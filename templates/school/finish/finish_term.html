@@ -1,0 +1,203 @@
+﻿{% block content %}
+    {% if message != None %}
+    {% endif %}
+
+    <form action="{%  url finish_term selectedTerm.id %}" name="info" method="post" id='myform'>{% csrf_token %}
+        {% ifequal selectedTerm currentTerm %}
+            {#<input class="btn" type="submit" name="tongKet" value="Tính tổng kết cả trường"> #}
+        {% endifequal %}
+    </form>
+
+    <h4> Thống kê toàn trường </h4>
+    <div class="row-fluid">
+        <div class="span4 alert-success">
+            <h5> Học lực </h5>
+            {% for h in hlList %}
+                <span class="pull-left">{% cycle "Giỏi" "Khá" "Trung bình" "Yếu" "Kém" "Chưa xếp loại" %}</span>
+                <span class="pull-right">{{ h }}</span>
+                <br>
+            {% endfor %}
+        </div>
+        <div class="span4 alert-danger">
+            <h5> Hạnh kiểm </h5>
+            {% for h in hkList %}
+                <span class="pull-left">{% cycle "Tốt" "Khá" "Trung bình" "Yếu" "Chưa xếp loại" %}</span>
+                <span class="pull-right">{{ h }}</span>
+                <br>
+            {% endfor %}
+        </div>
+        <div class="span4 alert-info">
+            <h5> Danh hiệu</h5>
+            <div class="row-fluid">
+            {% for h in ddList %}
+                <span
+                        class="pull-left">{% cycle "Học sinh giỏi" "Học sinh tiên tiến" "Không có" "Chưa xếp loại" %}</span>
+                    <span class="pull-right">{{ h }}</span>
+                <br>
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {#    <table class="table table-bordered table-condensed">#}
+    {#        <tr>#}
+    {#            <th width="14%">#}
+    {#            </th>#}
+    {#            <th width="14%" align="center">#}
+    {#                Tốt#}
+    {#            </th>#}
+    {#            <th width="14%" align="center">#}
+    {#                Khá#}
+    {#            </th>#}
+    {#            <th width="14%" align="center">#}
+    {#                Trung bình#}
+    {#            </th>#}
+    {#            <th width="28%" align="center">#}
+    {#                Yếu#}
+    {#            </th>#}
+    {#            <th width="14%" align="center">#}
+    {#                Chưa xếp loại#}
+    {#            </th>#}
+    {#        </tr>#}
+    {#        <tr>#}
+    {#            <td style="text-align: center;">#}
+    {#                Số lượng#}
+    {#            </td>#}
+    {#            {% for h in hkList %}#}
+    {#                <td style="text-align: center;" style="text-align:center">#}
+    {#                    {{ h }}#}
+    {#                </td>#}
+    {#            {% endfor %}#}
+    {#        </tr>#}
+    {#        <tr>#}
+    {#            <td style="text-align: center;">#}
+    {#                Phần trăm (%)#}
+    {#            </td>#}
+    {#            {% for h in pthkList %}#}
+    {#                <td style="text-align: center;" style="text-align:center">#}
+    {#                    {{ h|floatformat:"1" }}#}
+    {#                </td>#}
+    {#            {% endfor %}#}
+    {#        </tr>#}
+    {#    </table>#}
+    {##}
+    {#    <h5>Học lực </h5>#}
+    {#    <table class="table table-bordered">#}
+    {#        <tr>#}
+    {#            <th width="14%">#}
+    {#            </th>#}
+    {#            <th width="14%" align="center">#}
+    {#                Giỏi#}
+    {#            </th>#}
+    {#            <th width="14%" align="center">#}
+    {#                Khá#}
+    {#            </th>#}
+    {#            <th width="14%" align="center">#}
+    {#                Trung bình#}
+    {#            </th>#}
+    {#            <th width="14%" align="center">#}
+    {#                Yếu#}
+    {#            </th>#}
+    {#            <th width="14%" align="center">#}
+    {#                Kém#}
+    {#            </th>#}
+    {#            <th width="14%" align="center">#}
+    {#                Chưa xếp loại#}
+    {#            </th>#}
+    {#        </tr>#}
+    {#        <tr>#}
+    {#            <td style="text-align: center;">#}
+    {#                Số lượng#}
+    {#            </td>#}
+    {#            {% for h in hlList %}#}
+    {#                <td style="text-align: center;" style="text-align:center">#}
+    {#                    {{ h }}#}
+    {#                </td>#}
+    {#            {% endfor %}#}
+    {#        </tr>#}
+    {#        <tr>#}
+    {#            <td style="text-align: center;">#}
+    {#                Phần trăm (%)#}
+    {#            </td>#}
+    {#            {% for h in pthlList %}#}
+    {#                <td style="text-align: center;" style="text-align:center">#}
+    {#                    {{ h|floatformat:"1" }}#}
+    {#                </td>#}
+    {#            {% endfor %}#}
+    {#        </tr>#}
+    {#    </table>#}
+    {##}
+    {##}
+    {##}
+    {#--------------------------------------------------------------------------#}
+    {##}
+    {##}
+    {#    <h5>Danh hiệu </h5>#}
+    {##}
+    {#    <table class="table table-bordered">#}
+    {#        <tr>#}
+    {#            <th width="14%">#}
+    {#            </th>#}
+    {#            <th width="14%" align="center">#}
+    {#                Học sinh giỏi#}
+    {#            </th>#}
+    {#            <th width="15%" align="center">#}
+    {#                Học sinh tiên tiến#}
+    {#            </th>#}
+    {#            <th width="42%" align="center">#}
+    {#                Không có#}
+    {#            </th>#}
+    {#            <th width="14%" align="center">#}
+    {#                Chưa xếp loại#}
+    {#            </th>#}
+    {#        </tr>#}
+    {#        <tr>#}
+    {#            <td style="text-align: center;">#}
+    {#                Số lượng#}
+    {#            </td>#}
+    {#            {% for h in ddList %}#}
+    {#                <td style="text-align: center;" style="text-align:center">#}
+    {#                    {{ h }}#}
+    {#                </td>#}
+    {#            {% endfor %}#}
+    {#        </tr>#}
+    {#        <tr>#}
+    {#            <td style="text-align: center;">#}
+    {#                Phần trăm (%)#}
+    {#            </td>#}
+    {#            {% for h in ptddList %}#}
+    {#                <td style="text-align: center;" style="text-align:center">#}
+    {#                    {{ h|floatformat:"1" }}#}
+    {#                </td>#}
+    {#            {% endfor %}#}
+    {#        </tr>#}
+    {#    </table>#}
+
+    <div class="row-fluid">
+    <div class="row-fluid">
+        <h4 class=" "> Các lớp chưa tổng kết xong </h4>
+        <h5> Hạnh kiểm </h5>
+        <p>
+            {% for l,s in notFinishPractising %}
+                <span title="Lớp">{{ l }}:</span> <span class="alert-info" title="Số lượng">({{ s }})</span>,
+            {% endfor %}
+        </p>
+
+        <h5> Học lực </h5>
+
+        <p>
+            {% for l,s in notFinishLearning %}
+                <span title="Lớp">{{ l }}:</span> <span class="alert-info" title="Số lượng">({{ s }})</span>,
+            {% endfor %}
+        </p>
+
+
+        <h5>Tổng hợp</h5>
+
+        <p>
+            {% for l,s in notFinishAll %}
+                <span title="Lớp">{{ l }}:</span> <span class="alert-info" title="Số lượng">({{ s }})</span>,
+            {% endfor %}
+        </p>
+    </div>
+{% endblock %}

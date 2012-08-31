@@ -1,0 +1,408 @@
+{% extends "base.html" %}
+{% load url from future %}
+
+{#{% block breadcrumb %}#}
+{#    {{ block.super }}#}
+{#    {% load breadcrumb_tags %}#}
+{#    {% add_crumb 'Giới thiệu' %}#}
+{#{% endblock %}#}
+
+{% block js %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var $form = $('#login-form');
+            var $loginType = $('#login_type').val('');
+            var $username = $('#id_username');
+            var $password = $('#id_password');
+            $('#demo-login-school').click(function () {
+                $loginType.val('DEMO_LOGIN_SCHOOL');
+                $username.val('temp');
+                $password.val('temp');
+                $form.submit();
+            });
+            $('#demo-login-teacher').click(function () {
+                $loginType.val('DEMO_LOGIN_TEACHER');
+                $username.val('temp');
+                $password.val('temp');
+                $form.submit();
+            });
+            $('#demo-login-upper').click(function () {
+                $loginType.val('DEMO_LOGIN_UPPER');
+                $username.val('temp');
+                $password.val('temp');
+                $form.submit();
+            })
+        });
+    </script>
+{% endblock %}
+
+{% block css %}
+    <style type="text/css">
+        #breadcrumb {
+            display: none;
+        }
+
+        #myCarousel {
+        {#            border: #ddd solid thin;#} -moz-box-shadow: 0 0 5px 5px #CCC;
+            -webkit-box-shadow: 0 0 5px 5px #CCC;
+            box-shadow: 0 0 5px 5px #CCC;
+        }
+
+        .carousel-inner {
+            border: #ddd thin solid;
+            text-align: center;
+        }
+
+        .carousel .item > img {
+            display: inline-block;
+            width: 100%;
+        }
+
+            /*.carousel-caption {*/
+            /*top: 0;*/
+            /*bottom: auto;*/
+            /*background: rgba(0, 0,  0, .5);*/
+            /*}*/
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% if not user.is_authenticated %}
+        <div class="row-fluid" style="background-color: #ECFFB3;">
+            <div class="pagination-centered" style="padding-top:5em;">
+                <i class="icon-home" style="color: rgba(169, 1, 75, 0.8);font-size:10em;"
+                   title="Trường học, giáo viên"></i>
+                <span style="font-size: 2em">
+                    <i class=" icon-arrow-left" style="vertical-align:bottom;padding-left: 1em"></i>
+                    <span style="font-size: 1.2em;color: green;">
+                    <i class="icon-comment-alt" style="" title="Thông báo"></i>
+                    <i class="icon-check" style="" title="Điểm danh"></i>
+                    <i class="icon-file" style="" title="Điểm, học tập"></i>
+                    <i class="icon-trophy" style="" title="Rèn luyện"></i>
+                    </span>
+                    <i class=" icon-arrow-right" style="padding-right: 1em"></i>
+                </span>
+                <span style="font-size: 6em">
+                    <i class="icon-home" style="color: rgba(45, 174, 191, 0.8);" title="Học sinh"></i>
+                    <i class="icon-home" style="color: rgba(255, 95, 0, 0.8);margin-left: -.7em;" title="Phụ huynh"></i>
+                    <i class="icon-home" style="color: rgba(149, 161, 5, 0.8);;margin-left: -.7em;"
+                       title="Gia đình"></i>
+                </span>
+            </div>
+            <div class="pagination-centered" style="font-size: 1.5em;padding: 2em 0 1em 0;">
+                <p><span style="color: #045ebb;">Trường</span><span style="color: #ff6347;">Nhà</span>
+                    đưa thông tin trường học đến mọi nhà</p>
+            </div>
+        </div>
+
+        <br>
+        <br>
+        <div class="row-fluid pagination-centered">
+            <div class="span4 control-group">
+                <div class="controls">
+                    <a class="btn btn-primary btn-large" id="login" href="/login">
+                        Đăng nhập</a>
+
+                    <p class="help-block">
+                        Cho người đã có tài khoản sử dụng.
+                    </p>
+                </div>
+            </div>
+            <div class="span4 control-group">
+                <div class="controls">
+                    <form id="login-form" style="display: none;" action="/login/" method="POST">{% csrf_token %}
+                        <input id="id_username" type="text" name="username" maxlength="30">
+                        <input type="password" name="password" id="id_password">
+                        <input id="login_type" type="text" name="login_type" maxlength="30">
+                    </form>
+                    <div class="dropdown" style="display: inline-block;">
+                        <a class="btn btn-info btn-large dropdown-toggle" data-toggle="dropdown" href="#">
+                            Dùng thử
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" style="text-align: left;">
+                            <li>
+                                <a right-title="Dùng thử với tài khoản quản lý trường học"
+                                   href="#"
+                                   class=""
+                                   id="demo-login-school">
+                                    <span class="icon-home"></span>
+                                    Quản lý trường học</a>
+                            </li>
+                            <li>
+                                <a right-title="Dùng thử với tài khoản giáo viên"
+                                   href="#"
+                                   class=""
+                                   id="demo-login-teacher">
+                                    <span class="icon-user"></span>
+                                    Tài khoản giáo viên</a>
+                            </li>
+                            <li>
+                                <a right-title="Dùng thử với tài khoản sở giáo dục"
+                                   href="#"
+                                   class=""
+                                   id="demo-login-upper">
+                                    <span class="icon-user-md"></span>
+                                    Tài khoản sở giáo dục</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <p class="help-block">
+                        Dùng thử, tìm hiểu các tính năng.
+                    </p>
+                </div>
+            </div>
+            <div class="span4 control-group">
+                <div class="controls">
+                    <a class="btn btn-large btn-danger " id="register" href="/register">
+                        Đăng ký trường mới</a>
+
+                    <p class="help-block">
+                        Hiệu trưởng, hiệu phó đăng ký để sử dụng.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <br><br>
+        <div class="row-fluid">
+            <div class="span12" style="text-align: center;">
+                <div class="row-fluid">
+                    <div class="span3">
+                        <h3>
+                            <i class="icon-home-4"></i>
+                            Nhà trường
+                            <small>(Quản lý)</small>
+                        </h3>
+
+                        <p>Quản lý học tập và rèn luyện của học sinh</p>
+
+                        <p>Quản lý giáo viên, lớp, lịch học,...</p>
+
+                        <p>In các báo cáo theo mẫu của Bộ/Sở.</p>
+
+                        <p>Liên lạc với phụ huynh và giáo viên.</p>
+                    </div>
+
+                    <div class="span3">
+                        <h3><i class="icon-user-3"></i>
+                            Giáo viên </h3>
+
+                        <p>Nhập điểm, rèn luyện, chương trình học.</p>
+
+                        <p>Nhắn tin học tập cho phụ huynh.</p>
+
+                        <p>In các báo cáo tổng kết học tập.</p>
+
+                        <p>Xem thông tin học sinh, giáo viên trường.</p>
+
+                    </div>
+                    <div class="span3">
+                        <h3>
+                            <i class="icon-users"></i>
+                            Học sinh/Phụ huynh</h3>
+
+                        <p>Xem điểm, điểm danh, rèn luyện.</p>
+
+                        <p>Xem thời khoá biểu, bài học từng tuần.</p>
+
+                        <p>Nhận tin nhắn về học tập của học sinh.</p>
+
+                        <p>Giao lưu với các bạn trong lớp.</p>
+
+                    </div>
+                    <div class="span3">
+                        <h3>
+                            <i class="icon-folder-fill"></i>
+
+                            Phòng/Sở </h3>
+
+                        <p> Xem các báo cáo tổng hợp cấp Sở.</p>
+
+                        <p> Xem các báo cáo của các trường.</p>
+
+                        <p> Theo dõi hoạt động của từng trường.</p>
+
+                        <p> Khai thác số liệu giáo dục.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+
+        <h2 class="pagination-centered">Một số ảnh màn hình </h2>
+        <div>
+            <div id="myCarousel" class="carousel slide">
+                <div class="carousel-inner centered ">
+                    <div class="item">
+                        <img src="/static/images/help/dangnhap.png" alt="">
+
+                        <div class="carousel-caption">
+                            <h4>Đăng nhập</h4>
+
+                            <p>Sau khi có tài khoản quản lý cấp trường, nhà trường có thể đăng nhập để sử dụng dịch vụ
+                                phần
+                                mềm.</p>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="carousel-caption">
+                            <h4>Trang chủ của quản trị trường (Hiệu trưởng, hiệu phó, giáo vụ)</h4>
+
+                            <p>Sau khi thiết lập và đăng nhập bạn có thể nhìn thấy các chức năng quản lý chính của hệ
+                                thống
+                                ngay trên trang chủ.</p>
+                        </div>
+                        <img src="/static/images/help/home.png" alt="">
+                    </div>
+
+                    <div class="item">
+                        <img src="/static/images/help/lophoc.png" alt="">
+
+                        <div class="carousel-caption">
+                            <h4>Chức năng quản lý lớp</h4>
+
+                            <p>Khi chọn một lớp, các chức năng quản lý liên quan đến lớp được liệt kê ngay trên danh
+                                sách
+                                lớp.</p>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <img src="/static/images/help/lop-diem.png" alt="">
+
+                        <div class="carousel-caption">
+                            <h4>Nhập điểm</h4>
+
+                            <p>Số cột điểm động và di chuyển dễ dàng theo cột và hàng.</p>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <img src="/static/images/help/lop-diemdanh.png" alt="">
+
+                        <div class="carousel-caption">
+                            <h4>Điểm danh</h4>
+
+                            <p>Điểm danh bằng các chữ tắt.</p>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <img src="/static/images/help/baocao.png" alt="">
+
+                        <div class="carousel-caption">
+                            <h4>Báo cáo</h4>
+
+                            <p>Các báo cáo theo qui định của Bộ Giáo dục và Đào tạo.</p>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <img src="/static/images/help/giaovien.png" alt="">
+
+                        <div class="carousel-caption">
+                            <h4>Giáo viên </h4>
+
+                            <p>Giáo viên có tài khoản sử dụng để nhập điểm cho lớp được phân công giảng dạy, chủ
+                                nhiệm.</p>
+                        </div>
+                    </div>
+                    <div class="item active">
+                        <img src="/static/images/help/dangky.png" alt="">
+
+                        <div class="carousel-caption">
+                            <h4>Đăng ký sử dụng</h4>
+
+                            <p>Hiệu trưởng hoặc cán bộ phụ trách đăng ký sử dụng cho trường.</p>
+                        </div>
+                    </div>
+                </div>
+                <a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+                <a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
+            </div>
+
+            <br>
+            <br>
+
+            <div class="row-fluid" style="text-align: center;">
+                <div class="span4">
+                    <h3>Dễ sử dụng</h3>
+
+                    <p>Giao diện đơn giản, nhất quán.</p>
+
+                    <p>Không cần đào tạo, huấn luyện. </p>
+                </div>
+
+                <div class="span4">
+                    <h3>Linh hoạt</h3>
+
+                    <p>Phiên bản trên điện thoại.</p>
+
+                    <p>Chạy trên các trình duyệt hiện đại.</p>
+
+                </div>
+                <div class="span4">
+                    <h3>Hướng dịch vụ </h3>
+
+                    <p>Chỉ cần đăng ký và sử dụng.</p>
+
+                    <p>Không lo cài đặt, bảo trì.</p>
+                </div>
+            </div>
+            <div class="row-fluid" style="text-align: center;">
+                <div class="span4">
+                    <h3>Liên kết</h3>
+
+                    <p>Nhắn tin SMS qua điện thoại.</p>
+
+                    <p>Gửi thông báo qua email.</p>
+                </div>
+
+                <div class="span4">
+                    <h3>Sắp có</h3>
+
+                    <p>Nhập điểm, điểm danh từ điện thoại.</p>
+
+                    <p>Nội dung học tập.</p>
+                </div>
+                <div class="span4">
+                    <h3>Tương lai</h3>
+
+                    <p>Hỗ trợ giọng nói.</p>
+
+                    <p>Mạng xã hội học tập.</p>
+                </div>
+            </div>
+
+            <br>
+            <br>
+            <div class="row-fluid" style="text-align: center;">
+                <div class="span6">
+                    <a href="/about" class="btn btn-success btn-large">Thông tin sản phẩm</a>
+                </div>
+
+                <div class="span6">
+                    <a href="/help" class="btn btn-info btn-large">Xem hướng dẫn sử dụng</a>
+                </div>
+            </div>
+            <br>
+            <br>
+        </div>
+    {% elif user.is_superuser %}
+        {#        <a class="win-command" href="{%url app.views.manage_register %}"#}
+        <a class="win-command" href="/manageRegister"
+           title="Đăng ký">
+            <span class="win-commandimage win-commandring"><i class="icon-check"></i></span>
+            <span class="win-label">Quản lý đăng ký</span>
+        </a>
+
+        {#        <a class="win-command" href="{%url app.views.system_subject_agenda%}"#}
+        <a class="win-command" href="/app/manage_agenda/"
+           title="Quản lý phân phối chương trình của hệ thống">
+            <span class="win-commandimage win-commandring"><i class="icon-book"></i></span>
+            <span class="win-label">Chương trình</span>
+        </a>
+
+        <a class="win-command" href="/admin"
+           title="Mở trình quản trị sẵn có của hệ thống">
+            <span class="win-commandimage win-commandring"><i class="icon-briefcase"></i></span>
+            <span class="win-label">Duyệt dữ liệu</span></a>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Trợ giúp' %}
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}
+

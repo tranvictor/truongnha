@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb cl 'class_detail' cl.id %}
+    {% add_crumb 'Nghỉ học' %}
+{% endblock %}
+
+{% block content %}
+    <script>
+        $(document).ready(function () {
+            var note = '';
+
+            var done = function (json) {
+                if (json.message != null && json.message != '') $("#smsNotification").html("<ul>" + json.message + "</ul>");
+                else $("#smsNotification").html('');
+                $("#smsNotification").dialog("open");
+                $(".selected").each(select);
+                $("#selectAll").text("Chọn cả lớp");
+            };
+
+            $("#smsNotification").dialog({
+                modal:true,
+                buttons:{
+                    Đóng:function () {
+                        $(this).dialog('close');
+                    }
+                },
+                autoOpen:false,
+                width:500,
+                height:450,
+                maxWidth:500,
+                maxHeight:450,
+                title:"Những tin nhắn đã gửi"
+            })
+
+            var sendSmS = function () {
+                var id = $(this).attr('name');
+                var select = "#f_" + id;
+                var loai = $(select).text();
+                var data = id + '-' + loai;
+                //alert(window.location.pathname);
+                var arg = { type:"POST",
+                    url:"",
+                    data:{data:data, request_type:'sms'},
+                    datatype:"json",
+                    success:done
+                };
+                $.ajax(arg);
+                return false;
+            };
+
+            var sendSelected = function () {
+
+                var data = '';
+                $(".selected").each(function () {
+                    var id = $(this).attr('class').split(' ')[0];
+                    var select = "#f_" + id;
+                    var loai = $(select).text();
+                    var element = id + '-' + loai;
+                    data = data + ':' + element;
+                });
+
+                var arg = { type:"POST",
+                    url:"",
+                    data:{data:data, request_type:'sms'},
+                    datatype:"json",
+                    success:done
+                };
+                $.ajax(arg);
+                return false;
+            }
+            var select = function () {
+                if (!$(this).hasClass('thead')) {
+                    var id = $(this).attr('class').split(' ')[0];
+                    var checkboxid = '#checkbox_' + id;
+                    var checkboxall = '#checkbox_all'
+                    if ($(this).hasClass('selected')) {
+                        $(this).removeClass('selected');
+                        $(checkboxid).prop("checked", false);
+                        var n = $("input:checked").length;
+                        if (n == 1) $(checkboxall).prop("checked", false);
+                    } else {
+                        $(this).addClass('selected');
+                        $(checkboxid).prop("checked", true);
+                        $(checkboxall).prop("checked", true);
+                    }
+                    ;
+                }
+            }
+
+            $(".sms").each(function () {
+                $(this).click(sendSmS);
+                note = '';
+            });
+
+            $("select[name=class_id]").change(function () {
+                var class_id = $(this).val()
+                url = "/school/dsnghi/" + class_id + "/{{day}}/{{month}}/{{year}}"
+                window.location = url
+            });
+            $("input.datepicker").each(function () {
+                $(this).change(function () {
+                    var date = $(this).val()
+                    url = "/school/dsnghi/{{class_id}}/" + date
+                    window.location = url
+                });
+            });
+            $("select[name=loai]").each(function () {
+                $(this).change(function () {
+                    var id = $(this).parents("tr").attr('class').split(' ')[0];
+                    var loai = $(this).val();
+                    var data = { id:id, loai:loai, request_type:'update'}
+                    var arg = { type:"POST",
+                        url:"",
+                        data:data,
+                        datatype:"json"
+                    };
+
+                    $.ajax(arg);
+                    return false;
+
+                });
+            });
+            $("tr").each(function () {
+                $(this).click(select);
+            });
+            $("#checkbox_all").click(function () {
+                var checkboxall = '#checkbox_all'
+                if ($(checkboxall).is(':checked')) {
+                    $("tr").each(function () {
+                        var id = $(this).attr('class').split(' ')[0];
+                        var checkboxid = '#checkbox_' + id
+                        if (!$(this).hasClass('selected'))
+                            $(this).trigger('click');
+                    });
+                }
+                else {
+                    $("tr").each(function () {
+                        var id = $(this).attr('class').split(' ')[0];
+                        var checkboxid = '#checkbox_' + id
+                        if ($(this).hasClass('selected'))
+                            $(this).trigger('click');
+                    });
+                }
+            });
+            $("#sendSelected").click(sendSelected);
+
+            $("#selectAll").click(function () {
+                $("tr").each(select);
+                return false;
+            });
+            $("input.datepicker").datepicker("option", "yearRange", 'c-1:c');
+
+        });
+
+    </script>
+    <div class="well form-inline pagination-centered">
+        <p>
+            {% if pos > 1 %}
+                <label>Danh sách nghỉ học</label> {{ dncform }}
+            {% else %}
+                <label>Danh sách học sinh lớp</label> {{ cl }} <label>nghỉ học ngày</label> {{ dncform.date }}
+            {% endif %}
+        </p>
+    </div>
+
+    {% if message != None %}
+        {{ message }}
+        <br>
+    {% endif %}
+
+    {% if pos > 2 %}
+        <button id="selectAll" class="btn ">Đảo chọn</button>
+        <button id="sendSelected" class="btn btn-danger"> <i class="icon-envelope-alt"></i> Gửi tin nhắn của học sinh đã chọn</button>
+    {% endif %}
+
+    <table class="table">
+        <colgroup>
+        {% if pos > 2 %}
+            <col style="width: 3%;">
+        {% endif %}
+        <col style="width: 3%;">
+        <col style="width: 10%;">
+        <col style="width: 7%;">
+        <col style="width: 7%;">
+        <col style="width: 10%;">
+        <col style="width: 5%;">
+        </colgroup>
+
+        <tr class="thead">
+            {% if pos > 2 %}
+                <th class="align-left" width="2%">
+                    <input type="checkbox" id="checkbox_all"/>
+                </th>
+            {% endif %}
+            <th class="align-left">STT</th>
+            <th class="align-left">Họ Tên</th>
+            <th class="align-left">Ngày sinh</th>
+            <th class="align-left">Giới tính</th>
+            <th class="align-left">Điểm danh</th>
+            {% if pos > 2 %}
+                <th class="align-left">&nbsp</th>
+            {% endif %}
+        </tr>
+        {% for p,f in list %}
+            <tr class="{{p.id}}">
+                {% if pos > 2 %}
+                    <td>
+                        <input type="checkbox" id="checkbox_{{p.id}}"/>
+                    </td>
+                {% endif %}
+                <td>
+                    <p>{{ forloop.counter }}</p>
+                </td>
+
+                <td>
+                    <p>{{ p.last_name }}&nbsp{{ p.first_name }}</p>
+                </td>
+
+                <td>
+                    <p>{{ p.birthday|date:"SHORT_DATE_FORMAT" }}</p>
+                </td>
+
+                <td>
+                    <p>{{ p.sex }}</p>
+                </td>
+
+                <td id="f_{{p.id}}">{{ f }}</td>
+                {% if pos > 2 %}
+                    <td>
+                        <input type="submit" value="sms" name="{{p.id}}" class="sms"/>
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </table>
+
+    <div style="display: None;">
+        <div id="smsNotification">
+        </div>
+    </div>
+
+{% endblock %}

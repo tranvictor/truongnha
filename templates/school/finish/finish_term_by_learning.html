@@ -1,0 +1,36 @@
+﻿{% extends "base.html"%}
+
+{% block content %}
+
+    {% if message != None %}
+        {{message}}
+    {% endif %}
+    <table width="100%">
+        <tr>
+            <td align=center style="font-size:25px" >
+                <b> Kết quả tổng kết học lực toàn trường </b>
+            </td>
+        </tr>
+        <tr>
+            <td align=center style="font-size:25px" >
+                <b>	Học kỳ : {{ selectedTerm.number}}&nbsp  năm học : {{yearString}} </b>
+            </td>
+        </tr>
+    </table>
+    <b>Danh sách các lớp đã tổng kết xong</b>
+    <br>
+    {% for c in finishList %}
+        {{forloop.counter}}.
+        {{c}}
+        <br>
+    {% endfor %}
+
+    <b>Danh sách các lớp chưa tổng kết xong  </b>
+    <br>
+    {% for c in notFinishList %}
+        {{forloop.counter}}.
+        {{c}}
+        <br>
+    {% endfor %}
+
+{% endblock  %}

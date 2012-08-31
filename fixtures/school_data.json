@@ -1,0 +1,412 @@
+[
+  {
+    "model": "app.Organization",
+    "pk": 1,
+    "fields": {
+        "name": "Demo 1",
+        "email": "qlnt@googlegroups.com",
+        "level": "T",
+        "address": "ABC",
+        "manager_name": "Demo 1",
+        "school_level": 3,
+        "status" : 0
+    }
+  },
+  {
+    "model": "app.Organization",
+    "pk": 2,
+    "fields": {
+        "name": "Demo 2",
+        "email": "qlnt@googlegroups.com",
+        "level": "T",
+        "address": "ABC",
+        "manager_name": "Demo 2",
+        "school_level": 3,
+        "status" : 0
+    }
+  },
+  {
+    "model": "app.Organization",
+    "pk": 3,
+    "fields": {
+        "name": "Demo 3",
+        "email": "qlnt@googlegroups.com",
+        "level": "T",
+        "address": "ABC",
+        "manager_name": "Demo 3",
+        "school_level": 3,
+        "status" : 0
+    }
+  },
+  {
+    "model": "app.Organization",
+    "pk": 4,
+    "fields": {
+        "name": "Demo 4",
+        "email": "qlnt@googlegroups.com",
+        "level": "T",
+        "address": "ABC",
+        "manager_name": "Demo 4",
+        "school_level": 3,
+        "status" : 0
+    }
+  },
+  {
+    "model": "app.Organization",
+    "pk": 5,
+    "fields": {
+        "name": "Demo 5",
+        "email": "qlnt@googlegroups.com",
+        "level": "T",
+        "address": "ABC",
+        "manager_name": "Demo 5",
+        "school_level": 3,
+        "status" : 0
+    }
+  },
+  {
+    "model": "app.Organization",
+    "pk": 6,
+    "fields": {
+        "name": "Demo 6",
+        "email": "qlnt@googlegroups.com",
+        "level": "T",
+        "address": "ABC",
+        "manager_name": "Demo 6",
+        "school_level": 3,
+        "status" : 0
+    }
+  },
+  {
+    "model": "app.Organization",
+    "pk": 7,
+    "fields": {
+        "name": "Demo 7",
+        "email": "qlnt@googlegroups.com",
+        "level": "T",
+        "address": "ABC",
+        "manager_name": "Demo 7",
+        "school_level": 3,
+        "status" : 0
+    }
+  },
+  {
+    "model": "app.Organization",
+    "pk": 8,
+    "fields": {
+        "name": "Demo 8",
+        "email": "qlnt@googlegroups.com",
+        "level": "T",
+        "address": "ABC",
+        "manager_name": "Demo 8",
+        "school_level": 3,
+        "status" : 0
+    }
+  },
+  {
+    "model": "app.Organization",
+    "pk": 9,
+    "fields": {
+        "name": "Demo 9",
+        "email": "qlnt@googlegroups.com",
+        "level": "T",
+        "address": "ABC",
+        "manager_name": "Demo 9",
+        "school_level": 3,
+        "status" : 0
+    }
+  },
+  {
+    "model": "app.Organization",
+    "pk": 10,
+    "fields": {
+        "name": "Demo 10",
+        "email": "qlnt@googlegroups.com",
+        "level": "T",
+        "address": "ABC",
+        "manager_name": "Demo 10",
+        "school_level": 3,
+        "status" : 0
+    }
+  },
+  {
+    "pk": 2,
+    "model": "auth.user",
+    "fields": {
+        "username": "demo1",
+        "first_name": "",
+        "last_name": "",
+        "is_active": true,
+        "is_superuser": false,
+        "is_staff": false,
+        "last_login": "2011-05-23 19:41:09",
+        "groups": [],
+        "user_permissions": [],
+        "password": "sha1$88f6c$143036e77241a932f95658b923608d83cc63c01f",
+        "email": "", "date_joined": "2011-05-23 19:40:55"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "auth.user",
+    "fields": {
+        "username": "demo2",
+        "first_name": "",
+        "last_name": "",
+        "is_active": true,
+        "is_superuser": false,
+        "is_staff": false,
+        "last_login": "2011-05-23 19:41:09",
+        "groups": [],
+        "user_permissions": [],
+        "password": "sha1$3ddef$fd78b8955c4b6470f3abcdbe104beab1dc3661ee",
+        "email": "", "date_joined": "2011-05-23 19:40:55"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "auth.user",
+    "fields": {
+        "username": "demo3",
+        "first_name": "",
+        "last_name": "",
+        "is_active": true,
+        "is_superuser": false,
+        "is_staff": false,
+        "last_login": "2011-05-23 19:41:09",
+        "groups": [],
+        "user_permissions": [],
+        "password": "sha1$85033$cd65d71cf679a852d3d3700709196d5e7ae0cbb9",
+        "email": "", "date_joined": "2011-05-23 19:40:55"
+    }
+  },
+  {
+    "pk": 5,
+    "model": "auth.user",
+    "fields": {
+        "username": "demo4",
+        "first_name": "",
+        "last_name": "",
+        "is_active": true,
+        "is_superuser": false,
+        "is_staff": false,
+        "last_login": "2011-05-23 19:41:09",
+        "groups": [],
+        "user_permissions": [],
+        "password": "sha1$6a962$31b982fc4e9cf4f5e192678e963ca4d958d86e38",
+        "email": "", "date_joined": "2011-05-23 19:40:55"
+    }
+  },
+  {
+    "pk": 6,
+    "model": "auth.user",
+    "fields": {
+        "username": "demo5",
+        "first_name": "",
+        "last_name": "",
+        "is_active": true,
+        "is_superuser": false,
+        "is_staff": false,
+        "last_login": "2011-05-23 19:41:09",
+        "groups": [],
+        "user_permissions": [],
+        "password": "sha1$16ee1$8b9cddb650522630bd7b56c652e3f0d63f4ea834",
+        "email": "", "date_joined": "2011-05-23 19:40:55"
+    }
+  },
+  {
+    "pk": 7,
+    "model": "auth.user",
+    "fields": {
+        "username": "demo6",
+        "first_name": "",
+        "last_name": "",
+        "is_active": true,
+        "is_superuser": false,
+        "is_staff": false,
+        "last_login": "2011-05-23 19:41:09",
+        "groups": [],
+        "user_permissions": [],
+        "password": "sha1$80d80$2d6a144b4b4257ee8487c4cb6d5e2d872d53804b",
+        "email": "", "date_joined": "2011-05-23 19:40:55"
+    }
+  },
+  {
+    "pk": 8,
+    "model": "auth.user",
+    "fields": {
+        "username": "demo7",
+        "first_name": "",
+        "last_name": "",
+        "is_active": true,
+        "is_superuser": false,
+        "is_staff": false,
+        "last_login": "2011-05-23 19:41:09",
+        "groups": [],
+        "user_permissions": [],
+        "password": "sha1$7cf26$8f6cf630a528584c531de0e71c877cb425f38794",
+        "email": "", "date_joined": "2011-05-23 19:40:55"
+    }
+  },
+  {
+    "pk": 9,
+    "model": "auth.user",
+    "fields": {
+        "username": "demo8",
+        "first_name": "",
+        "last_name": "",
+        "is_active": true,
+        "is_superuser": false,
+        "is_staff": false,
+        "last_login": "2011-05-23 19:41:09",
+        "groups": [],
+        "user_permissions": [],
+        "password": "sha1$37f15$82b863cf37740b90b3ae066106d984a27a1f3bc6",
+        "email": "", "date_joined": "2011-05-23 19:40:55"
+    }
+  },
+  {
+    "pk": 10,
+    "model": "auth.user",
+    "fields": {
+        "username": "demo9",
+        "first_name": "",
+        "last_name": "",
+        "is_active": true,
+        "is_superuser": false,
+        "is_staff": false,
+        "last_login": "2011-05-23 19:41:09",
+        "groups": [],
+        "user_permissions": [],
+        "password": "sha1$04f11$d848be9dfcd5a113409d438759c9935d3cafec76",
+        "email": "", "date_joined": "2011-05-23 19:40:55"
+    }
+  },
+  {
+    "pk": 11,
+    "model": "auth.user",
+    "fields": {
+        "username": "demo10",
+        "first_name": "",
+        "last_name": "",
+        "is_active": true,
+        "is_superuser": false,
+        "is_staff": false,
+        "last_login": "2011-05-23 19:41:09",
+        "groups": [],
+        "user_permissions": [],
+        "password": "9c0a821a4e682ce4d2ae9fdafa083ae98fb7e9db",
+        "email": "", "date_joined": "2011-05-23 19:40:55"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "app.userprofile",
+    "fields": {
+        "organization": 1,
+        "notes": "",
+        "user": 2,
+        "phone": "",
+        "position": "HIEU_TRUONG"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "app.userprofile",
+    "fields": {
+        "organization": 2,
+        "notes": "",
+        "user": 3,
+        "phone": "",
+        "position": "HIEU_TRUONG"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "app.userprofile",
+    "fields": {
+        "organization": 3,
+        "notes": "",
+        "user": 4,
+        "phone": "",
+        "position": "HIEU_TRUONG"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "app.userprofile",
+    "fields": {
+        "organization": 4,
+        "notes": "",
+        "user": 5,
+        "phone": "",
+        "position": "HIEU_TRUONG"
+    }
+  },
+  {
+    "pk": 5,
+    "model": "app.userprofile",
+    "fields": {
+        "organization": 5,
+        "notes": "",
+        "user": 6,
+        "phone": "",
+        "position": "HIEU_TRUONG"
+    }
+  },
+  {
+    "pk": 6,
+    "model": "app.userprofile",
+    "fields": {
+        "organization": 6,
+        "notes": "",
+        "user": 7,
+        "phone": "",
+        "position": "HIEU_TRUONG"
+    }
+  },
+  {
+    "pk": 7,
+    "model": "app.userprofile",
+    "fields": {
+        "organization": 7,
+        "notes": "",
+        "user": 8,
+        "phone": "",
+        "position": "HIEU_TRUONG"
+    }
+  },
+  {
+    "pk": 8,
+    "model": "app.userprofile",
+    "fields": {
+        "organization": 8,
+        "notes": "",
+        "user": 9,
+        "phone": "",
+        "position": "HIEU_TRUONG"
+    }
+  },
+  {
+    "pk": 9,
+    "model": "app.userprofile",
+    "fields": {
+        "organization": 9,
+        "notes": "",
+        "user": 10,
+        "phone": "",
+        "position": "HIEU_TRUONG"
+    }
+  },
+  {
+    "pk": 10,
+    "model": "app.userprofile",
+    "fields": {
+        "organization": 10,
+        "notes": "",
+        "user": 11,
+        "phone": "",
+        "position": "HIEU_TRUONG"
+    }
+  }
+]

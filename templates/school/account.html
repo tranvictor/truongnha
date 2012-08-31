@@ -1,0 +1,32 @@
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#resetpass").click(function () {
+            return confirm('Mật khẩu sẽ được tạo lại ngẫu nhiên và gửi vào email và số điện thoại của người này.' +
+                    '\nBạn có muốn gửi mật khẩu mới cho tài khoản này không?');
+        });
+    });
+</script>
+
+{% block content %}
+    {% if message %}
+        <div class="alert alert-block alert-error fade in">
+            <a class="close" data-dismiss="alert" href="#">×</a>
+            <strong>{{ message }}</strong>
+        </div>
+    {% endif %}
+    <form action="{{ url }}" method="post" class="tttk">{% csrf_token %}
+        {#        <h3>Thông tin tài khoản</h3>#}
+        <table class="dataform">
+            <tr>
+                <th>Tên đăng nhập:</th>
+                <td>
+                    {{ account }}
+                    <button id="resetpass" class="btn btn-warning" style="margin-left: 2em;"
+                            title="Mật khẩu mới sẽ được tạo và gửi qua SMS và email.">
+                        Gửi mật khẩu
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </form>
+{% endblock %}

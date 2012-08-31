@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block js %}
+    <script type="text/javascript" src="/static/js/template_js/sortable_list.js"></script>
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb class 'class_detail' class.id %}
+    {% add_crumb 'Sắp xếp thứ tự học sinh' %}
+{% endblock %}
+
+{% block content %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // config the height of the div to fit with column attributes.
+            //var divList = $("#divList");
+            //var margin = $("#divList > ul > li:first").css('margin-bottom').replace('px', '');
+            //var liHeight = $("#divList>ul>li:first").outerHeight();
+            //var hs = parseInt(liHeight) + parseInt(margin);
+            //var numberOfLi = parseInt((divList.outerHeight() + parseInt(margin)) / hs);
+            //divList.css('height', numberOfLi * hs - margin);
+            // done configuration.
+
+            $("#sort_alphabet").click(function () {
+                document.location.replace('{% url orgamize_student class.id "1" %}');
+            });
+
+            $("#cancel_list_sorting").click(function () {
+                document.location.replace('{% url class_detail class.id %}');
+            });
+
+        });
+    </script>
+
+    <div id="submenu" class="btn-toolbar">
+        <input type="button" class="btn" id="sort_alphabet" value="Sắp xếp theo ABC"/>
+        <input type="button" class="btn" id="save" value="Lưu thứ tự"/>
+        <input type="button" class="btn " id="cancel_list_sorting" title="Trở về thứ tự ban đầu"
+               value="Hủy sắp xếp"/>
+        <span id="guide" class="btn tiptipclick" href="" title="Kéo học sinh đến vị trí mong muốn hoặc dùng các phím mũi tên để di chuyển con trỏ,
+            sau đó Enter để chọn học sinh được trỏ, sau khi chọn sử dụng các phím mũi tên để thay đổi vị trí. Kết thúc bằng việc ấn 'Lưu thứ tự'.">
+            Hướng dẫn</span>
+    </div>
+
+    <div id="divList">
+        <ul style="float: left;">
+            {% for student in student_list %}
+                <li class="sortable tiptiphover_delay ui-state-default selected" title="{{ student.birthday }}"
+                    id="{{ student.id }}">
+                    {{ forloop.counter }}
+                </li>
+            {% endfor %}
+        </ul>
+
+        <ul id="sortableList" style="float: left;">
+            {% for student in student_list %}
+                <li class="sortable tiptiphover_delay ui-state-default selected" title="{{ student.birthday }}"
+                    id="{{ student.id }}">
+                    <span class="ui-icon ui-icon-arrowthick-2-n-s icon" style="display: none; float: left;"></span>
+                    <span id="index" style="margin-left: 4px;">{{ student.index }}</span>
+                    {{ student.last_name }} {{ student.first_name }}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <p id="ajax_to" style="display: none;">{% url change_index 'student' class.id %}</p>
+{% endblock %}

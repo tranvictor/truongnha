@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+{% load upload_tags %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb class 'class_detail' class.id %}
+    {% add_crumb sub 'subject_per_class' sub.class_id.id %}
+    {% if list %}
+        {% add_crumb 'Phân phối chương trinh giảng dạy' %}
+    {% else %}
+        {% add_crumb 'Kế hoạch giảng dạy (chưa có)' %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if pos > 3 %}
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $("#notify").ajaxSuccess(function(event, request, settings, json) {
+                    if (json.message != null) {
+                        $(this).html("<ul>" + json.message + "</ul>");
+                        $(this).delay(1000).fadeOut(10000);
+                        if (json.message == 'Đã lưu. Vui lòng cập nhật các tiết học mới') window.location.reload(true);
+                    }
+                    else {
+                        $(this).text("Lưu");
+                        $(this).delay(1000).fadeOut('fast');
+                    }
+                });
+
+                $("#upload_modal").on('hidden', function(){
+                    location.reload('true');
+                });
+                $("#upload-modal-exit").click(function(){
+                    $("#upload_modal").modal('hide');
+                    return false;
+                });
+
+                $("textarea").each(function(){
+                    $(this).css('max-width', '400px');
+                    $(this).css('min-width', '250px');
+                });
+
+                $("textarea[name=title]").each(function() {
+
+                    $(this).change(function() {
+                        var value = $(this).val();
+                        var id = $(this).parents("tr").attr('id').split(' ')[0];
+                        var data = {value : value, id : id, request_type:'title'};
+                        var arg = { type:"POST",
+                            url:"",
+                            data: data,
+                            datatype:"json"
+                        };
+                        $.ajax(arg);
+                        return false;
+                    })
+                });
+
+                $("input[name=ngay_day]").each(function() {
+                    $(this).change(function() {
+                        var value = $(this).val();
+                        var id = $(this).parents("tr").attr('id').split(' ')[0];
+                        var data = {value : value, id : id, request_type:'ngay_day'};
+                        var arg = { type:"POST",
+                            url:"",
+                            data: data,
+                            datatype:"json"
+                        };
+                        $.ajax(arg);
+                        return false;
+                    });
+
+                });
+
+                 $("textarea[name=note]").each(function() {
+                    $(this).change(function() {
+                        var value = $(this).val();
+                        var id = $(this).parents("tr").attr('id').split(' ')[0];
+                        var data = {value : value, id : id, request_type:'note'};
+                        var arg = { type:"POST",
+                            url:"",
+                            data: data,
+                            datatype:"json"
+                        };
+                        $.ajax(arg);
+                        return false;
+                    });
+                });
+
+                $(".delete").each(function(){
+                    $(this).click(function(){
+                        var answer = confirm("Bạn có chắc chắn muốn xóa?");
+                        if (!answer) return false;
+                        var id = $(this).parents("tr").attr('id').split(' ')[0];
+                        $(this).parents("tr").hide();
+                        var data = {id : id, request_type:'delete'};
+                        var arg = { type:"POST",
+                            url:"",
+                            data: data,
+                            datatype:"json"
+                        };
+                        $.ajax(arg);
+                        return false;
+                    });
+                });
+
+                $("form").submit(function() {
+                    return false;
+                });
+
+            });
+        </script>
+    {% endif %}
+    <div class="well form-inline pagination-centered">
+        {% if pos > 3 %}
+            <a class="btn"
+               title="Nhập chương trình học từ file Excel"
+               href="#upload_modal"
+               data-toggle="modal"
+               id="import">
+                <i class="icon-upload-alt"></i>
+                Nhập từ Excel</a>
+            <a class="btn" title="Xuất chương trình học ra file Excel."
+                        href="{% url export_agenda sub.id %}" id="export">
+                <i class="icon-download-alt"></i>
+                Xuất ra Excel </a>
+            <a class="btn"
+                        href="{%url use_system_agenda sub.id %}" title="Sử dụng phân phối chương trình của hệ thống theo chuẩn BGD&ĐT">
+                     Chương trình của hệ thống</a>
+            <a class="btn"
+                        href="{%url use_school_agenda sub.id %}" title="Sử dụng phân phối chương trình của trường">
+                     Chương trình của trường</a>
+    </div>
+
+    <div>
+        <form action="{% url subject_agenda sub.id %}" method="post">{% csrf_token %}
+            {% if list %}
+            <table class="table table-striped table-bordered">
+                <tr>
+                    <th>STT</th>
+                    <th>Tiêu đề</th>
+                    <th>Ghi chú</th>
+                    <th></th>
+                </tr>
+
+                {% for u, v in list %}
+                    <tr id="{{ u.id }}">
+                        <td>{{ u.index }}</td>
+                        <td>{{ v.title }}</td>
+                        <td>{{ v.note }}</td>
+                        <td><button class="btn delete" title="Xóa tiết học khỏi chương trình">Xóa</button></td>
+                    </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+        </form>
+    {% else %}
+        {% if list %}
+        <table class="table table-striped table-bordered">
+            <tr>
+                <th>Tiết</th>
+                <th>Tiêu đề</th>
+                <th>Ghi chú</th>
+            </tr>
+            {% for u, v in list %}
+                <tr id="{{ u.id }}">
+                    <td>{{ u.index }}</td>
+                    <td>{{ u.title }}</td>
+                    <td>{{ u.note }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+    {% endif %}
+    </div>
+
+    <!--<div style="display: none;">-->
+        <!--<div id="fileupload">-->
+            <!--<form method="post" action="" enctype="multipart/form-data">-->
+                <!--<div class="fileupload-buttonbar">-->
+                    <!--{% csrf_token %}-->
+                    <!--<label class="fileinput-button">-->
+                        <!--<span>Chọn file...</span>-->
+                        <!--<input type="file" name="file" multiple>-->
+                    <!--</label>-->
+                <!--</div>-->
+            <!--</form>-->
+            <!--<div class="fileupload-content">-->
+                <!--<table class="files"></table>-->
+                <!--<div class="fileupload-progressbar"></div>-->
+            <!--</div>-->
+            <!--<div id="errorDetail" class="errorlist errorDiv" style="display: none;">-->
+            <!--</div>-->
+            <!--<p>-->
+                <!--Chú ý: Phải dùng file Excel theo <a href="{%url export_system_agenda index grade term %}"> mẫu-->
+                <!--này</a>.-->
+            <!--</p>-->
+        <!--</div>-->
+    <!--</div>-->
+    <div class="modal fade" id="upload_modal" style="display: none;">
+        <div class="modal-header">
+            <a class="close" data-dismiss="modal">×</a>
+            <h3>Nhập khung chương trình từ file Excel</h3>
+        </div>
+        <div class="modal-body">
+            <!-- The file upload form used as target for the file upload widget -->
+            <form id="fileupload" action="" method="POST" enctype="multipart/form-data">
+                <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+                <div class="row fileupload-buttonbar">
+                    <div class="span5">
+                        <!-- The fileinput-button span is used to style the file input field as button -->
+                                <span class="btn btn-success fileinput-button">
+                                    <i class="icon-plus icon-white"></i>
+                                    <span>Chọn files...</span>
+                                    <input type="file" name="files[]" multiple>
+                                </span>
+                        <button type="submit" class="btn btn-primary start">
+                            <i class="icon-upload icon-white"></i>
+                            <span>Tải tất cả</span>
+                        </button>
+                        <button type="reset" class="btn btn-warning cancel">
+                            <i class="icon-ban-circle icon-white"></i>
+                            <span>Dừng lại</span>
+                        </button>
+                        <button type="button" class="btn btn-danger delete">
+                            <i class="icon-trash icon-white"></i>
+                            <span>Xóa</span>
+                        </button>
+                        <input type="checkbox" class="toggle">
+                    </div>
+                    <div class="span3">
+                        <!-- The global progress bar -->
+                        <div class="progress progress-success progress-striped active fade">
+                            <div class="bar" style="width:0;"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- The loading indicator is shown during image processing -->
+                <div class="fileupload-loading"></div>
+                <br>
+                <!-- The table listing the files available for upload/download -->
+                <table class="table table-striped">
+                    <tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery">
+
+                    </tbody>
+                </table>
+            </form>
+            <div id="errorDetail">
+
+            </div>
+            <div class="hint">
+                <p>
+                    Chú ý: Phải dùng file Excel theo <a href="{%url export_system_agenda index grade term %}">mẫu
+                    này</a>.
+                </p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="btn" id="upload-modal-exit">Thôi</a>
+        </div>
+    </div>
+    {% upload_js %}
+    <script type="text/javascript" src="/static/js/jquery_file_upload/qlnt_upload_for_agenda.js"></script>
+    <script type="text/javascript" src="/static/js/jquery_file_upload/locale.js"></script>
+{% endblock %}

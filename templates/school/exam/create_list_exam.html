@@ -1,0 +1,288 @@
+﻿{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+{#    {% add_crumb 'Thiết lập' 'info' %}#}
+    {% add_crumb 'In danh sách thi' %}
+{% endblock %}
+
+{% block js %}
+    <script>
+        $(document).ready(function () {
+            $("[id^='class']").click(function () {
+                var id = this.id.split("_")[1];
+                var className = this.name;
+                id = "#name_" + id;
+                $(id).dialog({
+                    modal:true,
+                    buttons:{
+                        Đóng:function () {
+                            $(this).dialog('close');
+                        }
+                    },
+					position:'bottom',
+                    autoOpen:false,
+                    width:400,
+                    height:600,
+                    maxWidth:700,
+                    maxHeight:400,
+                    title:"Chọn học sinh không thi lớp " + className
+                });
+                $(id).dialog("open");
+
+            });
+            //$("#3").dialog('open');
+        });
+        function selectPupil(tb) {
+            var checkBox = tb.children[0].children[0];
+            if (tb.className == "selected") {
+                tb.className = "";
+                checkBox.checked = false;
+            }
+            else {
+                tb.className = "selected";
+                checkBox.checked = true;
+            }
+        }
+        function selectClass(tb) {
+			var  editButton = tb.nextElementSibling.children[0];	
+			for (x in editButton)
+				console.log(x);
+            var checkBox = tb.children[0];
+            if (tb.className == "selected") {
+                tb.className = "";
+                checkBox.checked = false;
+				editButton.disabled = true;
+            }
+            else {
+                tb.className = "selected";
+                checkBox.checked = true;
+				editButton.disabled = false;
+            }
+        }
+        function checkAll(tb, index) {
+            var numberBlock = {{numberBlock}};
+            var checkBox = tb.children[0];
+            var ok = tb.className.search("selected") != -1;
+            var table = document.getElementById("main-table");
+
+            if (ok) {
+                tb.className = "align-left"
+                checkBox.checked = false;
+            }
+            else {
+                tb.className = "selected align-left";
+                checkBox.checked = true;
+            }
+
+            for (var i = 1; i < 1000; i++) {
+                if (!table.rows[i]) break;
+                var cell = table.rows[i].cells[2 * (index - 1)];
+                var checkBox = cell.children[0];
+                if (!checkBox) break;
+
+                if (!ok) {
+                    cell.className = "selected";
+                    checkBox.checked = true;
+                }
+                else {
+                    cell.className = "lastname";
+                    checkBox.checked = false;
+                }
+            }
+        }
+        function submitToServer() {
+            var additionalDiv = document.getElementById("additionalDiv");
+        {% for ps in pupilList %}
+            {% if ps != 0 %}
+                {% for p in ps %}
+                    var checkBox = document.getElementById("p{{p.id}}");
+                    if (checkBox.checked) {
+                        var stringInput = " <input type=\"checkbox\" class=\"align-left\" name=\"pp_{{p.id}}\" checked >";
+                        additionalDiv.innerHTML += stringInput;
+                    }
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+
+            /*
+             for (x in div)
+             //console.log(x);
+             additionalDiv.innerHTML += x+"<br>";
+             //console.log(div.innerHTML);
+             */
+            document.myform.submit();
+        }
+        function acceptDigits(mainInput) {
+
+            var exp = /[^((\d))]/g;
+            mainInput.value = mainInput.value.replace(exp, '');
+
+            if (mainInput.value.length > 2)
+                mainInput.value = mainInput.value.substring(0, 2);
+            if (parseInt(mainInput.value) > 40)
+                mainInput.value = mainInput.value.substring(0, 1);
+        }
+
+    </script>
+{% endblock %}
+
+{% block content %}
+    <form class="well form-horizontal" action="{% url create_list_exam %}" method="post" onsubmit="return false;"
+          name="myform">{% csrf_token %}
+        <fieldset>
+            <legend>Thông tin chung</legend>
+            <div class="control-group">
+                <label class="control-label" for="tenkythi">Tên kỳ thi</label>
+
+                <div class="controls">
+                    <input type="text" name="name" id="tenkythi">
+
+                    <p class="help-block"></p>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="id_date">Ngày thi</label>
+
+                <div class="controls">
+                    <input type="text" name="date" id="id_date">
+
+                    <p class="help-block"></p>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="id_time">
+                    Giờ thi
+                </label>
+
+                <div class="controls">
+                    <input type="text" name="time" id="id_time">
+
+                    <p class="help-block"></p>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="id_subject">
+                    Môn thi
+                </label>
+
+                <div class="controls">
+                    <input type="text" name="subject" id="id_subject">
+
+                    <p class="help-block"></p>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="id_subject">
+                    Số thí sinh mỗi phòng
+                </label>
+
+                <div class="controls">
+                    <input type="text" name="maxPupil" value="25" onkeyup="acceptDigits(this)">
+
+                    <p class="help-block">Số lượng thí sinh trong mỗi phòng thi</p>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Chọn học sinh tham dự kỳ thi</legend>
+
+            <div class="row-fluid">
+                {% for grade in blockList %}
+                    {% if blockList.count == 4 %}
+                        <div class="span3">
+                        <h4>Khối {{ grade.number }}</h4>
+                    {% else %}
+                        <div class="span4">
+                        <h4>Khối {{ grade.number }}</h4>
+                    {% endif %}
+
+                <table class="table">
+                    <thead>
+                    <th>Tên lớp</th>
+                    <th>Chọn tất</th>
+                    <th>Bỏ chọn một phần</th>
+                    </thead>
+                    <tbody>
+                    {% for c in classList %}
+                        {% if c.block_id == grade %}
+                            <tr>
+                                <th>{{ c.name }}</th>
+                                <td onclick="selectClass(this)">
+                                    <input  type="checkbox" class="align-left"
+                                           name="{{c.id}}">
+                                </td>
+                                <td>
+                                    <button class="btn" disabled id="class_{{forloop.counter}}" name="{{c.name}}"> Sửa</button>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+                {% endfor %}
+                </div>
+        </fieldset>
+
+        {% for ps in pupilList %}
+            {% if ps != 0 %}
+                <div id="name_{{forloop.counter}}" style="display:none">
+                    <table class="table table-bordered table-striped" width="100%">
+                        <th colspan="2" width="4%">
+                            STT
+                        </th>
+                        <th colspan="2">
+                            Họ và tên
+                        </th>
+                        <th>
+                            Ngày sinh
+                        </th>
+
+                        {% for p in ps %}
+                            <tr onclick="selectPupil(this)">
+                                <td class="lastname">
+                                    <input type="checkbox" class="align-left" name="p{{p.id}}" id="p{{p.id}}">
+                                </td>
+                                <td class="firstname">
+                                    {{ forloop.counter }}
+                                </td>
+                                <td class="lastname">
+                                    {{ p.last_name }}
+                                </td>
+                                <td class="firstname">
+                                    {{ p.first_name }}
+                                </td>
+                                <td>
+                                    {{ p.birthday|date:"SHORT_DATE_FORMAT" }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            {% endif %}
+        {% endfor %}
+
+        <div id="additionalDiv" style="display:none"></div>
+
+        <fieldset>
+            <legend>Sắp xếp vào các phòng thi</legend>
+            <div class="control-group">
+                <div class="controls">
+                    <input type="radio" name="classifiedType" checked value="1">Các khối riêng biệt và không theo lớp.
+                    <br>
+                    <input type="radio" name="classifiedType" value="2">Các khối riêng biệt và theo lớp. <br>
+                    <input type="radio" name="classifiedType" value="3">Theo thứ tự ABC <br>
+                </div>
+            </div>
+        </fieldset>
+
+
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit" onclick="submitToServer();"> Xuất danh sách</button>
+        </div>
+    </form>
+{% endblock %}

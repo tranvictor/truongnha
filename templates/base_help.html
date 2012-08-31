@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block css %}
+    <link href="/static/css/help.css" rel="stylesheet">
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Trợ giúp' %}
+{% endblock %}
+
+{% block content %}
+    {% if not user.is_authenticated %}
+        <div class="row-fluid ">
+            <div class="alert alert-heading span6"><h4>
+                Nếu bạn là giáo viên, học sinh, hoặc phụ huynh: xin vui lòng liên hệ với nhà
+                trường để nhận tài khoản sử dụng.</h4>
+            </div>
+
+            <div class="alert alert-success span6"><h4>
+                Nếu bạn là hiệu trưởng, hiệu phó hay giáo vụ, phụ trách tin học của trường xin <a href="/register">Đăng
+                ký</a> để trường có thể sử dụng dịch vụ phần mềm.</h4></div>
+        </div>
+    {% endif %}
+
+    <div class="row-fluid" id="help-content-frame">
+        <div id="help-menu" class="span2">
+            {% include "help/menu.html" %}
+        </div>
+
+        <div id="help-content" class="help-content span10">
+            {% block help %}
+                {% if user.is_authenticated %}
+                    {% if user.userprofile.position == 'HOC_SINH' %}
+                        <ol>
+                            {#                                TODO #}
+                            <li>Chọn đăng nhập để sử dụng</li>
+                            <img src="/static/images/help/welcome.png"/>
+                        </ol>
+
+                    {% elif user.userprofile.position == 'GIAO_VIEN' %}
+                        <ol>
+                            <li>Đây là trang chủ của giáo viên sau khi đăng nhập. Bạn có thể chọn các chức năng quản
+                                lý lớp hoặc xem thông tin khác của trường.
+                            </li>
+                            <img src="/static/images/help/giaovien-home.png"/>
+                        </ol>
+                    {% elif user.userprofile.position == 'HIEU_TRUONG' or user.userprofile.position == 'HIEU_PHO' or user.userprofile.position == 'GIAO_VU' %}
+                        <ol>
+                            <li>Đây là trang chủ của quản trị trường sau khi đăng nhập. Bạn có thể chọn các chức
+                                năng quản lý lớp hoặc các chức năng quản lý cấp trường từ màn hình này.
+                            </li>
+                            <img src="/static/images/help/home.png"/>
+
+                            <li>Khi muốn quay về màn hình chính này bạn chỉ cần chọn biểu tượng
+                                <a href="/"><i class="icon-home icon-large"></i> Trường</a> ở góc trái, phía trên màn
+                                hình.
+                            </li>
+                        </ol>
+                    {% endif %}
+                {% else %}
+                    <ol>
+                        <li>Từ màn hình giới thiệu này bạn có thể đăng nhập, đăng ký, hoặc tìm hiểu về dịch vụ phần
+                            mềm.
+                        </li>
+                        <img src="/static/images/help/welcome.png"/>
+                    </ol>
+                {% endif %}
+            {% endblock %}
+        </div>
+    </div>
+{% endblock %}
+

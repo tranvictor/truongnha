@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Giới thiệu' %}
+{% endblock %}
+
+{% block content %}
+    <div class="row-fluid text-justify">
+        <div class="span6">
+            <h3>Giới thiệu</h3>
+
+            <p>Đây là dịch vụ phần mềm hỗ trợ quản lý cho các trường Trung học Cơ sở và Trung học Phổ thông (cấp 2 và cấp 3).
+                Phần mềm phục vụ các đối tượng chính là: Hiệu trưởng, Hiệu phó, Giáo viên, Học sinh, Phụ huynh
+                và Cán bộ cấp Sở, Phòng Giáo dục.</p>
+            <ul>
+                <li>Nhà trường có thể quản lý các thông tin về học tập, rèn luyện của học sinh.
+                </li>
+                <li>Giáo viên có thể nhập các kết quả học tập, rèn luyện của học sinh cho các lớp mình giảng
+                    dạy.
+                </li>
+                <li>Phụ huynh/Học sinh có thể xem các thông tin về tình hình học tập.</li>
+                <li>Cán bộ Sở Giáo dục có thể xem các báo cáo tổng hợp của các trường.</li>
+            </ul>
+
+
+            <h3>Nhóm phát triển</h3>
+            <p>Phần mềm do <a href="http://www.viettel.com.vn">Tập đoàn viễn thông Viettel</a> và
+                <a href="http://www.vnu.edu.vn">Đại học Quốc gia Hà Nội</a> hợp tác phát triển và cung cấp dưới
+                dạng
+                dịch vụ phần mềm. Dự án hình thành từ đề tài nghiên cứu phát triển của <a
+                        href="http://www.dost.hanoi.gov.vn/">Sở Khoa học và Công nghệ Hà Nội</a>.
+            </p>
+
+
+            <p>Nhóm nghiên cứu và phát triển chính từ <a href="http://www.uet.vnu.edu.vn">Trường Đại
+                học Công Nghệ - Đại học Quốc Gia Hà Nội</a> gồm
+                <strong>Trần Minh Đức, Lưu Thế Lợi, Lê Thế Lưu và Trần Huy Vũ (Trưởng nhóm)</strong>,
+                dưới sự phụ trách của <a href="http://www.uet.vnu.edu.vn/~hoangta/"> TS. Trương Anh Hoàng</a>.
+            </p>
+
+            <p>Sản phẩm cũng được nhiều giáo viên, sinh viên chạy thử và góp ý hoàn thiện hệ thống.</p>
+
+{#            <h3>Điều khoản</h3>#}
+{#            <p> TODO </p>#}
+{##}
+        </div>
+
+
+        <div class="span6">
+            <h3>Liên hệ</h3>
+
+            <p>Xin có thể gửi email cho chúng tôi qua hòm thư: <a
+                    href="mailto:contact@truongnha.com">contact@truongnha.com</a>.
+            </p>
+
+
+            <p>Liên hệ qua Google+:</p>
+            <div class="g-plusone"></div>
+
+            <!-- Place this tag after the last +1 button tag. -->
+            <script type="text/javascript">
+                window.___gcfg = {lang:'vi'};
+
+                (function () {
+                    var po = document.createElement('script');
+                    po.type = 'text/javascript';
+                    po.async = true;
+                    po.src = 'https://apis.google.com/js/plusone.js';
+                    var s = document.getElementsByTagName('script')[0];
+                    s.parentNode.insertBefore(po, s);
+                })();
+            </script>
+
+            <p>Để lại góp ý của bạn trên Facebook:
+                {#                <i class="icon-large icon-google-plus"></i>,#}
+                <!-- Place this tag where you want the +1 button to render. -->
+
+
+            <div id="fb-root"></div>
+            <script>(function (d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s);
+                js.id = id;
+                js.src = "//connect.facebook.net/vi_VN/all.js#xfbml=1";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+            </script>
+            <div class="fb-comments" data-href="http://truongnha.com/" data-num-posts="5" data-width="400"></div>
+
+            {#            <i class="icon-large icon-twitter"></i>#}
+            {#            .#}
+            </p>
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{#                <div class="span6">#}
+{#                    <h3>Chức năng sử dụng</h3>#}
+{##}
+{#                    <p>Phần mềm có giao diện tự nhiên để người sử dụng hiểu nghiệp vụ có thể sử dụng được ngay.#}
+{#                    </p>#}
+{##}
+{#                    <p>Khi người quản trị cấp trường thêm giáo viên hoặc học sinh, các tài khoản của giáo viên và học#}
+{#                        sinh được tự động tạo ra để giáo viên và học sinh cũng có thể đăng nhập và sử dụng hệ thống.#}
+{#                        Giáo viên sẽ nhập được các thông tin về điểm của lớp mình dạy. Học sinh có thể xem thông tin về#}
+{#                        điểm của mình.#}
+{#                    </p>#}
+{#                    Hướng dẫn ngắn gọn về phần mềm có thể xem#}
+{#                    <a target="_blank"#}
+{#                       href="https://docs.google.com/open?id=0B-w5Nu1TpdFRYzc4NmMyZWQtMTc0My00ZDQwLWJlM2YtNDg5MWU5NDIwMzQz">#}
+{#                        tại đây</a>.#}
+{#                </div>#}
+
+
+{#        <div class="span4">#}
+{#            <ul>#}
+{#                <li>Nguyễn Thị Dung, K53, kiểm thử tự động</li>#}
+{#                <li>Trần Thị Giang, K53, kiểm thử tự động</li>#}
+{#                <li>Nguyễn Nhung Hương, giáo viên trường Lomonoxop, cung cấp yêu cầu, thử nghiệm</li>#}
+{#                <li>Nguyễn Quang Minh, học viên K17, giáo viên cấp II, cung cấp yêu cầu, kiểm thử</li>#}
+{#                <li>Nguyễn Bảo Ngọc, K52, hỗ trợ hệ thống</li>#}
+{#                <li>Nguyễn Xuân Thanh, sinh viên K54, xây dựng tài liệu, hệ thống trợ giúp</li>#}
+{#                <li>Nguyễn Thị Vân, sinh viên K16, giáo viên, thử nghiệm</li>#}
+{#                <li>Nguyễn Văn Cao, giáo viên, thử nghiệm</li>#}
+{#                <li>Nguyễn Hồng Điệp, giáo viên, thử nghiệm</li>#}
+{#            </ul>#}
+{#    </div>#}
+

@@ -1,0 +1,520 @@
+{% extends "base.html" %}
+
+{% load upload_tags %}
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {#    {% add_crumb 'Thiết lập' 'info' %}#}
+    {% add_crumb 'Giáo viên, cán bộ' %}
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript" src="/static/js/template_js/teachers.js?{{ VERSION }}"></script>
+{#    <script type="text/javascript" src="/static/js/jquery.dataTables.js"></script>#}
+{##}
+{#    <script type="text/javascript" charset="utf-8">#}
+{#        /* Table initialisation */#}
+{#        $(document).ready(function() {#}
+{#            $('#teacher_table').dataTable( {#}
+{#                "sDom": "<'row'<'span8'l><'span8'f>r>t<'row'<'span8'i><'span8'p>>"#}
+{#            } );#}
+{#        } );#}
+{#    </script>#}
+{% endblock %}
+
+{% block css %}
+    <style type="text/css">
+        #teachers-nav {
+            font-size: 1.4em;
+        }
+
+        #teachers-nav ul {
+            padding: 0;
+            margin-right: 0;
+        }
+        #teachers-nav li {
+            list-style: none;
+            font-size: .9em;
+            padding: .2em 0 .2em 0;
+            /*margin-left: -.2em;*/
+            width: 100%;
+        }
+        #teachers-nav [class^="icon-"] {
+            opacity: 0.25;
+            font-size: 14px;
+        }
+        #teachers-nav [class^="icon-"]:hover {
+            opacity: 1;
+        }
+        .table [class^="icon-"] {
+            color: #888;
+        }
+        li:hover i[class^="icon-"] {
+            opacity: 1;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    <div class="row-fluid">
+    <div id="teachers-nav" class="span3">
+        <div >
+            <h3>Nhóm, tổ</h3>
+        </div>
+        <ul class="nav-list ">
+            <li id="team-all" class="active">
+                <a href="#">Tất cả</a>
+                {% if pos > 3 %}
+                    <div class="pull-right">
+                        <a title="Thêm tổ"
+                           href="#rename-team-modal"
+                           data-toggle="modal"
+                           class="add-team">
+                            <span class="icon-plus-sign"></span>
+                        </a>
+                    </div>
+                {% endif %}
+            </li>
+            <li>
+                <ul class="nav-list">
+                    {% for t in team_list %}
+                        <li id="team.{{ t.id }}" data-toggle="{{ t.name }}" class="team">
+                            <a href="#team.{{ t.id }}">
+                                <span id="team-display-name-{{ t.id }}">{{ t.name }}</span>
+                                <span class="caret" style="display: none;"></span>
+                            </a>
+                            {% if pos > 3 %}
+                                <div class='pull-right'>
+                                    <a class="{{ t.id }} add-group"
+                                       href="#rename-team-modal" data-toggle="modal"
+                                       title="Thêm nhóm mới">
+                                        <span class="icon-plus-sign"></span>
+                                    </a>
+                                    <a class="{{ t.id }} rename-team"
+                                       href="#rename-team-modal"
+                                       data-toggle="modal"
+                                       association="team-display-name-{{ t.id }}"
+                                       title="Sửa tên '{{ t.name }}'">
+                                        <span class="icon-edit"></span>
+                                    </a>
+                                    <a class="{{ t.id }} remove-team" href="#" title="Xóa tổ '{{ t.name }}'">
+                                        <span class="icon-trash"></span>
+                                    </a>
+                                </div>
+                            {% endif %}
+
+                            <ul class="nav-list groups">
+                                {% for group in group_list %}
+                                    {% if group.team_id == t %}
+                                        <li class="form-inline group"
+                                            data-toggle="{{group.name}}">
+                                            <a href="#">
+                                           <span class="group-display-name"
+                                                 id="group-display-name-{{ group.id }}">{{ group.name }}</span>
+                                            </a>
+                                            {% if pos > 3 %}
+                                                <div class="pull-right">
+                                                    <a class="{{ group.id }} rename-group form-inline"
+                                                       href="#rename-team-modal" title="Sửa tên nhóm '{{ group.name }}'"
+                                                       data-toggle="modal"
+                                                       association="group-display-name-{{ group.id }}"
+                                                            >
+                                                        <span class="icon-edit"></span>
+                                                    </a>
+                                                    <a class="{{ group.id }} remove-group"
+                                                       title="Xóa nhóm '{{ group.name }}'"
+                                                       href="#">
+                                                        <span class="icon-trash"></span>
+                                                    </a>
+                                                </div>
+                                            {% endif %}
+                                        </li>
+                                    {% endif %}
+
+                                {% endfor %}
+                            </ul>
+
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="span9" id="teacher-list-div">
+    <div class="btn-toolbar">
+        <div class="btn-group">
+            {% if pos >= 3 %}
+                <button id="textSms" class="btn btn-warning"
+                        title="Nhắn tin đến những giáo viên đã chọn">
+                    <i class="icon-envelope icon-white"></i>
+                    Nhắn tin
+                </button>
+            {% endif %}
+            {% if pos > 3 %}
+                <button id="activateAccount" class="btn"
+                        title="Mở cho tài khoản giáo viên được sử dụng. Các giáo viên không sử dụng cần khóa lại để đảm bảo an toàn thông tin hơn.">
+                    <i class="icon-key "></i>
+                    Mở tài khoản
+                </button>
+                <button id="deactivateAccount" class="btn disabled">
+                    <i class="icon-lock "></i>
+                    Khóa tài khoản
+                </button>
+            {% endif %}
+        </div>
+        {% if pos > 3 %}
+            <div class="btn-group pull-right">
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                    Chỉnh
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu pull-right" style="text-align: left;">
+                    <li>
+                        <a title="Nhập danh sách giáo viên từ file Excel"
+                           href="#upload_modal"
+                           data-toggle="modal"
+                           id="import">
+                            <i class="icon-upload-alt"></i>
+                            Nhập từ Excel </a>
+                    </li>
+                    <li>
+                        <a title="Xuất danh sách giáo viên ra file Excel"
+                           href="{% url teacher_generate 'all' %}"
+                           id="export">
+                            <i class="icon-download-alt"></i>
+                            Xuất ra Excel </a>
+                    </li>
+                    <li>
+                        <a title="Thêm giáo viên"
+                           href="#add-teacher-div"
+                           class="add_teacher_button"
+                           id="add-teacher">
+                            <span class="icon-plus"></span>
+                            Thêm giáo viên </a>
+                    </li>
+                    <li>
+                        <a id="delete"
+                           href="#"
+                           title="Xóa những giáo viên đang được chọn">
+                            <span class="icon-remove"></span>
+                            Xóa giáo viên
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+        <div id="teacher-pills" class="row-fluid">
+            <div class="span12" id="teacher-table-div">
+                <div id="after-post-alert"></div>
+                <table class="table" id="teacher_table">
+                    {% if pos >= 3 %}
+                        {% if pos > 3 %}
+                            <colgroup style="width: 2%;"></colgroup>
+                        {% endif %}
+                        <colgroup style="width: 5%;"></colgroup>
+                    {% endif %}
+
+                    <thead>
+                    {% if pos >= 3 %}
+                        {% if pos > 3 %}
+                        <th class="align-left" title="Tài khoản">
+                            <i class="icon-user"></i>
+                        </th>
+                        {% endif %}
+                        <th class="" style="text-align: center;">
+                            <input type="checkbox" id="checkbox_all"/>
+                        </th>
+                    {% endif %}
+                    <th class="align-left">STT</th>
+                    <th class="align-left">Họ</th>
+                    <th class="align-left">Tên</th>
+                    <th class="align-left">Ngày sinh</th>
+                    <th class="align-left">Điện thoại</th>
+                    <th class="align-left"></th>
+                    <th class="align-left">Giới tính</th>
+                    <th class="align-left">Dạy môn</th>
+                    <th class="align-left">Tổ</th>
+                    <th class="align-left">Nhóm</th>
+                    </thead>
+
+                    <tbody>
+                    {% for teacher in teacher_list %}
+                        <tr id="teacher-{{teacher.id}}"
+                            data-toggle="{{ teacher.team_id }}-{{ teacher.group_id }}"
+                            class="{{ teacher.id }} teacher">
+                            {% if pos > 3 %}
+                                <td>
+                                    {% if teacher.user_id.is_active %}
+                                        <i class='icon-key' id='lock-{{teacher.id}}'></i>
+                                    {% else %}
+                                        <i class='icon-lock' id='lock-{{teacher.id}}'></i>
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+
+                            {% if pos >= 3 %}
+                                <td style="text-align: center;">
+                                    <input type="checkbox" id="checkbox_{{teacher.id}}"
+                                           class="teacherCheckbox"/>
+                                </td>
+                            {% endif %}
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                {% if pos > 3 or user.id == teacher.user_id.id %}
+                                    <a href="{%url teacher_detail teacher.id  %}">
+                                {% endif %}
+                                {{ teacher.last_name }} </a>
+                            </td>
+                            <td>
+                                {% if pos > 3 or user.id == teacher.user_id.id %}
+                                    <a href="{%url teacher_detail teacher.id  %}">
+                                {% endif %}
+                                {{ teacher.first_name }} </a>
+                            </td>
+                            <td> {{ teacher.birthday|date:"SHORT_DATE_FORMAT" }}</td>
+                            <td> {{ teacher.sms_phone }}</td>
+                            {% if teacher.email %}
+                                <td title="{{teacher.email}}">
+                                    <i class="icon-envelope"></i>
+                                </td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+                            <td gender="{{ teacher.sex }}"> {{ teacher.sex }} </td>
+
+                            <td>
+                                {{ teacher.major }}
+                            </td>
+                            <td class="teacher-team truncated"
+                                data-toggle="{{ teacher.team_id }}">
+                                {% if teacher.team_id %}
+                                    {{ teacher.team_id }}
+                                {% endif %}
+                            </td>
+                            <td class="teacher-group truncated"
+                                data-toggle="{{ teacher.group_id }}">
+                                {% if teacher.group_id %}
+                                    {{ teacher.group_id }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                <select id="group_source" style="display: none;">
+                    {% for group in group_list %}
+                        <option value="{{ group.id }}" class="dyn {{ group.team_id.id }}">
+                            {{ group }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="span4 dataform" style="display: none;" id="add-teacher-div">
+                    <h3>Thêm giáo viên</h3>
+                <div id="addteacherform">
+                    <form action="{% url teachers %}"
+                          id="submitform" method="post">{% csrf_token %}
+                        <table class="dataform">
+                            <tr>
+                                <th> Họ tên:</th>
+                                <td> {{ teacher_form.first_name }} </td>
+                            </tr>
+                            <tr>
+                                <th> Ngày sinh:</th>
+                                <td> {{ teacher_form.birthday }}</td>
+                            </tr>
+                            <tr>
+                                <th> Điện thoại:</th>
+                                <td> {{ teacher_form.sms_phone }} </td>
+                            </tr>
+                            <tr>
+                                <th> Giới tính:</th>
+                                <td> {{ teacher_form.sex }} </td>
+                            </tr>
+                            <tr>
+                                <th> Chuyên môn:</th>
+                                <td> {{ teacher_form.major }} </td>
+                            </tr>
+                            <tr>
+                                <th> Tổ:</th>
+                                <td> {{ teacher_form.team_id }} </td>
+                            </tr>
+                            <tr>
+                                <th> Nhóm:</th>
+                                <td><select name="group_id" id="id_group_id" >
+                                    <option value="" selected="selected">---------</option>
+                                </select></td>
+                            </tr>
+                        </table>
+                    </form>
+                    </tr>
+                </div>
+                <div class="modal-footer">
+                    <button id="submitaddTeacher" class="btn btn-primary">Thêm</button>
+                    <button class="btn add-teacher-exit">Thôi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+    {% if pos >= 3 %}
+        <div id="smsWindow" class="popup-windows" style="display: none;">
+            <section>
+                <table class="table table-condensed no-border">
+                    <tr>
+                        <th class="from tr">Người gửi</th>
+                        <td>
+                            {{ user.last_name }} {{ user.first_name }} ({{ user }})
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="to tr">Người nhận</th>
+                        <td>
+                            <button id="showChosenTeacher">Chưa chọn giáo viên nào</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Nội dung</th>
+                        <td>
+                            <textarea class="smsContext item popupTextarea"
+                                      id="smsContent"
+                                      rows="4"
+                                      style="width: 250px; max-width: 250px; height: 100px;"></textarea>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th></th>
+                        <td>
+                            <button id="send" class="btn btn-danger" disabled="disabled">
+                                <i class="icon-envelope-alt"></i> Gửi tin nhắn
+                            </button>
+                            <button id="smsClose" class="btn">Thôi</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th></th>
+                        <td>
+                            <div class="progressbar ui-widget ui-widget-content ui-corner-all"
+                                 id="smsProgressbar"
+                                 style="display: none; height: 15px; margin-left: 10px; padding-left: 0;">
+                            </div>
+                            <div class="alert alert-error"
+                                id="smsErrorDetail"
+                                style="display: none;">
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </section>
+        </div>
+
+        <div class="modal fade" id="upload_modal" style="display: none;">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">×</a>
+
+                <h3>Nhập giáo viên từ file Excel</h3>
+            </div>
+            <div class="modal-body">
+                <!-- The file upload form used as target for the file upload widget -->
+                <form id="fileupload" action="" method="POST" enctype="multipart/form-data">
+                    <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+                    <div class="row fileupload-buttonbar">
+                        <div class="span5">
+                            <!-- The fileinput-button span is used to style the file input field as button -->
+                            <span class="btn btn-success fileinput-button">
+                                <i class="icon-plus icon-white"></i>
+                                <span>Chọn files...</span>
+                                <input type="file" name="files[]" multiple>
+                            </span>
+                            <button type="submit" class="btn btn-primary start">
+                                <i class="icon-upload icon-white"></i>
+                                <span>Tải tất cả</span>
+                            </button>
+                            <button type="reset" class="btn btn-warning cancel">
+                                <i class="icon-ban-circle icon-white"></i>
+                                <span>Dừng lại</span>
+                            </button>
+                            <button type="button" class="btn btn-danger delete">
+                                <i class="icon-trash icon-white"></i>
+                                <span>Xóa</span>
+                            </button>
+                            <input type="checkbox" class="toggle">
+                        </div>
+                        <div class="span3">
+                            <!-- The global progress bar -->
+                            <div class="progress progress-success progress-striped active fade">
+                                <div class="bar" style="width:0;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- The loading indicator is shown during image processing -->
+                    <div class="fileupload-loading"></div>
+                    <br>
+                    <!-- The table listing the files available for upload/download -->
+                    <table class="table table-striped">
+                        <tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery">
+
+                        </tbody>
+                    </table>
+                </form>
+                <div id="errorDetail">
+
+                </div>
+                <div class="hint">
+                    <p>
+                        Chú ý: Phải dùng file Excel theo <a href="{{ MEDIA_URL }}template_files/teacher_template.xls">mẫu
+                        này</a>.
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn" id="upload-modal-exit">Thôi</a>
+            </div>
+        </div>
+
+        <div class="modal fade" id="rename-team-modal" data-toggle="" request-type="" style="display: none;">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">x</a>
+
+                <h3 id="modal-header">Sửa tên tổ</h3>
+            </div>
+            <form method="post" action="" id="rename-team-form" enctype="text/plain">{% csrf_token %}
+                <div class="modal-body">
+                    <label for="rename-team-input" id="input-label">Tên mới:</label>
+
+                    <div class="controls">
+                        <div class="input-prepend">
+                            <span class="add-on">
+                                <i class="icon-pencil"></i>
+                            </span>
+                            <input type="text" id="rename-team-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-primary" id="rename-team-submit" value="Đổi tên">
+                    <a href="#" class="btn" id="rename-team-modal-exit">Thôi</a>
+                </div>
+            </form>
+        </div>
+
+        <div style="display: none;" id="dump"></div>
+
+        <!--<script type="text/javascript" src="/static/js/jquery_file_upload/qlnt_upload_for_teacher.js"></script>-->
+        <script type="text/javascript" src="/static/js/jquery_file_upload/locale.js"></script>
+        <script type="text/javascript" src="/static/js/jquery_file_upload/qlnt_upload_for_teacher.js"></script>
+        {% upload_js %}
+
+    {% endif %}
+
+{% endblock %}

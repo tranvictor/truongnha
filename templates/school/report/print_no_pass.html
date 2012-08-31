@@ -1,0 +1,131 @@
+﻿{% extends "base.html" %}
+
+{% block js %}
+    <script>
+        $(document).ready(function () {
+			$("#{{ type }}").addClass('active');
+        });
+    </script>
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% if not user.userprofile.isSchool %}
+		{% add_crumb 'Báo cáo' 'department_report' %}
+		{% add_crumb request.session.school_name 'report' request.session.school_id  %}
+	{% else %}
+		{% add_crumb 'Báo cáo' 'report' %}
+	{% endif %}
+	
+	{% if type == 1 %}
+		{% add_crumb 'Học sinh không lên lớp' %}
+	{% else %}
+	{% if type == 2 %}
+		{% add_crumb 'Học sinh thi lại' %}
+	{% else %}
+		{% add_crumb 'Học sinh rèn luyện thêm' %}
+	{% endif %}
+	{% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="btn-toolbar form-inline pull-right" >
+        <a href="{% url print_no_pass type 1%}" class="btn "> Xuất ra Excel </a>
+    </div>
+
+    {% load mark %}
+
+    {% if type != None %}
+		<div>
+        <table class="table"  >
+        <thead>
+            <tr>
+                <th width="1%">
+                    TT
+                </th>
+                <th width="10%">
+                    Lớp
+                </th>
+                <th colspan="2" width="20%">
+                    Họ và tên
+                </th>
+                <th >
+                    Ngày sinh
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c,tbNams in list %}
+                {% for tbNam in tbNams %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ c }}</td>
+                        <td class="lastname" width="20%">
+                            {{ tbNam.student_id.last_name }}
+                        </td>
+                        <td class="firstname" width="10%">
+                            {{ tbNam.student_id.first_name }}
+                        </td>
+                        <td>
+                            {{ tbNam.student_id.birthday|date:"SHORT_DATE_FORMAT" }}
+                        </td>
+{#                        <td>#}
+{#                            {% if tbNam.len_lop %}#}
+{#                                Được lên lớp#}
+{#                                {% if tbNam.thi_lai %}#}
+{#                                    (Sau khi kt lại)#}
+{#                                {% else %}#}
+{#                                    {% if tbNam.ren_luyen_lai %}#}
+{#                                        (Sau rèn luyện thêm trong hè)#}
+{#                                    {% endif %}#}
+{#                                {% endif %}#}
+{#                            {% else %}#}
+{#                                {% if tbNam.len_lop != None %}#}
+{#                                    Ở lại lớp#}
+{#                                    {% if tbNam.thi_lai %}#}
+{#                                        (Sau khi kt lại)#}
+{#                                    {% else %}#}
+{#                                        {% if tbNam.ren_luyen_lai %}#}
+{#                                            (Sau rèn luyện thêm trong hè)#}
+{#                                        {% endif %}#}
+{#                                    {% endif %}#}
+{#                                {% else %}#}
+{#                                    {% if tbNam.thi_lai %}#}
+{#                                        Thi lại#}
+{#                                    {% else %}#}
+{#                                        {% if tbNam.ren_luyen_lai %}#}
+{#                                            Rèn luyện thêm trong hè#}
+{#                                        {% else %}#}
+{#                                            Chưa được xếp loại#}
+{#                                        {% endif %}#}
+{#                                    {% endif %}#}
+{#                                {% endif %}#}
+{#                            {% endif %}#}
+{#                        </td>#}
+                    </tr>
+                {% endfor %}
+                {% if danhHieus %}
+                    <tr>
+                        <td> &nbsp
+                        </td>
+                        <td>
+                        </td>
+                        <td class="lastname">
+                        </td>
+                        <td class="firstname">
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+
+                {% endif %}
+            {% endfor %}
+        </tbody>
+        </table>
+		</div>
+    {% endif %}
+
+{% endblock %}

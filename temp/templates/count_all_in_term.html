@@ -1,0 +1,146 @@
+﻿{% extends "base.html"%}
+
+{% block content %}
+	{% if message != None %}
+  	{{message}}
+	{% endif %}
+  <p align="center" style="font-size:25px"> <b> Thống kê xếp loại học kỳ {{selectedTerm.number}}
+     Năm học :{{ yearString}}  </b>
+  <p>
+	
+
+<h3>A.THỐNG KÊ TOÀN TRƯỜNG:</h3>
+
+<table border=1 width="100%" class="table grid">
+	<tr> 
+		<td width="14%">
+		</td>
+		<td width="14%" align="center">
+			Học sinh giỏi
+		</td>
+		<td width="14%" align="center">
+			Học sinh tiến tiến
+		</td>
+		<td width="14%" align="center">
+			Không có danh hiệu
+		</td>
+		<td width="14%" align="center">
+			Chưa xếp loại
+		</td>		
+	</tr>
+	<tr>
+		<td style="text-align: center;">
+			Số lượng
+		</td>
+		{% for h in totalSlList %}
+		<td style="text-align: center;">
+			{{h}}
+		</td>
+		{% endfor %}
+	</tr>
+	<tr>
+		<td style="text-align: center;">
+			Phần trăm (%)
+		</td>
+		{% for h in totalPtList %}
+		<td style="text-align: center;">
+			{{h|floatformat:"2"}}
+		</td>
+		{% endfor %}
+	</tr>
+</table>
+
+
+
+<span style="font-size:18px" > <b> <u>B.CHI TIẾT TỪNG LỚP: </u> </b> </span>
+
+
+
+
+<table border=1 width="100%" class="table">
+	<tr> 
+		<td rowspan=2 width="16%" align="center" >
+			Lớp
+		</td>
+
+		<td rowspan=2 width="6%" align="center" >
+			Sĩ số
+		</td>
+		
+		<td colspan=2 width="12%" align="center">
+			Học sinh Giỏi
+		</td>
+		
+		<td colspan=2 width="12%" align="center">
+			Học sinh Khá
+		</td>
+		
+		<td colspan=2 width="12%" align="center">
+			Không có danh hiệu 
+		</td>
+		
+		<td colspan=2 width="12%" align="center">
+			Chưa xếp loại
+		</td>
+	</tr>
+
+	<tr> 
+		<td width="6%" align="center">
+			TS
+		</td>
+		<td width="6%" align="center">
+			%
+		</td>
+		<td width="6%" align="center">
+			TS
+		</td>
+		<td width="6%" align="center">
+			%
+		</td>
+		<td width="6%" align="center">
+			TS
+		</td>
+		<td width="6%" align="center">
+			%
+		</td>
+		<td width="6%" align="center">
+			TS
+		</td>
+		<td width="6%" align="center">
+			%
+		</td>
+		
+	</tr>
+	
+	
+	{% for name,ss,l in list %}
+	<tr>
+		<td style="text-align: center;">
+			{{ name}}
+		</td >
+		
+		<td style="text-align: center;">
+			{{ ss|floatformat:"0" }}
+		</td>
+		{% for u,v in l %}
+			<td style="text-align: center;">
+			    {{ u }}
+			</td >
+			
+			<td style="text-align: center;">
+				{{v|floatformat:"1"}}
+			</td>
+		{% endfor %}
+	</tr>	
+	{% endfor %}
+
+	
+
+</table>
+	
+	
+	
+{% endblock %}	
+	
+	
+	

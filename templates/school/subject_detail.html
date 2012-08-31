@@ -1,0 +1,32 @@
+﻿{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb sub.class_id 'class_detail' sub.class_id.id %}
+    {% add_crumb "Môn học" 'subject_per_class' sub.class_id.id %}
+    {% add_crumb sub %}
+{% endblock %}
+
+{% block content %}
+    <script>
+        $(document).ready(function () {
+            $("#id_type").each(function(){
+               $(this).attr("disabled", "disabled");
+            });
+        })
+    </script>
+
+    {% if message != None %}
+	    <br>
+            {{ message }}
+        <br>
+    {% endif %}
+
+    <form class="well offset4 span4" action="{% url subject_detail sub.id %}" method="post">{% csrf_token %}
+        {{ form.as_p }}
+		<div class="form-actions">
+			<input type="submit" class="btn btn-primary" value="Lưu"/>
+		</div>
+    </form>
+{% endblock %}

@@ -1,0 +1,40 @@
+<table class="table" id="class_table">
+    <thead>
+    <tr>
+        <th  title="Chọn cả lớp" style="text-align: center;">
+            <label for="checkbox_all"></label>
+            <input type="checkbox" id="checkbox_all"/>
+        </th>
+        <th > STT </th>
+        <th > Họ </th>
+        <th > Tên </th>
+        <th > Ngày sinh </th> 
+        <th > Nơi sinh </th>
+        <th > Giới tính </th>
+        <th > Dân tộc </th>
+        <th > Chỗ ở hiện tại </th>
+        <th > Họ tên bố </th>
+        <th > Họ tên mẹ </th>
+        <th > Số điện thoại </th>
+    </tr>
+    </thead>
+    {% for ss in list %}
+        <tr class="{{ss.id}} student">
+            <td style="text-align: center;">
+                <label for="checkbox_{{ss.id}}"></label>
+                <input type="checkbox" id="checkbox_{{ss.id}}"/>
+            </td>
+            <td> {{ forloop.counter }} </td>
+            <td>{{ ss.last_name }}</td>
+            <td>{{ ss.first_name }} </td>
+            <td> {{ ss.birthday|date:"SHORT_DATE_FORMAT" }} </td>
+            <td> {{ ss.birth_place }} </td>
+            <td> {{ ss.sex }} </td>
+            <td> {{ ss.dan_toc }} </td>
+            <td> {{ ss.current_address }} </td>
+            <td> {{ ss.father_name }} </td>
+            <td> {{ ss.mother_name }} </td>
+            <td> {{ ss.sms_phone }}</td>
+        </tr>
+    {% endfor %}
+</table>

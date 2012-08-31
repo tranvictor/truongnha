@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+
+{% if pos > 3 %}
+    {% block css %}
+        {#        <link href="/static/css/googlePlusPopup.css?0.9.5" rel="stylesheet" type="text/css"/>#}
+        <style>
+            #id_number_lesson, #id_hs {
+                width: 2em;
+            }
+
+            #id_type, #id_name, #id_teacher_id, #id_primary {
+                width: 7em;
+            }
+
+            input[class^="id_teacher_id"] {
+                width: 15em;
+            }
+        </style>
+    {% endblock %}
+
+    {% block js %}
+        <script type="text/javascript" src="/static/js/template_js/sortable_table.js?{{ VERSION }}"></script>
+        <script type="text/javascript" src="/static/js/template_js/subject_per_class.js?{{ VERSION }}"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+
+                $("select[name=class]").change(function() {
+                    if ($(this).val() != -1) {
+                        var url = "{%url school_index  %}subjectPerClass/" + $(this).val();
+                        $(location).attr('href', url);
+                    }
+                });
+
+                var init = function (p) {
+                    alert(p);
+                };
+                var callback = function (e, window) {
+                };
+
+                $("#id_type option").each(function()
+                {
+                    {% for s in subjectList %}
+                        if ($(this).val() == "{{ s.type }}"){
+                            $(this).remove();
+                        }
+                    {% endfor %}
+                });
+            });
+        </script>
+    {% endblock %}
+{% endif %}
+
+
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb class 'class_detail' class.id %}
+    {% add_crumb 'Môn học' %}
+{% endblock %}
+
+{% block content %}
+    <div class="form-inline pagination-centered">
+        <label>Lớp</label>
+        <select name="class">
+            {% for cl in classList %}
+                {% if cl.id != class.id %}
+                    <option value={{ cl.id }}> {{ cl }}</option>
+                {% else %}
+                    <option selected="selected" value={{ cl.id }}> {{ cl }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+
+    <div id="submenu" class="btn-toolbar">
+        {% if pos > 3 %}
+            <input class="btn" type="button" id="sort" value="Sắp xếp"/>
+
+            <a id="guide" class="btn " href="" title="Dùng các phím mũi tên để chọn môn học,
+            sau đó Enter để thay đổi thứ tự hoặc bỏ chọn môn đó. Kết thúc bằng việc ấn 'Lưu'.">
+                Hướng dẫn</a>
+{#            <input id="save" class="btn submitbutton pull-right" type="submit" value="Lưu"/>#}
+        {% endif %}
+    </div>
+
+    {% if message != None %}
+        {{ message }}
+        <br>
+    {% endif %}
+
+    <table class="table table-condensed" id="sortable" style="table-layout:auto;">
+        <thead>
+        <tr>
+            <th class="naviButton" style="display: none;"></th>
+            <th class="naviButton" style="display: none;"></th>
+            <th>
+                STT</th>
+            <th>
+                Môn học </th>
+            <th>
+                Chuyên môn
+            </th>
+            <th>
+                Số tiết/tuần
+            </th>
+            <th>
+                Hệ số</th>
+            <th>
+                Giáo viên</th>
+            <th>
+                Cách tính điểm
+            </th>
+            <th title="Nếu chọn sẽ nhập điểm nhận xét thay vì điểm là số">
+                Điểm nhận xét
+            </th>
+            <th title="Khung phân phối chương trình">
+                Nội dung
+            </th>
+            {% if pos > 3 %}
+                <th></th>
+            {% endif %}
+        </tr>
+        </thead>
+
+        {% for ss,f, iteacher, rteacher in list %}
+            <tr class="sortable" id="{{ ss.id }}">
+                <td class="naviButton" style="display: none;">
+                    <button id="naviButton-up" class="btn btn-small">Lên</button>
+                </td>
+                <td class="naviButton" style="display: none;">
+                    <button id="naviButton-down" class="btn btn-small">Xuống</button>
+                </td>
+
+                <td class="index">
+                    <p class="span1">{{ forloop.counter }}</p>
+                </td>
+
+                {% if pos > 3 %}
+                    <td>
+                        <a title="Sửa thông tin môn học"
+                           href="{%url subject_detail ss.id %}">
+                            {{ ss.name }}</a>
+                    </td>
+                    <td> {{ ss.type }} </td>
+                    <td>{{ f.number_lesson }}</td>
+                    <td> {{ f.hs }} </td>
+                    <td>
+                        {{ f.teacher_id }}
+                        <div>
+                            <select class="combobox" style="display: none;">
+                                <option value="">----------</option>
+                                {% for teacher in iteacher %}
+                                    {% if teacher == ss.teacher_id %}
+                                        <option selected="selected"
+                                                value="{{ teacher.id}}">{{ teacher }}</option>
+                                    {% else %}
+                                        <option value="{{ teacher.id}}">{{ teacher }}</option>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% for teacher in rteacher %}
+                                    {% if teacher == ss.teacher_id %}
+                                        <option selected="selected"
+                                                value="{{ teacher.id}}">{{ teacher }}</option>
+                                    {% else %}
+                                        <option value="{{ teacher.id}}">{{ teacher }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </td>
+                    <td> {{ f.primary }} </td>
+                    <td class="align-center"> {{ f.nx }} </td>
+                    <td class="align-center">
+                        <a class="btn btn-small"
+                           href="{% url subject_agenda ss.id %}">
+                            Nội dung</a>
+                    </td>
+                        {% if ss.type != "Toán" and ss.type != "Ngữ văn" %}
+                        <td><button class="btn no-text btn-small deletion">Xóa</button>
+                        </td>
+                        {% else %}
+                            <td title="Không thể xóa môn Toán và môn Ngữ văn"></td>
+                        {% endif %}
+                {% else %}
+                    <td> {{ ss.name }}</td>
+                    <td> {{ ss.type }}</td>
+                    <td> {{ ss.number_lesson }}</td>
+                    <td> {{ ss.hs }} </td>
+                    <td>
+                        {% if not ss.teacher_id %}
+                            Chưa phân công
+                        {% else %}
+                            {{ ss.teacher_id }}
+                        {% endif %}
+                    </td>
+                    <td> {{ ss.get_primary }} </td>
+                    <td>
+                        {% if not ss.nx %}
+                            Không
+                        {% else %}
+                            Có
+                        {% endif %}
+                    </td>
+                    <td class="align-center">
+                        <a href="{% url subject_agenda ss.id %}">Nội dung</a>
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+
+        {% if pos > 3 %}
+            <form action="{% url subject_per_class class.id %}" id="add_subject_form" method="post">{% csrf_token %}
+                <tr id="subject_form">
+                    {{ form.non_field_errors }}
+                    <td></td>
+                    <td>
+                        {{ form.name.errors }}
+                        <p>{{ form.name }}</p>
+                    </td>
+
+                    <td>
+                        {{ form.type.errors }}
+                        <p>{{ form.type }}</p>
+                    </td>
+
+                    <td>
+                        {{ form.number_lesson.errors }}
+                        <p>{{ form.number_lesson }}</p>
+                    </td>
+
+                    <td>
+                        {{ form.hs.errors }}
+                        <p>{{ form.hs }}</p>
+                    </td>
+
+                    <td>
+                        <div id="teacher">
+                            {{ form.teacher_id.errors }}
+                            <div>
+                                {{ form.teacher_id }}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {{ form.primary.errors }}
+                        <p>{{ form.primary }} </p>
+                    </td>
+                    <td align="center">
+                        {{ form.nx.errors }}
+                        <p>{{ form.nx }} </p>
+                    </td>
+                    <td></td>
+                    <td><input class="btn btn-danger btn-small" id="submit"  type="submit" value="Thêm"/></td>
+                </tr>
+            </form>
+        {% endif %}
+    </table>
+
+    <p id="ajax_to" style="display: none;">{% url change_index 'subject' class.id %}</p>
+    <p id="redirect_link" style="display: none;">{% url subject_per_class class.id %}</p>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% block content %}
+    <div class="row-fluid">
+    <div class="span6" id="khenthuong">
+        <h3> Khen thưởng </h3>
+        {% if ktcount > 0 %}
+            <table class="table table-bordered">
+                <tr>
+                    <th>STT</th>
+                    <th>Thời gian</th>
+                    <th>Hình thức</th>
+                    <th>Địa điểm</th>
+                    <th>Nội dung</th>
+                    {% if pos > 1 %}
+                        <th></th>
+{#                        <th></th>#}
+                    {% endif %}
+                </tr>
+
+                {% if message != None %}
+                    {{ message }}
+                {% endif %}
+
+                {% for kt in ktl %}
+                    <tr>
+                        <td> {{ forloop.counter }} </td>
+                        <td> {{ kt.time|date:"SHORT_DATE_FORMAT" }}</td>
+                        <td> {{ kt.hinh_thuc }}</td>
+                        <td> {{ kt.dia_diem }} </td>
+                        <td> {{ kt.noi_dung }} </td>
+                        {% if pos > 3 %}
+                            <td><a href="{% url delete_khen_thuong kt.id %}" class="btn btn-small delOnPage"> Xóa</a>
+                            <a href="{% url edit_khen_thuong kt.id %}" class="btn btn-small onPage"> Sửa</a>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p align="center">Học sinh hiện chưa có khen thưởng nào</p>
+        {% endif %}
+        {% if pos > 3 %}
+            <div class="btn-toolbar pagination-centered">
+                <a title="Thêm khen thưởng cho học sinh" class="btn btn-success onPage"
+                   href="{% url add_khen_thuong student_id %}">
+                    Thêm </a>
+            </div>
+        {% endif %}
+    </div>
+    <div class="span6" id="kiluat">
+        <h3>Kỉ luật </h3>
+        {% if klcount > 0 %}
+        <table class="table table-bordered" >
+            <thead>
+            <tr>
+                <th > STT </th>
+                <th > Thời gian</th>
+                <th > Hình thức</th>
+                <th > Địa điểm </th>
+                <th > Nội dung </th>
+                {%if pos > 1%}
+                <th></th>
+                {%endif%}
+            </tr>
+            </thead>
+            {% if message != None %}
+            {{message}}
+            {% endif %}
+
+            {% for kl in kll %}
+            <tr>
+                <td> {{forloop.counter}} </td>
+                <td> {{kl.time|date:"SHORT_DATE_FORMAT"}}</td>
+                <td> {{kl.hinh_thuc}}</td>
+                <td> {{kl.dia_diem}} </td>
+                <td> {{kl.noi_dung}} </td>
+                {%if pos > 3%}
+                <td>
+                    <a href = "{% url delete_ki_luat kl.id %}" class="btn btn-small delOnPage">
+                        Xóa</a>
+                    <a href = "{% url edit_ki_luat kl.id %}" class="btn btn-small onPage">
+                        Sửa</a>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+            <p align="center">
+                Học sinh hiện chưa có kỉ luật nào
+            </p>
+        {% endif %}
+
+            {% if pos > 3 %}
+                <div class="btn-toolbar pagination-centered">
+
+                            <a  title="Thêm kỉ luật cho học sinh" class = "btn btn-danger onPage"
+                                href="{% url add_ki_luat student_id %}">
+                            Thêm </a>
+                </div>
+            {% endif %}
+    </div>
+    </div>
+{% endblock %}

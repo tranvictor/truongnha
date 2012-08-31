@@ -1,0 +1,48 @@
+﻿{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% if not user.userprofile.isSchool %}
+		{% add_crumb 'Báo cáo' 'department_report' %}
+		{% add_crumb request.session.school_name 'report' request.session.school_id  %}
+	{% else %}
+		{% add_crumb 'Báo cáo' 'report' %}
+	{% endif %}
+	
+    {% add_crumb 'In danh sách lớp' %}
+{% endblock %}
+
+{% block content %}
+	<fieldset>
+		<div class="row-fluid">
+			{% for grade in blockList %}
+				{% if blockList.count == 4 %}
+					<div class="span3">
+					<h4>Khối {{ grade.number }}</h4>
+				{% else %}
+					<div class="span4">
+					<h4>Khối {{ grade.number }}</h4>
+				{% endif %}
+
+			<table class="table">
+				<tbody>
+				{% for c in classList %}
+					{% if c.block_id == grade %}
+						<tr>
+							<th>{{ c.name }}</th>
+							<td>
+								<a class="btn" href="{% url excel_class_list c.id %}"  > Tải về</button>
+							</td>
+						</tr>
+					{% endif %}
+				{% endfor %}
+				</tbody>
+			</table>
+			</div>
+			{% endfor %}
+			</div>
+	</fieldset>
+
+
+{% endblock %}

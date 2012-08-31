@@ -1,0 +1,27 @@
+/* CSS Document */
+div.verticalLabel{
+    float: left;
+    text-align: right;
+}
+
+div.verticalContent{
+    float: left;
+}
+
+/*textarea.popupTextarea{*/
+    /*width: 400px;*/
+    /*max-width: 400px;*/
+    /*color: #000000;*/
+    /*font-size: 11pt;*/
+    /*border: 1px solid #666666;*/
+    /*background: #ffffff;*/
+    /*background: -moz-linear-gradient(top, #FFFFFF 0%, #F4F4F4 100%);*/
+    /*background: -webkit-linear-gradient(top, #FFFFFF 0%, #F4F4F4 100%);*/
+    /*background: -o-linear-gradient(top, #FFFFFF 0%, #F4F4F4 100%);*/
+    /*background: -ms-linear-gradient(top, #FFFFFF 0%, #F4F4F4 100%);*/
+    /*background: linear-gradient(top, #FFFFFF 0%, #F4F4F4 100%);*/
+/*}*/
+
+.progressbar{
+    background: url(pbar-ani.gif);
+}

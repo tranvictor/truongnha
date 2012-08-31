@@ -1,0 +1,169 @@
+﻿{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {#    {% add_crumb 'Thiết lập' 'info' %}#}
+    {% add_crumb 'Chuyển học kỳ, năm học' %}
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#myForm").change(function () {
+                $("#myForm").submit();
+            });
+            $("#term_{{current_term.number}}").addClass("active");
+            if ("{{message}}" != "None")
+                $("#notify").showNotification("{{message}}", 100000);
+                
+            for(var i=1; i < 4; i++) {	
+                var id = "#calculate_"+i;
+                $(id).click(function(){
+                    $("#notify").showNotification("Đang tính tổng kết, xin vui lòng chờ vài phút...", 100000);
+                })
+            }						
+        });
+    </script>
+    <script type="text/javascript" src="/static/js/template_js/finish.js?0.9"></script>
+{% endblock %}
+
+{% block content %}
+    {% load mark %}
+    <div class="row-fluid">
+        <div class="span4">
+            <h2>Thiết lập học kỳ hiện tại</h2>
+            <div class="btn-toolbar">
+            <div class="btn-group" data-toggle="buttons-radio">
+                <a id="term_1" href="{% url finish 1%}" class="btn "> Học kỳ I </a>
+                <a id="term_2" href="{% url finish 2%}" class="btn "> Học kỳ II </a>
+                <a id="term_3" href="{% url finish 3%}" class="btn "> Học hè </a>
+
+                {% if school.status  == 3 or school.status == 2 %}
+                <a class="btn btn-danger"
+                    id="setup"
+                    data-toggle="{{year.time}}"
+                    year-time="{{year_time}}"
+                    href="#">Bắt đầu năm học mới</a>
+                {% else %}
+                <a class="btn disabled"
+                    id="setup"
+                    data-toggle="{{year.time}}"
+                    year-time="{{year_time}}"
+                    href="#">Bắt đầu năm học mới</a>
+                {% endif %}
+            </div>
+            </div>
+            <div id="class_label_preview" class="alert alert-info"
+                data-toggle="{{ school.school_level }}" style="display: none;">
+                <h4>Những lớp sẽ được tạo cho năm học mới:</h4>
+                <div class="row-fluid">
+                {% if school.school_level == '2' %}
+                    {% for grade in grades %}
+                        <div class="span3">
+                            <ul id="grade-{{grade.number}}">
+                            </ul>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    {% for grade in grades %}
+                        <div class="span4">
+                            <ul id="grade-{{grade.number}}">
+                            </ul>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                </div>
+                <button id="update_class_label" class="btn">Thay đổi</button>
+                <a href="{% url start_year %}"
+                    id="start_year"
+                    class="btn btn-primary">Tiếp tục</a>
+            </div>
+            <div id="class_labels" class="alert alert-info" style="display: none;padding-right: 14px;">
+                <h4>Danh sách lớp:</h4>
+                <textarea id="class_label" class="input-xlarge" rows="4"
+                    style="margin-bottom:9px;">
+                </textarea>
+                <button id="save_class_label" class="btn btn-danger">Lưu</button>
+            </div>
+            <div class="alert alert-danger">Giáo viên chỉ nhập được dữ liệu vào học kỳ hiện tại.</div>
+        </div>
+        <div class="span8">
+            <h2>Tổng hợp tình hình điểm, rèn luyện, danh hiệu</h2>
+            <table class="table ">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Học lực</th>
+                    <th>Hạnh kiểm</th>
+                    <th>Danh hiệu</th>
+                    <th>Thực hiện</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for number_finish_learning,number_finish_practising,number_finish_title,not_finish_learning,not_finish_practising, not_finish_all in list %}
+                    <tr>
+                        <td>
+                            {% if forloop.counter == 1 %}
+                                Học kỳ I
+                            {% elif forloop.counter == 2 %}
+                                Học kỳ II
+                            {% else %}
+                                Cả năm
+                            {% endif %}
+                        </td>
+                        <td>
+                            <h4 title="Số học sinh đã tổng kết xong">
+                                {{ number_finish_learning }}
+                                <small>({{ number_finish_learning|toPercent:number_pupil }}%)</small>
+                            </h4>
+                            <p> Còn
+                                {% for c,s in not_finish_learning %}
+                                    <a title="Xem chi tiết"
+                                       href="{% url xep_loai_hl_theo_lop c.id forloop.parentloop.counter %}"> {{ c.name }}</a>
+                                    <span class="" title="Số lượng">({{ s }})</span>
+                                {% endfor %}
+                            </p>
+                        </td>
+                        <td>
+                            <h4 title="Số học sinh đã tổng kết xong">{{ number_finish_practising }}
+                                <small>({{ number_finish_practising|toPercent:number_pupil }}%)</small>
+                            </h4>
+                            <p> Còn
+                                {% for c,s in not_finish_practising %}
+                                    <a title="Xem chi tiết" href="{% url hanh_kiem c.id %}"> {{ c.name }}</a>
+                                    <span class="" title="Số lượng">({{ s }})</span>
+                                {% endfor %}
+                            </p>
+                        </td>
+                        <td>
+                            <h4 title="Số học sinh đã tổng kết xong">{{ number_finish_title }}
+                                <small>({{ number_finish_title|toPercent:number_pupil }}%)</small>
+                            </h4>
+                            <p> Còn
+                                {% for c,s in not_finish_all %}
+                                    <a title="Xem chi tiết" href="{% url xep_loai_hl_theo_lop c.id forloop.parentloop.counter %}"> {{ c.name }}</a>
+                                    <span class="alert-success" title="Số lượng">({{ s }})</span>
+                                {% endfor %}
+                            </p>
+                        </td>
+                        <td>
+                            {% if current_term.number == 1 and forloop.counter == 1 %}
+                                <a class="btn btn-primary" id ="calculate_{{forloop.counter}}"
+                                   href="{% url finish 1 forloop.counter current_term.year_id.time 1 %}"
+                                   title="Tính tổng kết cả trường">Tính tổng kết cả trường </a>
+                            {% elif current_term.number > 1 and forloop.counter > 1 %}
+                                <a class="btn btn-primary" id ="calculate_{{forloop.counter}}"
+                                   href="{% url finish current_term.number  forloop.counter current_term.year_id.time 1 %}"
+                                   title="Tính tổng kết cả trường">Tính tổng kết cả trường </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    </tbody>
+
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,58 @@
+﻿{% if selectedTerm.number == 1 %}
+    {% for p,m,dml in list %}
+        {% if m.mg %}
+            <script>
+                for (var i = 1; i < SIZE; i++) {
+                    //alert("ok");
+                    if (table.rows[{{forloop.counter}}+2].cells.length > i + 5) {
+                        if (i < SIZE - 2)
+                            table.rows[{{forloop.counter}}+2].cells[i + 4].innerHTML = 'MG';
+                        table.rows[{{forloop.counter}}+2].cells[i + 4].className = "noedit";
+                        enableEdit[{{forloop.counter}}][i] = 0;
+                    }
+                }
+            </script>
+        {% endif %}
+    {% endfor %}
+{% else %}
+    {% for p,m,dml,hk1,tbnam in list %}
+
+        {% if hk1.mg %}
+            <script>
+                //alert("ok");
+                table.rows[{{forloop.counter}}+2].cells[SIZE + 1].innerHTML = 'MG';
+                table.rows[{{forloop.counter}}+2].cells[SIZE + 1].className = "noedit";
+                enableEdit[{{forloop.counter}}][SIZE - 3] = 0;
+                mgHK1[{{forloop.counter}}] = true;
+            </script>
+        {% endif %}
+
+        {% if m.mg %}
+            <script>
+                for (var i = 1; i < SIZE - 1; i++) {
+                    //alert("ok");
+                    if (table.rows[{{forloop.counter}}+2].cells.length > i + 5) {
+                        if (i != SIZE - 3)
+                            table.rows[{{forloop.counter}}+2].cells[i + 4].innerHTML = 'MG';
+                        table.rows[{{forloop.counter}}+2].cells[i + 4].className = "noedit";
+                        enableEdit[{{forloop.counter}}][i] = 0;
+                    }
+                }
+
+                table.rows[{{forloop.counter}}+2].cells[SIZE + 3].innerHTML = table.rows[{{forloop.counter}}+2].cells[SIZE + 1].innerHTML;
+                table.rows[{{forloop.counter}}+2].cells[SIZE + 3].className = table.rows[{{forloop.counter}}+2].cells[SIZE + 1].className;
+                if (!isComment)
+                    enableEdit[{{forloop.counter}}][SIZE - 1] = 0;
+
+                mgHK2[{{forloop.counter}}] = true;
+            </script>
+        {% else %}
+            {% if  hk1.mg %}
+                <script>
+                    table.rows[{{forloop.counter}}+2].cells[SIZE + 3].innerHTML = table.rows[{{forloop.counter}}+2].cells[SIZE + 2].innerHTML;
+                    table.rows[{{forloop.counter}}+2].cells[SIZE + 3].className = table.rows[{{forloop.counter}}+2].cells[SIZE + 2].className;
+                </script>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endif %}

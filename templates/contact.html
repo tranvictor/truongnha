@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Liên hệ' %}
+{% endblock %}
+
+{% block content %}
+  <p>
+  Xin vui lòng liên hệ với chúng tôi bằng gửi email
+  đến <a href="mailto:support@truongnha.com">support@truongnha.com</a>
+  hoặc gửi theo mẫu sau:
+  </p>
+  <form class="align-center" action="" method="post">{% csrf_token %}
+
+    <table class="table table-condensed no-border">
+      {% for field in form %}
+        <tr>
+          <th>{{ field.label }}:</th>
+          <td>{{ field.errors }}
+            {{ field }}
+          </td>
+        </tr>
+      {% endfor %}
+	  <tr>
+          <th></th>
+          <td>
+			<input class="btn btn-primary" type='submit' value='Gửi'/>
+          </td>
+	  </tr>
+    </table>
+    
+  </form>
+{% endblock %}

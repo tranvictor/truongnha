@@ -1,0 +1,14 @@
+.help-content img {
+    border: #ddd solid thin;
+    -moz-box-shadow: 0 0 3px 3px #CCC;
+    -webkit-box-shadow: 0 0 3px 3px #CCC;
+    box-shadow: 0 0 3px 3px #CCC;
+}
+
+.help-content ol li {
+    /*background-color: #9acd32;*/
+    font-size: 1.2em;
+    padding: 1em 0 1em 0;
+    color: #555;
+}
+

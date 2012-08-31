@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+	{% if user.is_authenticated %}
+		<h3>Gửi tin nhắn mới</h3>
+		<form enctype="multipart/form-data" action="" method="post">{% csrf_token %}
+			<input type="submit" name="choice" value="Gửi" /><br />
+			<table border="1">
+			{% for d in data %}
+				<tr>
+				<td>{{ d.number }}</td>
+				<td>{{ d.content }}</td>
+				</tr>
+			{% endfor %}
+			</table>			
+		</form>
+	{% endif %}
+{% endblock %}

@@ -1,0 +1,126 @@
+﻿{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Báo cáo' 'department_report' %}
+    {% add_crumb 'Hạnh kiểm theo huyện' %}
+
+{% endblock %}
+
+{% block js %}
+    <script>
+        $(document).ready(function () {
+            $("#year").change(function () {
+                //alert("chao");
+                $("#term").val("-1");
+            })
+            $('#term').change(function () {
+                var year = $('#year').val().split("-")[0];
+                var term = $('#term').val();
+                if (term != '-1')
+                    window.location.href = "/school/report/practisingByDistrict/" + year + "/" + term;
+            })
+            var nextYear = {{yearNumber}}+1;
+            var yearString = "{{yearNumber}}-" + nextYear;
+            $("#year").val(yearString);
+            $("#term").val("{{termNumber}}");
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="btn-toolbar form-inline pagination-centered">
+        Năm học
+        <select id="year" style="width:100px">
+            {% for i in yearList %}
+                <option value={{ i }}> {{ i }} </option>
+            {% endfor %}
+        </select>
+        Học kỳ
+        <select id="term" style="width:100px">
+            <option value='-1'> -----------</option>
+            <option value='1'> Học kỳ I</option>
+            <option value='2'> Học kỳ II</option>
+            <option value='3'> Cả năm</option>
+        </select>
+        <a class='btn' href="{% url practising_by_district yearNumber termNumber 1 %}">Xuất ra Excel </a>
+    </div>
+    <table class="table table-striped grid">
+        <tr>
+            <th rowspan=2>
+                Huyện
+            </th>
+            <th rowspan=2 class="align-left">
+                Trường
+            </th>
+            <th rowspan=2>
+                Tổng số
+            </th>
+            <th colspan="2">
+                Tốt
+            </th>
+            <th colspan="2">
+                Khá
+            </th>
+            <th colspan="2">
+                Trung bình
+            </th>
+            <th colspan="2">
+                Yếu
+            </th>
+        </tr>
+        <tr>
+            <th>SL</th>
+            <th>%</th>
+            <th>SL</th>
+            <th>%</th>
+            <th>SL</th>
+            <th>%</th>
+        </tr>
+        {% for aList in list %}
+            {% for s,subList in aList %}
+                <tr >
+                {% if s == '1' %}
+                        <td style="font-weight:bold">
+                            Tổng
+                        </td>
+                        <td style="font-weight:bold">
+                        </td>
+                {% else %}
+                    <tr>
+                        <td class="align-left">
+                            {{ s.district }}
+                        </td>
+                        <td class="align-left">
+                            {{ s.name }}
+                        </td>
+                {% endif %}
+
+                {% for l in subList %}
+                    <td>
+                        {{ l }}
+                    </td>
+                {% endfor %}
+                </tr>
+                {% if s == '1' %}
+                    <tr>
+                        <td>&nbsp</td>
+                        <td>&nbsp</td>
+                        <td>&nbsp</td>
+                        <td>&nbsp</td>
+                        <td>&nbsp</td>
+                        <td>&nbsp</td>
+                        <td>&nbsp</td>
+                        <td>&nbsp</td>
+                        <td>&nbsp</td>
+                        <td>&nbsp</td>
+                        <td>&nbsp</td>
+                        <td>&nbsp</td>
+                        <td>&nbsp</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    </table>
+{% endblock %}

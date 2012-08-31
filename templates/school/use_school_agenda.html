@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb sub.class_id 'class_detail' sub.class_id.id %}
+    {% add_crumb sub 'subject_per_class' sub.class_id.id %}
+    {% add_crumb 'Phân phối chương trinh giảng dạy của trường' %}
+
+{% endblock %}
+{% block content %}
+    {% if list %}
+    <div class="well form-inline pagination-centered">
+        <form class="form-header" id="selectform" action="" name="info" method="post">{% csrf_token %}
+            <a class="btn"
+                               href="{% url subject_agenda sub.id %}" title="Quay trở lại trang quản lý phân phối chương trình môn {{ sub}}">
+                               Không sử dụng</a>
+            <button class="btn" id="submit_button" title=" Sử dụng phân phối chương trình của hệ thống cho môn {{ sub }}">Sử dụng</button>
+        </form>
+    </div>
+        
+        <table class="table table-striped table-bordered">
+            <tr>
+                <th>Tiết</th>
+                <th>Tiêu đề</th>
+                <th>Ghi chú</th>
+
+            </tr>
+            {% for u in list %}
+                <tr>
+                    <td>{{ u.index }}</td>
+                    <td>{{ u.title }}</td>
+                    <td>{{ u.note }}</td>
+
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <div align="center">Trường chưa có phân phối chương trình môn {{ sub }} lớp {{ grade }}</div>
+    {% endif %}
+{% endblock %}

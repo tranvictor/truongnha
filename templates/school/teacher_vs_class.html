@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% if pos > 1 %}
+{#        {% if user.userprofile.position == 'HIEU_TRUONG' or user.userprofile.position == 'HIEU_PHO' or user.userprofile.position == 'GIAO_VU' %}#}
+            {#            {% add_crumb 'Thiết lập' 'info' %}#}
+{#            {% add_crumb 'Quản lý lớp và chủ nhiệm' 'classes' %}#}
+{#        {% elif user.userprofile.position == 'GIAO_VIEN' %}#}
+{#            {% add_crumb 'Các lớp học' %}#}
+{#        {% endif %}#}
+        {% add_crumb 'Các lớp và chủ nhiệm' 'classes' %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if user.userprofile.position == 'HIEU_TRUONG' or user.userprofile.position == 'HIEU_PHO' or user.userprofile.position == 'GIAO_VU' %}
+        <script type="text/javascript" src="/static/js/template_js/classes.js?{{ VERSION }}"></script>
+    {% endif %}
+
+    {#    <script type="text/javascript" src="/static/js/template_js/school.js?{{ VERSION }}"></script>#}
+
+    {% if message != None %}
+        {{ message }}
+    {% endif %}
+
+    <div id="errors"></div>
+        <div class="btn-toolbar pagination-centered">
+            {% if pos >= 4 %}
+            <a class="btn btn-primary" grade="{{ class.block_id.number }}"
+               href="{% url add_class %}">
+                <span class="icon-plus"></span>
+                Thêm lớp
+            </a>
+            {% endif %}
+            <a class="btn" title="Xuất danh sách giáo viên chủ nhiệm ra file Excel."
+               href="{%url export_gvcn_list %}" id="export">
+                <i class="icon-download-alt"></i>
+                Xuất ra Excel </a>
+        </div>
+
+
+
+    {% if user.userprofile.position == 'HIEU_TRUONG' or user.userprofile.position == 'HIEU_PHO' or user.userprofile.position == 'GIAO_VU' %}
+        <table class="table table-condensed table-striped">
+            <thead>
+            <tr>
+                <th>Lớp</th>
+                <th>Giáo viên chủ nhiệm</th>
+                <th style="text-align: right;"> Sĩ số</th>
+                <th style="text-align: center;"> Xóa</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for grade in blockList %}
+                <tr>
+                    <td>Khối {{ grade.number }}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+
+                {% for class in classList %}
+                    {% if class.block_id == grade %}
+                        <tr id="{{ class.id }}" teacher="{{class.teacher_id.id|default:''}}">
+                            <td>
+                                <a class="tenlop" href="{% url class_detail class.id %}">{{ class.name }}</a>
+                            </td>
+                            <td>
+                                <select class="combobox" id="teacher{{ class.id }}">
+                                    {% if not class.teacher_id %}
+                                        <option class="initOption" value="" selected="selected">
+                                            ----------
+                                        </option>
+                                    {% else %}
+                                        <option class="initOption" value="">
+                                            ----------</option>
+                                    {% endif %}
+                                    {% for teacher in teacherList %}
+                                        {% if class.teacher_id.id == teacher.id %}
+                                        <option value="{{ teacher.id }}" selected="selected">
+                                            {{ teacher}}
+                                        </option>
+                                        {% else %}
+                                        <option value="{{ teacher.id }}">
+                                                {{ teacher}}
+                                            </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td style="text-align: right;">
+                                {{ class.number_of_pupils }}
+                            </td>
+                            <td style="text-align: center;">
+                                {% if not class.number_of_pupils %}
+                                    <span forclass="{{ class.id }}" class="btn btn-small class-delete"
+                                          title="Xóa lớp học">
+                                                Xóa
+                                            </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        {% if user.userprofile.position == 'GIAO_VIEN' %}
+            <div class="row-fluid">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Lớp</th>
+                        <th>Giáo viên chủ nhiệm</th>
+                        <th style="text-align: right">Sĩ số</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for grade in blockList %}
+                        <tr>
+                            <td>Khối {{ grade.number }}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        {% for class in classList %}
+                            {% if class.block_id == grade %}
+                                <tr>
+                                    <td>
+                                        <a class="tenlop" href="{% url class_detail class.id %}">
+                                            {{ class.name }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        {{ class.teacher|default_if_none:".." }}
+                                    </td>
+                                    <td style="text-align: right">
+                                        {{ class.number_of_pupils }}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    {% endif %}
+{% endblock %}

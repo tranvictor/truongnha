@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Trang chủ' %}
+{% endblock %}
+
+{% block content %}
+    {#    <h3>Các lớp học</h3>#}
+    {% if user.is_authenticated %}
+        {% if user.userprofile.position == 'HIEU_TRUONG' or user.userprofile.position == 'HIEU_PHO' or user.userprofile.position == 'GIAO_VU' or user.userprofile.organization.level == 'S' %}
+            {% include "school/home_quantritruong.html" %}
+        {% else %}
+            {% include "school/home_giaovienhocsinh.html" %}
+        {% endif %}
+    {% endif %}
+{% endblock %}

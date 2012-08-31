@@ -1,0 +1,47 @@
+<tr id="teacher-{{teacher.id}}" data-toggle="{{ teacher.team_id }}-{{ teacher.group_id }}"
+    class="{{ teacher.id }} teacher">
+    <td>
+        {% if teacher.user_id.is_active %}
+            <i class='icon-key' id='lock-{{teacher.id}}'></i>
+        {% else %}
+            <i class='icon-lock' id='lock-{{teacher.id}}'></i>
+        {% endif %}
+    </td>
+    <td style="text-align: center;">
+        <input type="checkbox" id="checkbox_{{teacher.id}}"
+               class="teacherCheckbox"/>
+    </td>
+    <td>{{ count }}</td>
+    <td>
+        {% if pos > 3 %}
+            <a href="{%url teacher_detail teacher.id  %}">
+                {{ teacher.last_name }} </a>
+        {% else %}
+            {{ teacher.last_name }}
+        {% endif %}
+    </td>
+    <td>
+        {% if pos > 3 %}
+            <a href="{%url teacher_detail teacher.id  %}">
+                {{ teacher.first_name }} </a>
+        {% else %}
+            {{ teacher.first_name }}
+        {% endif %}
+    </td>
+    <td> {{ teacher.birthday|date:"SHORT_DATE_FORMAT" }}</td>
+    <td> {{ teacher.sms_phone }}</td>
+    <td> {{ teacher.sex }} </td>
+    <td>
+        {{ teacher.major }}
+    </td>
+    <td class="teacher-team truncated" data-toggle="{{ teacher.team_id }}">
+        {% if teacher.team_id %}
+            {{ teacher.team_id }}
+        {% endif %}
+    </td>
+    <td class="teacher-group truncated" data-toggle="{{ teacher.group_id }}">
+        {% if teacher.group_id %}
+            {{ teacher.group_id }}
+        {% endif %}
+    </td>
+</tr>

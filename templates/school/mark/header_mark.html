@@ -1,0 +1,260 @@
+﻿{% load upload_tags %}
+<div class="notify-widget-pane">
+    <button style="display:none;background: none;border: none;" id="buttonSave" onclick="update()">
+        <div id="messageChanging" class="notify"></div>
+    </button>
+</div>
+
+<div id="submenu" class="btn-toolbar">
+    <div class="btn-group">
+        <button onclick="showMessageTable(1);" class="btn btn-info pull-right" id="show_SMS_buttons">
+            Nhắn tin <i class=" icon-chevron-right"></i></button>
+        <span style="display:none" id="hide_SMS_buttons">
+                <button onclick="showMessageTable(0);" class="btn btn-info">
+                    <i class=" icon-chevron-left"></i>
+                    {% if enableChangeMark %}
+                        Nhập điểm
+                    {% else %}
+                        Bảng điểm
+                    {% endif %}
+                </button>
+                <button onclick="selectNoSent()" class="btn btn-success sms-toolbar">
+                    <i class=" icon-check"></i>
+                    Chọn điểm chưa nhắn
+                </button>
+                <button onclick="sendSMS()" class="btn btn-warning sms-toolbar">
+                    <i class=" icon-envelope"></i>
+                    Gửi tin nhắn
+                </button>
+        </span>
+    </div>
+
+    <div class="form-inline pull-right">
+        {% if enableChangeMark %}
+            <div class="btn-group ">		
+			<a class="btn dropdown-toggle " data-toggle="dropdown" href="#">
+				Khác
+				<span class="caret"></span>
+			</a>
+			
+			<ul class="dropdown-menu pull-right">
+				<li>
+					<a title="Nhập danh sách học sinh từ file Excel"
+					   href="#upload_modal"
+					   data-toggle="modal" 
+					   id="import">
+						<i class="icon-upload-alt"></i>
+						Nhập từ Excel </a>
+				</li>	
+				
+				<li>
+					<a href="{% url export_mark termChoice subjectChoice %}">
+						<i class="icon-download-alt"></i>
+						Xuất ra Excel </a>
+				</li>		
+		{% else %}	
+			<a class="btn" href="{% url export_mark termChoice subjectChoice %}">
+				<i class="icon-download-alt"></i>
+				Xuất ra Excel </a>
+
+        {% endif %}
+			
+        {% if enableChangeMark %}
+				<li>
+				<label>
+					<span title="Chuyển sang CỘT tiếp theo bằng {enter} hoặc {tab}">
+						<input type="radio" name="nextcell" id="move-right" value="move-right">
+						Nhập theo chiều ngang
+					</span>
+				</label>
+				</li>	
+				
+				<li>
+					<label>
+					<span title="Chuyển sang HÀNG tiếp theo bằng {enter} hoặc {tab}"> 
+						<input type="radio" name="nextcell" id="move-down" value="move-down" checked> 
+							Nhập theo chiều dọc 
+					</span>		
+					</label>
+				</li>	
+			</ul>
+			<label> &nbsp&nbsp </label> 
+            <label>
+            <span
+                    {% if  not selectedSubject.nx %}
+                        title="Bạn không cần gõ dấu phảy. Ví dụ nhập 7.5 thì chỉ cần gõ 75"
+                    {% else %}
+                        title="Bạn chỉ cần gõ tắt: D -> Đ (Đạt), C -> CĐ (Chưa đạt)"
+                    {% endif %}
+                    >
+				<!--suppress HtmlPresentationalElement -->
+				<i class="icon-gift"></i> típ
+			</span>
+            </label>
+			</div>
+        {% endif %}
+    </div>
+</div>
+<script>
+    m = document.getElementById("{{nextcell}}")
+    if (m) m.checked = true;
+</script>
+<div id="editWindow" class="popup-windows">
+    <section style="width: 350px; padding: 3px; float: right; background-color: #f5f5f5; margin-top: 0;">
+        <div class="mainSMS">
+            <table class="table table-condensed no-border">
+                <tr>
+                    <td>Ghi chú cho điểm học sinh</td>
+                </tr>
+                <tr>
+                    <td>
+                        <textarea class="smsContext popupTextarea"
+                                  id="editContent"
+                                  rows="3"
+                                  style="width: 300px; max-width: 300px;">
+                        </textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button id="saveNote" class="btn btn-primary">
+                            Lưu
+                        </button>
+                        <button id="editClose" class="btn ">
+                            Thôi
+                        </button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </section>
+</div>
+
+{#<div>#}
+{#    <div id="fileupload">#}
+{#        <form method="post" action="" enctype="multipart/form-data">#}
+{#            <div class="fileupload-buttonbar">#}
+{#                {% csrf_token %}#}
+{#                <label class="fileinput-button">#}
+{#                    <label>Chọn file: </label>#}
+{#                    <input type="file" name="file" multiple>#}
+{#                </label>#}
+{#                <button type="submit" id="startUpload" class="start">Tải file lên</button>#}
+{#            </div>#}
+{#        </form>#}
+{##}
+{#        <div class="fileupload-content">#}
+{#            <table class="files"></table>#}
+{#            <div class="fileupload-progressbar"></div>#}
+{#        </div>#}
+{##}
+{#        <div id="errorDetail" style="display: none;font: 14px/18px Arial;color:red">#}
+{#        </div>#}
+{#        Chú ý: Phải dùng file Excel theo#}
+{#        <button class="btn btn-primary" id="buttonExport"> mẫu này</button>#}
+{#        (lấy mẫu file excel với số cột tùy ý)#}
+{#    </div>#}
+{#</div>#}
+
+<div class="modal fade" id="upload_modal" style="display: none;">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+
+        <h3>Nhập điểm từ excel</h3>
+    </div>
+    <div class="modal-body">
+        <!-- The file upload form used as target for the file upload widget -->
+        <form id="fileupload" action="" method="POST" enctype="multipart/form-data">
+            <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+            <div class="row fileupload-buttonbar">
+                <div class="span5">
+                    <!-- The fileinput-button span is used to style the file input field as button -->
+					<span class="btn btn-success fileinput-button">
+						<i class="icon-plus icon-white"></i>
+						<span>Thêm file...</span>
+						<input type="file" name="files[]" multiple>
+					</span>
+                </div>
+                <div class="span3">
+                    <!-- The global progress bar -->
+                    <div class="progress progress-success progress-striped active fade">
+                        <div class="bar" style="width:0;"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- The loading indicator is shown during image processing -->
+            <div class="fileupload-loading"></div>
+            <br>
+            <!-- The table listing the files available for upload/download -->
+            <table class="table table-striped">
+                <tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery">
+                <div>
+                </div>
+                </tbody>
+            </table>
+        </form>
+        <div id="errorDetail" style="color:#FF4500">
+        </div>
+        <div id="diffMessage" style="display:none">
+            <button id="update" class="btn btn-primary">Cập nhật</button>
+            <button id="noUpdate" class="btn btn-primary">Không cập nhật</button>
+        </div>
+
+        <div class="hint">
+            Chú ý: Phải dùng theo
+            <a id="buttonExport"> mẫu này</a>
+            (lấy mẫu file excel với số cột tùy ý)
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" id="upload-modal-exit">Thôi</a>
+    </div>
+</div>
+
+<div id="dialogExport" style="display:none">
+    Chọn số lượng cột điểm.<br><br>
+    Miệng
+    <select id="colMiengExport" style="width:70px">
+        {% for i in secondLoop %}
+            {% if  i == MAX_VIEW %}
+                <option value="{{i}}" selected> {{ i }} </option>
+            {% else %}
+                {% if  i > MAX_VIEW %}
+                    <option value="{{i}}"> {{ i }} </option>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </select>
+    &nbsp&nbsp&nbsp 15 phút
+    <select id="col15PhutExport" style="width:70px">
+        {% for i in secondLoop %}
+            {% if  i == MAX_VIEW %}
+                <option value="{{i}}" selected> {{ i }} </option>
+            {% else %}
+                {% if  i > MAX_VIEW %}
+                    <option value="{{i}}"> {{ i }} </option>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </select>
+    &nbsp&nbsp&nbspMột tiết
+    <select id="colMotTietExport" style="width:70px">
+        {% for i in secondLoop %}
+            {% if  i == MAX_VIEW %}
+                <option value="{{i}}" selected> {{ i }} </option>
+            {% else %}
+                {% if  i > MAX_VIEW %}
+                    <option value="{{i}}"> {{ i }} </option>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </select>
+    &nbsp&nbsp&nbsp
+    <a href="{% url export_mark termChoice subjectChoice %}" id="finishExport" class="btn"> Tải về</a>
+</div>
+{% upload_js %}
+<script>
+    {% include "school/mark/upload_file_mark.js" %}
+</script>
+<script type="text/javascript" src="/static/js/jquery_file_upload/locale.js"></script>
+{#	<br>#}

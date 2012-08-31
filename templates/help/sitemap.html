@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block css %}
+    <style type="text/css">
+        ul li {
+            list-style-type: none;
+            padding: 0.2em 0 .2em 0;
+            font-size: 0.85em;
+            margin-left: -0.85em;
+        }
+    </style>
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Sơ đồ' %}
+{% endblock %}
+
+{% block content %}
+    <div class="row-fluid" style="font-size: 1.5em">
+        <div id="ussitemap" class="span4">
+            <h2>Quản lý trường</h2>
+            <ul>
+                <li><a href="/school/teachers">Giáo viên</a>
+                    <ul>
+                        <li><a href="/school/teachers">Nhắn tin </a></li>
+                        <li><a href="/school/teachers">Kích hoạt tài khoản</a></li>
+                        <li><a href="/school/teachers">Khóa tài khoản </a></li>
+                        <li><a href="/school/teachers">Chỉnh danh sách</a>
+                            <ul>
+                                <li><a href="/school/teachers">Nhập từ Excel</a></li>
+                                <li><a href="/school/teachers">Xuất ra Excel </a></li>
+                                <li><a href="/school/teachers">Thêm/Xóa/Sửa</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="">Thêm/Xóa/Phân giáo viên theo tổ, nhóm</a></li>
+                    </ul>
+                </li>
+                <li><a href="/school/report">Báo cáo</a>
+                    <ul>
+                        <li><a href="/school/printMarkBook">Sổ gọi tên và ghi điểm</a></li>
+                        <li><a href="/school/printMarkForClass">Phiếu báo điểm</a></li>
+                        <li><a href="/school/excelClassList">Danh sách học sinh theo lớp</a></li>
+                        <li><a href="/school/generate_teacher/all/">Danh sách giáo viên</a></li>
+                        <li><a href="/school/count1">Học lực, hạnh kiểm, danh hiệu</a></li>
+                        <li><a href="/school/count2/1/1">Thống kê điểm trung bình</a></li>
+                        <li><a href="/school/count2/2/1">Thống kê điểm cuối kì</a></li>
+                        <li><a href="/school/printDanhHieu">Danh hiệu</a></li>
+                        <li><a href="/school/printNoPass">Không lên lớp, thi lại, rèn luyện thêm</a></li>
+                        <li><a href="/school/countSMS">Thống kê tin nhắn SMS</a></li>
+                    </ul>
+                </li>
+
+            </ul>
+        </div>
+
+        <div class="span4">
+            <h2>Quản lý trường</h2>
+            <ul>
+                <li><a href="/school/finish">Chuyển kỳ</a>
+                    <ul>
+                        <li><a href="/school/finish/1">Chuyển sang học kỳ tiếp theo</a></li>
+                        <li><a href="/school/finish/2">Quay lại học kỳ trước</a></li>
+                        <li><a href="/school/setup/">Thiết lập năm học mới</a></li>
+                    </ul>
+                </li>
+
+                <li><a href="/school/timeTableSchool">Lịch học</a>
+                    <ul>
+                        <li><a href="/school/timeTableSchool">Nhập từ Excel</a></li>
+                    </ul>
+                </li>
+
+                <li><a href="/school/manage_school_agenda/">Chương trình</a>
+                    <ul>
+                        <li><a href="/school/manage_school_agenda/">Nhập từ Excel</a></li>
+                        <li><a href="/school/manage_school_agenda/">Xuất ra Excel </a></li>
+                    </ul>
+                </li>
+
+                <li><a href="/school/createListExam">Kỳ thi</a></li>
+                <li><a href="/school/info/">Thiết lập</a></li>
+                <li><a href="#">Sơ đồ</a>, <a href="/help">Hướng dẫn</a>, <a href="/about">Liên hệ</a></li>
+            </ul>
+        </div>
+
+        <div class="span4">
+            <h2>Quản lý lớp
+{#                <small>sau khi chọn một lớp từ <a href="/"><i class="icon-home"></i></a></small>#}
+            </h2>
+            <ul>
+                <li><a href="viewClassDetail">Lớp học</a>
+                    <ul>
+                        <li><a href="/school/diemdanh/1/25/7/2012">Điểm danh</a></li>
+                        <li><a href="/school/markTable/1/1">Điểm </a></li>
+                        <li><a href="/school/hanhkiem/1">Hạnh kiểm </a></li>
+                        <li><a href="/school/subjectPerClass/1">Môn học </a></li>
+                        <li><a href="/school/timeTable/1">Lịch học </a></li>
+                        <li><a href="/school/xepLoaiHlTheoLop/1/1">Tổng kết </a></li>
+                        <li><a href="/school/xlCaNamTheoLop/1/1">Xếp loại </a></li>
+                        <li><a href="/school/sendSMSResult/1">Nhắn tin học tập </a></li>
+                        <li><a href="/school/viewClassDetail/1">Nhắn tin </a></li>
+                        <li><a href="/school/viewClassDetail/1">Danh sách học sinh</a>
+                            <ul>
+                                <li><a href="/school/students/organize/1/0">Sắp xếp</a></li>
+                                <li><a href="/school/viewClassDetail/1">Nhập từ Excel</a></li>
+                                <li><a href="/school/viewClassDetail/1">Xuất ra Excel </a></li>
+                                <li><a href="/school/viewClassDetail/1">Thêm/Xóa/Sửa</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="/school/viewClassDetail/1"
+                               title="Sau khi kích chuột vào tên học sinh trong danh sách lớp">
+                            Hồ sơ học sinh </a>
+                            <ul>
+                                <li><a href="/school/viewClassDetail/1">Thêm/xóa khen thưởng</a></li>
+                                <li><a href="/school/viewClassDetail/1">Thêm/xóa kỷ luật</a></li>
+                                <li><a href="/school/viewClassDetail/1">Môn học miễn giảm</a></li>
+                                <li><a href="/school/viewClassDetail/1">Tạo lại mật khẩu/xem tài khoản</a></li>
+                                <li><a href="/school/viewClassDetail/1">Chuyển lớp</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}

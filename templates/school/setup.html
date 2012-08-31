@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Khởi tạo thông tin nhà trường' %}
+{% endblock %}
+
+{% block content %}
+    <script>
+        $(document).ready(function() {
+            $(".rightInfoDiv").hide();
+            $(".startYear").hide();
+            $(".confirmation").hide();
+
+            var update_school_detail_done = function(json) {
+                if (json.status == 'done') {
+                    $("#headTitle").text($("#id_name").val());
+                    $(".leftInfoDiv").hide();
+                    $(".message").text('');
+                    $(".rightInfoDiv").show(500);
+                } else {
+                }
+            };
+
+            $("#update_school_detail").click(function() {
+                var school_name = $("#id_name").val();
+                var school_level = $("#id_school_level").val();
+                var school_address = $("#id_address").val();
+                var school_phone = $("#id_phone").val();
+                var school_email = $("#id_email").val();
+                var data = { name: school_name, school_level: school_level,
+                    address: school_address, phone: school_phone, email: school_email,
+                    update_school_detail: true };
+
+                if (school_email.indexOf('@') == -1 || school_email.indexOf('.') == -1) {
+                    $("notify").showNotification('Email không hợp lệ.');
+                } else {
+                    var para = {
+                        type:"POST",
+                        url:"",
+                        data: data,
+                        datatype: "json",
+                        success: update_school_detail_done
+                    };
+                    $.ajax(para);
+                }
+                return false;
+            });
+
+            var update_class_name_done = function(json) {
+                if (json.status) {
+                    $("#message").text('');
+                    var grades = json.grades.split('-');
+                    var classes = json.classes.split('-');
+                    var text = '';
+                    for (var i = 0; i < grades.length; i++) {
+                        text += '<div style="float: left; margin: 15px;"><ul>';
+                        for (var j = 0; j < classes.length; j++)
+                            if (classes[j].split(' ')[0] == grades[i])
+                                text = text + '<li><small>' + (j +1) + ',</small>   ' + classes[j] + '</li>';
+                        text += '</ul></div>';
+                    }
+                    text += '<div style="clear: both;"></div>';
+                    $("#classReview").html(text);
+                    $(".rightInfoDiv").hide();
+                    $(".confirmation").fadeIn(300);
+                } else {
+                    $("#notify").showNotification(json.message, 3000);
+                    $("#labels").removeAttr('readonly');
+                    $("#update_class_name").removeAttr('disabled');
+
+                }
+            };
+
+            $("#update_class_name").click(function() {
+                var labels = $("#labels").val();
+                var temp = labels.replace(/Nhanh/g, '').replace(/nhanh/g, '').replace(/:/g, '');
+                temp = temp.replace(/ /g, '');
+                if (labels.indexOf('-') != -1) {
+                    $("#notify").showNotification('Tên lớp không được chứa kí tự "-".');
+                } else if (temp.length == 0) {
+                    $("#notify").showNotification('Danh sách lớp học để trống.');
+                }
+                else {
+                    $("#labels").attr('readonly', 'readonly');
+                    $(this).attr('disabled', 'disabled');
+
+                    var data = { labels: labels,
+                        update_class_name: true};
+                    var para = {
+                        type:"POST",
+                        url:"",
+                        global: false,
+                        data: data,
+                        datatype: "json",
+                        success: update_class_name_done
+                    };
+                    $.ajax(para);
+                }
+                return false;
+            });
+
+            $("#confirmation_ok").click(function() {
+                $(".rightInfoDiv").hide();
+                $(".confirmation").hide();
+                $(".startYear").fadeIn(500);
+                return false;
+            });
+
+            $("#confirmation_cancel").click(function() {
+                $(".confirmation").hide();
+                $("#labels").removeAttr('readonly');
+                $("#update_class_name").removeAttr('disabled');
+                $(".rightInfoDiv").fadeIn(300);
+                return false;
+            });
+
+            $("#begin_setup").click(function() {
+                window.location.href = "{%url setup %}";
+                return false;
+            });
+
+            var start_year_done = function(json) {
+                $("#start_year").attr['disabled'] = 'disabled';
+                $("div.startYear").append('<br><br><p>Quá trình bắt đầu năm học mới cần xử lý trong vài giây. \
+                Bạn vui lòng đợi một lát.</p>');
+                window.location.href = json.status == 'done' ? "{%url start_year %}" : "{%url setup %}";
+            };
+
+            $("#start_year").click(function() {
+                var data = { start_year: true };
+                var para = {
+                    type:"POST",
+                    url:"",
+                    data: data,
+                    datatype: "json",
+                    success: start_year_done
+                };
+                $.ajax(para);
+                return false;
+            });
+        });
+    </script>
+
+
+    <h3>Thiết lập thông tin cho trường học</h3>
+    <p id="message">
+        {% if message != None %}
+            {{ message }}
+            <br/>
+        {% endif %}
+    </p>
+    {% if user.userprofile.position == 'HIEU_TRUONG' or user.userprofile.position == 'HIEU_PHO' %}
+
+        <form action="{%url setup %}" method="post">{% csrf_token %}
+            <div class="infoContent">
+                <div class="leftInfoDiv">
+                    <h4>Thông tin cơ bản</h4>
+                    <table class="table table-condensed no-border">
+                        {{ form.as_table }}
+                    </table>
+                    <input class="btn btn-primary" type="submit" name="submit" id="update_school_detail" value="Tiếp tục"/>
+                </div>
+
+                <div class="rightInfoDiv">
+                    <h4>Khai báo lớp học</h4>
+                    <div class="rightInfoDivMain">
+                        <p>Nếu tên các lớp trong khối khác nhau, liệt kê các tên lớp cách nhau bằng dấu phảy.</p>
+
+                        <p>Ví dụ: <strong>10 A, 10 B, 10 C, 11 A, v.v.</strong></p>
+
+                        <p>Nếu chúng giống nhau, nhập "Nhanh:" và các phần chữ của lớp cách nhau bằng dấu phảy.</p>
+
+                        <p>Ví dụ: <strong>Nhanh: A, B</strong> sẽ tạo lớp 10 A, 10 B, 11 A, 11 B, 12 A, 12 B cho trường THPT.</p>
+                        <br>
+                        <label for="labels"></label>
+                        <input type="text"
+                               name="labels"
+                               id="labels"
+                               style="width: 400px; padding: 3px;"
+                               value="{{labels}}"/>
+                    </div>
+                    <br>
+                    <input class="btn" type="submit" id="begin_setup" value="Quay lại" title="Quay lại màn hình trước.">
+                    <input class="btn btn-primary" type="submit" name="submit" id="update_class_name" value="Tiếp tục"/>
+                </div>
+                <div class="confirmation">
+                    <h4>Tạo lớp học</h4>
+                    <p>Bạn có muốn tạo các lớp dưới đây không?</p>
+
+                    <div id="classReview"></div>
+                    <br>
+                    <input class="btn" type="submit" id="confirmation_cancel" value="Quay lại"
+                           title="Quay lại màn hình trước.">
+                    <input class="btn btn-primary" type="submit" id="confirmation_ok" value="Tiếp tục"
+                           title="Tiếp tục tạo các lớp trên.">
+                </div>
+                <div class="startYear">
+                    <h4>Hoàn tất</h4>
+                    <p>Hoàn thành quá trình khai báo và bắt đầu năm học.</p>
+                    <br>
+                    <input class="btn btn-success" type="submit" name="start_year" id="start_year" value="Bắt đầu năm học"/>
+                </div>
+            </div>
+        </form>
+    {% endif %}
+{% endblock %}

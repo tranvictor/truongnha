@@ -1,0 +1,26 @@
+{% extends "base_help.html" %}
+
+{% block help %}
+    <div class="help-content">
+        <ol>
+            {% if user.userprofile.position == 'HIEU_TRUONG' or user.userprofile.position == 'HIEU_PHO' or  user.userprofile.position == 'GIAO_VU' or not user.is_authenticated %}
+                <li>Từ trang chủ chọn 'Lịch học' để xem thời khóa biểu toàn trường. Sau đó có thể nhập thời khóa biểu từ Excel.</li>
+                <image src='/static/images/help/thoikhoabieu-truong.png'/>
+
+            {% elif user.userprofile.position == 'GIAO_VIEN' %}
+                <li>Từ trang chủ chọn 'Lịch học' để xem thời khóa biểu toàn trường.</li>
+                <image src='/static/images/help/thoikhoabieu-truong.png'/>
+
+{#                <image src="/static/images/help/giaovien-home.png"/>#}
+{##}
+{#                <li>Xem thời khóa biểu toàn trường.</li>#}
+{#                <image src='/static/images/help/giaovien-thoikhoabieu.png'/>#}
+            {% elif user.userprofile.position == 'HOC_SINH' %}
+                <div class="help-content">
+                    <image src='/static/images/help/thoikhoabieu.png'/>
+                </div>
+            {% endif %}
+        </ol>
+    </div>
+
+{% endblock %}

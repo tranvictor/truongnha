@@ -1,0 +1,123 @@
+<div class="help-menu">
+    {#    <h2><a href="/about" >Liên hệ</a></h2>#}
+    <h3><a href="/help">Hướng dẫn chung</a></h3>
+    {% if user.is_authenticated %}
+        {# Đã đăng nhập vào hệ thống: Hien thi help cho doi tuong su dung tuong ung #}
+        {% if user.userprofile.position == 'HOC_SINH' %}
+            {#            <div class="strong">#}
+            {#                Chức năng chính#}
+            {#            </div>#}
+            {#            <ul class="nav nav-list">#}
+            {#                <li><a href="QLNT_HS" >Xem hồ sơ học sinh</a></li>#}
+            {#                <li><a href="QLNT_HS_Lophoc" >Danh sách lớp, môn học...</a></li>#}
+            {#                <li><a href="QLNT_QL_Thoikhoabieu" >Xem thời khóa biểu</a></li>#}
+            {#                <li><a href="QLNT_QL_SuaTK" >Sửa thông tin tài khoản</a></li>#}
+            {#            </ul>#}
+        {% elif user.userprofile.position == 'GIAO_VIEN' %}
+            <h3>
+                Chức năng giáo viên
+            </h3>
+            <ul class="nav nav-list">
+                <li><a href="giaovien-diem" >Màn hình chính</a></li>
+                <li><a href="giaovien-lopchunhiem" >Quản lý lớp chủ nhiệm</a></li>
+                <li></li>
+                <li><a href="giaovien-giaovien" >Liên lạc với giáo viên khác</a></li>
+                <li><a href="giaovien-caclop" >Xem các lớp khác</a></li>
+                <li><a href="thoikhoabieu" >Xem thời khóa biểu</a></li>
+                <li><a href="taikhoan" >Sửa tài khoản</a></li>
+            </ul>
+        {% elif user.userprofile.position == 'HIEU_TRUONG' or user.userprofile.position == 'HIEU_PHO' or user.userprofile.position == 'GIAO_VU' %}
+            <h3 >
+                Quản lý trường
+            </h3>
+            <ul class="nav nav-list">
+                <li><a href="lop-chunhiem" 
+                       title="Thêm, xóa lớp, Gán giáo viên chủ nhiệm cho lớp">Lớp và chủ nhiệm</a></li>
+                <li><a href="giaovien" 
+                       title="Thêm, xóa, sửa thông tin giáo viên, tạo lại mật khẩu giáo viên">
+                    Giáo viên, cán bộ</a></li>
+                <li><a href="baocao" >Báo cáo thống kê</a></li>
+                <li><a href="thietlap" 
+                       title="Các thông tin tên, địa chỉ, điện thoại, email...">Thiết lập thông số</a></li>
+                {#                <li><a href="chuyenky" #}
+                {#                       title="Các thông tin tên, địa chỉ, điện thoại, email...">Chuyển học kỳ, năm học</a></li>#}
+                <li><a href="thoikhoabieu" >Thời khóa biểu trường</a></li>
+                <li><a href="taikhoan" 
+                       title="Sửa thông tin, đổi tên tài khoản, đổi mật khẩu">Tài khoản</a>
+                </li>
+            </ul>
+
+            <h3>
+                Quản lý lớp
+            </h3>
+            <ul class="nav nav-list">
+                <li><a href="lop" 
+                       title="Thêm, xóa học sinh, điểm danh, nhập điểm, xếp loại, tổng kết, nhắn tin điểm...">Danh sách
+                    lớp</a></li>
+                <li><a href="lop-diem" >Nhập điểm </a></li>
+                <li><a href="lop-diemdanh" >Điểm danh </a></li>
+                <li><a href="lop-hanhkiem" >Hạnh kiểm </a></li>
+                <li><a href="lop-monhoc" >Các môn học </a></li>
+                <li><a href="lop-lichhoc" >Thời khóa biểu</a></li>
+                <li><a href="lop-tongket" >Tính tổng kết</a></li>
+                <li><a href="lop-xeploai" >Xếp loại, xét lên lớp</a></li>
+                <li><a href="lop-sapxep" >Sắp xếp danh sách lớp</a></li>
+                <li><a href="lop-nhantin" >Nhắn tin học tập</a></li>
+            </ul>
+
+        {% endif %}
+    {% else %}
+        <h3 >
+            Quản lý trường
+        </h3>
+        <ul class="nav nav-list">
+            <li><a href="lop-chunhiem"
+                   title="Thêm, xóa lớp, Gán giáo viên chủ nhiệm cho lớp">Lớp và chủ nhiệm</a></li>
+            <li><a href="giaovien"
+                   title="Thêm, xóa, sửa thông tin giáo viên, tạo lại mật khẩu giáo viên">
+                Giáo viên, cán bộ</a></li>
+            <li><a href="baocao" >Báo cáo thống kê</a></li>
+            <li><a href="thietlap"
+                   title="Các thông tin tên, địa chỉ, điện thoại, email...">Thiết lập thông số</a></li>
+            {#                <li><a href="chuyenky" #}
+            {#                       title="Các thông tin tên, địa chỉ, điện thoại, email...">Chuyển học kỳ, năm học</a></li>#}
+            <li><a href="thoikhoabieu" >Thời khóa biểu trường</a></li>
+            <li><a href="taikhoan"
+                   title="Sửa thông tin, đổi tên tài khoản, đổi mật khẩu">Tài khoản</a>
+            </li>
+        </ul>
+
+        <h3>
+            Quản lý lớp
+        </h3>
+        <ul class="nav nav-list">
+            <li><a href="lop"
+                   title="Thêm, xóa học sinh, điểm danh, nhập điểm, xếp loại, tổng kết, nhắn tin điểm...">Danh sách
+                lớp</a></li>
+            <li><a href="lop-diem" >Nhập điểm </a></li>
+            <li><a href="lop-diemdanh" >Điểm danh </a></li>
+            <li><a href="lop-hanhkiem" >Hạnh kiểm </a></li>
+            <li><a href="lop-monhoc" >Các môn học </a></li>
+            <li><a href="lop-lichhoc" >Thời khóa biểu</a></li>
+            <li><a href="lop-tongket" >Tính tổng kết</a></li>
+            <li><a href="lop-xeploai" >Xếp loại, xét lên lớp</a></li>
+            <li><a href="lop-sapxep" >Sắp xếp danh sách lớp</a></li>
+            <li><a href="lop-nhantin" >Nhắn tin học tập</a></li>
+        </ul>
+
+        <h3>
+            Chức năng giáo viên
+        </h3>
+        <ul class="nav nav-list">
+            <li><a href="giaovien-home">Trang nhất</a></li>
+            <li><a href="giaovien-diem" >Nhập điểm</a></li>
+            <li><a href="giaovien-lopchunhiem" >Quản lý lớp chủ nhiệm</a></li>
+            <li></li>
+            <li><a href="giaovien-giaovien" >Liên lạc với giáo viên khác</a></li>
+            <li><a href="giaovien-caclop" >Xem các lớp khác</a></li>
+            <li><a href="thoikhoabieu" >Xem thời khóa biểu</a></li>
+            <li><a href="taikhoan" >Sửa tài khoản</a></li>
+        </ul>
+
+    {% endif %}
+</div>

@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% load upload_tags %}
+{% block js %}
+    <script type="text/javascript" src="/static/js/template_js/unc_class_detail.js?{{ VERSION }}"></script>
+{% endblock %}
+{% block css %}
+    <style type="text/css">
+        #unc_students {
+            font-size: 1.2em;
+            /*background-color: #fff5ee;*/
+        }
+
+        #unc_students li {
+            list-style: none;
+            font-size: .9em;
+            padding: 0.2em 0;
+        }
+
+        #unc_students [class^="icon-"] {
+            color: #dddddd;
+        }
+
+        #unc_students [class^="icon-"]:hover {
+            color: #08C;
+        }
+        div.hover-display{
+            display: none;
+        }
+        li:hover > div.hover-display{
+            display: block;
+        }
+    </style>
+{% endblock %}
+
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb class 'unc_class_detail' class.id selected_cl.id%}
+{% endblock %}
+
+{% block content %}
+
+    <div id="submenu" class="btn-toolbar">
+        <div class="btn-group ">
+            <a title="Phân lớp cho học sinh" 
+               class="btn btn-primary" href="#classify-modal"
+               id="classify">
+                Phân lớp
+            </a>
+            {% if class.block_id.number == 5 or class.block_id.number == 9 or class.block_id.number == 12 %}
+                <a title="Xét tốt nghiệp cho các học sinh được chọn"
+                   class="btn" href="#"
+                   id="graduate">
+                    Tốt nghiệp
+                </a>
+            {% endif %}
+        </div>
+    </div>
+<div class="row-fluid">
+    <div class="span2" id="unc_students">
+        <div class="btn-toolbar">
+            <span href="#">Lớp năm trước</span>
+        </div>
+        <div class="row-fluid">
+        <div class="span6"> 
+            <ul class="nav nav-list">
+                {% for cl in cl_list %}
+                {% if cl.number_of_staying_students != 0 %}
+                    {% if cl.block_id.number == class.block_id.number %} 
+                    {% if cl.id == selected_cl.id %}
+                        <li id="last_class_{{cl.id}}" class="active">
+                    {% else %}
+                    <li id="last_class_{{cl.id}}">
+                    {% endif %}
+                            <a href="{% url unc_class_detail class.id cl.id %}">
+                                <span id="class-display-name-{{cl.id}}">{{cl}}</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="span6" id="unc_students">
+            <ul class="nav nav-list">
+                {% for cl in cl_list %}
+                {% if cl.number_of_staying_students != 0 %}
+                    {% if cl.block_id.number != class.block_id.number %} 
+                    {% if cl.id == selected_cl.id %}
+                        <li id="last_class_{{cl.id}}" class="active">
+                    {% else %}
+                        <li id="last_class_{{cl.id}}">
+                    {% endif %}
+                            <a href="{% url unc_class_detail class.id cl.id %}">
+                                <span id="class-display-name-{{cl.id}}">{{cl}}</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+        </div>
+    </div>
+
+    <div class="span10">
+        <table class="table" id="student-table">
+            <thead>
+            <tr>
+                <th title="Chọn cả lớp" style="text-align: center;">
+                    <input type="checkbox"
+                    id="checkbox_all"
+                    class="studentCheckbox"/>
+                </th>
+                <th>STT</th>
+                <th id="thLastName">Họ</th>
+                <th id="thFirstName">Tên</th>
+                <th id="thBirthday">Ngày sinh</th>
+                <th title="Lớp năm trước">Lớp năm trước</th>
+                <th>Giới tính</th>
+                <th>Trạng thái</th>
+                <th class="visible-desktop">Nơi ở</th>
+                <th class="visible-desktop">Nơi sinh</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for ss in students %}
+                <tr class="{{ss.id}} student">
+                    <td style="text-align: center;">
+                        <input type="checkbox"
+                        id="checkbox_{{ss.id}}"
+                        class="studentCheckbox"/>
+                    </td>
+                    <td> {{ forloop.counter }} </td>
+                    <td>
+                        {{ ss.last_name }}
+                    </td>
+                    <td>
+                        {{ ss.first_name }}
+                    </td>
+                    <td> {{ ss.birthday|date:"SHORT_DATE_FORMAT" }} </td>
+                    <td> {{ ss.current_class }}</td>
+                    <td> {{ ss.sex }} </td>
+                    <td> {{ ss.get_learning_status_display }} </td>
+                    <td class="truncated visible-desktop"
+                        title="{{ ss.current_address }}">
+                        {{ ss.current_address }} </td>
+                    <td class="truncated visible-desktop"
+                        title="{{ ss.birth_place }}">
+                        {{ ss.birth_place }} </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <div id="student_placeholder" style="display: none;">
+        </div>
+    </div>
+</div>
+    <div class="fade modal" id="classify-modal" style="display: none;">
+        <div class="modal-header">
+            <a class="close" data-dismiss="modal">×</a>
+            <h3 id="showChosenStudent">Phân lớp học sinh tới</h3>
+        </div>
+        <div class="modal-body">
+            <label for="class_id">Chọn lớp</label>
+            <select name="class_id" id="class_id">
+                {% for cl in cls1 %}
+                    <option value="{{cl.id}}">{{ cl }}</option>
+                {% endfor %}
+                {% for cl in cls2 %}
+                    <option value="{{cl.id}}">{{ cl }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="btn btn-primary" id="submit">Phân lớp</a>
+            <a href="#" class="btn" id="classify-modal-exit">Thôi</a>
+        </div>
+    </div>
+{% endblock %}

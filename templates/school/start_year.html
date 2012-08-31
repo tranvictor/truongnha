@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<table>
+	<tr>
+		<th><a href="{%url start_year  %}/import">Nhập học sinh trúng tuyển từ file Excel</a></th>
+	</tr>
+	
+	<tr>
+		<th><a href="{%url start_year %}/manual">Nhập học sinh trúng tuyển</a></th>
+	</tr>
+	
+	<tr>
+		<th><a href="{%url start_year  %}/phanlop">Phân lớp</a></th>
+	</tr>
+</table>
+
+{% endblock %}

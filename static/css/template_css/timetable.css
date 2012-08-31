@@ -1,0 +1,46 @@
+tbody td[subject="Toán"]{background-color: #FF9875;}
+tbody td[subject="Vật lí"]{background-color: #FFC6B3;}
+tbody td[subject="Hóa học"]{background-color: #FFB3C6;}
+tbody td[subject="Sinh học"]{background-color: #FFB3EC;}
+tbody td[subject="Tin học"] {background-color: #ECB3FF;}
+tbody td[subject="Ngữ văn"] {background-color: #B3C6FF;}
+tbody td[subject="Lịch sử"]{background-color: #B3ECFF;}
+tbody td[subject="Địa lí"]{background-color: #B3FFEC;}
+tbody td[subject="Ngoại ngữ"]{background-color: #75DDFF;}
+tbody td[subject="NN2"]{background-color: #38CDFF;}
+tbody td[subject="GDCD"]{background-color: #B3FFC6;}
+tbody td[subject="Công nghệ"]{background-color: #C6FFB3;}
+tbody td[subject="Thể dục"]{background-color: #ECFFB3;}
+tbody td[subject="GDQP-AN"]{background-color: #FFECB3;}
+tbody td[subject="Âm nhạc"]{background-color: #DCFFB3;}
+tbody td[subject="Mĩ thuật"]{background-color: #BCFFB3;}
+tbody td[subject="Chào cờ"]{background-color: #C6C6C6;}
+tbody td[subject="Sinh hoạt"]{background-color: #DBC59E;}
+
+#summary td{
+    text-align: center;
+    width: 7.1428%;
+}
+
+#school-timetable td, #school-timetable th {
+    /*text-align: center;*/
+    padding: 2px;
+}
+#school-timetable th {
+    text-align: center;
+}
+
+#school-timetable td p{
+    padding: 2px 0 2px 0;
+    margin: 0;
+}
+
+#school-timetable td p.teacher {
+    text-align: right;
+}
+
+#school-timetable td select {
+    background: inherit;
+    border: none;
+    width: 100%;
+}

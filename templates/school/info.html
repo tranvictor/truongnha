@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Thiết lập thông số nhà trường' %}
+{% endblock %}
+
+{% block content %}
+    {#    <h2>Thiết lập dữ liệu trường học</h2>#}
+    {% if user.userprofile.position == 'HIEU_TRUONG' or user.userprofile.position == 'HIEU_PHO' %}
+        <script type="text/javascript" src="/static/js/ggplus_popup.js?{{ VERSION }}"></script>
+        <link href="/static/css/googlePlusPopup.css?{{ VERSION }}" rel="stylesheet" type="text/css"/>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $("#cancel").click(function () {
+                    window.location.href = "{% url school_index %}";
+                    return false;
+                });
+            });
+            $(document).ready(function () {
+                // setup layout
+                // end setting up layout
+                var updateSchoolDetailDone = function (json) {
+                    if (json.status.indexOf('error') == -1) {
+                        $("#notify").showNotification(json.message);
+                    } else {
+                        $("#id_phone").parents("td").append(json.phone);
+                        $("#id_email").parents("td").append(json.email);
+                        $("#id_address").parents("td").append(json.address);
+                        $("#id_name").parents("td").append(json.name);
+                        $("#id_lock_time").parents("td").append(json.lock_time);
+                        $("#notify").showNotification(json.message);
+                    }
+
+                };
+
+                $("#submit").click(function () {
+                    $(".errorlist").empty();
+                    var schoolName = $("#id_name").val();
+                    var schoolLevel = $("#id_school_level").val();
+                    var schoolAddress = $("#id_address").val();
+                    var schoolPhone = $("#id_phone").val();
+                    var schoolEmail = $("#id_email").val();
+                    var schoolLockTime = $("#id_lock_time").val();
+                    var schoolClassLabels = $("#id_class_labels").val();
+                    var semesterStartTime = $("#id_semester_start_time").val();
+                    var semesterFinishTime= $("#id_semester_finish_time").val();
+                    var data = { name:schoolName, school_level:schoolLevel,
+                        address:schoolAddress, phone:schoolPhone, email:schoolEmail,
+                        update_school_detail:true,
+                        lock_time:schoolLockTime,
+                        class_labels:schoolClassLabels,
+                        semester_start_time: semesterStartTime,
+                        semester_finish_time: semesterFinishTime
+                    };
+                    var para = {
+                        type:"POST",
+                        url:"",
+                        global:false,
+                        data:data,
+                        datatype:"json",
+                        success:updateSchoolDetailDone
+                    };
+                    $.ajax(para);
+                    return false;
+                });
+                $("#popupLockTimeValue").val($("#id_lock_time").val());
+                $("#lockTimePopup").find('li.value').each(function () {
+                    $(this).bind('click', function () {
+                        $("#popupLockTimeValue").val($(this).attr('value'));
+                        $('li').each(function () {
+                            $(this).removeClass('selected');
+                        });
+                        $(this).addClass('selected');
+                        $("#customLockTime").show();
+                        $("#divLockTimeValue").hide();
+                        return true;
+                    });
+                });
+                $("#customLockTime").bind('click', function () {
+                    $('li').each(function () {
+                        $(this).removeClass('selected');
+                    });
+                    $(this).hide();
+                    $("#popupLockTimeValue").val($("#id_lock_time").val());
+                    $("#divLockTimeValue").show();
+                    return true;
+                });
+
+                $("#id_lock_time").googlePlusPopup({
+                    popupWindow:$("#lockTimePopup"),
+                    getValue:function () {
+                        var val = $("#id_lock_time").val();
+                        if (val == 1) return "Một giờ";
+                        else if (val == 24) return "Một ngày";
+                        else if (val == 168) return "Một tuần";
+                        else if (val == 10000) return "Cả học kỳ";
+                        else return val.toString() + " Giờ";
+                    },
+                    applyValue:function (popup, original) {
+                        original.val(popup.find('input#popupLockTimeValue').val());
+                        return null;
+                    }
+                });
+            });
+        </script>
+
+        <div>
+            <form class="" action="{%url info %}" method="post">{% csrf_token %}
+                {% if message != None %}
+                    {{ message }}
+                    <br/>
+                {% endif %}
+                <div class="row-fluid form-horizontal">
+                    <div class="span6 ">
+                        <legend>Thiết lập thông số</legend>
+                        <table class="table no-border">
+                            {{ setting_form.as_table }}
+                        </table>
+                    </div>
+
+                    <div class="span6 ">
+                        <legend>Liên hệ</legend>
+                        <table class="table no-border">
+                            {{ form.as_table }}
+                        </table>
+                    </div>
+
+                    <div class="googlePlusPopupDiv" id="lockTimePopup" style="display: none; padding-left: 20px;">
+                        <ul>
+                            <li class="value" value="1" style="padding-left: 10px; cursor: pointer;">Một giờ</li>
+                            <li class="value" value="24" style="padding-left: 10px;cursor: pointer;">Một ngày</li>
+                            <li class="value" value="168" style="padding-left: 10px;cursor: pointer;">Một tuần</li>
+                            <li class="value" value="10000" style="padding-left: 10px;cursor: pointer;">Cả học kỳ</li>
+                            <li value="" id="customLockTime" style="padding-left: 10px;cursor: pointer;">Giá trị khác
+                            </li>
+                            <li value="" style="padding-left: 10px;cursor: pointer;">
+                                <div class="input-append" id="divLockTimeValue" style="display: none;">
+                                    <input class="input-mini"
+                                           type="text" id="popupLockTimeValue"
+                                           size="8"
+                                           value=""/>
+                                    <span class="add-on">Giờ</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="form-actions pagination-centered">
+                    <input type="submit" id="submit" class="btn btn-large btn-danger" name="submit" value="Lưu"/>
+{#                    <input type="reset" id="cancel" class="btn " name="cancel" value="Thôi"/>#}
+                </div>
+            </form>
+        </div>
+
+    {% else %}
+        <div>
+            {% if message != None %}
+                {{ message }}
+                <br/>
+            {% endif %}
+
+            <div class="well form-horizontal span6 offset3">
+                <div class="control-group">
+                    <label class="control-label"> Tên trường:</label>
+
+                    <div class="controls"><span class="input-xlarge uneditable-input"> {{ school.name }}</span></div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label"> Cấp:</label>
+                    <div class="controls"><span class="input-xlarge uneditable-input">{{ school.school_level }}</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Địa chỉ:</label>
+
+                    <div class="controls"><span class="input-xlarge uneditable-input"> {{ school.address }}</span></div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label"> Điện thoại:</label>
+
+                    <div class="controls"><span class="input-xlarge uneditable-input"> {{ school.phone }}</span></div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label"> Email:</label>
+
+                    <div class="controls"><span class="input-xlarge uneditable-input"> {{ school.email }}</span></div>
+                </div>
+
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

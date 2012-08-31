@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Đổi tên tài khoản' %}
+{% endblock %}
+
+{% block content %}
+    {% if user.userprofile.username_change == 0 %}
+        <form action="{% url username_change %}" method="post">{% csrf_token %}
+            <legend>Đổi tên đăng nhập</legend>
+            <div class="alert alert-heading"><strong>Chú ý</strong> tên tài khoản chỉ được thay đổi <strong>một</strong>
+                lần duy nhất.
+            </div>
+            <table class="table table-condensed no-border">
+                {{ message }}
+                {{ form.as_table }}
+                <tr>
+                    <th></th>
+                    <td>
+                        <button class="btn">Đổi</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    {% else %}
+        {{ message }}
+        <p> Bạn đã thay đổi tên tài khoản. Không thể thay đổi lần nữa.</p>
+    {% endif %}
+{% endblock %}

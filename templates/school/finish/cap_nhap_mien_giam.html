@@ -1,0 +1,155 @@
+﻿{% block content %}
+
+{% if user.userprofile.position == 'HIEU_TRUONG' or user.userprofile.position == 'HIEU_PHO' %}
+    <h3>Thông tin miễn giảm</h3>
+	<table class="dataform">
+		{% for s,rl in list %}
+		<tr>
+			<th> {{s.name}}: </th>
+			<td> 
+				<select id='miengiam_{{forloop.counter}}' >
+					{% ifequal rl 0%} 
+						<option value='0' selected> .............................. </option>
+					{% else %}	
+						<option value='0' >..............................</option>
+					{% endifequal %}	
+					
+					{% ifnotequal s.primary 2 %}
+						{% ifequal rl 1%} 
+							<option value='1' selected> Miễn kì I</option>
+						{% else %}	
+							<option value='1' > Miễn kì I</option>
+						{% endifequal %}	
+					{% endifnotequal %}
+					
+					{% ifnotequal s.primary 1 %}
+						{% ifequal rl 2%} 
+							<option value='2' selected> Miễn kì II</option>
+						{% else %}	
+							<option value='2' > Miễn kì II</option>
+						{% endifequal %}	
+					{% endifnotequal %}
+					
+					{% if s.primary != 1 and s.primary != 2 %}
+						{% ifequal rl 3%} 
+							<option value='3' selected> Miễn cả năm</option>
+						{% else %}	
+							<option value='3' > Miễn cả năm</option>
+						{% endifequal %}	
+					{% endif %}
+				</select>
+			</td> 
+		</tr>
+		{% endfor %}
+	</table>
+	
+<script>
+    function getCookie(name) {
+    var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+             // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+         }
+        }
+        return cookieValue;
+    } 
+	var cookieValue = getCookie('csrftoken'); 	
+	
+	function sendToServer(str)
+	{
+		var xmlhttp;
+		if (window.XMLHttpRequest)
+		{// code for IE7+, Firefox, Chrome, Opera, Safari
+			xmlhttp=new XMLHttpRequest();
+			//alert("chao");
+		}
+		else
+		{// code for IE6, IE5
+			xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		}
+
+		xmlhttp.onreadystatechange=function()
+		{
+			if (xmlhttp.readyState==4 && xmlhttp.status==200)
+			{
+				//document.getElementById("messageChanging").innerHTML="Đã lưu";
+				//updateNewMark();
+				var temp = document.getElementById("notify");
+					temp.innerHTML="Đã lưu";
+					$(temp).fadeIn();
+					$(temp).delay(2000).fadeOut('fast');      
+				
+				//if (document.getElementById("messageChanging").innerHTML!="Lưu ngay")
+				//	document.getElementById("messageChanging").innerHTML="Đã lưu";
+			}
+		}   				
+		//alert(cookieValue);
+		
+		xmlhttp.open("POST", "{% url cap_nhap_mien_giam class_id student_id %}",true);
+        xmlhttp.setRequestHeader("X-CSRFToken",cookieValue );
+		var data = "str="+str;
+		xmlhttp.send(data);			
+	}
+	
+	$(document).ready(function() 
+	{
+		$('select').change(function(){
+			var value = this.value;
+			var id    = this.id.split('_');						
+			if (id[0] == 'miengiam'){
+				var data = id[1]+":"+value;
+				sendToServer(data);	
+				var temp = document.getElementById("notify");
+				temp.innerHTML="Đang lưu...";
+				$(temp).fadeIn();
+			}
+		}
+		);
+	}
+	);
+	
+</script>
+
+{% else %}
+{% if user.userprofile.position == 'GIAO_VIEN' or user.userprofile.position == 'HOC_SINH' %}		
+	{% if coMienGiam %}
+		<table class="table">
+			<tr>
+				<th> Môn </th>
+				<th> Hình thức miễn giảm </th>
+			</tr>
+		{% for s,rl in list %}
+			{% if rl != 0 %}
+			<tr>
+				<td> {{s.name}} </td>
+				<td> 
+					{% ifequal rl 1%} 
+						 Miễn kì I
+					{% else %}		
+					{% ifequal rl 2%} 
+						Miễn kì II
+					{% else %}												
+					{% ifequal rl 3%} 
+						Miễn cả năm
+					{% endifequal %}	
+					{% endifequal %}	
+					{% endifequal %}	
+				</td> 
+			</tr>
+			{% endif %}
+		{% endfor %}			
+		</table>		
+	{% else %}
+		Không có môn nào được miễn giảm.
+	{% endif %}
+	
+{% endif %}
+{% endif %}
+	
+{% endblock %}

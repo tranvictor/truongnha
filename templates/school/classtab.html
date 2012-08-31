@@ -1,0 +1,270 @@
+{% block content %}
+    {% if message != None %}
+        {{ message }}
+    {% endif %}
+    {% if pos > 3 %}
+        <script>
+            $(document).ready(function() {
+                (function($) {
+                    $.widget("ui.combobox", {
+                        _create: function() {
+                            var self = this,
+                                select = this.element.hide(),
+                                selected = select.children(":selected"),
+                                value = selected.val() ? selected.text() : "";
+                            var input = this.input = $("<input>")
+                                    .insertAfter(select)
+                                    .val(value)
+                                    .addClass("ui-widget ui-widget-content ui-corner-left")
+                                    .autocomplete({
+                                        delay: 0,
+                                        minLength: 0,
+                                        source: function(request, response) {
+                                            var matcher = new RegExp($.ui.autocomplete.escapeRegex(request.term), "i");
+                                            response(select.children("option").map(function() {
+                                                var text = $(this).text();
+                                                if ( !request.term || matcher.test(text) )
+                                                    return {
+                                                        label: text.replace(
+                                                                new RegExp(
+                                                                        "(?![^&;]+;)(?!<[^<>]*)(" +
+                                                                                $.ui.autocomplete.escapeRegex(request.term) +
+                                                                                ")(?![^<>]*>)(?![^&;]+;)", "gi"
+                                                                ), "<strong>$1</strong>"),
+                                                        value: text,
+                                                        option: this
+                                                    };
+                                            }));
+                                        },
+                                        select: function(event, ui) {
+                                            ui.item.option.selected = true;
+                                            self._trigger("selected", event, {
+                                                item: ui.item.option
+                                            });
+                                            this.value = ui.item.option.text;
+                                            var attr = $(this).parents("tr").attr('id');
+                                            var teacher = ui.item.option.value;
+                                            $(this).parents("td").children(".all_teacher #id_teacher_id").val(teacher);
+                                            var id = $(this).parents("tr").attr('class').split(' ')[0];
+                                            var data = { id: id, teacher_id:teacher, request_type:'update'};
+                                            var arg = { type:"POST",
+                                                url:"",
+                                                data: data,
+                                                datatype:"json",
+                                                success:done,
+                                                error:function(){
+                                                    $(".submitbutton").attr("disabled", false);
+                                                    $(".submitbutton").val("Lưu");
+                                                }
+                                            };
+                                            $.ajax(arg);
+                                            return false;
+                                        },
+                                        change: function(event, ui) {
+                                            if (!ui.item) {
+                                                var matcher = new RegExp("^" + $.ui.autocomplete.escapeRegex($(this).val()) + "$", "i"),
+                                                        valid = false;
+                                                select.children("option").each(function() {
+                                                    if ($(this).text().match(matcher)) {
+                                                        this.selected = valid = true;
+                                                        return false;
+                                                    }
+                                                });
+                                                if (!valid) {
+                                                    // remove invalid value, as it didn't match anything
+                                                    $(this).val("");
+                                                    select.val("");
+                                                    input.data("autocomplete").term = "";
+                                                    return false;
+                                                }
+                                            }
+                                        }
+                                    });
+
+                            input.data("autocomplete")._renderItem = function(ul, item) {
+                                return $("<li></li>")
+                                        .data("item.autocomplete", item)
+                                        .append("<a>" + item.label + "</a>")
+                                        .appendTo(ul);
+                            };
+
+                            this.button = $("<button type='button'>&nbsp;</button>")
+                                    .attr("tabIndex", -1)
+                                    .attr("title", "Danh sách giáo viên")
+                                    .insertAfter(input)
+                                    .button({
+                                        icons: {
+                                            primary: "ui-icon-triangle-1-s"
+                                        },
+                                        text: false
+                                    })
+                                    .removeClass("ui-corner-all")
+                                    .addClass("ui-corner-right ui-button-icon")
+                                    .click(function() {
+                                        // close if already visible
+                                        if (input.autocomplete("widget").is(":visible")) {
+                                            input.autocomplete("close");
+                                            return;
+                                        }
+
+                                        // work around a bug (likely same cause as #5265)
+                                        $(this).blur();
+
+                                        // pass empty string as value to search for, displaying all results
+                                        input.autocomplete("search", "");
+                                        input.focus();
+                                    });
+                        }
+                    });
+                })(jQuery);
+
+//                $("select[name=teacher_id]").each(function() {
+//                    //$(this).hide();
+//                    $(this).addClass("combobox");
+//                });
+//
+                $('tr').each(function(){
+                    var self = $(this);
+                    var teacher = self.find('#id_teacher_id');
+                    console.log(teacher);
+                    teacher.change(function(){
+                        var selectedTeacher = $(this).val();
+                        var id = self.attr('class').split(' ')[0];
+                        var data = { id: id, teacher_id:selectedTeacher, request_type:'update'};
+                        var arg = { type:"POST",
+                            url:"",
+                            data: data,
+                            datatype:"json",
+                            success:function(){
+                                $("#notify").showNotification("Đã lưu");
+                            },
+                            error:function(){
+                                $("#notify").showNotification("Có lỗi xảy ra khi gửi dữ liệu");
+                                $(".submitbutton").attr("disabled", false);
+                                $(".submitbutton").val("Lưu");
+                            }
+                        };
+                        $.ajax(arg);
+                        return false;
+                    })
+                });
+                var done = function(json) {
+                    if (json.message != null && json.message != '') {
+                        $("#errors").html("<ul>" + json.message + "</ul>");
+                        $("#errors").dialog("open");
+                    }
+                };
+                $(".submitbutton").attr("disabled", true);
+                $("#errors").dialog({
+                    modal : true,
+                    buttons: {
+                        Đóng: function() {
+                            window.location = window.location.href;
+                            $(this).dialog('close');
+                        }
+                    },
+                    autoOpen: false,
+                    width: 500,
+                    height: 200,
+                    maxWidth: 500,
+                    maxHeight: 450,
+                    title: "Có lỗi xảy ra"
+                });
+
+                $(".submitform").submit(function() {
+                    var d = $(this).serialize() + '&request_type=update_all';
+                    var arg = {data: d,
+                        type: $(this).attr('method'),
+                        url: $(this).attr('action'),
+                        success: function(){
+                            $(".submitbutton").attr("disabled", true);
+                            $(".submitbutton").val("Đã lưu");
+                        },
+                        error:function(){
+                            $(".submitbutton").attr("disabled", false);
+                            $(".submitbutton").val("Lưu");
+                        }
+                    };
+                    $.ajax(arg);
+                    return false;
+                });
+            });
+            function confirmDelete() {
+                return confirm("Bạn có chắc chắn xóa không?");
+            }
+        </script>
+    {% endif %}
+
+
+    <div class="well form-inline pagination-centered">
+        <form class="submitform" action="{% url class_tab block_id %}" method="post">{% csrf_token %}
+            {% if pos >= 4 %}
+                <a href="{% url add_class %}" class="btn btn-danger">   Thêm lớp học</a>
+                <input type="submit" class="submitbutton btn " value="Đã lưu"/>
+            {% endif %}
+        </form>
+    </div>
+
+    <div id="errors"></div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th align="left"> STT </th>
+                <th align="left"> Lớp </th>
+                <th align="left"> Sỹ số </th>
+                <th align="left"> Giáo viên chủ nhiệm </th>
+                <th align="left"> Năm học</th>
+                {% if pos >= 4 %}
+                    <th ></th>
+                {% endif %}
+            </tr>
+            </thead>
+            {% for class, f, n in list %}
+                <tr class="{{class.id}}">
+                    <td> {{ forloop.counter }}</td>
+                    <td>
+                    <a href="{% url class_detail  class.id %}">
+                        {{ class.name }}
+                    </a>
+                    </td>
+                    <td> {{ n }} </td>
+                    {% if pos >= 4 %}
+                        <td>
+{#                            <div class="all_teacher autocomplete">#}
+                            <div class="all_teacher">
+                                {{ f.teacher_id }}
+                            </div>
+                        </td>
+                        {% else %}
+                        <td>
+                            {% if class.teacher_id %}
+                                {{ class.teacher_id }}
+                            {% else %}
+                                Chưa rõ
+                            {% endif %}
+                        </td>
+                    {% endif %}
+                    <td> {{ class.year_id }} </td>
+                    {% if pos >= 4 %}
+                        {% ifequal n  0 %}
+                            <td>
+								<a class="btn sm delete"
+								href="{% url delete_class class.id  %}">
+                                xóa
+								</a>
+							</td>
+                        {% else %}
+                            <td >
+								<a class="btn sm disabled"
+								title="Không được xóa các lớp vẫn còn học sinh"
+								href="">
+                                xóa
+								</a>
+                            </td>
+                        {% endifequal %}
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </table>
+    </form>
+{% endblock %}

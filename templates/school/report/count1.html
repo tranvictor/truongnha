@@ -1,0 +1,240 @@
+﻿{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}	
+    {% if not user.userprofile.isSchool %}
+		{% add_crumb 'Báo cáo' 'department_report' %}
+		{% add_crumb request.session.school_name 'report' request.session.school_id  %}
+	{% else %}
+		{% add_crumb 'Báo cáo' 'report' %}
+	{% endif %}
+	
+    {% add_crumb 'Học lực, hạnh kiểm, danh hiệu' %}
+{% endblock %}
+
+{%block js %}
+
+    <script>
+        $(document).ready(function () {
+			{% if message != None %}
+				var temp = document.getElementById("notify1");
+				temp.innerHTML = "{{message}}";
+				$(temp).fadeIn('fast');
+				$(temp).delay(1500000).fadeOut('fast');
+			{% endif %}
+			$("#{{ number }}").addClass('active');
+        });
+    </script>
+{% endblock %}
+
+{% block css %}
+    <link href="/static/css/report.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="notify-widget-pane">
+        <div class="notify" id="notify1" style="display: none;">
+        </div>
+    </div>
+
+    <div class="btn-toolbar form-inline pagination-centered ">
+		<div class="btn-group" data-toggle="buttons-radio">
+			<a id="1" href="{% url count1 year_id 1%}" class="btn"> Học kỳ I </a>
+			<a id="2" href="{% url count1 year_id 2%}" class="btn"> Học kỳ II </a>
+			<a id="3" href="{% url count1 year_id 3%}" class="btn"> Cả năm </a>
+		</div>
+		
+		<a class='btn pull-right' href="{% url count1 year_id number 1%}">Xuất ra Exel </a>
+	</div>	
+
+    <table width="100%" class="table grid">
+        <tr>
+            <th rowspan=3 width="10%" align="center">
+                Lớp
+            </th>
+
+            <th rowspan=3>
+                SS
+            </th>
+            <th colspan=10>
+                Học lực
+            </th>
+            <th colspan=8>
+                Hạnh kiểm
+            </th>
+            <th colspan=4>
+                Danh hiệu
+            </th>
+
+        </tr>
+        <tr>
+            <th colspan=2>
+                Giỏi
+            </th>
+            <th colspan=2>
+                Khá
+            </th>
+            <th colspan=2>
+                TB
+            </th>
+            <th colspan=2>
+                Yếu
+            </th>
+            <th colspan=2>
+                Kém
+            </th>
+            <th colspan=2>
+                Tốt
+            </th>
+            <th colspan=2>
+                Khá
+            </th>
+            <th colspan=2>
+                TB
+            </th>
+            <th colspan=2>
+                Yếu
+            </th>
+
+            <th colspan=2>
+                HSG
+            </th>
+            <th colspan=2>
+                HSTT
+            </th>
+        </tr>
+        <tr>
+            <th title="Số lượng">
+                SL
+            </th>
+            <th>
+                %
+            </th>
+            <th title="Số lượng">
+                SL
+            </th>
+            <th>
+                %
+            </th>
+            <th title="Số lượng">
+                SL
+            </th>
+            <th>
+                %
+            </th>
+            <th title="Số lượng">
+                SL
+            </th>
+            <th>
+                %
+            </th>
+            <th title="Số lượng">
+                SL
+            </th>
+            <th>
+                %
+            </th>
+            <th title="Số lượng">
+                SL
+            </th>
+            <th>
+                %
+            </th>
+            <th title="Số lượng">
+                SL
+            </th>
+            <th>
+                %
+            </th>
+            <th title="Số lượng">
+                SL
+            </th>
+            <th>
+                %
+            </th>
+            <th title="Số lượng">
+                SL
+            </th>
+            <th>
+                %
+            </th>
+            <th title="Số lượng">
+                SL
+            </th>
+            <th>
+                %
+            </th>
+            <th title="Số lượng">
+                SL
+            </th>
+            <th>
+                %
+            </th>
+        </tr>
+        {% for b,sum,total,list1 in list %}
+            {% for name,ss,l in list1 %}
+                <tr>
+                    <td style="text-align: center;">
+                        {{ name }}
+                    </td>
+
+                    <td>
+                        {{ ss|floatformat:"0" }}
+                    </td>
+                    {% for u,v in l %}
+                        <td>
+                            {{ u }}
+                        </td>
+
+                        <td>
+                            {{ v|floatformat:"2" }}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            <tr class="subtotal-row">
+                <td>
+                    Khối {{ b.number }}
+                </td>
+                <td>
+                    {{ sum|floatformat:"0" }}
+                </td>
+                {% for sl,pt in total %}
+                    <td>
+                        {{ sl }}
+                    </td>
+                    <td>
+                        {{ pt|floatformat:"2" }}
+                    </td>
+                {% endfor %}
+            </tr>
+{#            <tr class='lastblock'>#}
+{#                <td> &nbsp</td>#}
+{#                <td> &nbsp</td>#}
+{#                {% for sl,pt in total %}#}
+{#                    <td> &nbsp</td>#}
+{#                    <td> &nbsp</td>#}
+{#                {% endfor %}#}
+{#            </tr>#}
+        {% endfor %}
+        <tr class="total-row">
+            <td>
+                Toàn trường
+            </td>
+            <td>
+                {{ sumsumsum|floatformat:"0" }}
+            </td>
+            {% for sl,pt in allList %}
+                <td>
+                    {{ sl }}
+                </td>
+                <td>
+                    {{ pt|floatformat:"2" }}
+                </td>
+            {% endfor %}
+
+        </tr>
+    </table>
+
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Các đăng ký sử dụng' %}
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript" src="/static/js/template_js/manage_register.js?{{ VERSION }}"></script>
+{% endblock %}
+
+{% block content %}
+    {#    <h2>Danh sách đăng ký tài khoản khách hàng</h2>#}
+    {% if registers %}
+        <div id="submenu" class="btn-toolbar">
+            <button id="showRegistered" class="btn "
+                    title="Ẩn/Hiện những đăng ký đã cấp">Ẩn đăng ký đã cấp
+            </button>
+
+            <button id="createSelected" class="btn btn-primary"
+                    title="Tạo tài khoản cho những đăng ký đã chọn">Tạo tài khoản
+            </button>
+            <button id="delSelected" class="btn btn-danger"
+                    title="Xóa chọn">Xóa
+            </button>
+        </div>
+        <table class="table" id="registerTable">
+            <thead>
+            <tr>
+                <th title="Chọn tất cả" style="text-align: center;">
+                    <input type="checkbox" id="checkbox_all" class="registerCheckbox"/>
+                </th>
+                <th style="text-align: center">STT</th>
+                <th style="text-align: center">
+                    <a href="{% url manage_register short_by_date short_by_status %}">
+                        Trạng thái
+                    </a>
+                </th>
+                <th>Người đăng ký</th>
+                <th>Số điện thoại</th>
+                <th>Email</th>
+                <th>Tên trường</th>
+                <th style="text-align: center">Cấp</th>
+                <th>Địa chỉ</th>
+                <th>Tỉnh/Thành phố</th>
+                <th>
+                    <a href="{% url manage_register short_by_date short_by_status %}">
+                        Ngày đăng ký
+                    </a>
+                </th>
+                <th style="text-align: center" class="accountInfo">Tài khoản</th>
+                <th style="text-align: center" class="accountInfo">Mật khẩu</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            {% for register in registers %}
+                <tr class="{{ register.id }} register">
+                    <td style="text-align: center; padding-left: 4px;">
+                        <input type="checkbox" id="checkbox_{{register.id}}" class="registerCheckbox"/>
+                    </td>
+                    <td style="text-align: center">{{ forloop.counter }}</td>
+                    <td style="text-align: center;" class="status">{{ register.get_status_display }}</td>
+                    <td style="padding-left: 8px;">{{ register.register_name }}</td>
+                    <td style="padding-left: 8px;">{{ register.register_phone }}</td>
+                    <td style="padding-left: 8px;">{{ register.register_email }}</td>
+                    <td style="padding-left: 8px;">{{ register.school_name }}</td>
+                    <td style="text-align: center;">{{ register.get_school_level_display }}</td>
+                    <td style="padding-left: 8px;">{{ register.school_address }}</td>
+                    <td style="padding-left: 8px;">{{ register.get_school_province_display }}</td>
+                    <td style="padding-left: 8px;">{{ register.register_date|date:"SHORT_DATE_FORMAT" }}</td>
+                </tr>
+
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Không có đăng ký nào</p>
+    {% endif %}
+
+{% endblock %}

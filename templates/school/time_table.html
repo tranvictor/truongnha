@@ -1,0 +1,425 @@
+{% extends "base.html" %}
+{% load upload_tags %}
+
+{% block css %}
+    <link href="/static/css/template_css/timetable.css?{{ VERSION }}" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+{% block js %}
+    <script>
+
+        $(document).ready(function () {
+            var number_of_periods = new Object();
+            var chaoco_ids = [],
+                sinhhoat_ids = [];
+            {% for i in chaoco_list %}
+                chaoco_ids.push({{ i }});
+            {% endfor %}
+            {% for i in sinhhoat_list %}
+                sinhhoat_ids.push({{ i }});
+            {% endfor %}
+
+            {%  for sub, number in no_periods.items %}
+                number_of_periods["{{sub }}"] = {{ number }};
+            {% endfor %}
+
+            $("select[name^=period]").each(function () {
+                $(this).addClass('input-medium');
+            });
+
+            $("select[name=class]").change(function () {
+                if ($(this).val() != -1) {
+                    var url = "{%url school_index  %}timeTable/" + $(this).val();
+                    $(location).attr('href', url);
+                }
+            });
+
+            {% if pos > 3 %}
+                $(".submitbutton").attr("disabled", true);
+                $("select[name^=period]").each(function () {
+                    var day = $(this).parents("td").attr('id').split(' ')[0];
+                    var order = $(this).parents("td").parent("tr").attr('class').split(' ')[0];
+                    var id = day*10 + order*1;
+                    //alert (day + " " + order + " " + id + ' ' + chaoco_ids);
+                    if (jQuery.inArray(id, chaoco_ids) > -1){
+                        $(this).append('<option value="-1" selected="selected">Chào cờ</option>');
+                        $(this).parents("td").attr("subject", "Chào cờ");
+                    }
+                    else $(this).append('<option value="-1">Chào cờ</option>');
+
+                    if (jQuery.inArray(id, sinhhoat_ids) > -1) {
+                        $(this).append('<option value="-2" selected="selected">Sinh hoạt</option>');
+                        $(this).parents("td").attr("subject", "Sinh hoạt");
+                    }
+                    else $(this).append('<option value="-2">Sinh hoạt</option>');
+
+                    $(this).change(function () {
+                        var day = $(this).parents("td").attr('id').split(' ')[0];
+                        var val = $(this).val();
+                        var sub = ($(this).children("option:selected").text());
+                        var old_subject = $(this).parents("td").attr('subject');
+                        $(this).parents("td").attr('subject', sub);
+                        var thaydoi = true;
+                        {% for s in subject %}
+                            var tmp = "{{ s.id }}";
+                            if (tmp == val) {
+                                thaydoi = false;
+                                $(this).parents("td").children("p").replaceWith("<p>{{ s.teacher_id|default_if_none:".." }}</p>");
+                            }
+                        {% endfor %}
+                        var query2 = '[id="' + old_subject + '"]';
+                        if (old_subject != "None") {
+                            number_of_periods[old_subject]--;
+                            $(query2).text(number_of_periods[old_subject]);
+                        }
+
+                        var query = '"[id="' + sub + '"]';
+                        if (sub != "None") {
+                            number_of_periods[sub]++;
+                            $(query).text(number_of_periods[sub]);
+                        }
+
+                        if (thaydoi) {
+                            $(this).parents("td").children("p").replaceWith("<p></p>");
+                        }
+
+                        var period = $(this).attr('name');
+                        var data = { day:day, sub:val, request_type:period}
+                        var arg = { type:"POST",
+                            url:"",
+                            data:data,
+                            datatype:"json",
+                            error:function () {
+                                $(".submitbutton").attr('disabled', false);
+                                $(".submitbutton").val('Lưu');
+                            },
+                            success:function () {
+                            }
+                        };
+                        $.ajax(arg);
+                        return false;
+                    });
+                });
+            {% else %}
+                $("td").each(function () {
+                    var day = $(this).attr('id').split(' ')[0];
+                    var order = $(this).parent("tr").attr('class').split(' ')[0];
+                    var id = day*10 + order*1;
+                    //alert (day + " " + order + " " + id + ' ' + chaoco_ids);
+                    if (jQuery.inArray(id, chaoco_ids) > -1){
+                        $(this).text("Chào cờ");
+                        $(this).attr("subject", "Chào cờ");
+                    }
+                    if (jQuery.inArray(id, sinhhoat_ids) > -1) {
+                        $(this).text("Sinh hoạt");
+                        $(this).attr("subject", "Sinh hoạt");
+                    }
+                    //alert (day + " " + order + " " + id + ' ');
+                });
+            {% endif %}
+        });
+
+    </script>
+
+{% endblock %}
+
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb class 'class_detail' class.id %}
+    {% add_crumb 'Thời khóa biểu' %}
+{% endblock %}
+
+{% block content %}
+
+    <div id="submenu" class="form-inline pagination-centered">
+        <p><label>Lớp</label>
+            <select name="class" class="span1">
+                {% for cl in classList %}
+                    {% if cl.id != class.id %}
+                        <option value={{ cl.id }}> {{ cl }}</option>
+                    {% else %}
+                        <option selected="selected" value={{ cl.id }}> {{ cl }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </p>
+    </div>
+
+    <form action="{% url timetable class.id %}" method="post" class="pagination-centered">{% csrf_token %}
+    <table id="school-timetable" class="table table-bordered fifth-row">
+    <thead>
+    <colgroup>
+        <col style="width: 5%;"/>
+        <col style="width: 12%;"/>
+        <col style="width: 12%;"/>
+        <col style="width: 12%;"/>
+        <col style="width: 12%;"/>
+        <col style="width: 12%;"/>
+        <col style="width: 12%;"/>
+    </colgroup>
+    <tr>
+        <th></th>
+        <th>Thứ 2</th>
+        <th>Thứ 3</th>
+        <th>Thứ 4</th>
+        <th>Thứ 5</th>
+        <th>Thứ 6</th>
+        <th>Thứ 7</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for i in lesson %}
+        <tr class="{{ i }}">
+        <th class="span2">Tiết {{ i }}</th>
+        {% for w in week %}
+            {% for t, f in list %}
+                {% if t.day == w %}
+                    {% if i == 1 %}
+                        {% if pos < 4 %}
+                            {% if t.period_1 %}
+                                <td id="{{ w }}" subject="{{t.period_1}}">
+                                    <p>{{ t.period_1 }}</p>
+                                    <p>{{ t.period_1.teacher_id|default_if_none:".." }}</p>
+                                </td>
+                            {% else %}
+                                <td id="{{ w }}" subject=""></td>
+                            {% endif %}
+                        {% else %}
+                            <td subject="{{t.period_1}}" id="{{w}}"> {{ f.period_1 }}
+                                <p class="teacher">
+                                    {% if t.period_1 %}
+                                        {{ t.period_1.teacher_id|default_if_none:".." }}
+                                    {% endif %}
+                                </p>
+                            </td>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if i == 2 %}
+                        {% if pos < 4 %}
+                            {% if t.period_2 %}
+                                <td id="{{ w }}" subject="{{t.period_2}}">
+                                    <p>{{ t.period_2 }}</p>
+                                    <p>{{ t.period_2.teacher_id|default_if_none:".." }}</p>
+                                </td>
+                            {% else %}
+                                <td id="{{ w }}" subject=""></td>
+                            {% endif %}
+                        {% else %}
+                            <td subject="{{t.period_2}}" id="{{w}}"> {{ f.period_2 }}
+                                <p class="teacher">
+                                    {% if t.period_2 %}
+                                        {{ t.period_2.teacher_id|default_if_none:".." }}
+                                    {% endif %}
+                                </p>
+                            </td>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if i == 3 %}
+                        {% if pos < 4 %}
+                            {% if t.period_3 %}
+                                <td id="{{ w }}" subject="{{t.period_3}}">
+                                    <p>{{ t.period_3 }}</p>
+                                    <p>{{ t.period_3.teacher_id|default_if_none:".." }}</p>
+                                </td>
+                            {% else %}
+                                <td id="{{ w }}" subject=""></td>
+                            {% endif %}
+                        {% else %}
+                            <td subject="{{t.period_3}}" id="{{w}}"> {{ f.period_3 }}
+                                <p class="teacher">
+                                    {% if t.period_3 %}
+                                        {{ t.period_3.teacher_id|default_if_none:".." }}
+                                    {% endif %}
+                                </p>
+                            </td>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if i == 4 %}
+                        {% if pos < 4 %}
+                            {% if t.period_4 %}
+                                <td id="{{ w }}" subject="{{t.period_4}}">
+                                    <p>{{ t.period_4 }}</p>
+                                    <p>{{ t.period_4.teacher_id|default_if_none:".." }}
+                                    </p>
+                                </td>
+                            {% else %}
+                                <td id="{{ w }}" subject=""></td>
+                            {% endif %}
+                        {% else %}
+                            <td subject="{{t.period_4}}" id="{{w}}"> {{ f.period_4 }}
+                                <p class="teacher">
+                                    {% if t.period_4 %}
+                                        {{ t.period_4.teacher_id|default_if_none:".." }}
+                                    {% endif %}
+                                </p>
+                            </td>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if i == 5 %}
+                        {% if pos < 4 %}
+                            {% if t.period_5 %}
+                                <td id="{{ w }}" subject="{{t.period_5}}">
+                                    <p>{{ t.period_5 }}</p>
+                                    <p>{{ t.period_5.teacher_id|default_if_none:".." }}</p>
+                                </td>
+                            {% else %}
+                                <td id="{{ w }}" subject=""></td>
+                            {% endif %}
+                        {% else %}
+                            <td subject="{{t.period_5}}" id="{{w}}"> {{ f.period_5 }}
+                                <p class="teacher">
+                                    {% if t.period_5 %}
+                                        {{ t.period_5.teacher_id|default_if_none:".." }}
+                                    {% endif %}
+                                </p>
+                            </td>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if i == 6 %}
+                        {% if pos < 4 %}
+                            {% if t.period_6 %}
+                                <td id="{{ w }}" subject="{{t.period_6}}">
+                                    <p>{{ t.period_6 }}</p>
+                                    <p>{{ t.period_6.teacher_id|default_if_none:".." }}</p>
+                                </td>
+                            {% else %}
+                                <td id="{{ w }}" subject=""></td>
+                            {% endif %}
+                        {% else %}
+                            <td subject="{{t.period_6}}" id="{{w}}"> {{ f.period_6 }}
+                                <p class="teacher">
+                                    {% if t.period_6 %}
+                                        {{ t.period_6.teacher_id|default_if_none:".." }}
+                                    {% endif %}
+                                </p>
+                            </td>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if i == 7 %}
+                        {% if pos < 4 %}
+                            {% if t.period_7 %}
+                                <td id="{{ w }}" subject="{{t.period_7}}">
+                                    <p>{{ t.period_7 }}</p>
+                                    <p>{{ t.period_7.teacher_id|default_if_none:".." }}</p>
+                                </td>
+                            {% else %}
+                                <td id="{{ w }}" subject=""></td>
+                            {% endif %}
+                        {% else %}
+                            <td subject="{{t.period_7}}" id="{{w}}"> {{ f.period_7 }}
+                                <p class="teacher">
+                                    {% if t.period_7 %}
+                                        {{ t.period_7.teacher_id|default_if_none:".." }}
+                                    {% endif %}
+                                </p>
+                            </td>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if i == 8 %}
+                        {% if pos < 4 %}
+                            {% if t.period_8 %}
+                                <td id="{{ w }}" subject="{{t.period_8}}">
+                                    <p>{{ t.period_8 }}</p>
+                                    <p>{{ t.period_8.teacher_id|default_if_none:".." }}</p>
+                                </td>
+                            {% else %}
+                                <td id="{{ w }}" subject=""></td>
+                            {% endif %}
+                        {% else %}
+                            <td subject="{{t.period_8}}" id="{{w}}"> {{ f.period_8 }}
+                                <p class="teacher">
+                                    {% if t.period_8 %}
+                                        {{ t.period_8.teacher_id|default_if_none:".." }}
+                                    {% endif %}
+                                </p>
+                            </td>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if i == 9 %}
+                        {% if pos < 4 %}
+                            {% if t.period_9 %}
+                                <td id="{{ w }}" subject="{{t.period_9}}">
+                                    <p>{{ t.period_9 }}</p>
+
+                                    <p>{{ t.period_9.teacher_id|default_if_none:".." }}</p>
+                                </td>
+                            {% else %}
+                                <td id="{{ w }}" subject=""></td>
+                            {% endif %}
+                        {% else %}
+                            <td subject="{{t.period_9}}" id="{{w}}"> {{ f.period_9 }}
+                                <p class="teacher">
+                                    {% if t.period_9 %}
+                                        {{ t.period_9.teacher_id|default_if_none:".." }}
+                                    {% endif %}
+                                </p>
+                            </td>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if i == 10 %}
+                        {% if pos < 4 %}
+                            {% if t.period_10 %}
+                                <td id="{{ w }}" subject="{{t.period_10}}">
+                                    <p>{{ t.period_10 }}</p>
+
+                                    <p>{{ t.period_10.teacher_id|default_if_none:".." }}</p>
+                                </td>
+                            {% else %}
+                                <td id="{{ w }}" subject=""></td>
+                            {% endif %}
+                        {% else %}
+                            <td subject="{{t.period_10}}" id="{{w}}"> {{ f.period_10 }}
+                                <p class="teacher">
+                                    {% if t.period_10 %}
+                                        {{ t.period_10.teacher_id|default_if_none:".." }}
+                                    {% endif %}
+                                </p>
+                            </td>
+                        {% endif %}
+                    {% endif %}
+
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+
+    {#    In so luong cac tiet hoc trong tuan#}
+    <h3>Tổng số tiết từng môn</h3>
+    <table class="table table-bordered" id="summary">
+        <tbody>
+        <tr>
+            {% for sub, number in no_periods.items %}
+                <td subject="{{ sub }}">
+                    {{ sub }}
+                </td>
+            {% endfor %}
+        </tr>
+        <tr>
+            {% for sub, number in no_periods.items %}
+                <td >
+                    <span style="font-size: 1.25em" id="{{ sub }}"> {{ number }}</span>
+                </td>
+            {% endfor %}
+        </tr>
+        </tbody>
+    </table>
+    <br>
+    {% if pos > 3 %}
+        <input type="submit" class="submitbutton btn " disabled="disabled" value="Lưu"/>
+    {% endif %}
+    </form>
+{% endblock %}

@@ -1,0 +1,2907 @@
+[{
+    "pk" : 22,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "mark",
+        "name" : "B\u1ea3ng \u0111i\u1ec3m",
+        "app_label" : "school"
+    }
+},
+{
+    "pk" : 13,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "danhsachloailop",
+        "name" : "Danh s\u00e1ch lo\u1ea1i l\u1edbp",
+        "app_label" : "school"
+    }
+},
+{
+    "pk" : 15,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "teacher",
+        "name" : "Gi\u00e1o vi\u00ean",
+        "app_label" : "school"
+    }
+},
+{
+    "pk" : 26,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "hanhkiem",
+        "name" : "H\u1ea1nh ki\u1ec3m",
+        "app_label" : "school"
+    }
+},
+{
+    "pk" : 20,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "pupil",
+        "name" : "H\u1ecdc sinh",
+        "app_label" : "school"
+    }
+},
+{
+    "pk" : 24,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "khenthuong",
+        "name" : "Khen th\u01b0\u1edfng",
+        "app_label" : "school"
+    }
+},
+{
+    "pk" : 17,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "startyear",
+        "name" : "Kh\u00f3a",
+        "app_label" : "school"
+    }
+},
+{
+    "pk" : 14,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "block",
+        "name" : "Kh\u1ed1i",
+        "app_label" : "school"
+    }
+},
+{
+    "pk" : 18,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "term",
+        "name" : "K\u00ec",
+        "app_label" : "school"
+    }
+},
+{
+    "pk" : 25,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "kiluat",
+        "name" : "K\u1ec9 lu\u1eadt",
+        "app_label" : "school"
+    }
+},
+{
+    "pk" : 19,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "class",
+        "name" : "L\u1edbp",
+        "app_label" : "school"
+    }
+},
+{
+    "pk" : 21,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "subject",
+        "name" : "M\u00f4n",
+        "app_label" : "school"
+    }
+},
+{
+    "pk" : 16,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "year",
+        "name" : "N\u0103m h\u1ecdc",
+        "app_label" : "school"
+    }
+},
+{
+    "pk" : 27,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "tbhocky",
+        "name" : "Trung b\u00ecnh h\u1ecdc k\u00ec",
+        "app_label" : "school"
+    }
+},
+{
+    "pk" : 23,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "tkmon",
+        "name" : "Trung b\u00ecnh m\u00f4n",
+        "app_label" : "school"
+    }
+},
+{
+    "pk" : 28,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "tbnam",
+        "name" : "Trung b\u00ecnh n\u0103m",
+        "app_label" : "school"
+    }
+},
+{
+    "pk" : 30,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "tkdiemdanh",
+        "name" : "T\u1ed5ng k\u1ebft \u0111i\u1ec3m danh",
+        "app_label" : "school"
+    }
+},
+{
+    "pk" : 5,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "contenttype",
+        "name" : "content type",
+        "app_label" : "contenttypes"
+    }
+},
+{
+    "pk" : 2,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "group",
+        "name" : "group",
+        "app_label" : "auth"
+    }
+},
+{
+    "pk" : 8,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "logentry",
+        "name" : "log entry",
+        "app_label" : "admin"
+    }
+},
+{
+    "pk" : 10,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "membership",
+        "name" : "membership",
+        "app_label" : "app"
+    }
+},
+{
+    "pk" : 4,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "message",
+        "name" : "message",
+        "app_label" : "auth"
+    }
+},
+{
+    "pk" : 31,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "message",
+        "name" : "message",
+        "app_label" : "persistent_messages"
+    }
+},
+{
+    "pk" : 32,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "objectpermission",
+        "name" : "object permission",
+        "app_label" : "objectpermission"
+    }
+},
+{
+    "pk" : 9,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "organization",
+        "name" : "organization",
+        "app_label" : "app"
+    }
+},
+{
+    "pk" : 1,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "permission",
+        "name" : "permission",
+        "app_label" : "auth"
+    }
+},
+{
+    "pk" : 34,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "receiverreport",
+        "name" : "receiver report",
+        "app_label" : "report"
+    }
+},
+{
+    "pk" : 12,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "reportcontact",
+        "name" : "report contact",
+        "app_label" : "app"
+    }
+},
+{
+    "pk" : 35,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "sendreport",
+        "name" : "send report",
+        "app_label" : "report"
+    }
+},
+{
+    "pk" : 6,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "session",
+        "name" : "session",
+        "app_label" : "sessions"
+    }
+},
+{
+    "pk" : 7,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "site",
+        "name" : "site",
+        "app_label" : "sites"
+    }
+},
+{
+    "pk" : 33,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "sms",
+        "name" : "sms",
+        "app_label" : "sms"
+    }
+},
+{
+    "pk" : 3,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "user",
+        "name" : "user",
+        "app_label" : "auth"
+    }
+},
+{
+    "pk" : 11,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "userprofile",
+        "name" : "user profile",
+        "app_label" : "app"
+    }
+},
+{
+    "pk" : 29,
+    "model" : "contenttypes.contenttype",
+    "fields" : {
+        "model" : "diemdanh",
+        "name" : "\u0110i\u1ec3m danh",
+        "app_label" : "school"
+    }
+},
+{
+    "pk" : "d332c8f03b2fbce45eef3e505c405c91",
+    "model" : "sessions.session",
+    "fields" : {
+        "expire_date" : "2011-06-03 11:50:56",
+        "session_data" : "MWZhNTM1NGEzNjk4NTk3NDdiZjI5NzBkMzQ5ZTViMjYyYWQ0ZGJmMjqAAn1xAS4=\n"
+    }
+},
+{
+    "pk" : 1,
+    "model" : "sites.site",
+    "fields" : {
+        "domain" : "example.com",
+        "name" : "example.com"
+    }
+},
+{
+    "pk" : 61,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-20 11:50:26",
+        "object_repr" : "adminc3",
+        "object_id" : "5",
+        "change_message" : "user profile \"adminc3\" \u0111\u00e3 \u0111\u01b0\u1ee3c th\u00eam v\u00e0o.",
+        "user" : 1,
+        "content_type" : 3
+    }
+},
+{
+    "pk" : 60,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-20 11:49:28",
+        "object_repr" : "adminc3",
+        "object_id" : "5",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 3
+    }
+},
+{
+    "pk" : 59,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-20 00:46:12",
+        "object_repr" : "truong",
+        "object_id" : "4",
+        "change_message" : "position for user profile \"truong\" \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i.",
+        "user" : 1,
+        "content_type" : 3
+    }
+},
+{
+    "pk" : 58,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-20 00:46:01",
+        "object_repr" : "so",
+        "object_id" : "2",
+        "change_message" : "position for user profile \"so\" \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i.",
+        "user" : 1,
+        "content_type" : 3
+    }
+},
+{
+    "pk" : 57,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-20 00:45:54",
+        "object_repr" : "phong",
+        "object_id" : "3",
+        "change_message" : "position for user profile \"phong\" \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i.",
+        "user" : 1,
+        "content_type" : 3
+    }
+},
+{
+    "pk" : 56,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-20 00:36:55",
+        "object_repr" : "truong",
+        "object_id" : "4",
+        "change_message" : "first_name v\u00e0 last_name \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i.",
+        "user" : 1,
+        "content_type" : 3
+    }
+},
+{
+    "pk" : 55,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-20 00:36:48",
+        "object_repr" : "truong",
+        "object_id" : "4",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 3
+    }
+},
+{
+    "pk" : 54,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-20 00:36:37",
+        "object_repr" : "phong",
+        "object_id" : "3",
+        "change_message" : "first_name v\u00e0 last_name \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i.",
+        "user" : 1,
+        "content_type" : 3
+    }
+},
+{
+    "pk" : 53,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-20 00:36:31",
+        "object_repr" : "phong",
+        "object_id" : "3",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 3
+    }
+},
+{
+    "pk" : 52,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-20 00:36:17",
+        "object_repr" : "so",
+        "object_id" : "2",
+        "change_message" : "first_name v\u00e0 last_name \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i.",
+        "user" : 1,
+        "content_type" : 3
+    }
+},
+{
+    "pk" : 51,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-20 00:36:12",
+        "object_repr" : "so",
+        "object_id" : "2",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 3
+    }
+},
+{
+    "pk" : 50,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-20 00:36:02",
+        "object_repr" : "admin",
+        "object_id" : "1",
+        "change_message" : "first_name v\u00e0 last_name \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i. phone for user profile \"admin\" \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i.",
+        "user" : 1,
+        "content_type" : 3
+    }
+},
+{
+    "pk" : 49,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-04 15:16:47",
+        "object_repr" : "Tr\u01b0\u1eddng THPT Nguy\u1ec5n Tr\u00e3i",
+        "object_id" : "34",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 48,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-04 15:14:24",
+        "object_repr" : "Tr\u01b0\u1eddng THPT Li\u1ec5u Giai",
+        "object_id" : "33",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 47,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-04 15:11:23",
+        "object_repr" : "Tr\u01b0\u1eddng THPT H\u00e0 N\u1ed9i AMSTERDAM ",
+        "object_id" : "32",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 46,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-04 15:09:16",
+        "object_repr" : "Tr\u01b0\u1eddng THPT \u0110inh Ti\u00ean Ho\u00e0ng",
+        "object_id" : "31",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 45,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-04 14:52:03",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n \u0110an Ph\u01b0\u1ee3ng",
+        "object_id" : "24",
+        "change_message" : "manager_name, address, phone v\u00e0 email \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i.",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 44,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-04 14:50:07",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n \u0110\u00f4ng Anh",
+        "object_id" : "25",
+        "change_message" : "manager_name, address v\u00e0 email \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i.",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 43,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-04 14:49:37",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn \u0110\u1ed1ng \u0110a",
+        "object_id" : "26",
+        "change_message" : "manager_name, address, phone v\u00e0 email \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i.",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 42,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-04 14:49:04",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Gia L\u00e2m",
+        "object_id" : "27",
+        "change_message" : "manager_name, address, phone v\u00e0 email \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i.",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 39,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-04 14:47:37",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Gia L\u00e2m",
+        "object_id" : "27",
+        "change_message" : "upper_organization \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i.",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 40,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-04 14:47:37",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn \u0110\u1ed1ng \u0110a",
+        "object_id" : "26",
+        "change_message" : "upper_organization \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i.",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 41,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-04 14:47:37",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n \u0110\u00f4ng Anh",
+        "object_id" : "25",
+        "change_message" : "upper_organization \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i.",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 38,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-04 14:47:21",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn H\u00e0 \u0110\u00f4ng",
+        "object_id" : "28",
+        "change_message" : "upper_organization, manager_name, address, phone v\u00e0 email \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i.",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 37,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-04 14:46:37",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn Hai B\u00e0 Tr\u01b0ng",
+        "object_id" : "29",
+        "change_message" : "address v\u00e0 phone \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i.",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 36,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-04 14:45:07",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Ho\u00e0i \u0110\u1ee9c",
+        "object_id" : "30",
+        "change_message" : "address v\u00e0 phone \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i.",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 34,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-04 14:42:48",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Ho\u00e0i \u0110\u1ee9c",
+        "object_id" : "30",
+        "change_message" : "email, upper_organization v\u00e0 manager_name \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i.",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 35,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-04 14:42:48",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn Hai B\u00e0 Tr\u01b0ng",
+        "object_id" : "29",
+        "change_message" : "email, upper_organization v\u00e0 manager_name \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i.",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 33,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-04 14:39:46",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Ho\u00e0i \u0110\u1ee9c",
+        "object_id" : "30",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 32,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-04 14:39:34",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn Hai B\u00e0 Tr\u01b0ng",
+        "object_id" : "29",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 31,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-04 14:39:17",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn H\u00e0 \u0110\u00f4ng",
+        "object_id" : "28",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 30,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-04 14:39:03",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Gia L\u00e2m",
+        "object_id" : "27",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 29,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-04 14:38:36",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn \u0110\u1ed1ng \u0110a",
+        "object_id" : "26",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 28,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-04 14:38:12",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n \u0110\u00f4ng Anh",
+        "object_id" : "25",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 27,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-04 14:37:48",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n \u0110an Ph\u01b0\u1ee3ng",
+        "object_id" : "24",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 26,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-04 14:35:36",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Ch\u01b0\u01a1ng M\u1ef9",
+        "object_id" : "23",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 23,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-04 14:31:45",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn C\u1ea5u Gi\u1ea5y",
+        "object_id" : "22",
+        "change_message" : "name, address v\u00e0 manager_name \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i.",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 24,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-04 14:31:45",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Ba V\u00ec",
+        "object_id" : "21",
+        "change_message" : "name, address v\u00e0 manager_name \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i.",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 25,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-04 14:31:45",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn Ba \u0110\u00ecnh",
+        "object_id" : "20",
+        "change_message" : "name, address v\u00e0 manager_name \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i.",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 22,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-01 09:25:27",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n \u1ee8ng H\u00f2a",
+        "object_id" : "19",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 21,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-01 09:24:29",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n T\u1eeb Li\u00eam",
+        "object_id" : "18",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 20,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-01 09:23:44",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Th\u01b0\u1eddng T\u00edn",
+        "object_id" : "17",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 19,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-01 09:22:46",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn Thanh Xu\u00e2n",
+        "object_id" : "16",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 18,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-01 09:21:58",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Thanh Tr\u00ec",
+        "object_id" : "15",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 17,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-01 09:21:01",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Thanh Oai",
+        "object_id" : "14",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 16,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-01 09:19:54",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Th\u1ea1ch Th\u1ea5t",
+        "object_id" : "13",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 15,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-01 09:18:58",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn T\u00e2y H\u1ed3",
+        "object_id" : "12",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 14,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-01 09:18:08",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Th\u1ecb x\u00e3 S\u01a1n T\u00e2y",
+        "object_id" : "11",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 13,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-01 09:16:45",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n S\u00f3c S\u01a1n",
+        "object_id" : "10",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 12,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-01 09:15:54",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Qu\u1ed1c Oai",
+        "object_id" : "9",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 11,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-01 09:14:58",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Ph\u00fac Th\u1ecd",
+        "object_id" : "8",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 10,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-01 09:13:50",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Ph\u00fa Xuy\u00ean",
+        "object_id" : "7",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 9,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-01 09:12:33",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n M\u1ef9 \u0110\u1ee9c",
+        "object_id" : "6",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 8,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-01 09:11:21",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n M\u00ea Linh",
+        "object_id" : "5",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 7,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-01 09:10:18",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn Long Bi\u00ean",
+        "object_id" : "4",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 6,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-01 09:08:33",
+        "object_repr" : "S\u1edf Gi\u00e1o d\u1ee5c v\u00e0 \u0110\u00e0o t\u1ea1o H\u00e0 N\u1ed9i",
+        "object_id" : "1",
+        "change_message" : "address \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i.",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 5,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-01 09:08:24",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn Ho\u00e0n Ki\u1ebfm",
+        "object_id" : "2",
+        "change_message" : "address \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i.",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 4,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-01 09:08:13",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn Ho\u00e0ng Mai",
+        "object_id" : "3",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 3,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 2,
+        "action_time" : "2011-05-01 09:06:42",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn Ho\u00e0n Ki\u1ebfm",
+        "object_id" : "2",
+        "change_message" : "Kh\u00f4ng c\u00f3 tr\u01b0\u1eddng n\u00e0o thay \u0111\u1ed5i",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 2,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-01 09:06:39",
+        "object_repr" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn Ho\u00e0n Ki\u1ebfm",
+        "object_id" : "2",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 1,
+    "model" : "admin.logentry",
+    "fields" : {
+        "action_flag" : 1,
+        "action_time" : "2011-05-01 09:04:08",
+        "object_repr" : "S\u1edf Gi\u00e1o d\u1ee5c v\u00e0 \u0110\u00e0o t\u1ea1o H\u00e0 N\u1ed9i",
+        "object_id" : "1",
+        "change_message" : "",
+        "user" : 1,
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 1,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "S\u1edf Gi\u00e1o d\u1ee5c v\u00e0 \u0110\u00e0o t\u1ea1o H\u00e0 N\u1ed9i",
+        "school_level" : null,
+        "level" : "S",
+        "manager_name" : "Nguy\u1ec5n H\u1eefu \u0110\u1ed9",
+        "phone" : "0439426821",
+        "address" : "S\u1ed1 23 Quang Trung, 81 Th\u1ee3 Nhu\u1ed9m, Ho\u00e0n Ki\u1ebfm, H\u00e0 N\u1ed9i",
+        "upper_organization" : null,
+        "email" : "sogiaoduc@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 2,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn Ho\u00e0n Ki\u1ebfm",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "D\u01b0\u01a1ng Th\u1ecb Thanh Huy\u1ec1n ",
+        "phone" : "0438255110 ",
+        "address" : "S\u1ed1 5 H\u00e0ng B\u00fat ",
+        "upper_organization" : 1,
+        "email" : "pgd-hoankiem@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 3,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn Ho\u00e0ng Mai",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "\u0110\u1eb7ng V\u0103n Tr\u01b0\u1eddng",
+        "phone" : "0436332476\u00a0",
+        "address" : "\u00d4 1 l\u00f4 2 khu \u0111\u00f4 th\u1ecb \u0110\u1ec1n L\u1eeb - P.Ho\u00e0ng V\u0103n Th\u1ee5, Ho\u00e0ng Mai",
+        "upper_organization" : 1,
+        "email" : "pgd-hoangmai@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 4,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn Long Bi\u00ean",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "\u0110\u1eb7ng Vi\u1ec7t H\u00e0",
+        "phone" : "0438779199\u00a0",
+        "address" : "S\u1ed1 66 ng\u00f5 139 ph\u1ed1 Hoa L\u00e2m, P.Vi\u1ec7t H\u01b0ng, Q.Long Bi\u00ean",
+        "upper_organization" : 1,
+        "email" : "pgd-longbien@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 5,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n M\u00ea Linh",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "B\u00f9i V\u0103n C\u00f4ng",
+        "phone" : "0438169331",
+        "address" : "H\u1ed9i tr\u01b0\u1eddng UBND x\u00e3 Thanh L\u00e2m, M\u00ea Linh",
+        "upper_organization" : 1,
+        "email" : "pgd-melinh@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 6,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n M\u1ef9 \u0110\u1ee9c",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "\u0110\u1eb7ng V\u0103n Vi\u1ec7n",
+        "phone" : "0433847239",
+        "address" : "Th\u1ecb tr\u1ea5n huy\u1ec7n M\u1ef9 \u0110\u1ee9c",
+        "upper_organization" : 1,
+        "email" : "pgd-myduc@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 7,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Ph\u00fa Xuy\u00ean",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "Tr\u1ea7n C\u00f4ng Th\u00e0nh",
+        "phone" : "0433854287",
+        "address" : "Huy\u1ec7n Ph\u00fa Xuy\u00ean",
+        "upper_organization" : 1,
+        "email" : "pgd-phuxuyen@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 8,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Ph\u00fac Th\u1ecd",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "Ki\u1ec1u Tu\u1ea5n ",
+        "phone" : "0433640858",
+        "address" : "Th\u1ecb tr\u1ea5n Ph\u00fac Th\u1ecd Huy\u1ec7n Ph\u00fac Th\u1ecd",
+        "upper_organization" : 1,
+        "email" : "pgd-phuctho@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 9,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Qu\u1ed1c Oai",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "Nguy\u1ec5n V\u0103n Ph\u01b0\u01a1ng",
+        "phone" : "0433843155",
+        "address" : "Th\u00f4n Ng\u00f4 S\u00e0i - Th\u1ecb tr\u1ea5n Qu\u1ed1c Oai - huy\u1ec7n Qu\u1ed1c Oai",
+        "upper_organization" : 1,
+        "email" : "pgd-quocoai@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 10,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n S\u00f3c S\u01a1n",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "Nguy\u1ec5n Trung Th\u00e0nh",
+        "phone" : "0438843526",
+        "address" : "S\u1ed1 33 ng\u00f5 29 \u0111\u01b0\u1eddng N\u00fai \u0110\u00f4i, Th\u1ecb tr\u1ea5n S\u00f3c S\u01a1n, S\u00f3c S\u01a1n",
+        "upper_organization" : 1,
+        "email" : "pgd-socson@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 11,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Th\u1ecb x\u00e3 S\u01a1n T\u00e2y",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "V\u0169 \u0110\u00ecnh Ch\u00ednh",
+        "phone" : "0433832221",
+        "address" : "S\u1ed1 11 ph\u1ed1 Ng\u00f4 Quy\u1ec1n, S\u01a1n T\u00e2y",
+        "upper_organization" : 1,
+        "email" : "pgd-sontay@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 12,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn T\u00e2y H\u1ed3",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "Ho\u00e0ng V\u0103n S\u01a1n",
+        "phone" : "0437581042",
+        "address" : "655 \u0110\u01b0\u1eddng L\u1ea1c Long Qu\u00e2n, T\u00e2y H\u1ed3",
+        "upper_organization" : 1,
+        "email" : "pgd-tayho@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 13,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Th\u1ea1ch Th\u1ea5t",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "C\u1ea5n V\u0103n Qu\u1ea3ng",
+        "phone" : "0433842257",
+        "address" : "Li\u00ean Quan - Th\u1ea1ch Th\u1ea5t - H\u00e0 N\u1ed9i",
+        "upper_organization" : 1,
+        "email" : "pgd-thachthat@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 14,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Thanh Oai",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "\u0110\u1ed7 Ti\u1ebfn",
+        "phone" : "0433873028",
+        "address" : "Huy\u1ec7n Thanh Oai",
+        "upper_organization" : 1,
+        "email" : "pgd-thanhoai@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 15,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Thanh Tr\u00ec",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "Nguy\u1ec5n V\u0103n Ho\u00e0n",
+        "phone" : "0438617886",
+        "address" : "Th\u1ecb tr\u1ea5n V\u0103n \u0110i\u1ec3n",
+        "upper_organization" : 1,
+        "email" : "pgd-thanhtri@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 16,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn Thanh Xu\u00e2n",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "Nguy\u1ec5n Th\u1ecb Thu\u1ef7",
+        "phone" : "0435585604",
+        "address" : "Ng\u00f5 116 Ph\u1ed1 Nh\u00e2n Ho\u00e0, P.Nh\u00e2n Ch\u00ednh, Thanh Xu\u00e2n",
+        "upper_organization" : 1,
+        "email" : "pgd-thanhxuan@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 17,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Th\u01b0\u1eddng T\u00edn",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "Nguy\u1ec5n V\u0103n D\u0169ng",
+        "phone" : "0433853235",
+        "address" : "S\u1ed1 37 Nguy\u1ec5n Du, Th\u1ecb tr\u1ea5n Th\u01b0\u1eddng T\u00edn, H. Th\u01b0\u1eddng T\u00edn",
+        "upper_organization" : 1,
+        "email" : "pgd-thuongtin@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 18,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n T\u1eeb Li\u00eam",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "L\u00ea V\u0103n B\u00ecnh ",
+        "phone" : "0437641487",
+        "address" : "T\u1ed5 15 Th\u1ecb tr\u1ea5n C\u1ea7u Di\u1ec5n",
+        "upper_organization" : 1,
+        "email" : "pgd-tuliem@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 19,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n \u1ee8ng H\u00f2a",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "\u0110\u1ed7 Ng\u1ecdc Anh",
+        "phone" : "0433882643",
+        "address" : "Ho\u00e0ng X\u00e1, Th\u1ecb tr\u1ea5n V\u00e2n \u0110\u00ecnh, \u1ee8ng Ho\u00e0",
+        "upper_organization" : 1,
+        "email" : "pgd-unghoa@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 20,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn Ba \u0110\u00ecnh",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "Nguy\u1ec5n Th\u1ebf \u0110\u1ea1i ",
+        "phone" : "0437164892",
+        "address" : "S\u1ed1 10 Nguy\u1ec5n Tr\u01b0\u1eddng T\u1ed9",
+        "upper_organization" : 1,
+        "email" : "ppgd-badinh@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 21,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Ba V\u00ec",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "L\u00ea Ng\u1ecdc T\u00f4n ",
+        "phone" : "0433863001",
+        "address" : "Ph\u1ed1 M\u1edbi - X\u00e3 Chu Minh - Huy\u1ec7n Ba V\u00ec",
+        "upper_organization" : 1,
+        "email" : "ppgd-bavi@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 22,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn C\u1ea5u Gi\u1ea5y",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "B\u00f9i Th\u1ecb V\u00e2n Anh ",
+        "phone" : "0438349201",
+        "address" : "485 \u0110\u01b0\u1eddng Nguy\u1ec5n Khang",
+        "upper_organization" : 1,
+        "email" : "ppgd-caugiay@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 23,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Ch\u01b0\u01a1ng M\u1ef9",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "Nguy\u1ec5n V\u0103n V\u1eefng",
+        "phone" : "0433.866400",
+        "address" : "S\u1ed1 2 Y\u00ean S\u01a1n, Th\u1ecb tr\u1ea5n Ch\u00fac S\u01a1n, Ch\u01b0\u01a1ng M\u1ef9",
+        "upper_organization" : 1,
+        "email" : "pgd-chuongmy@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 24,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n \u0110an Ph\u01b0\u1ee3ng",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "Th\u1ebf Minh Kh\u00f4i\u00a0",
+        "phone" : "043.3886487\u00a0",
+        "address" : "Th\u1ecb tr\u1ea5n Ph\u00f9ng, huy\u1ec7n \u0110an Ph\u01b0\u1ee3ng",
+        "upper_organization" : 1,
+        "email" : "pgd-danphuong@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 25,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n \u0110\u00f4ng Anh",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "D\u01b0\u01a1ng Th\u1ecb S\u00e1u  ",
+        "phone" : "",
+        "address" : "Th\u1ecb tr\u1ea5n \u0110\u00f4ng Anh  ",
+        "upper_organization" : 1,
+        "email" : "pgd-donganh@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 26,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn \u0110\u1ed1ng \u0110a",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "Nguy\u1ec5n Duy Long  ",
+        "phone" : "0435112461",
+        "address" : "256 T\u00f4n \u0110\u1ee9c Th\u1eafng ",
+        "upper_organization" : 1,
+        "email" : "pgd-dongda@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 27,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Gia L\u00e2m",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "guy\u1ec5n V\u0103n Qu\u00fd ",
+        "phone" : "0438276332 ",
+        "address" : "C\u1ed5 Bi, Gia L\u00e2m ",
+        "upper_organization" : 1,
+        "email" : "pgd-gialam@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 28,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn H\u00e0 \u0110\u00f4ng",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "\u0110\u01b0\u1eddng Th\u1ecb L\u1ec7 ",
+        "phone" : "043.3824452",
+        "address" : "S\u1ed1 126 \u0111\u01b0\u1eddng T\u00f4 Hi\u1ec7u, P.Nguy\u1ec5n Tr\u00e3i, H\u00e0 \u0110\u00f4ng",
+        "upper_organization" : 1,
+        "email" : "pgd-hadong@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 29,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Qu\u1eadn Hai B\u00e0 Tr\u01b0ng",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "Nguy\u1ec5n Nh\u01b0 Th\u1eafng\u00a0",
+        "phone" : "0439784752",
+        "address" : "349 ph\u1ed1 Hu\u1ebf, Q. Hai B\u00e0 Tr\u01b0ng",
+        "upper_organization" : 1,
+        "email" : "pgd-haibatrung@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 30,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Ph\u00f2ng Gi\u00e1o d\u1ee5c Huy\u1ec7n Ho\u00e0i \u0110\u1ee9c",
+        "school_level" : null,
+        "level" : "P",
+        "manager_name" : "Nguy\u1ec5n Phan Minh\u00a0",
+        "phone" : "0433861220",
+        "address" : "Th\u1ecb tr\u1ea5n Tr\u1ea1m Tr\u00f4i, Ho\u00e0i \u0110\u1ee9c ",
+        "upper_organization" : 1,
+        "email" : "pgd-hoaiduc@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 31,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Tr\u01b0\u1eddng THPT \u0110inh Ti\u00ean Ho\u00e0ng",
+        "school_level" : null,
+        "level" : "T",
+        "manager_name" : "Nguy\u1ec5n T\u00f9ng L\u00e2m ",
+        "phone" : "0437152521 ",
+        "address" : "C\u01a1 S\u1edf 1: 67 Ph\u00f3 \u0110\u1ee9c Ch\u00ednh, Ba \u0110\u00ecnh ; C\u01a1 S\u1edf 2: S\u1ed1 5 Ph\u1ea1m S\u01b0 M\u1ea1nh, Ho\u00e0n Ki\u1ebfm ",
+        "upper_organization" : 2,
+        "email" : "c3dinhTienHoang@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 32,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Tr\u01b0\u1eddng THPT H\u00e0 N\u1ed9i AMSTERDAM ",
+        "school_level" : null,
+        "level" : "T",
+        "manager_name" : "Ph\u1ea1m V\u0103n \u0110\u1ea1i",
+        "phone" : "0438463096",
+        "address" : "\u0110\u01b0\u1eddng Ho\u00e0ng Minh Gi\u00e1m, Qu\u1eadn C\u1ea7u Gi\u1ea5y",
+        "upper_organization" : 22,
+        "email" : "c23hanoi-ams@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 33,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Tr\u01b0\u1eddng THPT Li\u1ec5u Giai",
+        "school_level" : null,
+        "level" : "T",
+        "manager_name" : "L\u00ea V\u0103n H\u1ed3ng ",
+        "phone" : "0437626607",
+        "address" : "50 Li\u1ec5u Giai, Ba \u0110\u00ecnh",
+        "upper_organization" : 20,
+        "email" : "c3bclieugiai@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 34,
+    "model" : "app.organization",
+    "fields" : {
+        "status" : null,
+        "name" : "Tr\u01b0\u1eddng THPT Nguy\u1ec5n Tr\u00e3i",
+        "school_level" : null,
+        "level" : "T",
+        "manager_name" : "Ph\u1ea1m V\u01b0\u01a1ng T\u1ea5n",
+        "phone" : "0437365650",
+        "address" : "S\u1ed1 50 H\u00e0o Nam, Ba \u0110\u00ecnh",
+        "upper_organization" : 20,
+        "email" : "c3nguyentrai@hanoiedu.vn"
+    }
+},
+{
+    "pk" : 1,
+    "model" : "app.membership",
+    "fields" : {
+        "org" : 1,
+        "user_admin" : 1
+    }
+},
+{
+    "pk" : 1,
+    "model" : "app.userprofile",
+    "fields" : {
+        "organization" : 1,
+        "notes" : "",
+        "user" : 1,
+        "phone" : "1",
+        "position" : "HIEU_TRUONG"
+    }
+},
+{
+    "pk" : 2,
+    "model" : "app.userprofile",
+    "fields" : {
+        "organization" : 1,
+        "notes" : "",
+        "user" : 2,
+        "phone" : "2",
+        "position" : "GIAM_DOC_SO"
+    }
+},
+{
+    "pk" : 3,
+    "model" : "app.userprofile",
+    "fields" : {
+        "organization" : 2,
+        "notes" : "",
+        "user" : 3,
+        "phone" : "3",
+        "position" : "TRUONG_PHONG"
+    }
+},
+{
+    "pk" : 4,
+    "model" : "app.userprofile",
+    "fields" : {
+        "organization" : 31,
+        "notes" : "",
+        "user" : 4,
+        "phone" : "4",
+        "position" : "HIEU_TRUONG"
+    }
+},
+{
+    "pk" : 5,
+    "model" : "app.userprofile",
+    "fields" : {
+        "organization" : 32,
+        "notes" : "",
+        "user" : 5,
+        "phone" : "",
+        "position" : "HIEU_TRUONG"
+    }
+},
+{
+    "pk" : 1,
+    "model" : "school.danhsachloailop",
+    "fields" : {
+        "loai" : "A",
+        "school_id" : 1
+    }
+},
+{
+    "pk" : 2,
+    "model" : "school.danhsachloailop",
+    "fields" : {
+        "loai" : "B",
+        "school_id" : 1
+    }
+},
+{
+    "pk" : 3,
+    "model" : "school.danhsachloailop",
+    "fields" : {
+        "loai" : "C",
+        "school_id" : 1
+    }
+},
+{
+    "pk" : 4,
+    "model" : "school.danhsachloailop",
+    "fields" : {
+        "loai" : "D",
+        "school_id" : 1
+    }
+},
+{
+    "pk" : 5,
+    "model" : "school.danhsachloailop",
+    "fields" : {
+        "loai" : "E",
+        "school_id" : 1
+    }
+},
+{
+    "pk" : 6,
+    "model" : "school.danhsachloailop",
+    "fields" : {
+        "loai" : "F",
+        "school_id" : 1
+    }
+},
+{
+    "pk" : 7,
+    "model" : "school.danhsachloailop",
+    "fields" : {
+        "loai" : "G",
+        "school_id" : 1
+    }
+},
+{
+    "pk" : 8,
+    "model" : "school.danhsachloailop",
+    "fields" : {
+        "loai" : "H",
+        "school_id" : 1
+    }
+},
+{
+    "pk" : 9,
+    "model" : "school.danhsachloailop",
+    "fields" : {
+        "loai" : "I",
+        "school_id" : 1
+    }
+},
+{
+    "pk" : 10,
+    "model" : "school.danhsachloailop",
+    "fields" : {
+        "loai" : "J",
+        "school_id" : 1
+    }
+},
+{
+    "pk" : 11,
+    "model" : "school.danhsachloailop",
+    "fields" : {
+        "loai" : "K",
+        "school_id" : 1
+    }
+},
+{
+    "pk" : 12,
+    "model" : "school.danhsachloailop",
+    "fields" : {
+        "loai" : "L",
+        "school_id" : 1
+    }
+},
+{
+    "pk" : 13,
+    "model" : "school.danhsachloailop",
+    "fields" : {
+        "loai" : "M",
+        "school_id" : 1
+    }
+},
+{
+    "pk" : 14,
+    "model" : "school.danhsachloailop",
+    "fields" : {
+        "loai" : "N",
+        "school_id" : 1
+    }
+},
+{
+    "pk" : 15,
+    "model" : "school.danhsachloailop",
+    "fields" : {
+        "loai" : "O",
+        "school_id" : 1
+    }
+},
+{
+    "pk" : 16,
+    "model" : "school.danhsachloailop",
+    "fields" : {
+        "loai" : "P",
+        "school_id" : 1
+    }
+},
+{
+    "pk" : 17,
+    "model" : "school.danhsachloailop",
+    "fields" : {
+        "loai" : "Q",
+        "school_id" : 1
+    }
+},
+{
+    "pk" : 1,
+    "model" : "sms.sms",
+    "fields" : {
+        "sender" : 1,
+        "success" : true,
+        "created" : "2011-05-20 01:08:23",
+        "content" : "7",
+        "phone" : "1",
+        "receiver" : "admin",
+        "recent" : true
+    }
+},
+{
+    "pk" : 2,
+    "model" : "sms.sms",
+    "fields" : {
+        "sender" : 1,
+        "success" : true,
+        "created" : "2011-05-20 01:08:24",
+        "content" : "7",
+        "phone" : "3",
+        "receiver" : "phong",
+        "recent" : true
+    }
+},
+{
+    "pk" : 3,
+    "model" : "sms.sms",
+    "fields" : {
+        "sender" : 1,
+        "success" : false,
+        "created" : "2011-05-20 01:08:24",
+        "content" : "7",
+        "phone" : "123",
+        "receiver" : "",
+        "recent" : true
+    }
+},
+{
+    "pk" : 22,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_logentry",
+        "name" : "Can add log entry",
+        "content_type" : 8
+    }
+},
+{
+    "pk" : 23,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_logentry",
+        "name" : "Can change log entry",
+        "content_type" : 8
+    }
+},
+{
+    "pk" : 24,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_logentry",
+        "name" : "Can delete log entry",
+        "content_type" : 8
+    }
+},
+{
+    "pk" : 28,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_membership",
+        "name" : "Can add membership",
+        "content_type" : 10
+    }
+},
+{
+    "pk" : 29,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_membership",
+        "name" : "Can change membership",
+        "content_type" : 10
+    }
+},
+{
+    "pk" : 30,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_membership",
+        "name" : "Can delete membership",
+        "content_type" : 10
+    }
+},
+{
+    "pk" : 25,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_organization",
+        "name" : "Can add organization",
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 26,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_organization",
+        "name" : "Can change organization",
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 27,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_organization",
+        "name" : "Can delete organization",
+        "content_type" : 9
+    }
+},
+{
+    "pk" : 34,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_reportcontact",
+        "name" : "Can add report contact",
+        "content_type" : 12
+    }
+},
+{
+    "pk" : 35,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_reportcontact",
+        "name" : "Can change report contact",
+        "content_type" : 12
+    }
+},
+{
+    "pk" : 36,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_reportcontact",
+        "name" : "Can delete report contact",
+        "content_type" : 12
+    }
+},
+{
+    "pk" : 31,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_userprofile",
+        "name" : "Can add user profile",
+        "content_type" : 11
+    }
+},
+{
+    "pk" : 32,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_userprofile",
+        "name" : "Can change user profile",
+        "content_type" : 11
+    }
+},
+{
+    "pk" : 33,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_userprofile",
+        "name" : "Can delete user profile",
+        "content_type" : 11
+    }
+},
+{
+    "pk" : 4,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_group",
+        "name" : "Can add group",
+        "content_type" : 2
+    }
+},
+{
+    "pk" : 5,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_group",
+        "name" : "Can change group",
+        "content_type" : 2
+    }
+},
+{
+    "pk" : 6,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_group",
+        "name" : "Can delete group",
+        "content_type" : 2
+    }
+},
+{
+    "pk" : 10,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_message",
+        "name" : "Can add message",
+        "content_type" : 4
+    }
+},
+{
+    "pk" : 11,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_message",
+        "name" : "Can change message",
+        "content_type" : 4
+    }
+},
+{
+    "pk" : 12,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_message",
+        "name" : "Can delete message",
+        "content_type" : 4
+    }
+},
+{
+    "pk" : 1,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_permission",
+        "name" : "Can add permission",
+        "content_type" : 1
+    }
+},
+{
+    "pk" : 2,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_permission",
+        "name" : "Can change permission",
+        "content_type" : 1
+    }
+},
+{
+    "pk" : 3,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_permission",
+        "name" : "Can delete permission",
+        "content_type" : 1
+    }
+},
+{
+    "pk" : 7,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_user",
+        "name" : "Can add user",
+        "content_type" : 3
+    }
+},
+{
+    "pk" : 8,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_user",
+        "name" : "Can change user",
+        "content_type" : 3
+    }
+},
+{
+    "pk" : 9,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_user",
+        "name" : "Can delete user",
+        "content_type" : 3
+    }
+},
+{
+    "pk" : 13,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_contenttype",
+        "name" : "Can add content type",
+        "content_type" : 5
+    }
+},
+{
+    "pk" : 14,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_contenttype",
+        "name" : "Can change content type",
+        "content_type" : 5
+    }
+},
+{
+    "pk" : 15,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_contenttype",
+        "name" : "Can delete content type",
+        "content_type" : 5
+    }
+},
+{
+    "pk" : 94,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_objectpermission",
+        "name" : "Can add object permission",
+        "content_type" : 32
+    }
+},
+{
+    "pk" : 95,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_objectpermission",
+        "name" : "Can change object permission",
+        "content_type" : 32
+    }
+},
+{
+    "pk" : 96,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_objectpermission",
+        "name" : "Can delete object permission",
+        "content_type" : 32
+    }
+},
+{
+    "pk" : 91,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_message",
+        "name" : "Can add message",
+        "content_type" : 31
+    }
+},
+{
+    "pk" : 92,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_message",
+        "name" : "Can change message",
+        "content_type" : 31
+    }
+},
+{
+    "pk" : 93,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_message",
+        "name" : "Can delete message",
+        "content_type" : 31
+    }
+},
+{
+    "pk" : 100,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_receiverreport",
+        "name" : "Can add receiver report",
+        "content_type" : 34
+    }
+},
+{
+    "pk" : 101,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_receiverreport",
+        "name" : "Can change receiver report",
+        "content_type" : 34
+    }
+},
+{
+    "pk" : 102,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_receiverreport",
+        "name" : "Can delete receiver report",
+        "content_type" : 34
+    }
+},
+{
+    "pk" : 103,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_sendreport",
+        "name" : "Can add send report",
+        "content_type" : 35
+    }
+},
+{
+    "pk" : 104,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_sendreport",
+        "name" : "Can change send report",
+        "content_type" : 35
+    }
+},
+{
+    "pk" : 105,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_sendreport",
+        "name" : "Can delete send report",
+        "content_type" : 35
+    }
+},
+{
+    "pk" : 40,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_block",
+        "name" : "Can add Kh\u1ed1i",
+        "content_type" : 14
+    }
+},
+{
+    "pk" : 41,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_block",
+        "name" : "Can change Kh\u1ed1i",
+        "content_type" : 14
+    }
+},
+{
+    "pk" : 42,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_block",
+        "name" : "Can delete Kh\u1ed1i",
+        "content_type" : 14
+    }
+},
+{
+    "pk" : 55,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_class",
+        "name" : "Can add L\u1edbp",
+        "content_type" : 19
+    }
+},
+{
+    "pk" : 56,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_class",
+        "name" : "Can change L\u1edbp",
+        "content_type" : 19
+    }
+},
+{
+    "pk" : 57,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_class",
+        "name" : "Can delete L\u1edbp",
+        "content_type" : 19
+    }
+},
+{
+    "pk" : 37,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_danhsachloailop",
+        "name" : "Can add Danh s\u00e1ch lo\u1ea1i l\u1edbp",
+        "content_type" : 13
+    }
+},
+{
+    "pk" : 38,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_danhsachloailop",
+        "name" : "Can change Danh s\u00e1ch lo\u1ea1i l\u1edbp",
+        "content_type" : 13
+    }
+},
+{
+    "pk" : 39,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_danhsachloailop",
+        "name" : "Can delete Danh s\u00e1ch lo\u1ea1i l\u1edbp",
+        "content_type" : 13
+    }
+},
+{
+    "pk" : 85,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_diemdanh",
+        "name" : "Can add \u0110i\u1ec3m danh",
+        "content_type" : 29
+    }
+},
+{
+    "pk" : 86,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_diemdanh",
+        "name" : "Can change \u0110i\u1ec3m danh",
+        "content_type" : 29
+    }
+},
+{
+    "pk" : 87,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_diemdanh",
+        "name" : "Can delete \u0110i\u1ec3m danh",
+        "content_type" : 29
+    }
+},
+{
+    "pk" : 76,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_hanhkiem",
+        "name" : "Can add H\u1ea1nh ki\u1ec3m",
+        "content_type" : 26
+    }
+},
+{
+    "pk" : 77,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_hanhkiem",
+        "name" : "Can change H\u1ea1nh ki\u1ec3m",
+        "content_type" : 26
+    }
+},
+{
+    "pk" : 78,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_hanhkiem",
+        "name" : "Can delete H\u1ea1nh ki\u1ec3m",
+        "content_type" : 26
+    }
+},
+{
+    "pk" : 70,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_khenthuong",
+        "name" : "Can add Khen th\u01b0\u1edfng",
+        "content_type" : 24
+    }
+},
+{
+    "pk" : 71,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_khenthuong",
+        "name" : "Can change Khen th\u01b0\u1edfng",
+        "content_type" : 24
+    }
+},
+{
+    "pk" : 72,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_khenthuong",
+        "name" : "Can delete Khen th\u01b0\u1edfng",
+        "content_type" : 24
+    }
+},
+{
+    "pk" : 73,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_kiluat",
+        "name" : "Can add K\u1ec9 lu\u1eadt",
+        "content_type" : 25
+    }
+},
+{
+    "pk" : 74,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_kiluat",
+        "name" : "Can change K\u1ec9 lu\u1eadt",
+        "content_type" : 25
+    }
+},
+{
+    "pk" : 75,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_kiluat",
+        "name" : "Can delete K\u1ec9 lu\u1eadt",
+        "content_type" : 25
+    }
+},
+{
+    "pk" : 64,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_mark",
+        "name" : "Can add B\u1ea3ng \u0111i\u1ec3m",
+        "content_type" : 22
+    }
+},
+{
+    "pk" : 65,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_mark",
+        "name" : "Can change B\u1ea3ng \u0111i\u1ec3m",
+        "content_type" : 22
+    }
+},
+{
+    "pk" : 66,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_mark",
+        "name" : "Can delete B\u1ea3ng \u0111i\u1ec3m",
+        "content_type" : 22
+    }
+},
+{
+    "pk" : 58,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_pupil",
+        "name" : "Can add H\u1ecdc sinh",
+        "content_type" : 20
+    }
+},
+{
+    "pk" : 59,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_pupil",
+        "name" : "Can change H\u1ecdc sinh",
+        "content_type" : 20
+    }
+},
+{
+    "pk" : 60,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_pupil",
+        "name" : "Can delete H\u1ecdc sinh",
+        "content_type" : 20
+    }
+},
+{
+    "pk" : 49,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_startyear",
+        "name" : "Can add Kh\u00f3a",
+        "content_type" : 17
+    }
+},
+{
+    "pk" : 50,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_startyear",
+        "name" : "Can change Kh\u00f3a",
+        "content_type" : 17
+    }
+},
+{
+    "pk" : 51,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_startyear",
+        "name" : "Can delete Kh\u00f3a",
+        "content_type" : 17
+    }
+},
+{
+    "pk" : 61,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_subject",
+        "name" : "Can add M\u00f4n",
+        "content_type" : 21
+    }
+},
+{
+    "pk" : 62,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_subject",
+        "name" : "Can change M\u00f4n",
+        "content_type" : 21
+    }
+},
+{
+    "pk" : 63,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_subject",
+        "name" : "Can delete M\u00f4n",
+        "content_type" : 21
+    }
+},
+{
+    "pk" : 79,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_tbhocky",
+        "name" : "Can add Trung b\u00ecnh h\u1ecdc k\u00ec",
+        "content_type" : 27
+    }
+},
+{
+    "pk" : 80,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_tbhocky",
+        "name" : "Can change Trung b\u00ecnh h\u1ecdc k\u00ec",
+        "content_type" : 27
+    }
+},
+{
+    "pk" : 81,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_tbhocky",
+        "name" : "Can delete Trung b\u00ecnh h\u1ecdc k\u00ec",
+        "content_type" : 27
+    }
+},
+{
+    "pk" : 82,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_tbnam",
+        "name" : "Can add Trung b\u00ecnh n\u0103m",
+        "content_type" : 28
+    }
+},
+{
+    "pk" : 83,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_tbnam",
+        "name" : "Can change Trung b\u00ecnh n\u0103m",
+        "content_type" : 28
+    }
+},
+{
+    "pk" : 84,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_tbnam",
+        "name" : "Can delete Trung b\u00ecnh n\u0103m",
+        "content_type" : 28
+    }
+},
+{
+    "pk" : 43,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_teacher",
+        "name" : "Can add Gi\u00e1o vi\u00ean",
+        "content_type" : 15
+    }
+},
+{
+    "pk" : 44,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_teacher",
+        "name" : "Can change Gi\u00e1o vi\u00ean",
+        "content_type" : 15
+    }
+},
+{
+    "pk" : 45,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_teacher",
+        "name" : "Can delete Gi\u00e1o vi\u00ean",
+        "content_type" : 15
+    }
+},
+{
+    "pk" : 52,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_term",
+        "name" : "Can add K\u00ec",
+        "content_type" : 18
+    }
+},
+{
+    "pk" : 53,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_term",
+        "name" : "Can change K\u00ec",
+        "content_type" : 18
+    }
+},
+{
+    "pk" : 54,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_term",
+        "name" : "Can delete K\u00ec",
+        "content_type" : 18
+    }
+},
+{
+    "pk" : 88,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_tkdiemdanh",
+        "name" : "Can add T\u1ed5ng k\u1ebft \u0111i\u1ec3m danh",
+        "content_type" : 30
+    }
+},
+{
+    "pk" : 89,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_tkdiemdanh",
+        "name" : "Can change T\u1ed5ng k\u1ebft \u0111i\u1ec3m danh",
+        "content_type" : 30
+    }
+},
+{
+    "pk" : 90,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_tkdiemdanh",
+        "name" : "Can delete T\u1ed5ng k\u1ebft \u0111i\u1ec3m danh",
+        "content_type" : 30
+    }
+},
+{
+    "pk" : 67,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_tkmon",
+        "name" : "Can add Trung b\u00ecnh m\u00f4n",
+        "content_type" : 23
+    }
+},
+{
+    "pk" : 68,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_tkmon",
+        "name" : "Can change Trung b\u00ecnh m\u00f4n",
+        "content_type" : 23
+    }
+},
+{
+    "pk" : 69,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_tkmon",
+        "name" : "Can delete Trung b\u00ecnh m\u00f4n",
+        "content_type" : 23
+    }
+},
+{
+    "pk" : 46,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_year",
+        "name" : "Can add N\u0103m h\u1ecdc",
+        "content_type" : 16
+    }
+},
+{
+    "pk" : 47,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_year",
+        "name" : "Can change N\u0103m h\u1ecdc",
+        "content_type" : 16
+    }
+},
+{
+    "pk" : 48,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_year",
+        "name" : "Can delete N\u0103m h\u1ecdc",
+        "content_type" : 16
+    }
+},
+{
+    "pk" : 16,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_session",
+        "name" : "Can add session",
+        "content_type" : 6
+    }
+},
+{
+    "pk" : 17,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_session",
+        "name" : "Can change session",
+        "content_type" : 6
+    }
+},
+{
+    "pk" : 18,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_session",
+        "name" : "Can delete session",
+        "content_type" : 6
+    }
+},
+{
+    "pk" : 19,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_site",
+        "name" : "Can add site",
+        "content_type" : 7
+    }
+},
+{
+    "pk" : 20,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_site",
+        "name" : "Can change site",
+        "content_type" : 7
+    }
+},
+{
+    "pk" : 21,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_site",
+        "name" : "Can delete site",
+        "content_type" : 7
+    }
+},
+{
+    "pk" : 97,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "add_sms",
+        "name" : "Can add sms",
+        "content_type" : 33
+    }
+},
+{
+    "pk" : 98,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "change_sms",
+        "name" : "Can change sms",
+        "content_type" : 33
+    }
+},
+{
+    "pk" : 99,
+    "model" : "auth.permission",
+    "fields" : {
+        "codename" : "delete_sms",
+        "name" : "Can delete sms",
+        "content_type" : 33
+    }
+},
+{
+    "pk" : 1,
+    "model" : "auth.user",
+    "fields" : {
+        "username" : "admin",
+        "first_name" : "admin",
+        "last_name" : "fullname",
+        "is_active" : true,
+        "is_superuser" : true,
+        "is_staff" : true,
+        "last_login" : "2011-05-20 11:48:34",
+        "groups" : [],
+        "user_permissions" : [],
+        "password" : "sha1$654c7$ef470cae95af6635a629e29d3862757d0717a1b1",
+        "email" : "admin@gmail.com",
+        "date_joined" : "2011-05-19 19:49:16"
+    }
+},
+{
+    "pk" : 2,
+    "model" : "auth.user",
+    "fields" : {
+        "username" : "so",
+        "first_name" : "so",
+        "last_name" : "fullname",
+        "is_active" : true,
+        "is_superuser" : false,
+        "is_staff" : false,
+        "last_login" : "2011-05-20 11:38:11",
+        "groups" : [],
+        "user_permissions" : [],
+        "password" : "sha1$f40b7$25807efff3f0bec500e39187dd778044de28764b",
+        "email" : "",
+        "date_joined" : "2011-05-20 00:36:12"
+    }
+},
+{
+    "pk" : 3,
+    "model" : "auth.user",
+    "fields" : {
+        "username" : "phong",
+        "first_name" : "phong",
+        "last_name" : "fullname",
+        "is_active" : true,
+        "is_superuser" : false,
+        "is_staff" : false,
+        "last_login" : "2011-05-20 11:38:49",
+        "groups" : [],
+        "user_permissions" : [],
+        "password" : "sha1$d0cb2$1f5e825cb623d1f6fea4e27d4ba9942cfb59a298",
+        "email" : "",
+        "date_joined" : "2011-05-20 00:36:31"
+    }
+},
+{
+    "pk" : 4,
+    "model" : "auth.user",
+    "fields" : {
+        "username" : "truong",
+        "first_name" : "truong",
+        "last_name" : "fullname",
+        "is_active" : true,
+        "is_superuser" : false,
+        "is_staff" : false,
+        "last_login" : "2011-05-20 11:50:52",
+        "groups" : [],
+        "user_permissions" : [],
+        "password" : "sha1$71dcc$9d84742ca504a4d3fa7578740402fbe8be688ad7",
+        "email" : "",
+        "date_joined" : "2011-05-20 00:36:48"
+    }
+},
+{
+    "pk" : 5,
+    "model" : "auth.user",
+    "fields" : {
+        "username" : "adminc3",
+        "first_name" : "",
+        "last_name" : "",
+        "is_active" : true,
+        "is_superuser" : false,
+        "is_staff" : false,
+        "last_login" : "2011-05-20 11:50:42",
+        "groups" : [],
+        "user_permissions" : [],
+        "password" : "sha1$bae80$e01e88798decbe3f2c176aebb3bcb44129c77576",
+        "email" : "",
+        "date_joined" : "2011-05-20 11:49:28"
+    }
+}]

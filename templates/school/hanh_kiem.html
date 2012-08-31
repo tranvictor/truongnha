@@ -1,0 +1,543 @@
+﻿{% extends "base.html" %}
+{% load upload_tags %}
+{% block css %}
+    <style type="text/css">
+        input.hk[value="T"] {
+            color: rgb(70, 136, 71);
+        }
+
+        input.hk[value="K"] {
+            color: rgb(58, 135, 173);
+        }
+
+        input.hk[value="TB"] {
+            color: rgb(248, 148, 6);
+        }
+
+        input.hk[value="Y"] {
+            color: rgb(185, 74, 72);
+        }
+
+        td.T {
+            color: rgb(70, 136, 71) !important;
+        }
+
+        td.K {
+            color: rgb(58, 135, 173) !important;
+        }
+
+        td.TB {
+            color: rgb(248, 148, 6) !important;
+        }
+
+        td.Y {
+            color: rgb(185, 74, 72) !important;
+        }
+
+        td.hk-thang {
+            background-color: #fbfbfb;
+        }
+    </style>
+{% endblock %}
+
+{% block js %}
+    {% if pos > 2 %}
+        <script language="JavaScript" type="text/javascript">
+        $(document).ready(function () {
+            var done = function (json) {
+                if (json.message != null && json.message != '')
+                    $("#smsNotification").html("<ul>" + json.message + "</ul>");
+                else
+                    $("#smsNotification").html('');
+                $("#smsNotification").dialog("open");
+            };
+
+            $("#smsNotification").dialog({
+                modal:true,
+                buttons:{
+                    Đóng:function () {
+                        $(this).dialog('close');
+                    }
+                },
+                autoOpen:false,
+                width:500,
+                height:450,
+                maxWidth:500,
+                maxHeight:450,
+                title:"Tin nhắn đã gửi"
+            });
+
+            $("#upload_modal").on('hidden', function () {
+                location.reload('true');
+            });
+            $("#upload-modal-exit").click(function () {
+                $("#upload_modal").modal('hide');
+                return false;
+            });
+
+            function getval(inp) {
+                if (inp == 'B' || inp == 'b') return 'TB';
+                return inp.toUpperCase();
+            }
+
+            $("select[name=class]").change(function () {
+                if ($(this).val() != -1) {
+                    var url = "{%url school_index  %}hanhkiem/" + $(this).val();
+                    $(location).attr('href', url);
+                }
+            });
+
+            var sendSelected = function () {
+                var data = '';
+                $("input[type=checkbox]").each(function () {
+                    if ($(this).is(':checked')) {
+                        var id = $(this).attr('id').split('_')[1];
+                        data = data + id + ' ';
+                        $(this).prop("checked", false);
+                    }
+                });
+                if (data == '') {
+                    alert("Hãy chọn ít nhất một cột");
+                    return false;
+                }
+                var arg = { type:"POST",
+                    url:"",
+                    data:{data:data, request_type:'sms'},
+                    datatype:"json",
+                    success:done
+                };
+                $.ajax(arg);
+                return false;
+            };
+
+            $("#sendSelected").click(sendSelected);
+
+            $(".submitbutton").attr("disabled", true);
+
+            $("input[name^=term]").each(function () {
+                $(this).on('keyup', function (event) {
+                    var $this = $(this).parent("td");
+                    var cellIndex = $this.index();
+                    if (event.keyCode == 40 || event.keyCode == 13) {
+                        $this.closest('tr').next().children().eq(cellIndex).find("input").focus();
+                        return false;
+                    }
+                    if (event.keyCode == 39) {
+                        $this.closest('td').next().find("input").focus();
+                        return false;
+                    }
+                    if (event.keyCode == 37) {
+                        $this.closest('td').prev().find("input").focus();
+                        return false;
+                    }
+                    if (event.keyCode == 38) {
+                        $this.closest('tr').prev().children().eq(cellIndex).find("input").focus();
+                        return false;
+                    }
+                    if ($(this).val().length > 1) $(this).val($(this).val().substring(0, 1));
+                    $(this).val($(this).val().replace(/[^TKBYtkby]/gi, ''));
+                    $(this).attr('value', $(this).val());
+                });
+
+                $(this).blur(function () {
+                    var old_value = $(this).parents("td").attr("hanhkiem");
+                    var id = $(this).parents("tr").attr('class').split(' ')[0];
+                    var value = getval($(this).val());
+                    var name = $(this).attr("name");
+                    $(this).val(value);
+                    $(this).attr('value', $(this).val());
+                    var data = { id:id, val:value, request_type:name};
+                    var arg = { type:"POST",
+                        url:"",
+                        data:data,
+                        datatype:"json",
+                        error:function () {
+                            $(".submitbutton").attr("disabled", false);
+                        }
+                    };
+                    if (value != old_value){
+                        $(this).parents("td").attr("hanhkiem", value);
+                        $.ajax(arg);
+                    }
+                    return false;
+
+                });
+            });
+
+
+            $("input[name=year]").each(function () {
+                $(this).on('keyup', function (event) {
+                    var $this = $(this).parent("td");
+                    var cellIndex = $this.index();
+                    if (event.keyCode == 40 || event.keyCode == 13) {
+                        $this.closest('tr').next().children().eq(cellIndex).find("input").focus();
+                        return false;
+                    }
+                    if (event.keyCode == 39) {
+                        $this.closest('td').next().find("input").focus();
+                        return false;
+                    }
+                    if (event.keyCode == 37) {
+                        $this.closest('td').prev().find("input").focus();
+                        return false;
+                    }
+                    if (event.keyCode == 38) {
+                        $this.closest('tr').prev().children().eq(cellIndex).find("input").focus();
+                        return false;
+                    }
+                    if ($(this).val().length > 1) $(this).val($(this).val().substring(0, 1));
+                    $(this).val($(this).val().replace(/[^TKBYtkby]/gi, ''));
+                    $(this).attr('value', $(this).val());
+                });
+
+                $(this).blur(function () {
+                    var id = $(this).parents("tr").attr('class').split(' ')[0];
+                    var old_value = $(this).parents("td").attr("hanhkiem");
+                    var y = getval($(this).val());
+                    $(this).val(y);
+                    $(this).attr('value', $(this).val());
+                    var data = { id:id, val:y, request_type:'year'};
+                    var arg = { type:"POST",
+                        url:"",
+                        data:data,
+                        datatype:"json",
+                        error:function () {
+                            $(".submitbutton").attr('disabled', false);
+                        }
+                    };
+                    if (y != old_value){
+                        $(this).parents("td").attr("hanhkiem", y);
+                        $.ajax(arg);
+                    }
+                    return false;
+                });
+            });
+
+            $("input[name^=hk_thang]").each(function () {
+                $(this).on('keyup', function (event) {
+                    var $this = $(this).parent("td");
+                    var cellIndex = $this.index();
+                    if (event.keyCode == 40 || event.keyCode == 13) {
+                        $this.closest('tr').next().children().eq(cellIndex).find("input").focus();
+                        return false;
+                    }
+                    if (event.keyCode == 39) {
+                        $this.closest('td').next().find("input").focus();
+                        return false;
+                    }
+                    if (event.keyCode == 37) {
+                        $this.closest('td').prev().find("input").focus();
+                        return false;
+                    }
+                    if (event.keyCode == 38) {
+                        $this.closest('tr').prev().children().eq(cellIndex).find("input").focus();
+                        return false;
+                    }
+
+                    if ($(this).val().length > 1) $(this).val($(this).val().substring(0, 1));
+                    $(this).val($(this).val().replace(/[^TKBYtkby]/gi, ''));
+                    $(this).attr('value', $(this).val());
+                });
+
+
+                $(this).blur(function () {
+                    var id = $(this).parents("tr").attr('class').split(' ')[0];
+                    var old_value = $(this).parents("td").attr("hanhkiem");
+                    var value = getval($(this).val());
+                    $(this).val(value);
+                    $(this).attr('value', $(this).val());
+                    var thang = $(this).attr("name");
+                    var data = { id:id, request_type:thang, 'val':value};
+                    var arg = { type:"POST",
+                        url:"",
+                        data:data,
+                        datatype:"json",
+                        error:function () {
+                            $(".submitbutton").attr('disabled', false);
+                        }
+                    };
+                    if (value != old_value){
+                        $(this).parents("td").attr("hanhkiem", value);
+                        $.ajax(arg);
+                    }
+                    return false;
+                });
+            });
+
+            $("input[type=checkbox]").change(function () {
+                var selected = '.' + $(this).parent().attr("class").split(' ')[0];
+                if ($(this).is(':checked')) {
+                    $(selected).addClass('selected');
+                }
+                else {
+                    $(selected).removeClass('selected');
+                }
+            });
+        });
+        </script>
+    {% endif %}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb class 'class_detail' class.id %}
+    {% add_crumb 'Hạnh kiểm' %}
+{% endblock %}
+
+{% block content %}
+    <div class="form-inline pagination-centered">
+        <label for="id_class">Lớp</label>
+        <select name="class" id="id_class">
+            {% for cl in classList %}
+                {% if cl.id != class.id %}
+                    <option value="{{ cl.id }}"> {{ cl }}</option>
+                {% else %}
+                    <option selected="selected" value="{{ cl.id }}"> {{ cl }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+
+    <div id="submenu" class="btn-toolbar">
+        <div class="btn-group">
+            {% if user.userprofile.organization.level == 'T' and pos > 3 %}
+                <button id="sendSelected" class="btn btn-warning" title="Gửi SMS cho những tháng đã chọn">
+                    <i class="icon-envelope-alt"></i> Gửi tin nhắn
+                </button>
+            {% endif %}
+            <a class="btn"
+               title="Nhập chương trình học từ file Excel"
+               href="#upload_modal"
+               data-toggle="modal"
+               id="import">
+                <i class="icon-upload-alt"></i>
+                Nhập từ Excel</a>
+            <a class="btn" title="Xuất hạnh kiểm ra file Excel."
+               href="{%url export_hanh_kiem class.id %}" id="export">
+                <i class="icon-download-alt"></i>
+                Xuất ra Excel </a>
+        </div>
+
+        <div class="btn-group pull-right">
+            <button class="btn disabled"> Nhập một chữ cái:
+                <span class="badge badge-success">T</span>: Tốt,
+                <span class="badge badge-info">K</span>: Khá,
+                <span class="badge badge-warning">B</span>: Trung bình,
+                <span class="badge badge-important">Y</span>: Yếu.
+            </button>
+            {% if user.userprofile.organization.level == 'T' %}
+                <button class="btn disabled span1"
+                        title="Có thể dùng phím Enter hoặc phím mũi tên xuống để xuống ô dưới">
+                    <i class="icon-gift"></i> típ
+                </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <form action="{% url hanh_kiem class.id %}" method="post">{% csrf_token %}
+        {% if message != None %}
+            {{ message }}
+        {% endif %}
+
+        <table class="table table-bordered table-hover grid-edit fifth-row">
+            {% if pos == 4 %}
+                <thead>
+                <tr>
+                    <th rowspan="2">TT</th>
+                    <th rowspan="2" class="align-left">Họ tên</th>
+                    <th rowspan="2">Ngày sinh</th>
+                    <th class="hk1"><input title="Chọn nhắn tin hạnh kiểm kì 1" type="checkbox" id="checkbox_6"/></th>
+                    {% if term.number == 1 %}
+                        <th></th>
+                        <th></th>
+                    {% else %}
+                        <th class="hk2"><input title="Chọn nhắn tin hạnh kiểm kì 2" type="checkbox" id="checkbox_7"/>
+                        </th>
+                        <th class="cn"><input title="Chọn nhắn tin hạnh kiểm cả năm" type="checkbox" id="checkbox_8"/>
+                        </th>
+                    {% endif %}
+
+                    <th class="col1"><input title="Chọn nhắn tin hạnh kiểm tháng 9" type="checkbox" id="checkbox_9"/>
+                    </th>
+                    <th class="col2"><input title="Chọn nhắn tin hạnh kiểm tháng 10" type="checkbox" id="checkbox_10"/>
+                    </th>
+                    <th class="col3"><input title="Chọn nhắn tin hạnh kiểm tháng 11" type="checkbox" id="checkbox_11"/>
+                    </th>
+                    <th class="col4"><input title="Chọn nhắn tin hạnh kiểm tháng 12" type="checkbox" id="checkbox_12"/>
+                    </th>
+                    <th class="col5"><input title="Chọn nhắn tin hạnh kiểm tháng 1" type="checkbox" id="checkbox_1"/>
+                    </th>
+                    <th class="col6"><input title="Chọn nhắn tin hạnh kiểm tháng 2" type="checkbox" id="checkbox_2"/>
+                    </th>
+                    <th class="col7"><input title="Chọn nhắn tin hạnh kiểm tháng 3" type="checkbox" id="checkbox_3"/>
+                    </th>
+                    <th class="col8"><input title="Chọn nhắn tin hạnh kiểm tháng 4" type="checkbox" id="checkbox_4"/>
+                    </th>
+                    <th class="col9"><input title="Chọn nhắn tin hạnh kiểm tháng 5" type="checkbox" id="checkbox_5"/>
+                    </th>
+                </tr>
+                <tr>
+                    <th class="hk1">Kì 1</th>
+                    <th class="hk2">Kì 2</th>
+                    <th class="cn">Cả năm</th>
+
+                    <th class="col1" title="Tháng">Th.9</th>
+                    <th class="col2" title="Tháng">Th.10</th>
+                    <th class="col3" title="Tháng">Th.11</th>
+                    <th class="col4" title="Tháng">Th.12</th>
+                    <th class="col5" title="Tháng">Th.1</th>
+                    <th class="col6" title="Tháng">Th.2</th>
+                    <th class="col7" title="Tháng">Th.3</th>
+                    <th class="col8" title="Tháng">Th.4</th>
+                    <th class="col9" title="Tháng">Th.5</th>
+                </tr>
+                </thead>
+            {% else %}
+                <thead>
+                <tr>
+                    <th>TT</th>
+                    <th class="align-left">Họ tên</th>
+                    <th>Ngày sinh</th>
+
+                    <th>Kì 1</th>
+                    <th>Kì 2</th>
+                    <th>Cả năm</th>
+
+                    <th title="Tháng">9</th>
+                    <th title="Tháng">10</th>
+                    <th title="Tháng">11</th>
+                    <th title="Tháng">12</th>
+                    <th title="Tháng">1</th>
+                    <th title="Tháng">2</th>
+                    <th title="Tháng">3</th>
+                    <th title="Tháng">4</th>
+                    <th title="Tháng">5</th>
+                </tr>
+
+                </thead>
+            {% endif %}
+
+            <tbody>
+            {% for p,f, v in list %}
+                <tr class="{{p.id}}">
+                    <td>{{ forloop.counter }}</td>
+
+                    <td class="align-left" style="font-size: 1.15em;">{{ p.last_name }} {{ p.first_name }}</td>
+
+                    <td>{{ p.birthday|date:"SHORT_DATE_FORMAT" }}</td>
+
+                    {% if pos > 2 %}
+                        {% if term.number == 1 %}
+                            <td class="hk1" hanhkiem="{{ v.term1}}">{{ f.term1|default_if_none:"" }}</td>
+                            <td class="hk2"></td>
+                            <td class="cn"></td>
+                        {% else %}
+                            {% if pos < 4 %}
+                                <td class="hk {{ v.term1}}">{{ v.term1|default_if_none:"" }}</td>
+                            {% else %}
+                                <td class="hk1" hanhkiem="{{ v.term1 }}">{{ f.term1|default_if_none:"" }}</td>
+                            {% endif %}
+                            <td class="hk2" hanhkiem="{{ v.term2 }}">{{ f.term2|default_if_none:""  }}</td>
+                            <td class="cn" hanhkiem="{{ v.year }}">{{ f.year|default_if_none:""  }}</td>
+                        {% endif %}
+
+                        {% for field in f.get_list_month %}
+                            <td class="col{{ forloop.counter }} hk-thang" hanhkiem="{{ field.value }}">{{ field }}</td>
+                        {% endfor %}
+                    {% else %}
+                        <td class="{{ v.term1 }}">{{ v.term1|default_if_none:"" }}</td>
+                        <td class="{{ v.term2 }}">{{ v.term2|default_if_none:"" }}</td>
+                        <td class="{{ v.year }}">{{ v.year|default_if_none:"" }}</td>
+
+                        {% for field in v.get_list_month %}
+                            <td class="{{ field }} hk-thang"> {{ field|default_if_none:"" }}</td>
+                        {% endfor %}
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% if pos > 3 %}
+            <div class="pagination-centered">
+                <input class="btn submitbutton" type="submit" value="Lưu"/>
+            </div>
+        {% endif %}
+    </form>
+
+    <div style="display: None;">
+        <div id="smsNotification">
+        </div>
+    </div>
+    {% if pos > 3 %}
+
+        <div class="modal fade" id="upload_modal" style="display: none;">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">×</a>
+
+                <h3>Nhập hạnh kiểm từ file Excel</h3>
+            </div>
+            <div class="modal-body">
+                <!-- The file upload form used as target for the file upload widget -->
+                <form id="fileupload" action="" method="POST" enctype="multipart/form-data">
+                    <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+                    <div class="row fileupload-buttonbar">
+                        <div class="span5">
+                            <!-- The fileinput-button span is used to style the file input field as button -->
+                            <span class="btn btn-success fileinput-button">
+                                <i class="icon-plus icon-white"></i>
+                                <span>Chọn files...</span>
+                                <input type="file" name="files[]" multiple>
+                            </span>
+                            <button type="submit" class="btn btn-primary start">
+                                <i class="icon-upload icon-white"></i>
+                                <span>Tải tất cả</span>
+                            </button>
+                            <button type="reset" class="btn btn-warning cancel">
+                                <i class="icon-ban-circle icon-white"></i>
+                                <span>Dừng lại</span>
+                            </button>
+                            <button type="button" class="btn btn-danger delete">
+                                <i class="icon-trash icon-white"></i>
+                                <span>Xóa</span>
+                            </button>
+                            <input type="checkbox" class="toggle">
+                        </div>
+                        <div class="span3">
+                            <!-- The global progress bar -->
+                            <div class="progress progress-success progress-striped active fade">
+                                <div class="bar" style="width:0;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- The loading indicator is shown during image processing -->
+                    <div class="fileupload-loading"></div>
+                    <br>
+                    <!-- The table listing the files available for upload/download -->
+                    <table class="table table-striped">
+                        <tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery">
+
+                        </tbody>
+                    </table>
+                </form>
+                <div id="errorDetail">
+
+                </div>
+                <div class="hint">
+                    <p>
+                        Chú ý: Phải dùng file Excel theo <a
+                            href="{% url export_hanh_kiem class.id %}">mẫu
+                        này</a>.
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn" id="upload-modal-exit">Thôi</a>
+            </div>
+        </div>
+        {% upload_js %}
+        <script type="text/javascript" src="/static/js/jquery_file_upload/qlnt_upload_for_hanh_kiem.js"></script>
+        <script type="text/javascript" src="/static/js/jquery_file_upload/locale.js"></script>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,35 @@
+﻿{% block content %}
+    <div class="span6">
+        <h3>Thông tin nghỉ học</h3>
+        {% if count > 0 %}
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>TT</th>
+                    <th>Ngày</th>
+                    <th>Hình thức</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                {% for f in form %}
+                    <tr>
+                        <td>
+                            <p>{{ forloop.counter }}</p>
+                        </td>
+                        <td>
+                            <p>{{ f.time|date:"SHORT_DATE_FORMAT" }}</p>
+                        </td>
+
+                        <td>
+                            <p>{{ f.loai }}</p>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p align="center">Học sinh chưa nghỉ buổi nào.</p>
+        {% endif %}
+    </div>
+{% endblock %}

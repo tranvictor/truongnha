@@ -1,0 +1,73 @@
+﻿{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+{#    {% add_crumb 'Thiết lập' 'info' %}#}
+    {% add_crumb 'Quản lý lớp và chủ nhiệm' 'classes' %}
+    {% add_crumb 'Thêm lớp học' %}
+{% endblock %}
+
+{% block content %}
+    <script>
+        $(document).ready(function() {
+            $("#id_name").change(function() {
+                var names = $(this).val().split(" ");
+                if (isNaN(parseInt(names[0]))) {
+                    $("#submit").attr('disabled', true);
+                    alert('Tên lớp bắt đầu bằng số và dấu cách, ví dụ 10 A, 10 B..');
+                }
+                else{
+                    if ((parseInt(names[0]) >= {{ up }}) || (parseInt(names[0]) < {{ low }})){
+                        $("#submit").attr('disabled', true);
+                        var upto = {{ up }} - 1;
+                        alert('Lớp phải từ {{ low }} đến '+ upto);
+                    }
+                    else
+                        $("#submit").removeAttr('disabled');
+                }
+            });
+        });
+    </script>
+    {% if message != None %}
+        {{ message }} <br>
+    {% endif %}
+
+    <form class="span6" method="post" action= {% url add_class %} >{% csrf_token %}
+        <legend>Thêm lớp học mới</legend>
+        {{ form.non_field_errors }}
+        <table class="table table-condensed no-border">
+            <tr>
+                <th><label for="id_name">Tên lớp(*):</label></th>
+                <td>
+                    {{ form.name.errors }}
+                    {{ form.name }}
+                    <span class="help-inline">Tên lớp bắt đầu bằng Số và Dấu Cách. Ví dụ: <strong>10 A</strong>.</span>
+                </td>
+            </tr>
+
+            <tr>
+                <th><label for="id_phan_ban">Phân ban(*):</label></th>
+                <td>
+                    {{ form.phan_ban.errors }}
+                    {{ form.phan_ban }}
+                </td>
+            </tr>
+                        
+            <tr>
+                <th><label for="id_teacher_id">Giáo viên chủ nhiệm:</label></th>
+                <td>
+                    {{ form.teacher_id.errors }}
+                    {{ form.teacher_id }}
+                </td>
+            </tr>
+
+            <tr>
+                <th></th>
+                <td>
+				<input class="btn btn-danger" type="submit" id="submit" title="Thêm lớp học" value="Thêm"/>
+                </td>
+            </tr>			
+        </table>
+    </form>
+{% endblock %}

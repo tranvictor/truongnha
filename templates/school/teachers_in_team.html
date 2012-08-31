@@ -1,0 +1,156 @@
+{% block content %}
+    {% if pos > 3 %}
+        <script>
+            $(document).ready(function() {
+                $("select[name=team_id]").each(function() {
+                    $(this).change(function() {
+                        var id = $(this).parents("tr").attr('class').split(' ')[0];
+                        var team = $(this).val();
+                        var p = $(this).parents("tr");
+                        var data = { id: id, team:team, request_type:'team'};
+                        var arg = { type:"POST",
+                            url:"school/teachers_in_team/{{ team.id }}",
+                            data: data,
+                            datatype:"json",
+                            success:function(){
+                                p.remove();
+                            }
+                        };
+                        $.ajax(arg);
+                        return false;
+
+                    });
+                });
+
+                $("select[name=major]").each(function() {
+                    $(this).change(function() {
+                        var id = $(this).parents("tr").attr('class').split(' ')[0];
+                        var major = $(this).val();
+                        var data = { id: id, major:major, request_type:'major'};
+                        var arg = { type:"POST",
+                            url:"school/teachers_in_team/{{ team.id }}",
+                            data: data,
+                            datatype:"json",
+                            success:function() {
+                                applyListener();
+                            }
+                        };
+                        $.ajax(arg);
+                        return false;
+                    });
+                });
+
+                $("select[name=group_id]").each(function() {
+                    $(this).change(function() {
+                        var id = $(this).parents("tr").attr('class').split(' ')[0];
+                        var group = $(this).val();
+                        var data = { id: id, group:group, request_type:'group'};
+                        var arg = { type:"POST",
+                            url:"school/teachers_in_team/{{ team.id }}",
+                            data: data,
+                            datatype:"json",
+                            success:function(){
+                            }
+                        };
+                        $.ajax(arg);
+                        return false;
+
+                    });
+                });
+            });
+        </script>
+    {% endif %}
+
+    <table class="table table-striped">
+        <colgroup>
+        {% if pos > 3 %}
+            <col style="width: 5%;">
+        {% endif %}
+        <col style="width: 5%;">
+        <col style="width: 20%;">
+        <col style="width: 10%;">
+        <col style="width: 5%;">
+        <col style="width: 10%;">
+        <col style="width: 10%;">
+        <col style="width: 10%;">
+        </colgroup>
+        <thead>
+        <tr>
+
+            {% if pos > 3 %}
+                <th title="Chọn cả tổ" class="" style="text-align: center;">
+                    <input type="checkbox" class="checkbox_all"/>
+                </th>
+            {% endif %}
+            <th class="align-left">STT</th>
+            <th class="align-left">Họ tên</th>
+            <th class="align-left">Ngày sinh</th>
+            <th class="align-left">Giới tính</th>
+            <th class="align-left">Dạy môn</th>
+            <th class="align-left">Tổ</th>
+            <th class="align-left">Nhóm</th>
+        </tr>
+        </thead>
+        {% if message != None %}
+            {{ message }}
+        {% endif %}
+        <tbody>
+        {% for ss, f in list %}
+            <tr class="{{ ss.id }}">
+                {% if pos > 3 %}
+                    <td  style="text-align: center;">
+                        <input type="checkbox" class="checkbox_{{ss.id}}"/>
+                    </td>
+                {% endif %}
+                <td class="align-left">{{ forloop.counter }}</td>
+                <td class="align-left">
+                    {% if pos > 3 or teacher_id == ss.id %}
+                        <a href="{%url school.views.school_index  %}viewTeacherDetail/{{ss.id}}">
+                            {{ ss.last_name }} {{ ss.first_name }} </a>
+                    {% else %}
+                        {{ ss.last_name }} {{ ss.first_name }}
+                    {% endif %}
+                </td>
+
+                <td class="align-left"> {{ ss.birthday|date:"SHORT_DATE_FORMAT" }}</td>
+                <td class="align-left"> {{ ss.sex }} </td>
+                {% if pos > 3 %}
+                    <td class="align-left"> {{ f.major }} </td>
+                    <td class="align-left"> {{ f.team_id }} </td>
+                    <td class="align-left"> {{ f.group_id }} </td>
+                    {% else %}
+                    <td class="align-left">
+                        {% if ss.major == '-1' %}
+                            Chưa có
+                        {% else %}
+                            {{ ss.major }}
+                        {% endif %}
+                    </td>
+                    <td class="align-left">
+                        {% if ss.team_id%}
+                            {{ ss.team_id }}
+                        {% else %}
+                            Chưa có
+                        {% endif %}
+                    </td>
+                    <td class="align-left">
+                        {% if ss.group_id %}
+                            {{ ss.group_id }}
+                        {% else %}
+                            Chưa có
+                        {% endif %}
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+    {% if pos > 3 %}
+        <tr>
+            <td class="align-left">&nbsp</td>
+        </tr>
+    {% endif %}
+    <input id="reload" type="hidden" onclick="location.replace(location.href)"/>
+{% endblock %}

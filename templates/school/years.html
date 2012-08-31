@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Các năm học' %}
+{% endblock %}
+
+{% block content %}
+{#	<h2>Các năm học</h2> #}
+	<ul>
+	{% for year in years %}
+			<li>{{ year.time }}</li>
+	{% endfor %}
+	</ul>		
+{% endblock %}
+

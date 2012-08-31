@@ -1,0 +1,23 @@
+﻿{% block content %}
+    {#<table border = 0 align = "center" width = "100%">#}
+    {#</table>#}
+    {#<br>#}
+
+    <form action="{{ url }}" method="post" class="onPage">{% csrf_token %}
+        <legend>Thêm khen thưởng</legend>
+        {{ form.non_field_errors }}
+        <table class="table table-condensed no-border">
+            {{ form.as_table }}
+            {% if message != None %}
+                {{ message }} <br>
+            {% endif %}
+            <tr>
+                <th></th>
+                <td>
+                    <input type="submit" class="btn btn-danger" value="Lưu"/>
+                    <a href="{% url ktkl p.id %}" class="btn onPage">Quay lại</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+{% endblock %}

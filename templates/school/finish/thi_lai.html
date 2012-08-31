@@ -1,0 +1,205 @@
+﻿{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb selectedClass 'class_detail' selectedClass.id %}
+    {% add_crumb 'Xếp loại' 'xl_ca_nam_theo_lop' selectedClass.id 1 %}	
+    {% add_crumb 'Nhập điểm thi lại' %}
+{% endblock %}
+
+{% block content %}
+
+	{% load mark %}
+
+    {% if message %}
+        {{ message }}
+    {% else %}
+        <script>
+            function acceptDigits(tb) {
+                if (tb.readOnly) return;
+                var ok = true;
+                var exp = /[^((\d).,)]/g;
+                tb.value = tb.value.replace(exp, '');
+
+                var exp1 = /[,]/g;
+                tb.value = tb.value.replace(exp1, '.');
+
+
+                var value = tb.value;
+                //kiem tra xem no co nhieu hon hai dau cham hay ko
+
+                var countDot = 0;
+                for (var i = 0; i < value.length; i++)
+                    if (value.charAt(i) == ".")
+                        countDot++;
+
+                if (countDot > 1)
+                    tb.value = value.substring(0, value.length - 1);
+
+                if (tb.value.length > 3) {
+                    tb.value = tb.value.substring(0, 3);
+                    ok = false;
+                }
+
+                var number = parseFloat(tb.value);
+
+
+                if ((10 < number ) && (number < 100)) {
+                    var temp = number / 10;
+                    tb.value = temp.toString();
+                }
+                if (number >= 100) {
+                    tb.value = tb.value.substring(0, 2);
+                    ok = false;
+                }
+                if ((tb.value.length == 2) && (tb.value[0] == '0')) {
+                    var temp = number / 10;
+                    tb.value = temp.toString();
+                }
+            }
+
+        </script>
+        <br>
+        Hướng dẫn: Nếu học sinh đăng kí thi lại môn nào thì nhập điểm vào môn đó, ngược lại thì bỏ trống.
+        <form action="{% url  thi_lai selectedClass.id %}" method="post">{% csrf_token %}
+            <input type="submit" class="btn" value="Lưu và xếp loại">
+
+
+            {% for tkMonList,tbNam in list %}
+                <br>
+                <br>
+                {{ tbNam.student_id.last_name }} &nbsp {{ tbNam.student_id.first_name }}
+				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+				{{ tbNam.student_id.birthday|date:"SHORT_DATE_FORMAT" }}
+                <table class="table table-bordered ">
+                    <tr>
+                        <th> Môn
+                        </th>
+                        {% for tkMon in tkMonList %}
+                            {% if tkMon.thi_lai %}
+                                <th>
+                                    {{ tkMon.subject_id.name }}
+                                </th>
+                            {% endif %}
+                        {% endfor %}
+                        <th>
+                            TB cả năm
+                        </th>
+                        <th>
+                            Học lực
+                        </th>
+                        <th> Xếp loại
+                        </th>
+                    </tr>
+
+                    <tr>
+                        <td> Điểm TB
+                        </td>
+                        {% for tkMon in tkMonList %}
+                            {% if tkMon.thi_lai %}
+                                <td>
+									{% if tkMon.subject_id.nx %}									
+										{{ tkMon.tb_nam|convertMarkToCharacter }}
+									{% else %}
+										{{ tkMon.tb_nam }}
+									{% endif %}	
+                                </td>
+                            {% endif %}
+                        {% endfor %}
+                        <td>
+                            {{ tbNam.tb_nam }}
+                        </td>
+                        <td>
+                            Yếu
+                        </td>
+                        <td>
+                            &nbsp
+                        </td>
+                    </tr>
+					
+                    <tr>
+                        <td> Điểm KT lại
+                        </td>
+                        {% for tkMon in tkMonList %}
+                            {% if tkMon.thi_lai %}
+								{% if not tkMon.subject_id.nx %}									
+									{% ifequal tkMon.diem_thi_lai None %}
+										<td>
+											<input class="mark" type="text" id="{{tkMon.id}}" name="{{tkMon.id}}">
+										</td>
+									{% else %}
+										<td>
+											<input class="mark" type="text" id="{{tkMon.id}}" name="{{tkMon.id}}"
+												   value="{{tkMon.diem_thi_lai}}" >
+										</td>
+									{% endifequal %}
+								{% else %}
+									{% ifequal tkMon.diem_thi_lai None %}
+										<td>
+											<select name="{{tkMon.id}}" onchange="submitClass()">
+												<option value="-1" selected> ---------------- </option>
+												<option value="7" > Đạt  </option>
+												<option value="4" > Chưa đạt </option>
+											</select>		
+										</td>
+									{% else %}
+										<td>
+											{% if  tkMon.diem_thi_lai >= 5 %}
+												<select name="{{tkMon.id}}" onchange="submitClass()">
+													<option value="-1" > ---------------- </option>
+													<option value="7" selected > Đạt  </option>
+													<option value="4" > Chưa đạt </option>
+												</select>		
+											{% else %}	
+												<select name="{{tkMon.id}}" onchange="submitClass()">
+													<option value="-1" > ---------------- </option>
+													<option value="7" > Đạt  </option>
+													<option value="4" selected > Chưa đạt </option>
+												</select>		
+											{% endif %}																					
+										</td>
+									{% endifequal %}								
+								{% endif %}	
+
+                            {% endif %}
+                        {% endfor %}
+
+                        {% ifequal tbNam.tb_thi_lai None %}
+                            <td>
+                            </td>
+                        {% else %}
+                            <td>
+                                {{tbNam.tb_thi_lai}}
+                            </td>
+                        {% endifequal %}
+                        <td>
+							{{ tbNam.hl_thi_lai|convertHlToVietnamese }}
+                        </td>
+                        <td>
+                            {% if tbNam.len_lop %}
+                                Được lên lớp
+                            {% else %}
+                                {% if tbNam.len_lop != None %}
+                                    Không được lên lớp
+                                {% else %}
+                                    &nbsp
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            {% endfor %}
+        </form>
+        <script>
+            $(document).ready(function () {
+                $('input').keyup(function () {
+                    //if ((this.id[0] != 't') && (this.id[0] != 'h') && (this.id[0] != 'x')) {
+                        acceptDigits(this);
+					//}
+
+                });
+            });
+        </script>
+    {% endif %}
+{% endblock %}

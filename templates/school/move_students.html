@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+{#    {% add_crumb 'Thiết lập' 'info' %}#}
+    {% add_crumb 'Chuyển lớp'  %}
+{% endblock %}
+
+
+{% block content %}
+    <script type="text/javascript" src="/static/js/template_js/move_students.js"></script>
+    <div class="well form-inline pagination-centered">
+        <label for="source_id">Từ lớp: </label>
+        <select name="source" id="source_id">
+            <option value="-1"> ------ </option>
+            {% for cl in classList %}
+                <option value="{{ cl.id }}">{{ cl }}</option>
+            {% endfor %}
+            <option value="0"> Chưa phân lớp </option>
+        </select>
+
+        <label for="target_id">Đến lớp: </label>
+        <select name="target" id="target_id">
+            <option> ------ </option>
+        </select>
+
+        <button class="btn btn-danger align-center" id="moveSelected" style="display: none"> Chuyển </button>
+    </div>
+
+    <div id="students_table">
+
+    </div>
+
+    <div class="btn-toolbar pagination-centered">
+    <button class="btn " id="selectAll"  style="display: none;"> Đảo chọn </button>
+    </div>
+{% endblock %}

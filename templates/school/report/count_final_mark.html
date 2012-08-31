@@ -1,0 +1,153 @@
+﻿{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Báo cáo' 'department_report' %}
+    {% if type == '0' %}
+        {% add_crumb 'Điểm thi học kỳ' %}
+    {% else %}
+        {% add_crumb 'Điểm trung bình học kỳ' %}
+    {% endif %}
+
+{% endblock %}
+
+{% block js %}
+    <script>
+        $(document).ready(function () {
+            $('#term').change(function () {
+                $('#subject').val("-1");
+                $('#block').val("-1");
+            });
+
+            $('#subject').change(function () {
+                $('#block').val("-1");
+            });
+
+            $('#block').change(function () {
+                var yearNumber = $('#year').val().split("-")[0];
+                var termNumber = $('#term').val();
+                var subjectIndex = $('#subject').val();
+                var blockIndex = $('#block').val();
+
+                if ((blockIndex != '-1') && (subjectIndex != '-1'))
+                    window.location.href = "/school/report/countFinalMark/{{type}}/" + yearNumber +
+                            "/" + termNumber + '/' + subjectIndex + '/' + blockIndex;
+            })
+
+            $('#year').val("{{yearNumber}}");
+            $('#term').val("{{termNumber}}");
+            $('#subject').val("{{subjectIndex}}");
+            $('#block').val("{{blockIndex}}");
+        });
+    </script>
+
+{% endblock %}
+
+{% block content %}
+    <div class="pagination-centered">Năm học
+        <select id="year" style="width:100px">
+            {% for i in yearList %}
+                <option value={{ i }}> {{ i }} </option>
+            {% endfor %}
+        </select>
+        Học kỳ
+        <select id="term" style="width:100px">
+            <option value='-1'> -----------</option>
+            <option value='1'> Học kỳ I</option>
+            <option value='2'> Học kỳ II</option>
+            {% if type == '1' %}
+                <option value='3'> Cả năm</option>
+            {% endif %}
+        </select>
+        Môn
+        <select id="subject" class="input-medium">
+            <option value="-1"> Chọn môn</option>
+            {% for s in subjectList %}
+                <option value="{{forloop.counter}}"> {{ s }} </option>
+            {% endfor %}
+        </select>
+        Khối
+        <select id="block" class="input-medium">
+            <option value="-1"> Chọn khối</option>
+            <option value="6"> 6</option>
+            <option value="7"> 7</option>
+            <option value="8"> 8</option>
+            <option value="9"> 9</option>
+
+            <option value="10"> 10</option>
+            <option value="11"> 11</option>
+            <option value="12"> 12</option>
+        </select>
+    </div>
+
+    {% if blockIndex != -1 %}
+        <div class="btn-toolbar pull-right"><a class='btn' href="{% url count_final_mark type yearNumber termNumber subjectIndex blockIndex 1 %}">
+            Xuất ra
+            Excel </a>
+        </div>
+
+        <table class="table table-bordered grid">
+            <tr>
+                <th rowspan="2">
+                    STT
+                </th>
+                <th rowspan="2" class="align-left">
+                    Tên trường
+                </th>
+                <th rowspan="2">
+                    Tổng số
+                </th>
+                {% for h in headerTable %}
+                    <th colspan="2">
+                        {{ h }}
+                    </th>
+                {% endfor %}
+            </tr>
+            <tr>
+                {% for h in headerTable %}
+                    <th>SL</th>
+                    <th>%</th>
+                {% endfor %}
+
+            </tr>
+            {% for school,sum,aList in list %}
+                <tr>
+                    <td>
+                        {{ forloop.counter }}
+                    </td>
+                    <td class="align-left">
+                        {{ school }}
+                    </td>
+                    <td>
+                        {{ sum }}
+                    </td>
+                    {% for sl,pt in aList %}
+                        <td>
+                            {{ sl }}
+                        </td>
+                        <td>
+                            {{ pt }}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            <tr style="font-weight:bold">
+                <td colspan=2>
+                    Tổng
+                </td>
+                <td>
+                    {{ sumsum|floatformat:"0" }}
+                </td>
+                {% for sl,pt in sumList %}
+                    <td>
+                        {{ sl }}
+                    </td>
+                    <td>
+                        {{ pt }}
+                    </td>
+                {% endfor %}
+            </tr>
+        </table>
+    {% endif %}
+{% endblock %}

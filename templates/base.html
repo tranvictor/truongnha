@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<head xmlns="http://www.w3.org/1999/xhtml">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block title %}
+        {% if user.is_anonymous %}
+            <title>Trường Nhà</title>
+        {% else %}
+            <title>Trường Nhà - {{ user.userprofile.organization.name }}</title>
+        {% endif %}
+    {% endblock %}
+    <link rel="shortcut icon" href="/static/images/favicon.ico" />
+
+    <link href="/static/css/smoothness/jquery-ui-1.8.21.custom.css" rel="stylesheet" type="text/css" media="screen"/>
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="/static/font-awaresome/css/font-awesome.css">
+    <link rel="stylesheet" type="text/css" href="/static/metroui/metro.css">
+    <link href="/static/css/datepicker.css" rel="stylesheet"/>
+    <link href="/static/css/jquery_file_upload/jquery.fileupload-ui.css" rel="stylesheet" type="text/css"
+          media="screen"/>
+    <link href="/static/css/truongnha.css?{{ VERSION }}" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/template_css/popup.css?{{ VERSION }}" rel="stylesheet" type="text/css"/>
+
+    <link href="/static/joyride/joyride-1.0.3.css" rel="stylesheet">
+
+    {% block css %}
+        <!-- For extra css -->
+    {% endblock %}
+
+    <script type="text/javascript" src="/static/js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery-ui-1.8.21.custom.min.js"></script>
+    <script type="text/javascript" src="/static/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/static/js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="/static/js/jquery_file_upload/tmpl.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery_file_upload/jquery.fileupload.js"></script>
+    <script type="text/javascript" src="/static/js/jquery_file_upload/jquery.fileupload-ui.js"></script>
+    <script type="text/javascript" src="/static/js/jquery_file_upload/jquery.iframe-transport.js"></script>
+    <script type="text/javascript" src="/static/js/Class.create.js"></script>
+    <script type="text/javascript" src="/static/js/jquery-encoder-0.1.0.js"></script>
+    <script type="text/javascript" src="/static/js/template_js/base.js?{{ VERSION }}"></script>
+    <script type="text/javascript" src="/static/joyride/jquery.joyride-1.0.3.js"></script>
+
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-5180820-2']);
+        _gaq.push(['_trackPageview']);
+
+        (function () {
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    {% block js %}
+        <!-- For extra js -->
+    {% endblock %}
+    <!--[if lt IE 9]>
+	  <script type="text/javascript" src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	  <![endif]-->
+
+</head>
+
+<body>
+<header id="top-header">
+    <div class="container-fluid">
+        <div id="school-info" class="pull-left">
+            <span class="lead">
+                {% if user.is_authenticated %}
+                    {% if user.is_superuser %}
+                        Quản trị hệ thống Trường Nhà
+                    {% else %}
+                        <span id="school-name">{{ user.userprofile.organization.name }}</span>
+                        <small> {{ user.userprofile.organization.get_status }}</small>
+                    {% endif %}
+                {% else %}
+                    Dịch vụ phần mềm quản lý trường học
+                {% endif %}
+            </span>
+        </div>
+        <div id="user-info" class="pull-right">
+            {% if user.is_authenticated %}
+                {% if not user.is_superuser %}
+                    <a href="/app/{{user.username}}"
+                       title="Sửa thông tin người sử dụng, đổi mật khẩu, đổi tên tài khoản.">
+                        <i class="icon-user"></i>
+                        {% if user.pupil %}
+                            {{ user.pupil.last_name }} {{ user.pupil.first_name }}
+                        {% else %}
+                            {% if user.teacher %}
+                                {{ user.teacher.last_name }} {{ user.teacher.first_name }}
+                            {% else %}
+                                {{ user.first_name }}
+                            {% endif %}
+                        {% endif %}
+                        <small>({{ user.username }})</small>
+                    </a>
+                {% else %}
+                    {{ user.last_name }} {{ user.first_name }}
+                    <small>({{ user.username }})</small>
+
+                    <a href="{%url django.contrib.auth.views.logout %}">
+                        Đăng xuất <i class="icon-signout"></i>
+                    </a>
+                {% endif %}
+            {% endif %}
+
+            <a href="{%url index %}">
+                <img id="logo" src="/static/images/logo.png" alt="logo"
+                     title="Dịch vụ phần mềm quản lý trường học"/></a>
+        </div>
+    </div>
+</header>
+
+<section id="main" class="container-fluid">
+    <div id="breadcrumb">
+        <a id="breadcrumb-home" href="{%url index %}" title="Trang bắt đầu" >
+            {#            <img id="breadcrumb-home" src="/static/images/favicon.png" title="Xuất phát"/></a>#}
+{#            <i class="icon-home icon-large "></i> #}
+            <i class="icon-home" style="color: rgba(255, 69, 0, 0.75);" ></i>
+            <i class="icon-home" style="color: rgba(0, 136, 204, 0.75);margin-left: -.5em;" ></i>
+{#            Trường#}
+        </a>
+        {% if user.is_authenticated %}
+            {% block breadcrumb %}
+                {% load breadcrumb_tags %}
+                {% add_crumb '' 'index' %}
+            {% endblock %}
+            {% render_breadcrumbs %}
+
+            <a class="pull-right" href="{%url django.contrib.auth.views.logout %}"
+               title="Thoát ra, kết thúc phiên làm việc. BẠN PHẢI ĐĂNG XUẤT NẾU ĐĂNG NHẬP TRÊN CÁC MÁY TÍNH DÙNG CHUNG ĐỂ TRÁNH NGƯỜI KHÁC THAY ĐỔI DỮ LIỆU.">
+                Đăng xuất <i class="icon-signout"></i>
+            </a>
+        {% endif %}
+    </div>
+
+    <div id="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+    <div class="placeholder" style="clear: both;"></div>
+</section>
+
+<div id="feedbackWindow" class="popup-windows" >
+    <form>
+        {% if user.is_anonymous %}
+            <label for="feedbackUsername">Họ và tên</label>
+            <input class="span3" type="text" id="feedbackUsername">
+
+            <label for="feedbackUserEmail">Email</label>
+            <input class="span3" type="email" value="" id="feedbackUserEmail"
+                   placeholder="Ví dụ: abc@gmail.com">
+        {% endif %}
+
+        <label for="feedbackContent">Nội dung</label>
+        <textarea class="feedbackContext popupTextarea span3"
+                  id="feedbackContent"
+                  rows="7"
+                  placeholder="Nhập bất kỳ góp ý hoặc thông tin về hệ thống cho chúng tôi"
+                ></textarea>
+
+        <div class="btn-toolbar">
+            <button class="btn btn-primary" id="sendFeedback">Gửi</button>
+            <button class="btn" id="feedbackClose">Thôi</button>
+        </div>
+    </form>
+</div>
+
+<div class="notify-widget-pane">
+    <div class="notify" id="notify" style="display: none; z-index: 5000;">
+        Đang gửi dữ liệu...
+    </div>
+</div>
+
+
+{#    <!-- Run the plugin -->#}
+{#    <script type="text/javascript">#}
+{#        $(window).load(function() {#}
+{#            $(this).joyride();#}
+{#        });#}
+{#    </script>#}
+
+</body>

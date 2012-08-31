@@ -1,0 +1,32 @@
+
+<tr class="{{student.id}} student"
+    style='-webkit-user-select: none; cursor:pointer;'>
+        <td style="text-align: center;">
+            <input type="checkbox" id="checkbox_{{student.id}}" class="studentCheckbox"/>
+        </td>
+        <td> {{ count }} </td>
+        <td><a title="Xem toàn bộ thông tin chi tiết"
+                              href="{%url student_detail student.id %}">{{ student.last_name }}</a>
+        </td>
+        <td><a title="Xem toàn bộ thông tin chi tiết"
+                              href="{%url student_detail student.id %}">{{ student.first_name }}</a>
+        </td>
+        <td> {{ student.birthday|date:"SHORT_DATE_FORMAT" }} </td>
+        <td gender="{{ student.sex }}"> {{ student.sex }} </td>
+        <td class="smsPhone"> {{ student.sms_phone }}</td>
+        {% if student.email %}
+          <td title="{{ student.email }}">
+            <i class="icon-envelope"></i>
+          </td>
+        {% else %}
+          <td></td>
+        {% endif %}
+        <td class="truncated" title="{{ student.current_address }}">
+            {{ student.current_address }} </td>
+        <td>
+          {% if student.father_name %}
+            {{ student.father_name }},
+          {% endif %}
+          {{ student.mother_name }}
+        </td>
+    </tr>

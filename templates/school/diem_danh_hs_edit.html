@@ -1,0 +1,55 @@
+﻿{% block content %}
+  <br>
+
+  <form action="{% url diem_danh_hs student_id 1 %}" method="post" class="onPage">{% csrf_token %}
+
+    <table class="table" style="width:auto;">
+
+      <tr>
+        <th class="align-left"> STT</th>
+        <th class="align-left"> Ngày</th>
+        <th class="align-left"> Loại</th>
+      </tr>
+      {% if message != None %}
+        {{ message }}
+      {% endif %}
+
+      {% if pos > 2 %}
+        {% for d,f in ddhs %}
+          <tr>
+            <td>
+              <p>{{ forloop.counter }}</p>
+            </td>
+            <td>
+              <p>{{ d.time|date:"SHORT_DATE_FORMAT" }}</p>
+            </td>
+
+            <td>
+              {{ f.loai.errors }}
+              <p>{{ f.loai }}</p>
+            </td>
+          </tr>
+        {% endfor %}
+        <tr>
+          <td>
+            <p>{{ p.id }} </p>
+              <input type="submit" class="btn" value="Lưu"/>
+          </td>
+
+          <td >
+            {{ iform.time.errors }}
+            <p>{{ iform.time }}</p>
+          </td>
+
+          <td >
+            {{ iform.loai.errors }}
+            <p>{{ iform.loai }}</p>
+          </td>
+        </tr>
+      {% endif %}
+
+    </table>
+
+  </form>
+
+{% endblock %}

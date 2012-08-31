@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load pagination_tags %}
+{# TODO remove #}
+{% block content %}
+<p>Kết quả gửi tin nhắn</p>
+<br>
+	{% if user.is_authenticated %}
+		{% if sms_list %}
+			<h3>Các tin nhắn đã được gửi đi:</h3>
+            {% autopaginate sms_list 30 %}
+			<table class="table table-striped">
+				<tr >
+				<th >Số điện thoại</th>
+				<th >Người nhận</th>				
+				<th >Nội dung</th>
+				<th >Thời gian gửi</th>
+				</tr>
+			{% for s in sms_list %}
+				<tr >
+				<td >{{ s.phone }}</td>
+				<td >{{ s.receiver }}</td>
+				<td >{{ s.content }}</td>
+				<td >{{ s.createdFormat }}</td>
+				</tr>
+			{% endfor %}
+			</table>
+            {% paginate %}
+		{% else %}
+		    <p>Không có tin nhắn nào đã được gửi đi.</p>
+		{% endif %}
+		<br>
+		{% if sms_list_failed %}
+			<h3>Các tin nhắn không gửi được:</h3>
+            {% autopaginate sms_list 30 %}
+			<table class="table table-striped">
+				<tr >
+				<th >Số điện thoại</th>
+				<th >Người nhận</th>
+				<th >Nội dung</th>
+				<th >Thời gian gửi</th>
+				<th >Lý do</th>
+				</tr>
+			{% for s in sms_list %}
+				<tr >
+				<td >{{ s.phone }}</td>
+				<td >{{ s.receiver }}</td>
+				<td >{{ s.content }}</td>
+				<td >{{ s.createdFormat }}</td>
+				<td >todo</td>
+				</tr>
+			{% endfor %}
+			</table>
+            {% paginate %}
+		{% else %}
+		    <p>Không có tin nhắn nào đã được gửi đi.</p>
+		{% endif %}
+
+	{% endif %}
+{% endblock %}
+

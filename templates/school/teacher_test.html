@@ -1,0 +1,634 @@
+{% extends "base.html" %}
+{% load upload_tags %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Giáo viên' %}
+{% endblock %}
+
+{% block css %}
+    <style type="text/css">
+        ul.topnav {
+            list-style: none;
+            padding: 0 20px;
+            margin: 0;
+            float: left;
+            width: 920px;
+            background: #222;
+            font-size: 1.2em;
+            background: url(http://www.sohtanaka.com/web-design/examples/drop-down-menu/topnav_bg.gif) repeat-x;
+        }
+        ul.topnav li {
+            float: left;
+            margin: 0;
+            padding: 0 15px 0 0;
+            position: relative; /*--Declare X and Y axis base for sub navigation--*/
+        }
+        ul.topnav li a{
+            padding: 10px 5px;
+            color: #fff;
+            display: block;
+            text-decoration: none;
+            float: left;
+        }
+        ul.topnav li a:hover{
+            background: url(http://www.sohtanaka.com/web-design/examples/drop-down-menu/topnav_hover.gif) no-repeat center top;
+        }
+        ul.topnav li span { /*--Drop down trigger styles--*/
+            width: 17px;
+            height: 35px;
+            float: left;
+            background: url("http://www.sohtanaka.com/web-design/examples/drop-down-menu/subnav_btn.gif") no-repeat center top;
+        }
+        ul.topnav li span.subhover {background-position: center bottom; cursor: pointer;} /*--Hover effect for trigger--*/
+        ul.topnav li ul.subnav {
+            list-style: none;
+            position: absolute; /*--Important - Keeps subnav from affecting main navigation flow--*/
+            left: 0; top: 35px;
+            background: #333;
+            margin: 0; padding: 0;
+            display: none;
+            float: left;
+            width: 170px;
+            border: 1px solid #111;
+        }
+        ul.topnav li ul.subnav li{
+            margin: 0; padding: 0;
+            border-top: 1px solid #252525; /*--Create bevel effect--*/
+            border-bottom: 1px solid #444; /*--Create bevel effect--*/
+            clear: both;
+            width: 170px;
+        }
+        html ul.topnav li ul.subnav li a {
+            float: left;
+            width: 145px;
+            background: #333 url(http://www.sohtanaka.com/web-design/examples/drop-down-menu/dropdown_linkbg.gif) no-repeat 10px center;
+            padding-left: 20px;
+        }
+        html ul.topnav li ul.subnav li a:hover { /*--Hover effect for subnav links--*/
+            background: #222 url(http://www.sohtanaka.com/web-design/examples/drop-down-menu/dropdown_linkbg.gif) no-repeat 10px center;
+        }
+    </style>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $("ul.topnav li span").click(function() { //When trigger is clicked...
+
+                //Following events are applied to the subnav itself (moving subnav up and down)
+                $(this).parent().find("ul.subnav").slideDown('fast').show(); //Drop down the subnav on click
+
+                $(this).parent().hover(function() {
+                }, function(){
+                    $(this).parent().find("ul.subnav").slideUp('slow'); //When the mouse hovers out of the subnav, move it back up
+                });
+
+                //Following events are applied to the trigger (Hover events for the trigger)
+                }).hover(function() {
+                    $(this).addClass("subhover"); //On hover over, add class "subhover"
+                }, function(){  //On Hover Out
+                    $(this).removeClass("subhover"); //On hover out, remove class "subhover"
+            });
+            
+            $("ul.topnav li a").click(function(){
+                var a = $(this).attr('href');
+                $("input:checked").prop('checked',false);
+                $(".selected").removeClass('selected');
+                $(".list").hide();
+                $("#add").hide();
+                $(a).show();
+                return false;
+            });
+
+
+            $("#all > form > table").clone().appendTo(".list:not(#all)");
+            $(".list:not(#all)").each(function(){
+                var id = $(this).attr('id');
+                var count = 1;
+                $("tr",this).each(function(){
+                    if (!$(this).hasClass('thread')){
+                        if (!$(this).hasClass(id)) $(this).remove();
+                        else{
+                            $(":nth-child(2)",this).text(count);
+                            count = count + 1;
+                        };
+                    }
+                });
+            });
+
+            var reNumber = function(){
+                $(".list").each(function(){
+                    var count = 1;
+                    $("tr",this).each(function(){
+                        if (!$(this).hasClass('thread')){
+                            $(".index",this).text(count);
+                            count = count + 1;
+                        }
+                    });
+                });
+            }
+            
+            var select = function() {
+                if (!$(this).hasClass('thread') && !$(this).hasClass('form') && !$(this).hasClass('function')) {
+                    var id = $(this).attr('class').split(' ')[0];
+                    var checkboxid = ':visible .checkbox_' + id;
+                    var checkboxall = ':visible .checkbox_all';
+                    if ($(this).hasClass('selected')) {
+                        $(this).removeClass('selected');
+                        $(checkboxid).prop("checked", false);
+                        var n = $("tr.selected").length;
+                        if (n == 0){
+                            $(checkboxall).prop("checked", false);
+                        }
+                    } else {
+                        $(this).addClass('selected');
+                        $(checkboxid).prop("checked", true);
+                        $(checkboxall).prop("checked", true);
+                    }
+                }
+            };
+            $("tr").live("click",select);
+            $(".checkbox_all").live("click",function() {
+                var checkboxall = '.checkbox_all:visible';
+                if ($(checkboxall).is(':checked')) {
+                    $("tr:visible").each(function() {
+                        if (!$(this).hasClass('selected') &&!$(this).hasClass('thread') && !$(this).hasClass('form')){
+                            $(this).addClass('selected');
+                        }
+                    });
+                    $("input[type=checkbox]:not(:checked):visible").each(function(){
+                        $(this).prop("checked",true);
+                    });
+                }
+                else {
+                    $("tr").each(function() {
+                        if ($(this).hasClass('selected')){
+                            $(this).removeClass('selected');
+                        }
+                    });
+                    $("input:checked").each(function(){
+                        $(this).prop('checked',false);
+                    });
+                }
+            });
+
+            $("#delete").click(function(){
+                if (!$(".checkbox_all").is(':checked')) {
+                    alert("Hãy chọn ít nhất một giáo viên để xoá.");
+                    return false;
+                }
+                var answer = confirm('Bạn có muốn xóa những giáo viên đã chọn');
+                if (!answer) return false;
+                var data = '';
+                $(".selected").each(function() {
+                    data = data + $(this).attr('class').split(' ')[0] + '-';
+                });
+                $("#notify").text("Đang xóa...");
+                $("#notify").show();
+                var arg = { type:"POST",
+                    url:"",
+                    global: false,
+                    data: {data:data, request_type:'del'},
+                    datatype:"json",
+                    success: function() {
+                        $("#notify").showNotification("Đã xóa xong");
+                        $("tr.selected").each(function(){
+                            var select = '.' + $(this).attr('class').split(' ')[0];
+                            $(select).remove();
+                        });
+                        $(".checkbox_all").prop("checked", false);
+                        reNumber();
+                    }
+                };
+                $.ajax(arg);
+                return false;
+            });
+
+            $("#import").click(function() {
+                $("#fileupload").dialog('open');
+            });
+
+            $("#fileupload").dialog({
+                modal : true,
+                buttons: {
+                    Đóng: function() {
+                        location.reload('true');
+                        $(this).dialog('close');
+                    }
+                },
+                autoOpen: false,
+                width: 700,
+                height: 400,
+                maxWidth: 700,
+                maxHeight: 400,
+                title: "Nhập giáo viên từ file Excel"
+            });
+
+            $("#submitform").submit(function(){
+                var select = $(this);
+                $(".errorlist").empty();
+                var data = $(this).serialize();
+                data = data + '&request_type=add';
+                var arg = {
+                    data : data,
+                    type: $(this).attr("method"),
+                    url: $(this).attr("action"),
+                    global: false,
+                    datatype:"json",
+                    success: function(json) {
+                        $("#notify").showNotification(json.message);
+                        if(json.status == 'failed'){
+                            $("#id_first_name").before(json.first_name);
+                            $("#id_birthday").before(json.birthday);
+                        }
+                        else if (json.status == 'dup'){
+                            $("input",select).val('');
+                        }
+                        else if(json.status == 'success') {
+                            $("input",select).val('');
+                            $(".form").before(json.text);
+                        }
+                    }
+                };
+                $.ajax(arg);
+                return false;
+            });
+
+            $("#add_group_form").submit(function(){
+                $(".errorlist").empty();
+                var select = $(this);
+                var data = $(this).serialize();
+                data = data + '&request_type=addgroup';
+                var arg = {
+                    data : data,
+                    type: $(this).attr("method"),
+                    url: $(this).attr("action"),
+                    global: false,
+                    datatype:"json",
+                    success: function(json) {
+                        $("#notify").showNotification(json.message);
+                        if(json.status == 'failed'){
+                            $(".agft").prepend(json.team_id);
+                            $(".agfn").prepend(json.name);
+                        }
+                        else if (json.status == 'dup'){
+                            $("input",select).val('');
+                        }
+                        else if(json.status == 'success') {
+                            location = "/school/teacher_test";
+                        }
+                    }
+                };
+                $.ajax(arg);
+                return false;
+            });
+
+            $("#add_team_form").submit(function(){
+                $(".errorlist").empty();
+                var data = $(this).serialize();
+                var select = $(this);
+                data = data + '&request_type=addteam';
+                var arg = {
+                    data : data,
+                    type: $(this).attr("method"),
+                    url: $(this).attr("action"),
+                    global: false,
+                    datatype:"json",
+                    success: function(json) {
+                        $("#notify").showNotification(json.message);
+                        if(json.status == 'failed'){
+                            $("#id_name").before(json.name);
+                        }
+                        else if (json.status == 'dup'){
+                            $("input",select).val('');
+                        }
+                        else if(json.status == 'success') {
+                            location = "/school/teacher_test";
+                        }
+                    }
+                };
+                $.ajax(arg);
+                return false;
+            });
+
+            $(".rename").live("click",function(){
+                var select = $(this).parent().prev();
+                $("input",select).attr('disabled', false);
+                $(".rename").attr('disabled', true);
+                $(this).text("Cập nhật");
+                $(this).attr("disabled",false);
+                $(this).addClass("submitrename");
+                $(this).removeClass("rename");
+                $(".cancel",$(this).parent().next()).show();
+                return false;
+            });
+            $(".submitrename").live("click",function(){
+                var select = $(this).parent().prev();
+                var data = {request_type:"rename",
+                            type: $(select).parent().attr("class").split(' ')[0],
+                            name: $("input",select).val()
+                };
+                var arg = {
+                    data: data,
+                    global: false,
+                    url: "",
+                    type: "POST",
+                    datatype: "json",
+                    success: function(){
+                        $("#notify").showNotification("Đã đổi tên");
+                        location = "/school/teacher_test";
+                    }
+                };
+                $.ajax(arg);
+                return false;
+            });
+            $(".cancel").click(function(){
+                var select = $(this).parent().prev();
+                $(this).hide();
+                $("button",select).text("Đổi tên");
+                $("button",select).addClass("rename");
+                $("button",select).removeClass("submitrename");
+                $("input",$(select).prev()).attr("disabled",true);
+                $("button").attr("disabled",false);
+                return false;
+            });
+            $(".deletetg").click(function(){
+                var i = confirm("Bạn có chắc muốn xóa tổ/nhóm này không?");
+                if (i){
+                    var select = $(this).parent().prev();
+                    var data = {request_type:"deletetg",
+                                type: $(select).parent().attr("class").split(' ')[0]
+                    };
+                    var arg = {
+                        data: data,
+                        global: false,
+                        url: "",
+                        type: "POST",
+                        datatype: "json",
+                        success: function(){
+                            $("#notify").showNotification("Đã xóa");
+                            location = "/school/teacher_test";
+                        }
+                    };
+                    $.ajax(arg);
+                }
+                return false;
+            });
+        });
+    </script>
+{% endblock %}
+{% block content %}
+    {% if pos > 3 %}
+        <br>
+        <div id="tableFunction">
+            {% if pos > 3 %}
+                <a class="btn" href="#popupDiv" id="import"> Nhập từ Excel </a>
+                <a class="btn" title="Xuất danh sách giáo viên ra file Excel."
+                    href="{% url school.views.teacher_generate 'all' %}" id="export"> Xuất ra Excel </a>
+                <button class="btn " id="delete"> Xóa </button>
+            {% endif %}
+        </div>
+    {% endif %}
+    <div id="tabs">
+        <ul class="topnav">
+            <li><a href="#all">Tất cả</a></li>
+            {% for t,g in gnt %}
+            <li>
+                {% if g %}
+                    <a href="#team{{ t.id }}">{{ t.name }}</a><span></span>
+                    <ul class="subnav">
+                        {% for a in g %}
+                            <li><a href="#group{{ a.id }}">{{ a.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <a href="#team{{ t.id }}">{{ t.name }}</a>
+                {% endif %}
+            </li>
+            {% endfor %}
+            {% if pos > 3 %}
+                <li><a href="#add"> Quản lý tổ nhóm </a></li>
+            {% endif %}
+        </ul>
+    </div>
+    <div id="all" class="list">
+        <h2>Danh sách giáo viên</h2>
+                <form action="/school/teacher_test" id ="submitform" method="post">{% csrf_token %}
+                    <table class="table">
+                        {% if pos > 3 %}
+                            <colgroup style="width: 5%;"></colgroup>
+                        {% endif %}
+                        <colgroup style="width: 5%;"></colgroup>
+                        <colgroup style="width: 20%;"></colgroup>
+                        <colgroup style="width: 10%;"></colgroup>
+                        <colgroup style="width: 25%;"></colgroup>
+                        <colgroup style="width: 5%;"></colgroup>
+                        <colgroup style="width: 10%;"></colgroup>
+                        <colgroup style="width: 15%;"></colgroup>
+                        <colgroup style="width: 5%;"></colgroup>
+                        <thead>
+                        <tr>
+                            {% if pos > 3 %}
+                            <th title="Chọn tất cả" class="" style="text-align: center;">
+                                <input type="checkbox" class="checkbox_all"/>
+                            </th>
+                            {% endif %}
+                            <th class="align-left">STT</th>
+                            <th class="align-left">Họ tên </th>
+                            <th class="align-left">Ngày sinh</th>
+                            <th class="align-left">Quê quán</th>
+                            <th class="align-left">Giới tính </th>
+                            <th class="align-left"> Dạy môn</th>
+                            <th class="align-left"> Tổ </th>
+                            <th class="align-left"> Nhóm </th>
+                        </tr>
+                        </thead>
+                        {% if message != None %}
+                            {{ message }}
+                        {% endif %}
+                        <tbody>
+                        {% for ss in teacherList %}
+                            <tr class="{{ss.id}} team{{ ss.team_id.id }} group{{ ss.group_id.id }}">
+                                {% if pos > 3 %}
+                                <td style="text-align: center;">
+                                    <input type="checkbox" class="checkbox_{{ss.id}}"/>
+                                </td>
+                                {% endif %}
+                                <td class="index">{{ forloop.counter }}</td>
+                                <td>
+                                    {% if pos > 3 or teacher_id == ss.id %}
+                                        <a href="{%url school.views.school_index  %}viewTeacherDetail/{{ss.id}}">
+                                    {% endif %}
+                                    {{ ss.last_name }} {{ ss.first_name }} </a>
+                                </td>
+                                <td> {{ ss.birthday|date:"SHORT_DATE_FORMAT" }}</td>
+                                <td> {{ ss.home_town }}</td>
+                                <td> {{ ss.sex }} </td>
+                                    <td>
+                                        {% if ss.major == '-1' %}
+                                            Chưa rõ
+                                        {% else %}
+                                            {{ ss.major }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if ss.team_id %}
+                                            {{ ss.team_id }}
+                                        {% else %}
+                                            Chưa rõ
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if ss.group_id %}
+                                            {{ ss.group_id }}
+                                        {% endif %}
+                                    </td>
+                            </tr>
+                        {% endfor %}
+                        {% if pos > 3 %}
+                                <tr class="form">
+                                    {{ form.non_field_errors }}
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        {{ form.first_name.errors }}
+                                        <p>{{ form.first_name }}</p>
+                                    </td>
+
+                                    <td>
+                                        {{ form.birthday.errors }}
+                                        <p>{{ form.birthday }}</p>
+                                    </td>
+
+                                    <td>
+                                        {{ form.home_town.errors }}
+                                        <p>{{ form.home_town }}</p>
+                                    </td>
+
+
+                                    <td>
+                                        {{ form.sex.errors }}
+                                        <p>{{ form.sex }}</p>
+                                    </td>
+
+
+                                    <td>
+                                        {{ form.major.errors }}
+                                        <p>{{ form.major }}</p>
+                                    </td>
+
+                                    <td>
+                                        {{ form.team_id.errors }}
+                                        <p>{{ form.team_id }}</p>
+                                    </td>
+
+                                    <td><button class="btn">Thêm</button></td>
+                                </tr>
+                        {% endif %}
+                    </tbody>
+                    </table>
+                    </form>
+
+    </div>
+    <div id="add" style="display: none">
+        <h2> Danh sách tổ nhóm </h2>
+        <table class="table"> <tbody>
+        {% for t,g in gnt %}
+                <tr class="team-{{ t.id }}">
+                    <th> Tổ </th>
+                    <th> </th>
+                    <td> <input value="{{ t.name }}" disabled="true"></td>
+                    <td> <button class="rename button blue"> Đổi tên </button> </td>
+                    <td> <button class="cancel button blue" style="display: none"> Thôi </button> </td>
+                    <td> <button class="deletetg button blue"> Xóa </button></td>
+                </tr>
+            {% for a in g %}
+                <tr class="group-{{ a.id }}">
+                    <th> </th>
+                    <th> Nhóm </th>
+                    <td> <input value="{{ a.name }}" disabled="true"></td>
+                    <td> <button class="rename button blue"> Đổi tên </button> </td>
+                    <td> <button class="cancel button blue" style="display: none"> Thôi </button> </td>
+                    <td> <button class="deletetg button blue"> Xóa </button></td>
+                </tr>
+            {% endfor %}
+        {% endfor %}
+        </tbody>
+        </table>
+
+
+        <div id="addteam">
+            <h2> Thêm tổ </h2>
+            <form action="/school/teacher_test" method="post" id="add_team_form">
+                {% csrf_token %}
+                <table><tbody>
+                    <tr>
+                        <th> Tên tổ </th>
+                        <td> {{ add_team_form.name }}</td>
+                    </tr>
+                </tbody></table>
+                <button class="btn"> Thêm </button>
+            </form>
+        </div>
+
+        <div id="addgroup">
+            <h2> Thêm nhóm</h2>
+            <form action="/school/teacher_test" method="post" id="add_group_form">
+                {% csrf_token %}
+                <table><tbody>
+                    <tr>
+                        <th> Tên nhóm </th>
+                        <td class="agfn"> {{ add_group_form.name }}</td>
+                    </tr>
+                    <tr>
+                        <th> Tổ </th>
+                        <td class="agft"> {{ add_group_form.team_id }}</td>
+                    </tr>
+                </tbody></table>
+                <button class="btn"> Thêm </button>
+            </form>
+        </div>
+
+    </div>
+    {% for t,g in gnt %}
+        <div id="team{{ t.id }}" class="list" style="display: none;">
+            <h2> Danh sách tổ {{ t.name }}</h2>
+        </div>
+        {% for a in g %}
+            <div id="group{{ a.id }}" class="list" style="display: none;">
+                <h2> Danh sách nhóm {{ a.name }}</h2>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% if pos > 3 %}
+        <div style="display: none;">
+            <div id="fileupload">
+                <form method="post" action="" enctype="multipart/form-data">
+                    <div class="fileupload-buttonbar">
+                        {% csrf_token %}
+                        <label class="fileinput-button">
+                            <span>Chọn file...</span>
+                            <input type="file" name="file" multiple>
+                        </label>
+                        <button type="submit" id="startUpload" class="start">Tải file lên</button>
+                    </div>
+                </form>
+                <div class="fileupload-content">
+                    <table class="files"></table>
+                    <div class="fileupload-progressbar"></div>
+                </div>
+                <div id="errorDetail" class="errorlist errorDiv" style="display: none;">
+                </div>
+                <div class="hint">
+                    <p>
+                        Chú ý: Phải dùng file Excel theo <a href="{{ MEDIA_URL }}template_files/teacher_template.xls">mẫu
+                        này</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% upload_js %}
+        <script type="text/javascript" src="/static/js/jquery_file_upload/qlnt_upload_for_teacher.js"></script>
+    {% endif %}
+{% endblock %}

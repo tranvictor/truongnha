@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% if pos > 1 %}
+        {% add_crumb 'Giáo viên' 'teachers' %}
+        {% add_crumb teacher %}
+    {% endif %}
+{% endblock %}
+
+{% block js %}
+    <script>
+        $(document).ready(function () {
+            {% if pos > 3 %}
+                $("input").attr("disabled", false);
+                $("select").attr("disabled", false);
+            {% endif %}
+            {% if pos == 3 %}
+                $("input.tea").attr("disabled", false);
+                $("select.tea").attr("disabled", false);
+            {% endif %}
+
+            var update_teacher_detail = function (json) {
+                $("#notify").showNotification(json.message);
+                $("#id_first_name").parents("td").append(json.first_name);
+                $("#id_last_name").parents("td").append(json.last_name);
+                $("#id_birthday").parents("td").append(json.birthday);
+                $("#id_phone").parents("td").append(json.phone);
+                $("#id_email").parents("td").append(json.email);
+                $("#id_sms_phone").parents("td").append(json.sms_phone);
+                $("#id_cmt").parents("td").append(json.cmt);
+                $("#id_ngay_vao_doan").parents("td").append(json.ngay_vao_doan);
+                $("#id_ngay_vao_dang").parents("td").append(json.ngay_vao_dang);
+                $("#id_hs_luong").parents("td").append(json.hs_luong);
+                $("#id_bac_luong").parents("td").append(json.bac_luong);
+                $("#id_bhxh").parents("td").append(json.bhxh);
+                $("#id_muc_luong").parents("td").append(json.muc_luong);
+            };
+
+            $("form").submit(function () {
+                $(".errorlist", this).empty();
+                data = $(this).serialize();
+                var arg = {
+                    data:data,
+                    type:$(this).attr("method"),
+                    url:$(this).attr("action"),
+                    success:update_teacher_detail,
+                    global:false
+                };
+                $.ajax(arg);
+                return false;
+            });
+            $("#resetpass").live("click", function () {
+                var $form = $("form.tttk");
+                var data = $form.serialize();
+                var arg = {
+                    data:data,
+                    type:$form.attr("method"),
+                    url:$form.attr("action"),
+                    global:false,
+                    success:function (json) {
+                        $("#notify").showNotification(json.message);
+                    }
+                };
+                $.ajax(arg);
+                return false;
+            });
+            $("#id_team_id").change(function () {
+                var value = $(this).val();
+                var sw = "#team" + value;
+                $(this).parents("tr").next().remove();
+                $(sw).clone().insertAfter($(this).parents("tr"));
+            });
+            {% if pos > 3 %}
+                $.ajax({
+                    url:"{% url teacher_account id %}",
+                    global:false,
+                    dataType:'html',
+                    type:'GET',
+                    success:function (response) {
+                        $("#taikhoan").html(response);
+                        applyListener();
+                    }
+                });
+            {% endif %}
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    {% if message != None %}
+        {{ message }} <br>
+    {% endif %}
+
+    <form action="{% url teacher_detail id %}" method="post">{% csrf_token %}
+        <div id="gv" class="container-fluid">
+            {% if pos > 3 %}
+                <div id="taikhoan" class="span12">
+                </div>
+            {% endif %}
+
+            <div id="ttcn" class="span6">
+                <h3> Thông tin cá nhân </h3>
+                <table class="dataform">
+                    {{ ttcnform.as_table }}
+                    {{ tgform.as_table }}
+                    {{ ttcnform2.as_table }}
+                </table>
+            </div>
+
+
+            <div id="ttll" class="span6">
+                <h3> Thông tin liên lạc </h3>
+                <table class="dataform ">
+                    {{ ttllform.as_table }}
+                </table>
+            </div>
+
+
+            {% if pos >= 3 %}
+                <div id="ttcb" class="span6">
+                    <h3> Thông tin cán bộ </h3>
+                    <table class="dataform ">
+                        {{ ttcbform.as_table }}
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+        {% if pos >= 3 %}
+            <div class="form-actions pagination-centered">
+                <input type="submit" class="btn btn-primary" value="Lưu"/>
+            </div>
+        {% endif %}
+    </form>
+
+    <div style="display: none;" id="team_list">
+        <table class="dataform ">
+            <tr id="team" class="team">
+                <th><label> Nhóm: </label></th>
+                <td>
+                    <select name="group_id">
+                        <option value=""></option>
+                    </select>
+                </td>
+            </tr>
+            {% for t,gl in tng %}
+                <tr id="team{{ t.id }}" class="team">
+                    <th><label> Nhóm: </label></th>
+                    <td>
+                        <select name="group_id">
+                            <option value=""></option>
+                            {% for g in gl %}
+                                <option value="{{ g.id }}">{{ g }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

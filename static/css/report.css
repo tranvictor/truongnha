@@ -1,0 +1,7 @@
+.subtotal-row, .total-row {
+    color: green;
+}
+.total-row {
+    font-weight: bold;
+    color: green;
+}

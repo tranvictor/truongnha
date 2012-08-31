@@ -1,0 +1,158 @@
+﻿{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb selectedClass 'class_detail' selectedClass.id %}
+    {% add_crumb 'Xếp loại' 'xl_ca_nam_theo_lop' selectedClass.id 1 %}
+    {% add_crumb 'Rèn luyện thêm' %}
+{% endblock %}
+
+{% block content %}
+    <div class="btn-toolbar form-inline pagination-centered">
+        <p>
+            <label>Cập nhập hạnh kiểm rèn luyện sau hè lớp </label> {{ selectedClass.name }}
+            <label>năm học</label> {{ yearString }}
+        </p>
+    </div>
+
+    <table class="table" width="100%">
+        <tr>
+            <th>
+                TT
+            </th>
+            <th colspan=2>
+                Họ và tên
+            </th>
+            <th>
+                Ngày sinh
+            </th>
+            <th width="10%">
+                Hạnh kiểm cả năm
+            </th>
+            <th width="20%">
+                Hạnh kiểm sau hè
+            </th>
+            <th width="30%">
+                Xếp loại
+            </th>
+        </tr>
+        {% for hk in hkList %}
+            <tr>
+                <td>{{ forloop.counter }} </td>
+                <td class="lastname">
+                    {{ hk.student_id.last_name }}
+                </td>
+                <td class="firstname">
+                    {{ hk.student_id.first_name }}
+                </td>
+                <td>
+                    {{ hk.student_id.birthday|date:"SHORT_DATE_FORMAT" }}
+                </td>
+                <td>
+                    Yếu
+                </td>
+                <td>
+                    <select id="{{hk.id}}" value="{{hk.hk_ren_luyen_lai}}">
+                        <option value='No'> -------</option>
+                        <option value='T'> Tốt</option>
+                        <option value='K'> Khá</option>
+                        <option value='TB'> Trung bình</option>
+                        <option value='Y'> Yếu</option>
+                    </select>
+                </td>
+                <td id="t{{hk.id}}">
+                </td>
+            </tr>
+
+        {% endfor %}
+
+        {% for hk in hkList %}
+            {% if hk.hk_ren_luyen_lai %}
+                {% if hk.hk_ren_luyen_lai = "Y" %}
+                    <script>
+                        document.getElementById({{hk.id}}).value = "{{hk.hk_ren_luyen_lai}}";
+                        document.getElementById("t" +{{hk.id}}).innerHTML = "Ở lại lớp";
+                    </script>
+                {% else %}
+                    <script>
+                        document.getElementById({{hk.id}}).value = "{{hk.hk_ren_luyen_lai}}";
+                        document.getElementById("t" +{{hk.id}}).innerHTML = "Được lên lớp";
+                    </script>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </table>
+    <script>
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        var cookieValue = getCookie('csrftoken');
+        function sendToServer(str) {
+            var xmlhttp;
+            if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+                //alert("chao");
+            }
+            else {// code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    //document.getElementById("messageChanging").innerHTML="Đã lưu";
+                    //updateNewMark();
+                    var temp = document.getElementById("notify");
+                    temp.innerHTML = "Đã lưu";
+                    $(temp).fadeIn();
+                    $(temp).delay(2000).fadeOut('fast');
+
+                    //if (document.getElementById("messageChanging").innerHTML!="Lưu ngay")
+                    //	document.getElementById("messageChanging").innerHTML="Đã lưu";
+                }
+            }
+            //alert(cookieValue);
+
+            xmlhttp.open("POST", "{% url save_ren_luyen_them %}", true);
+            xmlhttp.setRequestHeader("X-CSRFToken", cookieValue);
+            var data = "str=" + str;
+            xmlhttp.send(data);
+        }
+
+        $(document).ready(function () {
+                    $('select').change(function () {
+                                var value = this.value;
+                                var id = this.id;
+                                var nextCell = document.getElementById("t" + id);
+                                if (value == 'No')
+                                    nextCell.innerHTML = "";
+                                else if (value == 'Y')
+                                    nextCell.innerHTML = "Ở lại lớp";
+                                else
+                                    nextCell.innerHTML = "Được lên lớp";
+
+                                var data = id + ":" + value;
+                                sendToServer(data);
+                                var temp = document.getElementById("notify");
+                                temp.innerHTML = "Đang lưu...";
+                                $(temp).fadeIn();
+
+                            }
+                    );
+                }
+        );
+
+    </script>
+{% endblock %}

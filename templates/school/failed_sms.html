@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load pagination_tags %}
+
+{% block content %}
+<h2>Kết quả gửi tin nhắn</h2>
+	{% if user.is_authenticated %}
+		<a href="{%url school.sms_views.sent_sms %}">Những tin nhắn gửi đi thành công</a>&nbsp-&nbsp
+		<a href="{%url school.sms_views.failed_sms %}">Những tin nhắn gửi đi thất bại</a>
+
+        <h2>Danh sách tin nhắn không được gửi đi:</h2>
+		<small><b>Ghi chú - x</b>: Số điện thoại không thuộc Người sử dụng nào.</small>
+		{% if sms_list %}
+            {% autopaginate sms_list 30 %}
+			<table class="table">
+				<col width=150>
+				<col width=200>
+				<col width=300>
+				<col width=180>
+				<col width=160>
+				<tr >
+				<th >Số điện thoại</th>
+				<th >Người nhận</th>
+				<th >Nội dung</th>
+				<th >Thời gian gửi</th>
+				<th >Lý do</th>
+				</tr>
+			{% for s in sms_list %}
+				<tr >
+				<td >{{ s.phone }}</td>
+				<td >{{ s.receiver }}</td>
+				<td >{{ s.content }}</td>
+				<td >{{ s.createdFormat }}</td>
+				<td ><b>x</b></td>
+				</tr>
+			{% endfor %}
+			</table>
+            {% paginate %}
+		{% else %}
+		    <p>Không có tin nhắn nào đã được gửi đi.</p>
+		{% endif %}
+	{% endif %}
+{% endblock %}
+

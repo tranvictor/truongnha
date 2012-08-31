@@ -1,0 +1,119 @@
+﻿{% extends "base.html" %}
+
+{% block js %}
+    <script>
+        $(document).ready(function () {
+            $("#loaitin{{type}}").attr("checked", "true");
+        });
+    </script>
+{% endblock %}
+
+{% block css %}
+    <style type="text/css">
+    label, input {
+        padding-right: 1em;
+        padding-left: 1em;
+        vertical-align: middle;
+    }
+    </style>
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% if not user.userprofile.isSchool %}
+        {% add_crumb 'Báo cáo' 'department_report' %}
+        {% add_crumb request.session.school_name 'report' request.session.school_id %}
+    {% else %}
+        {% add_crumb 'Báo cáo' 'report' %}
+    {% endif %}
+    {% add_crumb 'Tin nhắn' %}
+{% endblock %}
+
+{% block content %}
+    <div class="btn-toolbar pagination-centered">
+        <form class="form-inline" action="{% url count_sms %}" name="info"
+              method="post"> {% csrf_token %}
+            <fieldset>
+                <label>Từ ngày</label>
+                <input id="id_date1" name="firstDate" class="datepicker" value="{{day}}/{{month}}/{{year}}">
+                <label>đến ngày</label>
+                <input id="id_date2" name="secondDate" class="datepicker" value="{{day1}}/{{month1}}/{{year1}}">
+
+
+                <label>
+                <input TYPE="radio" NAME="type1" id='loaitin1' value="1">Tất cả
+                </label>
+
+                <label>
+                    <input TYPE="radio" NAME="type1" id='loaitin2' value="2">
+                    Đã gửi được
+                </label>
+
+                <label>
+                    <input TYPE="radio" NAME="type1" id='loaitin3' value="3">
+                    Không gửi được
+                </label>
+
+                <input type="submit" value="Xem" class="btn btn-info">
+            </fieldset>
+        </form>
+    </div>
+
+    <table class="table" width="100%">
+        <tr>
+            <th>
+                STT
+            </th>
+            <th>
+                Người gửi
+            </th>
+            <th>
+                Người nhận
+            </th>
+            <th>
+                SĐT
+            </th>
+            <th>
+                Ngày gửi
+            </th>
+            <th>
+                Nội dung
+            </th>
+            <th>
+                Trạng thái
+            </th>
+        </tr>
+        {% for l in list %}
+            <tr>
+                <td>
+                    {{ forloop.counter }}
+                </td>
+                <td>
+                    {{ l.sender }}
+                </td>
+                <td>
+                    {{ l.receiver }}
+                </td>
+                <td>
+                    {{ l.phone }}
+                </td>
+                <td>
+                    {{ l.created|date:"SHORT_DATETIME_FORMAT" }}
+                </td>
+
+                <td>
+                    {{ l.content }}
+                </td>
+                <td>
+                    {% if l.success %}
+                        Thành công
+                    {% else %}
+                        Thất bại
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}

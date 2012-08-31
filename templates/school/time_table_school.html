@@ -1,0 +1,294 @@
+{% extends "base.html" %}
+{% load upload_tags %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Thời khóa biểu toàn trường' %}
+{% endblock %}
+
+{% block content %}
+    <link href="/static/css/template_css/timetable.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="/static/js/template_js/timetableSchool.js?{{ VERSION }}"></script>
+
+    <script>
+        $(document).ready(function () {
+            var number_of_periods = new Object();
+            var chaoco_ids = [],
+            sinhhoat_ids = [];
+            {% for i in chaoco %}
+                chaoco_ids.push({{ i }});
+            {% endfor %}
+            {% for i in sinhhoat %}
+                sinhhoat_ids.push({{ i }});
+            {% endfor %}
+
+            $("td").each(function () {
+                var attr = $(this).attr('id');
+                if (typeof attr == 'undefined' || attr == false) return;
+                var day = attr.split(' ')[0];
+                var cl = $(this).parent("tr").attr('class').split(' ')[0];
+                var id = cl*100 + day*1;
+                //alert (day + " " + order + " " + id + ' ' + chaoco_ids);
+                if (jQuery.inArray(id, chaoco_ids) > -1){
+                    $(this).text("Chào cờ");
+                    $(this).attr("subject", "Chào cờ");
+                }
+                if (jQuery.inArray(id, sinhhoat_ids) > -1) {
+                    $(this).text("Sinh hoạt");
+                    $(this).attr("subject", "Sinh hoạt");
+                }
+                //alert (day + " " + order + " " + id + ' ');
+            });
+        });
+        </script>
+    {% if pos > 3 %}
+        <div id="submenu" class="btn-toolbar pagination-centered">
+            <a class="btn"
+               title="Nhập thời khoá biểu toàn trường từ file Excel"
+               href="#upload_modal"
+               data-toggle="modal"
+               id="import">
+                <i class="icon-upload-alt"></i>
+                Nhập từ Excel </a>
+
+            <a id="changeTeacher" class="btn checked"> Ẩn giáo viên dạy</a>
+        </div>
+    {% endif %}
+
+    <table class="table table-bordered table-condensed" id="school-timetable" style="table-layout: fixed;">
+        <colgroup>
+            <col style="width: 5%;"/>
+            <col style="width: 3%;"/>
+            <col style="width: 12%;"/>
+            <col style="width: 12%;"/>
+            <col style="width: 12%;"/>
+            <col style="width: 12%;"/>
+            <col style="width: 12%;"/>
+            <col style="width: 12%;"/>
+        </colgroup>
+        <thead>
+        <tr>
+            <th>Lớp</th>
+            <th>Tiết</th>
+            <th>Thứ 2</th>
+            <th>Thứ 3</th>
+            <th>Thứ 4</th>
+            <th>Thứ 5</th>
+            <th>Thứ 6</th>
+            <th>Thứ 7</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for cl, tkb in list %}
+
+            {% for i in lesson %}
+                <tr class ="{{ cl.id }}">
+                    {% if i == 1 %}
+                        <th rowspan="10">
+                            <h3><a href="{%url timetable cl.id %}" title="Xem/chỉnh sửa thời khóa biểu lớp">
+                                {{ cl.name }}</a></h3></th>
+                    {% endif %}
+                    <th>{{ i }}</th>
+                    {% for w in week %}
+                        {% for t in tkb %}
+                            {% if t.day == w %}
+                                {% if i == 1 %}
+                                    {% if t.period_1 %}
+                                        <td subject="{{t.period_1}}">
+                                            <p class="">{{ t.period_1 }}</p>
+
+                                            <p class="teacher">{{ t.period_1.teacher_id|default_if_none:"" }}</p>
+                                        </td>
+                                    {% else %}
+                                        <td id="{{ w }}{{ i }}"></td>
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if i == 2 %}
+                                    {% if t.period_2 %}
+                                        <td subject="{{t.period_2}}">
+                                            <p>{{ t.period_2 }}</p>
+
+                                            <p class="teacher">{{ t.period_2.teacher_id|default_if_none:"" }}</p>
+                                        </td>
+                                    {% else %}
+                                        <td id="{{ w }}{{i}}"></td>
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if i == 3 %}
+                                    {% if t.period_3 %}
+                                        <td subject="{{t.period_3}}">
+                                            <p>{{ t.period_3 }}</p>
+
+                                            <p class="teacher">{{ t.period_3.teacher_id|default_if_none:"" }}</p>
+                                        </td>
+                                    {% else %}
+                                        <td id="{{ w }}{{i}}"></td>
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if i == 4 %}
+                                    {% if t.period_4 %}
+                                        <td subject="{{t.period_4}}">
+                                            <p>{{ t.period_4 }}</p>
+
+                                            <p class="teacher">{{ t.period_4.teacher_id|default_if_none:"" }}
+                                            </p>
+                                        </td>
+                                    {% else %}
+                                        <td id="{{ w }}{{i}}"></td>
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if i == 5 %}
+                                    {% if t.period_5 %}
+                                        <td subject="{{t.period_5}}">
+                                            <p>{{ t.period_5 }}</p>
+
+                                            <p class="teacher">{{ t.period_5.teacher_id|default_if_none:"" }}</p>
+                                        </td>
+                                    {% else %}
+                                        <td id="{{ w }}{{i}}"></td>
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if i == 6 %}
+                                    {% if t.period_6 %}
+                                        <td subject="{{t.period_6}}">
+                                            <p>{{ t.period_6 }}</p>
+
+                                            <p class="teacher">{{ t.period_6.teacher_id|default_if_none:"" }}</p>
+                                        </td>
+                                    {% else %}
+                                        <td id="{{ w }}{{i}}"></td>
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if i == 7 %}
+                                    {% if t.period_7 %}
+                                        <td subject="{{t.period_7}}">
+                                            <p>{{ t.period_7 }}</p>
+
+                                            <p class="teacher">{{ t.period_7.teacher_id|default_if_none:"" }}</p>
+                                        </td>
+                                    {% else %}
+                                        <td id="{{ w }}{{i}}"></td>
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if i == 8 %}
+                                    {% if t.period_8 %}
+                                        <td subject="{{t.period_8}}">
+                                            <p>{{ t.period_8 }}</p>
+
+                                            <p class="teacher">{{ t.period_8.teacher_id|default_if_none:"" }}</p>
+                                        </td>
+                                    {% else %}
+                                        <td id="{{ w }}{{i}}"></td>
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if i == 9 %}
+                                    {% if t.period_9 %}
+                                        <td subject="{{t.period_9}}">
+                                            <p>{{ t.period_9 }}</p>
+
+                                            <p class="teacher">{{ t.period_9.teacher_id|default_if_none:"" }}</p>
+                                        </td>
+                                    {% else %}
+                                        <td id="{{ w }}{{i}}"></td>
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if i == 10 %}
+                                    {% if t.period_10 %}
+                                        <td subject="{{t.period_10}}">
+                                            <p>{{ t.period_10 }}</p>
+
+                                            <p class="teacher">{{ t.period_10.teacher_id|default_if_none:"" }}</p>
+                                        </td>
+                                    {% else %}
+                                        <td id="{{ w }}{{i}}"></td>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        {% endfor %}
+        </tbody>
+    </table>
+    {% if pos > 3 %}
+
+        <div class="modal fade" id="upload_modal" style="display: none;">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">×</a>
+
+                <h3>Nhập thời khóa biểu từ file Excel</h3>
+            </div>
+            <div class="modal-body">
+                <!-- The file upload form used as target for the file upload widget -->
+                <form id="fileupload" action="" method="POST" enctype="multipart/form-data">
+                    <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+                    <div class="row fileupload-buttonbar">
+                        <div class="span5">
+                            <!-- The fileinput-button span is used to style the file input field as button -->
+                            <span class="btn btn-success fileinput-button">
+                                <i class="icon-plus icon-white"></i>
+                                <span>Chọn files...</span>
+                                <input type="file" name="files[]" multiple>
+                            </span>
+                            <button type="submit" class="btn btn-primary start">
+                                <i class="icon-upload icon-white"></i>
+                                <span>Tải tất cả</span>
+                            </button>
+                            <button type="reset" class="btn btn-warning cancel">
+                                <i class="icon-ban-circle icon-white"></i>
+                                <span>Dừng lại</span>
+                            </button>
+                            <button type="button" class="btn btn-danger delete">
+                                <i class="icon-trash icon-white"></i>
+                                <span>Xóa</span>
+                            </button>
+                            <input type="checkbox" class="toggle">
+                        </div>
+                        <div class="span3">
+                            <!-- The global progress bar -->
+                            <div class="progress progress-success progress-striped active fade">
+                                <div class="bar" style="width:0;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- The loading indicator is shown during image processing -->
+                    <div class="fileupload-loading"></div>
+                    <br>
+                    <!-- The table listing the files available for upload/download -->
+                    <table class="table table-striped">
+                        <tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery">
+
+                        </tbody>
+                    </table>
+                </form>
+                <div id="errorDetail">
+
+                </div>
+                <div class="hint">
+                    <p>
+                        Chú ý: Phải dùng file Excel theo <a
+                            href="{{ MEDIA_URL }}template_files/ThoiKhoaBieu_template.xls">mẫu
+                        này</a>.
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn" id="upload-modal-exit">Thôi</a>
+            </div>
+        </div>
+        {% upload_js %}
+        <script type="text/javascript" src="/static/js/jquery_file_upload/qlnt_upload_for_tkb.js"></script>
+        <script type="text/javascript" src="/static/js/jquery_file_upload/locale.js"></script>
+    {% endif %}
+{% endblock %}

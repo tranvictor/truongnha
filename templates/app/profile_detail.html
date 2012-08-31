@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Tài khoản người sử dụng' %}
+{% endblock %}
+
+{% block content %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#notify").ajaxSuccess(function (event, request, settings, json) {
+                $(this).text("Đã lưu");
+                $(this).delay(1000).fadeOut('fast');
+            });
+
+            $("#form").submit(function () {
+                var data = $(this).serialize();
+                var arg = {
+                    data:data,
+                    type:$(this).attr("method"),
+                    url:$(this).attr("action"),
+                    datatype:"json"
+                };
+                $.ajax(arg);
+                return false;
+            });
+        });
+    </script>
+    {% if user.username == profile.user.username %}
+        <div class="row-fluid">
+            <div id="profile" class="span4">
+                {% if profile %}
+
+                    <form id="form" method="POST" action="/app/{{ user.username }}/"
+                          enctype="multipart/form-data"> {% csrf_token %}
+                        <h2> Thông tin cá nhân</h2>
+                        <table class="table table-condensed no-border dataform">
+                            <tr>
+                                <th>Họ và tên:</th>
+                                <td> {{ profile.user.first_name }} {{ profile.user.last_name }}</td>
+                            </tr>
+                            {#                            <tr>#}
+                            {#                                <th>Tổ chức:</th>#}
+                            {#                                <td> {{ profile.organization }}</td>#}
+                            {#                            </tr>#}
+                            <tr>
+                                <th>Vị trí:</th>
+                                <td> {{ profile.get_position_display }}</td>
+                            </tr>
+                            <tr>
+                                <th><label for="id_phone">Điện thoại:</label></th>
+                                <td><input id="id_phone" type="text" name="phone" maxlength="20"
+                                           value="{{ profile.phone }}"/></td>
+                            </tr>
+                            <tr>
+                                <th><label for="id_notes">Ghi chú:</label></th>
+                                <td><input id="id_notes" type="text" name="notes" maxlength="255"
+                                           value="{{ profile.notes}}"/></td>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <td>
+                                    <input type="submit" class="btn btn-primary" name="submit"
+                                           value="Lưu" id="submit">
+
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                {% else %}
+                {% endif %}
+            </div>
+
+            <div id="passwordChange" class="span4">
+                <form id="pwform" action="/app/{{ user.username }}/" method="post">{% csrf_token %}
+                    <h2> Đổi mật khẩu</h2>
+                    <table class="table table-condensed no-border">
+                        <tr>
+                            <th><label for="id_old_password">Mật khẩu cũ:</label></th>
+                            <td><input type="password" name="old_password" id="id_old_password"/></td>
+                        </tr>
+                        <tr>
+                            <th><label for="id_new_password1">Mật khẩu mới:</label></th>
+                            <td><input type="password" name="new_password1" id="id_new_password1"/></td>
+                        </tr>
+                        <tr>
+                            <th><label for="id_new_password2">Nhập lại mật khẩu mới:</label></th>
+                            <td><input type="password" name="new_password2" id="id_new_password2"/></td>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <td>
+                                <button class="btn btn-danger" type="submit">Đổi</button>
+                            </td>
+                        </tr>
+                    </table>
+                    {#                    <table class="table table-condensed no-border">#}
+                    {#                        {{ password.as_table }}#}
+                    {#                        <tr>#}
+                    {#                            <th></th>#}
+                    {#                            <td>#}
+                    {#                                <button class="btn btn-danger" type="submit">Đổi</button>#}
+                    {#                            </td>#}
+                    {#                        </tr>#}
+                    {#                    </table>#}
+                </form>
+            </div>
+            {% if user.userprofile.username_change == 0 %}
+                <div id="usernameChange" class="span4">
+                    <form id="unform" action="/app/{{ user.username }}/" method="post">{% csrf_token %}
+                        <h2> Đổi tên đăng nhập</h2>
+
+                        <div class="alert alert-heading">
+                            <strong>Chú ý!</strong> Tên tài khoản chỉ được thay đổi <strong>một</strong> lần duy nhất.
+                        </div>
+
+                        <table class="table table-condensed no-border">
+                            {{ username.as_table }}
+                            <tr>
+                                <th></th>
+                                <td>
+                                    <button class="btn btn-warning" type="submit">Đổi</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}

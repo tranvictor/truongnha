@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Đăng nhập' %}
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"
+{#            xmlns="http://www.w3.org/1999/html"#}
+            ></script>
+    <script type='text/javascript'>
+        $(document).ready(function () {
+            {% if login_failure_exceed %}
+                Recaptcha.create("6LdfIc4SAAAAACxRkXpRGhyK-mHYUsCQIHwF42fc",
+                        "captcha-form",
+                        {
+                            theme:"white",
+                            callback:Recaptcha.focus_response_field
+                        }
+                );
+            {% endif %}
+        });
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            document.getElementById('id_username').focus();
+        });
+    </script>
+
+{% endblock %}
+
+{% block content %}
+    <div class="row-fluid">
+        <div class="span6">
+{#            <h3>Đã có tài khoản</h3>#}
+            <form action="{{ app_path }}" method="post" id="login-form" class="well form-horizontal">
+                {% csrf_token %}
+                <legend>Đăng nhập hệ thống</legend>
+                <fieldset>
+                    <div class="control-group">
+                        <label class="control-label" for="id_username">Tên đăng nhập</label>
+
+                        <div class="controls">
+                            <input class="input-medium" id="id_username" type="text" name="username" maxlength="30">
+
+                            <p class="help-block">{{ form.username.errors }}</p>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="id_password">Mật khẩu</label>
+
+                        <div class="controls">
+                            <input class="input-medium" type="password" name="password" id="id_password">
+
+                            <p class="help-block">{{ form.password.errors }}</p>
+                        </div>
+                    </div>
+
+                    <div class="control-group" style="display: none;">
+                        <label class="control-label" for="login_type">Kiểu đăng nhập</label>
+
+                        <div class="controls">
+                            <input id="login_type" type="text" name="login_type" maxlength="30">
+
+                            <p class="help-block">{{ form.login_type.errors }}</p>
+                        </div>
+                    </div>
+                    {% if login_failure_exceed %}
+                        <div class="control-group">
+                            <div id="captcha-form">
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if form.errors %}
+                        <div class="control-group">
+                            {% if login_failure_exceed %}
+                                <b>Tên tài khoản, mật khẩu hoặc captcha không đúng.</b>
+                            {% else %}
+                                {% if error_type == 'deactivated' %}
+                                    <b>Tài khoản đã bị vô hiệu hóa.</b>
+                                {% else %}
+                                    {% if error_type == 'wrong_demo_account' %}
+                                        <b>Tài khoản dùng thử chưa được tạo. Bạn vui lòng thử vào lúc khác.</b>
+                                    {% else %}
+                                        <b>Tên tài khoản hoặc mật khẩu không đúng.</b>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </fieldset>
+                <div class="form-actions">
+                    <input id="login" class="btn btn-primary" type="submit" style="float: left; margin-right: 10px;"
+                           value="Đăng nhập"/>
+                </div>
+            </form>
+        </div>
+
+        <div class="span6">
+            <h3>Không đăng nhập được</h3>
+
+            <p>Xin vui lòng liên hệ cán bộ phụ trách tin học của trường để
+                lấy thông tin tài khoản nếu bạn không nhớ tên tài khoản hoặc mật khẩu.</p>
+{#        </div>#}
+{##}
+{#        <div class="span3">#}
+            <h3>Chưa có tài khoản</h3>
+
+            <p>Nếu bạn chưa có tài khoản và là Hiệu trưởng hay Hiệu phó hoặc cán bộ phụ trách tin học của trường, xin
+                vui lòng đăng ký để sử
+                dụng.</p>
+
+            <div class="alert alert-danger">
+                Giáo viên và học sinh KHÔNG CẦN đăng ký - hãy liên hệ nhà trường để có tài khoản đăng nhập và sử dụng.
+            </div>
+        </div>
+    </div>
+{% endblock %}

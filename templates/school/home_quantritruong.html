@@ -1,0 +1,142 @@
+<section id="classes" style="padding-bottom: 2em;">
+    <div class="row-fluid">
+        {% for grade in grades %}
+            {% if grades.count == 4 %}
+                <div class="span3 row-fluid class-container">
+            {% else %}
+                <div class="span4 row-fluid class-container">
+            {% endif %}
+        <h3>Khối {{ grade.number }}</h3>
+
+        {% for class in classes %}
+            {% if class.block_id == grade %}
+                <div class="row-fluid">
+                    <div class="lophoc" class="span12">
+                        <a class="tenlop" id="{{ class.id }}" href="{% url class_detail class.id %}">
+                            <span title="Tên lớp">{{ class.name }} </span>
+
+                                    <span class="gvcn" title="chủ nhiệm lớp">
+                                            {{ class.teacher|default_if_none:".." }}
+                                    </span>
+
+                                    <span class="siso" title="Sĩ số">
+                                            {{ class.number_of_pupils }}
+                                    </span>
+                        </a>
+
+                        <div class="slidein">
+                            <a title="Nhập hoặc chỉnh sửa điểm các môn học"
+                               class="btn btn-small btn-primary"
+                               href="{%url mark_table currentTerm.id class.id %}">
+                                Điểm</a>
+                            <a title="Nhập thông tin học sinh nghỉ học có phép, không phép"
+                               class="btn btn-small btn-success"
+                               href="{%url diem_danh_form class.id  %}">
+                                Điểm danh</a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+        {% for unc in uncs %}
+            {% if unc.block_id == grade and unc.number_of_students %}
+                <div class="row-fluid">
+                    <div class="lophoc" class="span12 ">
+                        <a class="tenlop" id="{{ unc.id }}"
+                           href="{% url unc_class_detail unc.id '' %}">
+                                    <span title="Danh sách học sinh chưa được phân lớp học" style="color: #777;">
+                                        {{ unc.name }}
+                                    </span>
+                            <span class="siso"  title="Số lượng học sinh">
+                                {{ unc.number_of_students }}
+                            </span>
+                        </a>
+                    </div>
+                </div>
+
+            {% endif %}
+        {% endfor %}
+
+        {% if grades.count == 4 %}
+            </div>
+        {% else %}
+            </div>
+        {% endif %}
+
+        {% endfor %}
+    </div>
+</section>
+
+{% if user.userprofile.position == 'HIEU_TRUONG' or user.userprofile.position == 'HIEU_PHO' or user.userprofile.position == 'GIAO_VU' %}
+    <div id="main-menu" class="win-commandlayout pagination-centered">
+        {# Người sử dụng cấp trường       #}
+        {% if user.userprofile.organization.status != 0 %}
+            {# Đang trong năm học #}
+            <a class="win-command" href="{% url classes %}"
+               title="Thêm/xoá lớp và gán giáo viên chủ nhiệm lớp">
+                <span class="win-commandimage win-commandring"><i class=" icon-th-large"></i></span>
+                <span class="win-label">Lớp học</span>
+            </a>
+            <a class="win-command" href="{% url teachers %}"
+               title="Quản lý danh sách giáo viên, cán bộ trong trường">
+                <span class="win-commandimage win-commandring"><i class="icon-group"></i></span>
+                <span class="win-label">Giáo viên</span>
+            </a>
+
+            <hr class="win-command"/>
+            <a class="win-command" href="{%url report %}"
+               title="Các báo cáo thống kê, tổng kết">
+                <span class="win-commandimage win-commandring"><i class="icon-bar-chart"></i></span>
+                <span id="command-report" class="win-label">Báo cáo</span>
+            </a>
+            <a class="win-command" href="{% url info %}" title="Thông tin trường, khóa điểm, tham số.">
+                <span class="win-commandimage win-commandring"><i class="icon-cogs"></i></span>
+                <span class="win-label">Thiết lập</span>
+            </a>
+            <a class="win-command" href="{% url finish %}" title="Chuyển học kỳ, năm học, xem tổng kết">
+                <span class="win-commandimage win-commandring"><i class="icon-columns"></i></span>
+                <span class="win-label">Chuyển kỳ</span>
+            </a>
+
+            <hr class="win-command"/>
+            <a class="win-command" href="{%url timetable_school %}" title="Thời khóa biểu toàn trường">
+                <span class="win-commandimage win-commandring"><i class="icon-calendar"></i></span>
+                <span class="win-label">Lịch học</span>
+            </a>
+            <a class="win-command" href="{% url school_subject_agenda %}"
+               title="Quảng lý phân phối chương trình các môn">
+                <span class="win-commandimage win-commandring"><i class="icon-book"></i></span>
+                <span class="win-label">Chương trình</span>
+            </a>
+            <a class="win-command" href="{% url create_list_exam %}" title="Tạo danh sách phòng thi">
+                <span class="win-commandimage win-commandring"><i class="icon-pencil"></i></span>
+                <span class="win-label">Kỳ thi</span>
+            </a>
+
+            <hr class="win-command"/>
+            <a class="win-command" href="/help/sitemap" title="Sơ đồ chức năng.">
+                <span class="win-commandimage win-commandring"><i class="icon-sitemap"></i></span>
+                <span class="win-label">Sơ đồ</span>
+            </a>
+            <a class="win-command" href="{%url views.about %}"
+               title="Giới thiệu, liên lạc, góp ý">
+                <span class="win-commandimage win-commandring"><i class="icon-info-sign"></i></span>
+                <span class="win-label">Liên hệ</span>
+            </a>
+
+            <a class="win-command" href="{%url help.views.help %}"
+               title="Hướng dẫn sử dụng">
+                <span class="win-commandimage win-commandring"><i class="icon-question-sign"></i></span>
+                <span class="win-label">Trợ giúp</span>
+            </a>
+        {% else %}
+            {# Khi chưa khởi  tạo năm học #}
+            <a class="win-command" href="{%url setup %}"
+               title="Khai báo thông tin trường học và tạo nhanh các lớp học">
+                <span class="win-commandimage win-commandring"><i class="icon-cog"></i></span>
+                <span class="win-label">Khởi tạo</span>
+            </a>
+        {% endif %}
+    </div>
+{% endif %}
+

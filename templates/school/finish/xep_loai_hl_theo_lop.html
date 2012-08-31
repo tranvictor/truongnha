@@ -1,0 +1,167 @@
+﻿{% extends "base.html" %}
+
+{% block js %}
+   {# <script type="text/javascript" src="/static/bootstrap/js/bootstrap-button.js"></script> #}
+
+    <script>
+        $(document).ready(function () {
+            $('input[type=radio]').change(function () {
+                window.location.href = "/school/xepLoaiHlTheoLop/" + {{selectedClass.id}} + "/" + this.value;
+            })
+			//document.getElementById({{termNumber}}).checked = true;
+			$("#{{ termNumber }}").addClass('active');
+        });
+    </script>
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb selectedClass 'class_detail' selectedClass.id %}
+    {% add_crumb 'Tổng kết điểm' %}
+{% endblock %}
+
+{% block content %}
+    <div class="notify-widget-pane">
+        <div class="notify" id="notify1" style="display: none;">
+        </div>
+    </div>
+
+    {% load mark %}
+
+    <div class="form-inline pagination-centered" data-toggle="buttons-radio">
+        <a id="1" href="{% url xep_loai_hl_theo_lop selectedClass.id  1%}" class="btn"> Học kỳ I </a>
+        <a id="2" href="{% url xep_loai_hl_theo_lop selectedClass.id  2%}" class="btn"> Học kỳ II </a>
+        <a id="3" href="{% url xep_loai_hl_theo_lop selectedClass.id  3%}" class="btn"> Cả năm </a>
+    </div>
+
+    <div id="submenu" class="btn-toolbar">
+		{% if isSchool %}		
+            <a id="tinhtrungbinh" class="btn btn-primary" href="{% url xep_loai_hl_theo_lop selectedClass.id  termNumber 1%}" >
+			Tính điểm trung bình và xét danh hiệu
+            </a>
+		{% endif %}	
+    </div>
+
+    <table id="mark-table" class="table table-bordered grid fifth-row">
+    <thead>
+        <tr>
+            <th rowspan=2 style="width:4px">
+                STT
+            </th>
+            <th colspan=2 rowspan=2 >
+                Họ và tên
+            </th>
+            <th rowspan=2 width="1%">
+                Ngày sinh
+            </th>
+            {% for s in subjectList %}
+
+                <th rowspan=2 class="mark-column">
+                    {% if s.name == 'GDQP-AN' or  s.name == 'GDQP' %}
+                        GD<br>QP<br>AN
+                    {% else %}
+                        {% if s.name == 'GDCD' %}
+                            GD<br>CD
+                        {% else %}
+                            {{ s.name }}
+                        {% endif %}
+                    {% endif %}
+                </th>
+            {% endfor %}
+            <th rowspan=2 width="" >
+                TB
+            </th>
+            <th colspan=3 width="" >
+                Kết quả xếp loại và thi đua
+            </th>
+        </tr>
+        <tr>
+            <th> HL</th>
+            <th> HK</th>
+            <th> DH</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p,m,tbhocky,hk in list %}
+            <tr>
+                <td >
+                    {{ forloop.counter }}
+                </td>
+                <td class="lastname align-left" >
+                    {{ p.last_name }}
+                </td>
+                <td class="firstname align-left">
+                    {{ p.first_name }}
+                </td>
+                <td>
+                    {{ p.birthday|date:"SHORT_DATE_FORMAT" }}
+                </td>
+                {% for s in m %}
+                    {% ifequal s 'MG' %}
+                        <td style="color:red;">
+                            MG
+                        </td>
+                    {% else %}
+                        <td >
+                            {{ s }}
+                        </td>
+                    {% endifequal %}
+                {% endfor %}
+                {% ifnotequal termNumber  3 %}
+                    <td>
+                        {% if tbhocky.tb_hk %}
+                            {{ tbhocky.tb_hk }}
+                        {% else %}
+                            &nbsp
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ tbhocky.hl_hk|convertHlToVietnamese }}
+                    </td>
+                    <td>
+                        {{ hk|convertHKToVietnamese }}
+                    </td>
+
+                    <td>
+                        {{ tbhocky.danh_hieu_hk|convertDHToVietnamese }}
+                    </td>
+
+                {% else %}
+                    <td>
+                        {% if tbhocky.tb_nam %}
+                            {{ tbhocky.tb_nam }}
+                        {% else %}
+                            &nbsp
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {{ tbhocky.hl_nam|convertHlToVietnamese }}
+                    </td>
+                    <td>
+                        {{ hk.year|convertHKToVietnamese }}
+                    </td>
+
+                    <td>
+                        {{ tbhocky.danh_hieu_nam|convertDHToVietnamese }}
+                    </td>
+                {% endifnotequal %}
+
+            </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+
+    {% if message != None %}
+        <script>
+            var temp = document.getElementById("notify1");
+            temp.innerHTML = "{{message}}";
+            $(temp).fadeIn('fast');
+            $(temp).delay(7000).fadeOut('fast');
+
+        </script>
+    {% endif %}
+
+
+{% endblock %}

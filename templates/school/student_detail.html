@@ -1,0 +1,355 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb class 'class_detail' class.id %}
+    {% add_crumb student %}
+
+{% endblock %}
+
+{% block content %}
+    <script>
+    $(document).ready(function () {
+        $("#tabs").tabs({
+            ajaxOptions:{
+                error:function (xhr, status, index, anchor) {
+                    $(anchor.hash).html(
+                            "Có lỗi khi lấy dữ liệu từ máy chủ. Xin hãy thử lại");
+                },
+                global:false
+            }
+        });
+        {% if pos > 3 %}
+            $("input").attr('disabled', false);
+            $("select").attr('disabled', false);
+            $("select[name=start_year_id]").attr('disabled', true);
+        {% endif %}
+        $("#id_father_name").each(function () {
+            if ($(this).val() == '') {
+                $("#id_father_birthday").attr('disabled', true);
+                $("#id_father_job").attr('disabled', true);
+            }
+        });
+
+        $("#id_mother_name").each(function () {
+            if ($(this).val() == '') {
+                $("#id_mother_birthday").attr('disabled', true);
+                $("#id_mother_job").attr('disabled', true);
+            }
+        });
+        $("#id_father_name").change(function () {
+            if ($(this).val() == '') {
+                $("#id_father_birthday").val('');
+                $("#id_father_job").val('');
+                $("#id_father_birthday").attr('disabled', true);
+                $("#id_father_job").attr('disabled', true);
+            }
+            else {
+                $("#id_father_birthday").removeAttr('disabled');
+                $("#id_father_job").removeAttr('disabled');
+            }
+        });
+
+        $("#id_mother_name").change(function () {
+            if ($(this).val() == '') {
+                $("#id_mother_birthday").val('');
+                $("#id_mother_job").val('');
+                $("#id_mother_birthday").attr('disabled', true);
+                $("#id_mother_job").attr('disabled', true);
+            }
+            else {
+                $("#id_mother_birthday").removeAttr('disabled');
+                $("#id_mother_job").removeAttr('disabled');
+            }
+        });
+
+        $("#id_ngay_vao_doi").each(function () {
+            if (!$("#id_doi").is(':checked')) {
+                $(this).attr('disabled', true);
+            }
+        });
+
+        $("#id_ngay_vao_doan").each(function () {
+            if (!$("#id_doan").is(':checked')) {
+                $(this).attr('disabled', true);
+            }
+        });
+
+        $("#id_ngay_vao_dang").each(function () {
+            if (!$("#id_dang").is(':checked')) {
+                $(this).attr('disabled', true);
+            }
+        });
+
+        $("#id_doi").click(function () {
+            if (!$(this).is(':checked')) {
+                $("#id_ngay_vao_doi").val('');
+                $("#id_ngay_vao_doi").attr('disabled', true);
+            }
+            else {
+                $("#id_ngay_vao_doi").removeAttr('disabled');
+            }
+        });
+
+        $("#id_doan").click(function () {
+            if (!$(this).is(':checked')) {
+                $("#id_ngay_vao_doan").val('');
+                $("#id_ngay_vao_doan").attr('disabled', true);
+            }
+            else {
+                $("#id_ngay_vao_doan").removeAttr('disabled');
+            }
+        });
+
+        $("#id_dang").click(function () {
+            if (!$(this).is(':checked')) {
+                $("#id_ngay_vao_dang").val('');
+                $("#id_ngay_vao_dang").attr('disabled', true);
+            }
+            else {
+                $("#id_ngay_vao_dang").removeAttr('disabled');
+            }
+        });
+        var updateStudentDetail = function (json) {
+            $("#notify").showNotification(json.message);
+            if (json.response_type == 'tths') {
+                $("#id_first_name").parents("td").append(json.first_name);
+                $("#id_last_name").parents("td").append(json.last_name);
+                $("#id_birthday").parents("td").append(json.birthday);
+                $("#id_school_join_date").parents("td").append(json.school_join_date);
+                $("#id_school_join_mark").parents("td").append(json.school_join_mark);
+                $("#id_father_birthday").parents("td").append(json.father_birthday);
+                $("#id_mother_birthday").parents("td").append(json.mother_birthday);
+                $("#id_phone").parents("td").append(json.phone);
+                $("#id_father_phone").parents("td").append(json.father_phone);
+                $("#id_mother_phone").parents("td").append(json.mother_phone);
+                $("#id_email").parents("td").append(json.email);
+                $("#id_sms_phone").parents("td").append(json.sms_phone);
+                $("#id_ngay_vao_dang").parents("td").append(json.ngay_vao_dang);
+                $("#id_ngay_vao_doi").parents("td").append(json.ngay_vao_doi);
+                $("#id_ngay_vao_doan").parents("td").append(json.ngay_vao_doan);
+            }
+        };
+        $("form.student_detail").submit(function () {
+            $(".errorlist", this).empty();
+            var data = $(this).serialize();
+            var arg = {
+                data:data,
+                type:$(this).attr("method"),
+                url:$(this).attr("action"),
+                success:updateStudentDetail,
+                global:false
+            };
+            $.ajax(arg);
+            return false;
+        });
+        $("a.onPage").live("click", function () {
+            $.ajax({
+                url:this.href,
+                global:false,
+                dataType:'html',
+                type:'GET',
+                success:function (response) {
+                    $('.ui-tabs-panel:visible').html(response);
+                    applyListener();
+                }
+            });
+            return false;
+        });
+        $("a.delOnPage").live("click", function () {
+            var c = confirm("Bạn có muốn xóa thông tin này không");
+            if (!c) return false;
+            $.ajax({
+                url:this.href,
+                global:false,
+                dataType:'html',
+                type:'GET',
+                success:function (response) {
+                    $('.ui-tabs-panel:visible').html(response);
+                    applyListener();
+                }
+            });
+            return false;
+        });
+        $("form.onPage").live("submit", function () {
+            var data = $(this).serialize();
+            var arg = {
+                data:data,
+                type:$(this).attr("method"),
+                url:$(this).attr("action"),
+                global:false,
+                success:function (response) {
+                    $('.ui-tabs-panel:visible').html(response);
+                    applyListener();
+                }
+            };
+            $.ajax(arg);
+            return false;
+        });
+        $("form.tttk").live("submit", function () {
+            var data = $(this).serialize();
+            var arg = {
+                data:data,
+                type:$(this).attr("method"),
+                url:$(this).attr("action"),
+                global:false,
+                success:function (json) {
+                    $("#notify").showNotification(json.message);
+                }
+            };
+            $.ajax(arg);
+            return false;
+        });
+        $("form.moveStudent").live("submit", function () {
+            var data = $(this).serialize();
+            var arg = {
+                data:data,
+                type:$(this).attr("method"),
+                url:$(this).attr("action"),
+                global:false,
+                error:function () {
+                    $("input").attr('disabled', false);
+                },
+                success:function (response) {
+                    location.reload(true);
+                }
+            };
+            $("#notify").text('Hệ thống đang chuyển lớp cho học sinh.\n Xin bạn vui lòng chờ');
+            $("#notify").show();
+            $("input").attr('disabled', true);
+            $.ajax(arg);
+            return false;
+        });
+        $("button.history").live("click", function () {
+            if ($(this).hasClass("warning")) {
+                var ans = confirm("Trong lịch sử này có điểm cũ của học sinh.\n Nếu bạn xóa toàn bộ điểm này sẽ mất.\n Bạn có muốn xóa không?");
+                if (!ans) return false;
+            }
+            var id = $(this).attr("class").split(" ")[0];
+            var data = {request_type:'delete_history',
+                id:id
+            };
+            var arg = {data:data,
+                url:"/school/movestudent/{{ student.id }}",
+                type:'POST',
+                success:function () {
+                    $("#notify").showNotification("Đã xóa xong");
+                    var select = "button.history." + id;
+                    $(select).parents("tr").remove();
+                }
+            };
+            $.ajax(arg);
+        });
+        {% if pos > 3 %}
+            $.ajax({
+                url:"{% url cap_nhap_mien_giam class.id student.id %}",
+                global:false,
+                dataType:'html',
+                type:'GET',
+                success:function (response) {
+                    $("#miengiam").html(response);
+                    applyListener();
+                }
+            });
+            $.ajax({
+                url:"{% url student_account student.id %}",
+                global:false,
+                dataType:'html',
+                type:'GET',
+                success:function (response) {
+                    $("#taikhoan").html(response);
+                    applyListener();
+                }
+            });
+        {% endif %}
+        $.ajax({
+            url:"{% url move_one_student id %}",
+            global:false,
+            dataType:'html',
+            type:'GET',
+            success:function (response) {
+                $("#tabs-3 > div").append(response);
+                applyListener();
+            }
+        });
+        $.ajax({
+            url:"{% url diem_danh_hs id %}",
+            global:false,
+            dataType:'html',
+            type:'GET',
+            success:function (response) {
+                $("#tabs-3 > div").append(response);
+                applyListener();
+            }
+        });
+    });
+    </script>
+
+    {% if pos > 0 %}
+
+    {% endif %}
+
+    {% if message != None %}
+        {{ message }} <br>
+    {% endif %}
+
+
+    <div id="tabs">
+        <ul>
+            <li><a href="#tabs-1">Thông tin học sinh</a></li>
+            <li><a href="{% url ktkl id %}">Khen thưởng, kỷ luật</a></li>
+            <li><a href="#tabs-3">Nghỉ học, chuyển lớp</a></li>
+            <li><a href="{% url mark_for_a_student class.id id %}">Bảng điểm</a></li>
+            <li><a href="#tabs-2">Miễn giảm</a></li>
+        </ul>
+        <div id="tabs-1">
+            <div id="taikhoan"></div>
+            <form action="{% url student_detail id %}" method="post" class="student_detail">
+                {% csrf_token %}
+                <div class="container-fluid">
+                    <div class="row-fluid">
+                        <div id="ttcn" class="span6">
+                            <h3> Thông tin cá nhân </h3>
+                            <table class="table table-condensed no-border dataform">
+                                {{ ttcnform.as_table }}
+                            </table>
+                        </div>
+                        <div id="ttll" class="span6">
+                            <h3> Thông tin liên lạc </h3>
+                            <table class="table table-condensed no-border dataform">
+                                {{ ttllform.as_table }}
+                            </table>
+                        </div>
+                        <div id="ttgd" class="span6">
+                            <h3> Thông tin gia đình </h3>
+                            <table class="table table-condensed no-border dataform">
+                                {{ ttgdform.as_table }}
+                            </table>
+                        </div>
+                        <div id="ttdd" class="span6">
+                            <h3>Thông tin đoàn đội </h3>
+                            <table class="table table-condensed no-border dataform">
+                                {{ ttddform.as_table }}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions pagination-centered">
+                    <input class="btn btn-primary" type="submit" value="Lưu"/>
+                </div>
+            </form>
+        </div>
+        <div id="tabs-2">
+            <div class="row-fluid">
+                <div id="miengiam" class="span4"></div>
+            </div>
+        </div>
+        <div id="tabs-3">
+            <div class="row-fluid">
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

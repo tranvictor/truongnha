@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Gửi tin nhắn'  %}
+{% endblock %}
+
+{% block content %}
+  {% load pagination_tags %}
+  {% if not user.is_authenticated %}
+    <h2>Gửi tin nhắn SMS</h2>
+  {% else %}
+    <h2>Gửi tin nhắn SMS</h2>
+    <a href="{%url school.sms_views.excel_sms%}">Nhập từ Excel</a>
+    <form action="" method="post">{% csrf_token %}
+      <table class="table table-condensed no-border">
+        <col width="160">
+        <tr>
+          <th>Nội dung:</th>
+          <td>
+            <p class="errorlist">{{ content_error }}</p>
+            <textarea title="Nội dung tin nhắn không quá 160 chữ cái."
+                      onKeyPress="return taLimit(this)" onKeyUp="return taCount(this,'myCounter')"
+                      name="content" rows=3 wrap="physical" cols=60></textarea><br/>
+            <small>Số ký tự còn lại <strong id=myCounter>160</strong></small >.
+            <script language="Javascript">
+              /**
+               * DHTML textbox character counter script. Courtesy of SmartWebby.com
+               */
+              maxL = 160;
+              var bName = navigator.appName;
+              function taLimit(taObj) {
+                if (taObj.value.length == maxL) return false;
+                return true;
+              }
+
+              function taCount(taObj, Cnt) {
+                objCnt = createObject(Cnt);
+                objVal = taObj.value;
+                if (objVal.length > maxL) objVal = objVal.substring(0, maxL);
+                if (objCnt) {
+                  if (bName == "Netscape") {
+                    objCnt.textContent = maxL - objVal.length;
+                  }
+                  else {
+                    objCnt.innerText = maxL - objVal.length;
+                  }
+                }
+                return true;
+              }
+              function createObject(objId) {
+                if (document.getElementById) return document.getElementById(objId);
+                else if (document.layers) return eval("document." + objId);
+                else if (document.all) return eval("document.all." + objId);
+                else return eval("document." + objId);
+              }
+            </script>
+        </tr>
+        <tr style="display:none">
+          <th>Người nhận:</th>
+          <td>
+            <div style="width:500px; height:200px; overflow: auto; border:solid 1px">
+              {% for u in user_list %}
+                {% if u.last_name or u.first_name %}
+                  <input type="checkbox" name="receiver" value="{{ u }}">{{ u.last_name }} {{ u.first_name }}
+                {% else %}
+                  <input type="checkbox" name="receiver" value="{{ u }}">{{ u }}
+                {% endif %}
+                <br>
+              {% endfor %}
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Số điện thoại:
+          </th>
+          <td>
+            <p class="errorlist">{{ phone_error }}</p>
+            <small>
+              Số điện thoại người nhận phân cách bằng dấu dấu cách hoặc ";" hoặc ",".
+            </small>
+            <br>
+            <textarea name="phone" value="12" onkeypress="return onlyNumbers();" rows="7" wrap="physical"
+                      cols="60"></textarea>
+            <script language="JavaScript">
+              function onlyNumbers(evt) {
+                var e = event || evt; // for trans-browser compatibility
+                var charCode = e.which || e.keyCode;
+                if (charCode > 32 && (charCode < 48 || charCode > 57) && charCode != 44 && charCode != 59)
+                  return false;
+                return true;
+              }
+            </script>
+          </td>
+        </tr>
+{#        <tr>#}
+{#          <td></td>#}
+{#          <td>#}
+{#        </td>#}
+{#        </tr>#}
+      </table>
+    <br>
+      <input text-align="right" class="btn" type="submit" value="Gửi"/>
+    </form>
+  {% endif %}
+{% endblock %}

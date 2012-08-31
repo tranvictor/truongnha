@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% if user.userprofile.position != "GIAO_VIEN" %}
+        {% if selectedClass %}
+            {% add_crumb selectedClass 'class_detail' selectedClass.id %}
+        {% endif %}
+        {% if selectedSubject %}
+            {% add_crumb selectedSubject %}
+        {% else %}
+            {% add_crumb 'Chọn môn' %}
+        {% endif %}
+    {% else %}
+        {% if selectedSubject %}
+            {% add_crumb selectedSubject %}
+        {% else %}
+            {% add_crumb 'Bảng điểm' %}
+        {% endif %}
+    {% endif %}
+
+{% endblock %}
+
+{% block content %}
+
+    <script language="JavaScript" type="text/javascript">
+        function submitSubject() {
+            if ($("#subject").val() != -1)
+                if ($("[name=nextcell]").val() && ($("[name=nextcell]").val() == 'move-right'))
+                    window.location.href = "/school/markTable/" + {{termChoice}} +"/" + {{classChoice}} +"/" + $("#subject").val() + "/0";
+                else
+                    window.location.href = "/school/markTable/" + {{termChoice}} +"/" + {{classChoice}} +"/" + $("#subject").val();
+
+        }
+
+        function submitSubject1() {
+            if ($("#subject").val() != -1)
+                if ($("[name=nextcell]").val() && ($("[name=nextcell]").val() == 'move-right'))
+                    window.location.href = "/school/markForTeacher/" + {{type}} +"/" + {{termChoice}} +"/" + $("#subject").val() + "/0";
+                else
+                    window.location.href = "/school/markForTeacher/" + {{type}} +"/" + {{termChoice}} +"/" + $("#subject").val();
+
+        }
+
+        function submitClass() {
+            if ($("class1").val() != -1) {
+                $("subject").val("-1");
+                window.location.href = "/school/markTable/" + {{termChoice}} +"/" + $("#class1").val();
+            }
+        }
+        function submitTerm() {
+            var position = "{{user.userprofile.position}}";
+
+            if (position != "GIAO_VIEN")
+                window.location.href = "/school/markTable/" + $("#term").val();
+            else
+                window.location.href = "/school/markForTeacher/" + {{type}}+"/" + $("#term").val();
+        }
+
+    </script>
+    {# <div id="myDiv2"  > </div>  #}
+    {# <div id="myDiv3"  > </div>  #}
+
+    <input type="text" id="mainInput" class="mark" style="display: none">
+
+    <div class="form-inline pagination-centered">
+        <label>Học kỳ</label>
+        <select class="input-medium" id="term" onchange="submitTerm();">
+            {% for term in termList %}
+                <option value={{ term.id }} selected> {{ term }} </option>
+            {% endfor %}
+        </select>
+        {% if user.userprofile.position != "GIAO_VIEN" %}
+            <label>lớp</label>
+            <select class="input-medium" id="class1" onchange="submitClass()">
+                <option value="-1" selected> Chọn lớp</option>
+                {% for class in classList %}
+                    <option value={{ class.id }}> {{ class.name }} </option>
+                {% endfor %}
+            </select>
+            <label>môn</label>
+            <select class="input-medium" id="subject" onchange="submitSubject()">
+                <option value=-1 selected>Chọn môn</option>
+                {% for subject in subjectList %}
+                    <option value={{ subject.id }}> {{ subject.name }} </option>
+                {% endfor %}
+            </select>
+        {% else %}
+            <label>môn</label>
+            <select id="subject" onchange="submitSubject1()">
+                <option value=-1 selected>Chọn môn</option>
+                {% for subject in subjectList %}
+                    <option value={{ subject.id }}> {{ subject.name }} - {{ subject.class_id.name }} </option>
+                {% endfor %}
+            </select>
+        {% endif %}
+    </div>
+
+    <script type="text/javascript">
+        var position = "{{user.userprofile.position}}";
+        if (position != "GIAO_VIEN")
+            $("#class1").val("{{classChoice}}");
+        $("#term").val("{{termChoice}}");
+        $("#subject").val("{{subjectChoice}}");
+    </script>
+
+    {% include "school/mark/js_initiate.html" %}
+    {% include "school/mark/js_control.html" %}
+
+    {% ifnotequal subjectChoice -1 %}
+        {% if user.userprofile.organization.level == 'T' %}
+            {% include "school/mark/header_mark.html" %}
+        {% endif %}
+
+        {% include "school/mark/mark_for_headmaster.html" %}
+
+        {% include "school/mark/js_save.html" %}
+        {% include "school/mark/js_sms.html" %}
+        {% include "school/mark/js_note.html" %}
+        {% include "school/mark/js_other.html" %}
+        {% include "school/mark/mien_giam_mark.html" %}
+    {% endifnotequal %}
+{% endblock %}

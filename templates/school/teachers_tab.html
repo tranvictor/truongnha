@@ -1,0 +1,189 @@
+{% block content %}
+    {% if pos > 3 %}
+        <script>
+         $(document).ready(function() {
+                $("input.datepicker").datepicker("option", "yearRange", 'c-60:c-18');
+                $("select[name=team_id]").each(function() {
+                    $(this).change(function() {
+                        var id = $(this).parents("tr").attr('class').split(' ')[0];
+                        var team = $(this).val();
+                        var data = { id: id, team:team, request_type:'team'};
+                        var arg = { type:"POST",
+                            url:"school/teachers_tab",
+                            data: data,
+                            datatype:"json",
+                            success:function() {
+                            }
+                        };
+                        $.ajax(arg);
+                        return false;
+
+                    });
+                });
+
+                $("select[name=major]").each(function() {
+                    $(this).change(function() {
+                        var id = $(this).parents("tr").attr('class').split(' ')[0];
+                        var major = $(this).val();
+                        var data = { id: id, major:major, request_type:'major'};
+                        var arg = { type:"POST",
+                            url:"school/teachers_tab",
+                            data: data,
+                            datatype:"json",
+                            success:function() {
+                            }
+                        };
+                        $.ajax(arg);
+                        return false;
+                    });
+                });
+
+
+                $("#submitform").submit(function() {
+                    var d = $(this).serialize();
+                    d = d +'&request_type=add';
+                    var arg = {data: d,
+                        type: $(this).attr('method'),
+                        url: $(this).attr('action'),
+                        success: function(response) {
+                            $('.ui-tabs-panel:visible').html(response);
+                            applyListener();
+                        },
+                        global:false
+                    };
+                    $.ajax(arg);
+                    return false;
+                });
+         });
+        </script>
+    {% endif %}
+        <form action="/school/teachers_tab" id ="submitform" method="post">{% csrf_token %}
+            <table class="table table-striped">
+                <colgroup>
+                {% if pos > 3 %}
+                    <col style="width: 5%;">
+                {% endif %}
+                <col style="width: 5%;">
+            
+                <col style="width: 25%;">
+                <col style="width: 15%;">
+                <col style="width: 5%;">
+                <col style="width: 10%;">
+                <col style="width: 15%;">
+                <col style="width: 10%;">
+
+                </colgroup>
+                <thead>
+                <tr>
+                    {% if pos > 3 %}
+                    <th title="Chọn tất cả" class="" style="text-align: center;">
+                        <input type="checkbox" class="checkbox_all"/>
+                    </th>
+                    {% endif %}
+                    <th class="align-left">STT</th>
+                    <th class="align-left"><a
+                            href="{%url school.views.school_index  %}teachers/1/{{next_status}}"
+                            class="" title="Sắp xếp theo tên">Họ tên </a></th>
+                    <th class="align-left"><a
+                            href="{%url school.views.school_index  %}teachers/2/{{next_status}}"
+                            class="" title="Sắp xếp theo ngày sinh">Ngày sinh</a></th>
+                    <th class="align-left"><a
+                            href="{%url school.views.school_index  %}teachers/3/{{next_status}}"
+                            class="" title="Sắp xếp giới tính">Giới tính </a></th>
+                    <th class="align-left">Dạy môn</th>
+                    <th class="align-left"><a
+                            href="{%url school.views.school_index  %}teachers/4/{{next_status}}"
+                            class="" title="Sắp xếp theo tổ">Tổ </a></th>
+                    {% if pos > 3 %}
+                        <th></th>
+                    {% endif %}
+                </tr>
+                </thead>
+                {% if message != None %}
+                    {{ message }}
+                {% endif %}
+                <tbody>
+                {% for ss, f in list %}
+                    <tr class="{{ss.id}}">
+                        {% if pos > 3 %}
+                        <td style="text-align: center;">
+                            <input type="checkbox" class="checkbox_{{ss.id}}"/>
+                        </td>
+                        {% endif %}
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            {% if pos > 3 or teacher_id == ss.id %}
+                                <a href="{%url school.views.school_index  %}viewTeacherDetail/{{ss.id}}">
+                            {% endif %}
+                            {{ ss.last_name }} {{ ss.first_name }} </a>
+                        </td>
+                        <td> {{ ss.birthday|date:"SHORT_DATE_FORMAT" }}</td>
+                        <td> {{ ss.sex }} </td>
+
+                        {% if pos > 3 %}
+                            <td>{{ f.major }}</td>
+                            <td> {{ f.team_id }} </td>
+                            <td></td>
+                        {% else %}
+                            <td>
+                                {% if ss.major == '-1' %}
+                                    Chưa rõ
+                                {% else %}
+                                    {{ ss.major }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if ss.team_id %}
+                                    {{ ss.team_id }}
+                                {% else %}
+                                    Chưa rõ
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                {% if pos > 3 %}
+                        <tr>
+                            {{ form.non_field_errors }}
+                            <td></td>
+                            <td></td>
+                            <td>
+                                {{ form.first_name.errors }}
+                                <p>{{ form.first_name }}</p>
+                            </td>
+
+                            <td>
+                                {{ form.birthday.errors }}
+                                <p>{{ form.birthday }}</p>
+                            </td>
+
+
+                            <td>
+                                {{ form.sex.errors }}
+                                <p>{{ form.sex }}</p>
+                            </td>
+
+
+                            <td>
+                                {{ form.major.errors }}
+                                <p>{{ form.major }}</p>
+                            </td>
+
+                            <td>
+                                {{ form.team_id.errors }}
+                                <p>{{ form.team_id }}</p>
+                            </td>
+
+                            <td><input type="submit" class="btn" value="Thêm"/></td>
+                        </tr>
+                {% endif %}
+                </tbody>
+            </table>
+            </form>
+
+            {% if pos > 3 %}
+                <tr>
+                    <td class="align-left">&nbsp</td>
+                </tr>
+            {% endif %}
+{% endblock %}

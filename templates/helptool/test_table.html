@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('input:text').each(function(){
+           $(this).focus(function(){
+               $(this).addClass('focused');
+           })
+        });
+        $('input:text').each(function(){
+           $(this).blur(function(){
+               $(this).removeClass('focused');
+           })
+        });
+        $(document).keydown( function(event){
+        console.log(event.which);
+        var theSelected = $(".focused");
+        console.log(theSelected);
+        if (theSelected.length >0){
+
+            // selected an element => moving that element to organize elements.
+            var id, row, col;
+            if ( event.which == 38){
+                // up arrow key
+                console.log('key_up_arrow_down');
+
+                id = theSelected.attr('id');
+                id = id.split('_');
+                if (id.length >1 ){
+                    row = parseInt(id[0]);
+                    col = parseInt(id[1]);
+                    if (row >1){
+                        row -= 1;
+                        id = '#'+row.toString() + '_' + col.toString();
+                        $(id).focus();
+                    }
+                }
+            } else if ( event.which == 40){
+                // down arrow key
+                console.log('key_down_arrow_down');
+
+                id = theSelected.attr('id');
+                id = id.split('_');
+                if (id.length >1 ){
+                    row = parseInt(id[0]);
+                    col = parseInt(id[1]);
+                    if (row < 69){
+                        row += 1;
+                        id = '#'+row.toString() + '_' + col.toString();
+                        $(id).focus();
+                    }
+                }
+            } else if ( event.which == 37){
+                // left arrow key
+                console.log('key_left_arrow_down');
+
+                id = theSelected.attr('id');
+                id = id.split('_');
+                if (id.length >1 ){
+                    row = parseInt(id[0]);
+                    col = parseInt(id[1]);
+                    if (col > 1){
+                        col -= 1;
+                        id = '#'+row.toString() + '_' + col.toString();
+                        $(id).focus();
+                    }
+                }
+            }else if ( event.which == 39){
+                // right arrow key
+                console.log('key_right_arrow_down');
+
+                id = theSelected.attr('id');
+                id = id.split('_');
+                if (id.length >1 ){
+                    row = parseInt(id[0]);
+                    col = parseInt(id[1]);
+                    if (col < 19){
+                        col += 1;
+                        id = '#'+row.toString() + '_' + col.toString();
+                        $(id).focus();
+                    }
+                }
+            }
+        }
+
+    });
+    });
+</script>
+    <table class="table" id="test_table">
+        {% for student in student_list %}
+            <tr id="tr_{{ forloop.counter }}">
+                {% for mark in mark_list %}
+                    <td>
+                        <input id="{{ forloop.parentloop.counter }}_{{ forloop.counter }}" type="text" style="width: 50px;">
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+
+    </table>
+{% endblock %}

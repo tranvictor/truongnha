@@ -1,0 +1,80 @@
+{% block content %}
+    {#    <div class="row-fluid">#}
+    {#        <div class="span3">#}
+    {#            <h3>Lịch dạy</h3>#}
+    {#            {% for d, subs in table.items %}#}
+    {#                {% if subs.items %}#}
+    {#                    <h5> Thứ {{ d }}</h5>#}
+    {#                    {% for t, sub in subs.items %}#}
+    {#                        {% if sub %}#}
+    {#                            <p style="padding-left: 5em;"> Tiết {{ t }}:#}
+    {#                                {% for v in sub %}#}
+    {#                                    {{ v.name }}#}
+    {#                                    {{ v.class_id.name }}#}
+    {#                                {% endfor %}#}
+    {#                            </p>#}
+    {#                        {% endif %}#}
+    {#                    {% endfor %}#}
+    {#                {% endif %}#}
+    {#            {% endfor %}#}
+    {#        </div>#}
+    {##}
+    {#        <div class="span9">#}
+    <h2>Thời khóa biểu giáo viên</h2>
+    <table id="school-timetable" class="table table-bordered grid" style="table-layout:auto;" >
+        <colgroup>
+            <col style="width: 9%;"/>
+            <col style="width: 9%;"/>
+            <col style="width: 9%;"/>
+            <col style="width: 9%;"/>
+            <col style="width: 9%;"/>
+            <col style="width: 9%;"/>
+            <col style="width: 9%;"/>
+            <col style="width: 9%;"/>
+            <col style="width: 9%;"/>
+            <col style="width: 9%;"/>
+            <col style="width: 9%;"/>
+        </colgroup>
+        <thead>
+        <tr>
+            <th> Tiết</th>
+            <th> 1</th>
+            <th> 2</th>
+            <th> 3</th>
+            <th> 4</th>
+            <th> 5</th>
+            <th> 6</th>
+            <th> 7</th>
+            <th> 8</th>
+            <th> 9</th>
+            <th> 10</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for d, subs in table.items %}
+            <tr>
+                <th> Thứ {{ d }}</th>
+
+                {% for t, sub in subs.items %}
+
+                    {% for v in sub %}
+                        {% if forloop.first %}
+                            <td subject="{{ v.name }}">
+                        {% endif %}
+
+                        <p>{{ v.name }} </p>
+                        <p>{{ v.class_id.name }}</p>
+
+                        {% if forloop.first %}
+                            </td>
+                        {% endif %}
+                    {% endfor %}
+
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {#        </div>#}
+    {#    </div>#}
+{% endblock %}

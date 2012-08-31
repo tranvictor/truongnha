@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+
+{% block css %}
+    <style type="text/css">
+        input[name="loai"][value="P"] {
+            color: rgb(70, 136, 71);
+        }
+
+        input[name="loai"][value="M"] {
+            color: rgb(58, 135, 173);
+        }
+
+        input[name="loai"][value="K"] {
+            color: rgb(245, 37, 39);
+        }
+    </style>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#nosunday').datepicker({
+                format:'dd/mm/yyyy',
+                weekStart:1
+            }).on('changeDate', function (ev) {
+                        var day = ev.date.getDate();
+                        var month = ev.date.getMonth() + 1;
+                        var year = ev.date.getFullYear();
+                        var date = day + '/' + month + '/' + year;
+                        window.location = "/school/diemdanh/" + "{{class.id}}" + "/" + date;
+                    });
+            ;
+
+            var done = function (json) {
+                if (json.message != null && json.message != '')
+                    $("#smsNotification").html("<ul>" + json.message + "</ul>");
+                else
+                    $("#smsNotification").html('');
+                $("#smsNotification").dialog("open");
+            };
+
+            $("#smsNotification").dialog({
+                modal:true,
+                buttons:{
+                    Đóng:function () {
+                        $(this).dialog('close');
+                    }
+                },
+                autoOpen:false,
+                width:500,
+                height:450,
+                maxWidth:500,
+                maxHeight:450,
+                title:"Tin nhắn đã gửi"
+            });
+
+            var sendSMS = function () {
+                var data = '';
+                $(":checkbox").each(function () {
+                    if ($(this).is(':checked')) {
+                        var id = $(this).attr('id').split('_')[1];
+                        data = data + id + '-';
+                        $(this).prop("checked", false);
+                    }
+                });
+                if (data == '') {
+                    alert("Hãy chọn ít nhất một cột");
+                    return false;
+                }
+                var arg = { type:"POST",
+                    url:"",
+                    data:{data:data, request_type:'sms'},
+                    datatype:"json",
+                    success:done
+                };
+                $.ajax(arg);
+                return false;
+            };
+
+            $("#sendSMS").click(sendSMS);
+
+            $("input[name=loai]").on('keyup', function (event) {
+                var $this;
+                var cellIndex;
+                if (event.keyCode == 37) {
+                    $this = $(this).parents("tr");
+                    cellIndex = $(this).parent("td").index() - 1;
+                    $this.children().eq(cellIndex).find("input").focus();
+                    return false;
+                }
+                if (event.keyCode == 38) {
+                    $this = $(this).parent("td");
+                    cellIndex = $this.index();
+                    $this.closest('tr').prev().children().eq(cellIndex).find("input").focus();
+                    return false;
+                }
+                if (event.keyCode == 39) {
+                    $this = $(this).parents("tr");
+                    cellIndex = $(this).parent("td").index() + 1;
+                    $this.children().eq(cellIndex).find("input").focus();
+                    return false;
+                }
+                if (event.keyCode == 40 || event.keyCode == 13) {
+                    $this = $(this).parent("td");
+                    cellIndex = $this.index();
+                    $this.closest('tr').next().children().eq(cellIndex).find("input").focus();
+                    return false;
+                }
+            });
+            function send_dd(id,value){
+                var std = id.split('_')[0];
+                var time = id.split('_')[1];
+                var data = [std, value, time].join('-');
+                var arg = { type:'POST',
+                    url:"",
+                    data:{
+                        data:data,
+                        request_type:'dd'
+                    },
+                    datatype:"json"
+                };
+                $.ajax(arg);
+                return false;
+            }
+
+            $("input[name=loai]").change(function (event) {
+                var default_value = event.target.defaultValue;
+                var value = $(this).val().toUpperCase();
+                $(this).val(value);
+                $(this).attr("value",value);
+                var id = $(this).attr('id');
+                if (value.match(/[PKMpkm]/)){
+                    send_dd(id,value);
+                }
+                else{
+                    $(this).val('');
+                    $(this).attr("value","");
+                    if (default_value == '') {
+                    } else {
+                        send_dd(id, "");
+                    }
+                }
+            });
+
+            $("select[name=class_id]").change(function () {
+                var class_id = $(this).val();
+                window.location = "/school/diemdanh/" + class_id + "/" + "{{ date|date:"SHORT_DATE_FORMAT" }}";
+            });
+
+            $("#nosunday").change(function () {
+                var val = $(this).val();
+                window.location = "/school/diemdanh/" + "{{class.id}}" + "/" + val;
+            });
+
+            $("input[type=checkbox]").change(function () {
+                var selected = '.' + $(this).parent().attr("class").split(' ')[1];
+                if ($(this).is(':checked')) {
+                    $(selected).addClass('selected');
+                }
+                else {
+                    $(selected).removeClass('selected');
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb class 'class_detail' class.id %}
+    {% add_crumb 'Điểm danh' %}
+{% endblock %}
+
+{% block content %}
+    <div class="form-inline pagination-centered">
+        {% if pos == 3 %}
+            <label>Lớp</label> {{ class }}
+            <label>ngày</label> <input id="nosunday" value="{{ date|date:"SHORT_DATE_FORMAT" }}">
+        {% else %}
+            <label for="id_class_id">Lớp</label> {{ dncform.class_id }}
+            <label for="nosunday"> tuần (ngày) </label>
+            <input class="input-medium" id="nosunday" value="{{ date|date:"SHORT_DATE_FORMAT" }}">
+        {% endif %}
+        <a href="/school/diemdanh/{{class.id}}/{{ previous_week|date:"SHORT_DATE_FORMAT" }}" class="btn btn-primary"
+           title="Tuần trước">
+            <i class="icon-arrow-left"></i></a>
+        <a href="/school/diemdanh/{{class.id}}/{{ next_week|date:"SHORT_DATE_FORMAT" }}" class="btn btn-primary"
+           title="Tuần tiếp theo">
+            <i class="icon-arrow-right"></i></a>
+    </div>
+
+    <div id="submenu" class="btn-toolbar">
+        <button id="sendSMS" class="btn btn-danger" title="Gửi SMS cho những tháng đã chọn">
+            <i class="icon-envelope-alt"></i> Gửi tin nhắn
+        </button>
+
+        {#        <div class="alert">#}
+        {#            <button type="button" class="close" data-dismiss="alert">×</button>#}
+        {#            <strong>Warning!</strong> Best check yo self, you're not looking too good.#}
+        {#        </div>#}
+        {#        <div class="xalert xpull-right">#}
+        <span class="pull-right" >
+            <label>
+                Nhập một chữ cái:
+                <span class="badge badge-success">P</span>: Có phép,
+                <span class="badge badge-important">K</span>: Không phép,
+                <span class="badge badge-info">M</span>: Muộn.
+                &nbsp
+                <span title="Có thể dùng phím Enter, phím mũi tên hoặc phím tab để di chuyển.">
+                <i class="icon-gift"></i> típ
+                </span>
+            </label>
+        </span>
+
+    </div>
+
+    <table class="table table-bordered table-hover grid-edit fifth-row">
+        <thead>
+        <tr>
+            <th rowspan="2"> TT</th>
+            <th rowspan="2"> Họ tên</th>
+            {% for d in week_list %}
+                <th class="dd col{{ forloop.counter }}">
+                    <input title="Chọn để nhắn tin điểm danh của tất cả học sinh"
+                           id="checkbox_{{ d|date:"SHORT_DATE_FORMAT" }}" type="checkbox">
+                </th>
+            {% endfor %}
+        </tr>
+        <tr>
+            {% for d in week_list %}
+                <th class="dd col{{ forloop.counter }}"> {{ d|date:"D, j/n" }} </th>
+            {% endfor %}
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for p,fl in list %}
+            <tr>
+                <td> {{ forloop.counter }}</td>
+                <td class="align-left" style="font-size: 1.15em;"> {{ p }}</td>
+                {% for f in fl %}
+                    <td class="dd col{{ forloop.counter }}"> {{ f.loai }} </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    <div style="display: None;">
+        <div id="smsNotification">
+        </div>
+    </div>
+{% endblock %}

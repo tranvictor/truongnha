@@ -1,0 +1,212 @@
+﻿{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb selectedClass 'class_detail' selectedClass.id %}
+    {% add_crumb 'Nhắn tin kết quả học tập' %}
+{% endblock %}
+
+{% block content %}
+    {% load mark %}
+    <script>
+        $(document).ready(function () {
+
+            var select = function () {
+                if (!$(this).hasClass('thread') && !$(this).hasClass('form') && !$(this).hasClass('function')) {
+                    //var id = $(this).attr('class').split(' ')[0];
+                    var id = this.rowIndex;
+					if (id==0) return;
+                    var checkboxid = '#checkbox_' + id;
+                    if (document.getElementById("checkbox_" + id).disabled)
+                        return;
+                    var checkboxall = '#checkboxAll';
+					
+                    if ($(this).hasClass('selected')) {
+                        $(this).removeClass('selected');
+						$(this).children("td").each(function(){
+							$(this).removeClass("selected");
+						})
+                        $(checkboxid).prop("checked", false);
+                        var n = $("input[type=checkbox]:checked").length;
+                        if (n <= 1) $(checkboxall).prop("checked", false);
+                    } else {
+                        $(this).addClass('selected');
+ 						$(this).children("td").each(function(){
+							$(this).addClass("selected");
+						})
+                       $(checkboxid).prop("checked", true);
+                        $(checkboxall).prop("checked", true);
+
+                    }
+                }
+            };
+            var send = function () {
+                if (!$("#checkboxAll").is(':checked')) {
+                    alert("Bạn chưa chọn học sinh nào.");
+                    return false;
+                }
+                var data = '';
+                $("input[type=checkbox]:checked").each(function () {
+                    if (this.id != 'checkboxAll')
+                        data = data + this.id.split('_')[1] + '-';
+                });
+                $("#notify").text("Đang gửi...");
+                $("#notify").show();
+
+                var arg = { type:"POST",
+                    url:"",
+                    global:false,
+                    data:{data:data, request_type:'del'},
+                    datatype:"json",
+                    success:function (json) {
+                        $("#notify").showNotification(json.result, 5000);
+                        successStrings = json.successString.split('-');
+                        for (s in successStrings) {
+                            var id = "sent_" + successStrings[s];
+                            if (document.getElementById(id)) {
+                                document.getElementById(id).innerHTML = 'Đã gửi';
+                                document.getElementById(id).className = 'sent';
+                            }
+                        }
+                    },
+                    error:function () {
+                        $("#notify").showNotification("Gặp lỗi khi gửi tin nhắn");
+                    }
+                };
+                $.ajax(arg);
+                return false;
+            };
+            $("#send").click(send);
+
+            // individual listener
+            $("tr").each(function () {
+                $(this).click(select);
+            });
+
+            $("#checkboxAll").click(function () {
+                var checkboxall = '#checkboxAll';
+                if ($(checkboxall).is(':checked')) {
+                    $("tr").each(function () {
+                        if (!$(this).hasClass('selected'))
+                            $(this).trigger('click');
+                    });
+                }
+                else {
+                    $("tr").each(function () {
+                        if ($(this).hasClass('selected'))
+                            $(this).trigger('click');
+                    });
+                }
+            });
+            $("#checkNoSent").click(function () {
+                $("tr").each(function () {
+                    //var id = $(this).attr('class').split(' ')[0];
+                    var id = this.rowIndex;
+                    var sentId = '#sent_' + id;
+                    if ($(sentId).hasClass('sent')) {
+                        if ($(this).hasClass('selected'))
+                            $(this).trigger('click');
+                    }
+                    else
+                    if (!$(this).hasClass('selected'))
+                        $(this).trigger('click');
+                });
+            });
+            $('input[type=radio]').change(function () {
+                window.location.href = "/school/sendSMSResult/"+{{selectedClass.id}}+
+                "/" + this.value;
+            })
+			$("#term{{ termNumber }}").addClass('active');
+        });
+    </script>
+
+    <div class="btn-toolbar form-inline pagination-centered">
+		<div class="btn-group" data-toggle="buttons-radio">
+			<a id="term1" href="{% url send_sms_result selectedClass.id 1 %}" class="btn"> Học kỳ I </a>
+			<a id="term2" href="{% url send_sms_result selectedClass.id 2 %}" class="btn"> Học kỳ II </a>
+			<a id="term3" href="{% url send_sms_result selectedClass.id 3 %}" class="btn"> Cả năm </a>
+		</div>
+
+		<div class="btn-group" >
+			<button id="checkNoSent" class="btn btn-info"> Chọn học sinh chưa gửi</button>
+			<button id="send" class="btn btn-warning"> <i class="icon-envelope-alt"></i> Gửi tin nhắn</button>
+		</div>
+
+
+        {% if message != None %}
+            {{ message }}
+        {% endif %}
+    </div>
+
+    <table class="table fifth-row">
+        <thead>
+        <tr >
+            <th style="text-align:center">
+                <input type="checkbox" id="checkboxAll">
+            </th>
+            <th>
+                STT
+            </th>
+            <th colspan=2>
+                Họ và tên
+            </th>
+            <th>
+                Ngày sinh
+            </th>
+            <th>
+                Nội dung sẽ gửi
+            </th>
+            <th>
+                Số điện thoại
+            </th>
+            <th>
+                Trạng thái
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for p,c,tb in list %}
+            {% if p.sms_phone %}
+                <tr>
+                    <td style="text-align: center;">
+                        <input type="checkbox" id="checkbox_{{forloop.counter}}">
+                    </td>
+                    {% else %}
+                <tr class="" title="Không có số điện thoại nên sẽ không thể chọn được học sinh này.">
+                <td style="text-align: center;">
+                    <input type="checkbox" id="checkbox_{{forloop.counter}}" disabled>
+                </td>
+            {% endif %}
+
+        <td>{{ forloop.counter }} </td>
+        <td class="lastname">{{ p.last_name }} </td>
+        <td class="firstname">{{ p.first_name }}   </td>
+        <td>
+            {{ p.birthday|date:"SHORT_DATE_FORMAT" }}
+        </td>
+        <td >
+            {{ c }}
+        </td>
+        <td>
+            {% if p.sms_phone %}
+                {{ p.sms_phone }}
+            {% else %}
+                &nbsp
+            {% endif %}
+        </td>
+        {% if tb.sent %}
+            <td class="sent" id="sent_{{forloop.counter}}">
+                Đã gửi
+            </td>
+        {% else %}
+            <td id="sent_{{forloop.counter}}">
+                Chưa gửi
+            </td>
+        {% endif %}
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+

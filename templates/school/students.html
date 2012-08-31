@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<script>
+function confirmDelete()
+{
+    return confirm("Bạn có chắc chắn xóa không?");
+}
+</script>
+
+<table class="table table-striped" >
+    <tr>
+		<th width="5%"> STT </th>
+        <th width="25%"><a href="{%url school.views.school_index  %}students/1/{{next_status}}/1"> Họ & Tên </a></th>
+        <th width="15%"><a href="{%url school.views.school_index  %}students/2/{{next_status}}/1">Ngày sinh</a></th>
+        <th width="10%"><a href="{%url school.views.school_index  %}students/3/{{next_status}}/1"> Giới tính</a></th>
+        <th width="7%"><a href="{%url school.views.school_index  %}students/4/{{next_status}}/1">Ban Đăng kí </a></th>
+   		<th width="8%"><a href="{%url school.views.school_index  %}students/6/{{next_status}}/1">Lớp</a></th>
+        <th width="15%"><a href="{%url school.views.school_index  %}students/5/{{next_status}}/1">Ngày vào trường</a></th>
+        <th width="10%"> Năm BD </th>
+        <th width = "5%"> <a href = ""></a></th>
+    </tr>
+
+    {% if message != None %}
+    {{message}}
+    {% endif %}
+
+    {% for ss in studentList.object_list %}
+    <tr>
+        <td style="text-align: center;" width="5%">{{forloop.counter|add:base_order}}</td>
+        <td style="text-align: center;" width="25%"> <a href="{%url school.views.school_index  %}viewStudentDetail/{{ss.id}}">{{ss.last_name}} {{ss.first_name}}</a></td>
+        <td style="text-align: center;" width="15%"> {{ss.birthday|date:"SHORT_DATE_FORMAT"}}</td>
+        <td style="text-align: center;" width="10%"> {{ss.sex}}</td>
+        <td style="text-align: center;" width="7%"> {{ss.ban_dk}} </td>
+        <td style="text-align: center;" width="8%"> {{ss.class_id}} </td>
+        <td style="text-align: center;" width="15%"> {{ss.school_join_date|date:"SHORT_DATE_FORMAT"}} </td>
+        <td style="text-align: center;" width="10%"> {{ss.start_year_id}} </td>
+        <td width = "5%"> <a href = "{%url school.views.school_index  %}deleteStudentInSchool/{{ss.id}}" onclick="return confirmDelete();"> xóa</a></td>
+    </tr>
+    {% endfor %}
+	<tr boder = 0>
+		<td width = "100%" colspan = 9 align = "right">
+		<div class = "pagination">
+		<span class = "step-links">
+			{% if studentList.has_previous %}
+				<a href = "{%url school.views.school_index  %}students/{{sort_type}}/{{sort_status}}/{{studentList.previous_page_number}}"> Trang trước </a>
+			{% endif %}
+			
+			<span class = "current">
+				Trang {{studentList.number}} trên {{studentList.paginator.num_pages}}.
+			</span>
+			
+			{% if studentList.has_next %}
+				<a href = "{%url school.views.school_index  %}students/{{sort_type}}/{{sort_status}}/{{studentList.next_page_number}}"> Trang sau </a>
+			{% endif %}
+		</span>
+		</div>
+		</td>
+	</tr>
+    <form action="/school/students/{{sort_type}}/{{sort_status}}/{{studentList.number}}" method="post">{% csrf_token %}
+        <tr>
+            {{ form.non_field_errors }}
+            <td style="text-align: center;" width="5%"></td>
+            <td style="text-align: center;" width="25%">
+                    {{form.first_name.errors }}
+                    <p>{{ form.first_name }}</p>
+            </td>
+
+            <td style="text-align: center;" width="15%">
+                    {{ form.birthday.errors }}
+                    <p>{{ form.birthday }}</p>
+            </td>
+
+            <td style="text-align: center;" width="10%">
+                    {{ form.sex.errors }}
+                    <p>{{ form.sex }}</p>
+            </td>
+
+            <td style="text-align: center;" width="7%">
+                    {{form.ban_dk.errors }}
+                    <p>{{ form.ban_dk }}</p>
+            </td>
+            
+            <td style="text-align: center;" width="8%">
+                    {{form.class_id.errors }}
+                    <p>{{ form.class_id }}</p>
+            </td>
+
+            <td style="text-align: center;" width="15%">
+                    {{ form.school_join_date.errors }}
+                    <p>{{ form.school_join_date }}</p>                   
+            </td>
+
+            <td style="text-align: center;" width="10%">
+                    {{ form.start_year_id.errors }}
+                    <p>{{ form.start_year_id }}</p>                   
+            </td>         
+        </tr>
+        <tr border = 0>
+        		<td width = "5%" align = "left" border = 0><input type ="submit" value="Thêm"/></td>
+        		<td align = "right" colspan = 8 border = 0> <a href = "">
+                    <i class="icon-download-alt"></i>
+                    Xuất ra Excel </a> </td>
+			</form>
+        </tr>
+</table>
+{% endblock %}
