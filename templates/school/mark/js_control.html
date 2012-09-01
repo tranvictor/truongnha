@@ -406,30 +406,13 @@ function controlDirection(cell,event)
 	//alert(timetime2-timetime1);
 }
 	$(document).ready(function() {
-		$("#markTable").find("tr").each(function(){
-			if ((this.rowIndex>2)  && (this.rowIndex<2+length)){
-				$(this).find("td").each(function(){
-				
-					var ok = false;
-					if (($(this).index()>4) && ($(this).index()<6+3*MAX_COL)) 
-						ok = true;
-					if (($(this).index() == 6+3*MAX_COL) && (isComment) && (!isSecondTerm))
-						ok = true;
-					if ( (($(this).index() == 7+3*MAX_COL) || ($(this).index() == 8+3*MAX_COL)) &&
-						(isComment) && (isSecondTerm))
-						ok = true;		
-					
-					if (ok){
-						$(this).click(function(){
-							focusCell(this);
-							checkToSend(this);
-						});	
-						$(this).keyup(function(event){
-							control(this,event); controlDirection(this,event);							
-						});
-					}
-				});
-			};
-		});		
+		$("#markTable").delegate('td[id^="cell_"]',"click",function(){
+			focusCell(this);
+			checkToSend(this);
+		});
+		$("#markTable").delegate('td[id^="cell_"]',"keyup",function(event){
+			control(this,event); 
+			controlDirection(this,event);							
+		});
 	});			
 </script>
