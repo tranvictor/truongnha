@@ -416,8 +416,7 @@ class Class(models.Model):
     year_id = models.ForeignKey(Year, verbose_name = "Năm học(*)")
     #lop nay thuoc khoi nao
     block_id = models.ForeignKey(Block, verbose_name = "Khối(*)")
-    teacher_id = models.ForeignKey(Teacher, verbose_name = "Giáo viên chủ nhiệm", null = True, blank = True) #field nay chi dung de phan quyen, vi vay chi gan 1 gia tri nhan dang
-    #temp_teacher_id = models.OneToOneField(Teacher,related_name='temp_class_set', verbose_name = "Giáo viên chủ nhiệm", null = True, blank = True) #field nay chi dung de phan quyen, vi vay chi gan 1 gia tri nhan dang
+    teacher_id = models.ForeignKey(Teacher, verbose_name = "Giáo viên chủ nhiệm", null = True, blank = True) 
     
     def teacher(self):
         if self.teacher_id:

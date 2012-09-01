@@ -54,10 +54,11 @@ def school_index(request):
                                            context_instance=context)
     elif user_type == 'GIAO_VIEN':
         teaching_subjects = Subject.objects.\
-                                    filter(teacher_id=user.teacher).\
-                                    order_by("class_id__block_id__number", "index")
+                                    filter(teacher_id=user.teacher,
+                                           class_id__year_id=year ).\
+                                    order_by("class_id__block_id__number",
+                                            "name")
         teaching_class = user.teacher.current_homeroom_class()
-        print teaching_class, teaching_class.teacher_id
         term = get_current_term(request)
         if term.number == 3:
             term = Term.objects.get(year_id=term.year_id, number=2)
