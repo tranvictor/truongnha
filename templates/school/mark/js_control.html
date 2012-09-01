@@ -406,6 +406,7 @@ function controlDirection(cell,event)
 	//alert(timetime2-timetime1);
 }
 	$(document).ready(function() {
+		var time1 = new Date().getTime();
 		$("#markTable").delegate('td[id^="cell_"]',"click",function(){
 			focusCell(this);
 			checkToSend(this);
@@ -414,5 +415,13 @@ function controlDirection(cell,event)
 			control(this,event); 
 			controlDirection(this,event);							
 		});
+		$("#markTable").delegate('td[id^="cell__"]',"click",function(){
+			select(this);
+		});
+		$("#markTable").delegate('th[id^="col_"]',"click",function(){
+			checkCol(this);
+		});
+		var time2 = new Date().getTime();
+		console.log(time2-time1);	
 	});			
 </script>
