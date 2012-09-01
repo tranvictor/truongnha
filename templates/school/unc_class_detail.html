@@ -120,8 +120,8 @@
                 <th title="Lớp năm trước">Lớp năm trước</th>
                 <th>Giới tính</th>
                 <th>Trạng thái</th>
-                <th class="visible-desktop">Nơi ở</th>
-                <th class="visible-desktop">Nơi sinh</th>
+                <th class="">Nơi ở</th>
+                <th class="">Nơi sinh</th>
             </tr>
             </thead>
 
@@ -144,10 +144,10 @@
                     <td> {{ ss.current_class }}</td>
                     <td> {{ ss.sex }} </td>
                     <td> {{ ss.get_learning_status_display }} </td>
-                    <td class="truncated visible-desktop"
+                    <td class=""
                         title="{{ ss.current_address }}">
                         {{ ss.current_address }} </td>
-                    <td class="truncated visible-desktop"
+                    <td class=""
                         title="{{ ss.birth_place }}">
                         {{ ss.birth_place }} </td>
                 </tr>

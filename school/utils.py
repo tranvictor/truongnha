@@ -573,11 +573,11 @@ def completely_del_student( student):
     student.user_id.delete()
 
 
-def add_teacher( first_name = None, last_name = None, full_name = None,
-                 birthday = None, sms_phone = '', sex = 'N', dan_toc = 'Kinh', major='',
-                 current_address = '', home_town = '', birthplace = '',
-                 school = None, team_id = None, group_id = None,
-                 force_update = False):
+def add_teacher( first_name=None, last_name=None, full_name=None,
+                 birthday=None, sms_phone='', sex='N', dan_toc='Kinh',
+                 major='', current_address='', home_town='', birthplace='',
+                 school=None, team_id=None, group_id=None,
+                 force_update=False):
     if full_name:
         names = full_name.split(" ")
         last_name = ' '.join(names[:len(names)-1])
