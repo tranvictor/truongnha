@@ -30,6 +30,8 @@
 	<script type="text/javascript" src="/static/js/template_js/mark/note.js?{{ VERSION }}"></script>
 	<script type="text/javascript" src="/static/js/template_js/mark/other.js?{{ VERSION }}"></script>
 	<script type="text/javascript" src="/static/js/template_js/mark/upload_file_mark.js?{{ VERSION }}"></script>
+	<script type="text/javascript" src="/static/js/template_js/mark/upload_file_mark.js?{{ VERSION }}"></script>
+	<script type="text/javascript" src="/static/js/jquery_file_upload/locale.js?{{ VERSION }}"></script>
 {% endblock %}
 
 {% block content %}
@@ -118,7 +120,6 @@
         {% endif %}
 
         {% include "school/mark/mark_for_headmaster.html" %}
-
         {% include "school/mark/js_save.html" %}
         {% include "school/mark/mien_giam_mark.html" %}
     {% endifnotequal %}

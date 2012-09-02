@@ -130,32 +130,6 @@
     </section>
 </div>
 
-{#<div>#}
-{#    <div id="fileupload">#}
-{#        <form method="post" action="" enctype="multipart/form-data">#}
-{#            <div class="fileupload-buttonbar">#}
-{#                {% csrf_token %}#}
-{#                <label class="fileinput-button">#}
-{#                    <label>Chọn file: </label>#}
-{#                    <input type="file" name="file" multiple>#}
-{#                </label>#}
-{#                <button type="submit" id="startUpload" class="start">Tải file lên</button>#}
-{#            </div>#}
-{#        </form>#}
-{##}
-{#        <div class="fileupload-content">#}
-{#            <table class="files"></table>#}
-{#            <div class="fileupload-progressbar"></div>#}
-{#        </div>#}
-{##}
-{#        <div id="errorDetail" style="display: none;font: 14px/18px Arial;color:red">#}
-{#        </div>#}
-{#        Chú ý: Phải dùng file Excel theo#}
-{#        <button class="btn btn-primary" id="buttonExport"> mẫu này</button>#}
-{#        (lấy mẫu file excel với số cột tùy ý)#}
-{#    </div>#}
-{#</div>#}
-
 <div class="modal fade" id="upload_modal" style="display: none;">
     <div class="modal-header">
         <a class="close" data-dismiss="modal">×</a>
@@ -217,10 +191,10 @@
     <select id="colMiengExport" style="width:70px">
         {% for i in secondLoop %}
             {% if  i == MAX_VIEW %}
-                <option value="{{i}}" selected> {{ i }} </option>
+                <option value="{{i}}" selected > {{ i }} </option>
             {% else %}
                 {% if  i > MAX_VIEW %}
-                    <option value="{{i}}"> {{ i }} </option>
+                    <option value="{{i}}" > {{ i }} </option>
                 {% endif %}
             {% endif %}
         {% endfor %}
@@ -229,10 +203,10 @@
     <select id="col15PhutExport" style="width:70px">
         {% for i in secondLoop %}
             {% if  i == MAX_VIEW %}
-                <option value="{{i}}" selected> {{ i }} </option>
+                <option value="{{i}}" selected > {{ i }} </option>
             {% else %}
                 {% if  i > MAX_VIEW %}
-                    <option value="{{i}}"> {{ i }} </option>
+                    <option value="{{i}}" > {{ i }} </option>
                 {% endif %}
             {% endif %}
         {% endfor %}
@@ -241,10 +215,10 @@
     <select id="colMotTietExport" style="width:70px">
         {% for i in secondLoop %}
             {% if  i == MAX_VIEW %}
-                <option value="{{i}}" selected> {{ i }} </option>
-            {% else %}
+                <option value="{{i}}" selected > {{ i }} </option>
+			{% else %}
                 {% if  i > MAX_VIEW %}
-                    <option value="{{i}}"> {{ i }} </option>
+                    <option value="{{i}}" > {{ i }} </option>
                 {% endif %}
             {% endif %}
         {% endfor %}
@@ -253,5 +227,3 @@
     <a href="{% url export_mark termChoice subjectChoice %}" id="finishExport" class="btn"> Tải về</a>
 </div>
 {% upload_js %}
-<script type="text/javascript" src="/static/js/template_js/mark/upload_file_mark.js?{{ VERSION }}"></script>
-<script type="text/javascript" src="/static/js/jquery_file_upload/locale.js?{{ VERSION }}"></script>
