@@ -253,8 +253,5 @@
     <a href="{% url export_mark termChoice subjectChoice %}" id="finishExport" class="btn"> Tải về</a>
 </div>
 {% upload_js %}
-<script>
-    {% include "school/mark/upload_file_mark.js" %}
-</script>
-<script type="text/javascript" src="/static/js/jquery_file_upload/locale.js"></script>
-{#	<br>#}
+<script type="text/javascript" src="/static/js/template_js/mark/upload_file_mark.js?{{ VERSION }}"></script>
+<script type="text/javascript" src="/static/js/jquery_file_upload/locale.js?{{ VERSION }}"></script>
