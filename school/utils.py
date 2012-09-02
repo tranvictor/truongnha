@@ -583,7 +583,7 @@ def add_teacher( first_name=None, last_name=None, full_name=None,
         last_name = ' '.join(names[:len(names)-1])
         first_name = names[len(names)-1]
     if team_id:
-        if  (type(team_id) == str or type(team_id) == unicode) and team_id.strip():
+        if (type(team_id) == str or type(team_id) == unicode) and team_id.strip():
             name = team_id.strip()
             try:
                 team_id = school.team_set.get( name = name)
@@ -595,12 +595,12 @@ def add_teacher( first_name=None, last_name=None, full_name=None,
                 team_id.save()
         elif not isinstance(team_id, Team):
             team_id = None
-
     else:
         team_id = None
     if team_id:
         if group_id:
-            if (type(group_id) == str or type(group_id) == unicode) and group_id.strip() :
+            if (type(group_id) == str
+                    or type(group_id) == unicode) and group_id.strip():
                 name = group_id
                 try:
                     group_id = team_id.group_set.get( name = name)
@@ -622,7 +622,7 @@ def add_teacher( first_name=None, last_name=None, full_name=None,
 
     if major.strip():
         if to_en(major) not in SUBJECT_LIST_ASCII:
-            major = '-1'
+            major = ''
 
     teacher = Teacher()
     teacher.first_name = first_name
@@ -663,7 +663,6 @@ def add_teacher( first_name=None, last_name=None, full_name=None,
         teacher.user_id = user
     teacher.save()
     return teacher
-
 
 def del_teacher( teacher):
     _class = teacher.current_homeroom_class()
