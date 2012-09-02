@@ -266,14 +266,13 @@
                         {{ ss.current_address }} </td>
                     <td >
                         {% if ss.father_name %}
-                            {{ ss.father_name }},
+                            {{ ss.father_name }}
+                            {% if ss.mother_name %}
+                            ,
+                            {% endif %}
                         {% endif %}
                         {{ ss.mother_name }}
                     </td>
-{#                    <td class="visible-desktop">  </td>#}
-{#                    <td class="truncated visible-desktop" title="{{ ss.birth_place }}">#}
-{#                        {{ ss.birth_place }} </td>#}
-{#                    <td class="hidden-phone"> {{ ss.dan_toc }} </td>#}
                 </tr>
             {% endfor %}
             </tbody>

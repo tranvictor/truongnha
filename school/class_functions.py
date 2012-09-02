@@ -38,7 +38,7 @@ def viewUncategorizedClassDetail(request, class_id, l_class_id=None):
     except ObjectDoesNotExist:
         cl_list = []
     try:
-        unc_cl = UncategorizedClass.objects.get(id = class_id)
+        unc_cl = UncategorizedClass.objects.get(id=class_id)
         last_year = Year.objects.get(school_id=school, time=year.time-1)
         number = unc_cl.block_id.number
         cl_list1 = last_year.class_set.filter(block_id__number=number)\
@@ -49,7 +49,7 @@ def viewUncategorizedClassDetail(request, class_id, l_class_id=None):
         if not l_class_id:
             l_class = cl_list[0]
         else:
-            l_class = Class.objects.get(id = l_class_id)
+            l_class = Class.objects.get(id=l_class_id)
     except ObjectDoesNotExist:
         return HttpResponseNotFound()
     cls1 = year.class_set.filter(block_id__number = unc_cl.block_id.number)

@@ -408,15 +408,16 @@ class UncategorizedClass(models.Model):
 class Class(models.Model):    
     name = models.CharField("Tên lớp(*)", max_length = 20)
     index = models.IntegerField("Số thứ tự", default=0)
-    phan_ban = models.CharField("Phân ban", max_length=5, choices= BAN_CHOICE, default=u'CB', null = True)
-    max = models.IntegerField("Max student index", default=0, null = True)
-    status = models.SmallIntegerField("Tình trạng", max_length = 3, null = True, blank= True, choices = CLASS_ACTION_STATUS)
-
+    phan_ban = models.CharField("Phân ban", max_length=5,
+            choices=BAN_CHOICE, default=u'CB', null=True)
+    max = models.IntegerField("Max student index", default=0, null=True)
+    status = models.SmallIntegerField("Tình trạng",
+            max_length=3, null=True, blank=True, choices=CLASS_ACTION_STATUS)
 
     year_id = models.ForeignKey(Year, verbose_name = "Năm học(*)")
-    #lop nay thuoc khoi nao
     block_id = models.ForeignKey(Block, verbose_name = "Khối(*)")
-    teacher_id = models.ForeignKey(Teacher, verbose_name = "Giáo viên chủ nhiệm", null = True, blank = True) 
+    teacher_id = models.ForeignKey(Teacher, verbose_name="Giáo viên chủ nhiệm",
+            null=True, blank=True) 
     
     def teacher(self):
         if self.teacher_id:
