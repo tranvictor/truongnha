@@ -22,6 +22,15 @@
 
 {% endblock %}
 
+{% block js %}
+	<script type="text/javascript" src="/static/js/template_js/mark/control.js?{{ VERSION }}"></script>
+	<script type="text/javascript" src="/static/js/template_js/mark/initiate.js?{{ VERSION }}"></script>
+	<script type="text/javascript" src="/static/js/template_js/mark/save.js?{{ VERSION }}"></script>
+	<script type="text/javascript" src="/static/js/template_js/mark/sms.js?{{ VERSION }}"></script>
+	<script type="text/javascript" src="/static/js/template_js/mark/note.js?{{ VERSION }}"></script>
+	<script type="text/javascript" src="/static/js/template_js/mark/other.js?{{ VERSION }}"></script>
+{% endblock %}
+
 {% block content %}
 
     <script language="JavaScript" type="text/javascript">
@@ -31,7 +40,6 @@
                     window.location.href = "/school/markTable/" + {{termChoice}} +"/" + {{classChoice}} +"/" + $("#subject").val() + "/0";
                 else
                     window.location.href = "/school/markTable/" + {{termChoice}} +"/" + {{classChoice}} +"/" + $("#subject").val();
-
         }
 
         function submitSubject1() {
@@ -40,7 +48,6 @@
                     window.location.href = "/school/markForTeacher/" + {{type}} +"/" + {{termChoice}} +"/" + $("#subject").val() + "/0";
                 else
                     window.location.href = "/school/markForTeacher/" + {{type}} +"/" + {{termChoice}} +"/" + $("#subject").val();
-
         }
 
         function submitClass() {
@@ -57,13 +64,11 @@
             else
                 window.location.href = "/school/markForTeacher/" + {{type}}+"/" + $("#term").val();
         }
-
     </script>
     {# <div id="myDiv2"  > </div>  #}
     {# <div id="myDiv3"  > </div>  #}
 
     <input type="text" id="mainInput" class="mark" style="display: none">
-
     <div class="form-inline pagination-centered">
         <label>Học kỳ</label>
         <select class="input-medium" id="term" onchange="submitTerm();">
@@ -105,9 +110,7 @@
         $("#subject").val("{{subjectChoice}}");
     </script>
 
-    {% include "school/mark/js_initiate.html" %}
-    {% include "school/mark/js_control.html" %}
-
+   {% include "school/mark/js_initiate.html" %} 
     {% ifnotequal subjectChoice -1 %}
         {% if user.userprofile.organization.level == 'T' %}
             {% include "school/mark/header_mark.html" %}
@@ -116,9 +119,6 @@
         {% include "school/mark/mark_for_headmaster.html" %}
 
         {% include "school/mark/js_save.html" %}
-        {% include "school/mark/js_sms.html" %}
-        {% include "school/mark/js_note.html" %}
-        {% include "school/mark/js_other.html" %}
         {% include "school/mark/mien_giam_mark.html" %}
     {% endifnotequal %}
 {% endblock %}
