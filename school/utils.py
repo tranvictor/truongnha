@@ -987,8 +987,9 @@ def to_subject_name(name):
     sub_sinh = [u'Sinh học',u'sinh', u'sinh hoc']
     sub_su = [u'Lịch sử',u'lich su', u'su']
     sub_dia = [u'Địa lí',u'dia', u'dia ly', u'dia li']
-    sub_nn = [u'Ngoại ngữ',u'nn', u'ngoai ngu']
-    sub_nn2 = [u'NN2', u'nn2',u'ngoai ngu 2']
+    sub_nn = [u'Ngoại ngữ',u'nn', u'ngoai ngu',u'anh',u'tieng anh']
+    sub_nn2 = [u'NN2', u'nn2',u'ngoai ngu 2',u'phap',u'tieng phap',u'nhat',u'tieng nhat',
+               u'nga',u'tieng nga',u'duc',u'tieng duc',u'trung',u'tieng trung']
     sub_gdcd = [u'GDCD',u'gdcd', u'cd', u'cong dan', u'giao duc cong dan']
     sub_cn = [u'Công nghệ',u'cn', u'cong nghe']
     sub_td = [u'Thể dục',u'td', u'the duc']
@@ -1001,3 +1002,4 @@ def to_subject_name(name):
     for sub in sub_list:
         if name in sub:
             return sub[0]
+    raise Exception(u'Can not recognize')
