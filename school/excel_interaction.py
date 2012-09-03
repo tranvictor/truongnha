@@ -4,7 +4,10 @@ from datetime import date
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_POST
+from django.db.models.query import QuerySet
+from django.core.exceptions import ObjectDoesNotExist
 import simplejson
+import re
 from utils import to_en1
 import xlrd
 from xlrd.formula import cellname
@@ -456,9 +459,10 @@ def process_file(file_name, task):
                     flag = True
                     break
             if flag: break
-            #                                                             CHUA BIEN LUAN TRUONG HOP: start_row = -1, ko co cot ten: Mã học sinh
+            #CHUA BIEN LUAN TRUONG HOP: start_row = -1, ko co cot ten: Mã học sinh
         if start_row == -1:
-            return {'error': u'File tải lên phải có cột "Họ và Tên".'}, u'File tải lên phải có cột "Họ và Tên".', 0, 0
+            return ({'error': u'File tải lên phải có cột "Họ và Tên".'},
+                    u'File tải lên phải có cột "Họ và Tên".', 0, 0)
             # start_row != 0
         c_ten = -1
         c_ngay_sinh = -1
@@ -591,7 +595,7 @@ def process_file(file_name, task):
         message += u'</ul>'
         return student_list, message, number, number_ok
     elif task == u"import_teacher":
-        teacher_list = []
+        teacher_list = {}
         filepath = os.path.join(settings.TEMP_FILE_LOCATION, file_name)
         if not os.path.isfile(filepath):
             raise NameError, "%s is not a valid filename" % file_name
@@ -606,14 +610,15 @@ def process_file(file_name, task):
         for c in range(0, sheet.ncols):
             flag = False
             for r in range(0, sheet.nrows):
-                if sheet.cell_value(r, c) == u'Họ và Tên':
+                if sheet.cell_value(r, c) in [u'Họ và Tên', u'Họ Tên', u'Tên']:
                     start_row = r
                     flag = True
                     break
             if flag: break
-            #                                                             CHUA BIEN LUAN TRUONG HOP: start_row = -1, ko co cot ten: Mã học sinh
+            #CHUA BIEN LUAN TRUONG HOP: start_row = -1, ko co cot ten: Mã học sinh
         if start_row == -1:
-            return {'error': u'File tải lên phải có cột "Họ và Tên".'}, u'File tải lên phải có cột "Họ và Tên".', 0, 0
+            return ({'error': u'File tải lên phải có cột "Họ và Tên".'},
+                    u'File tải lên phải có cột "Họ và Tên".', 0, 0)
             # start_row != 0
         c_ten = -1
         c_ngay_sinh = -1
@@ -625,11 +630,13 @@ def process_file(file_name, task):
         c_nhom = -1
         c_chuyen_mon = -1
         c_phone = -1
+        c_pccm = -1
+        c_cn = -1
+
         number = 0
         number_ok = 0
         for c in range(0, sheet.ncols):
             value = sheet.cell_value(start_row, c)
-
             if value == u'Họ và Tên':
                 c_ten = c
             elif value == u'Ngày sinh':
@@ -646,11 +653,32 @@ def process_file(file_name, task):
                 c_to = c
             elif value == u'Nhóm':
                 c_nhom = c
-            elif value == u'Dạy môn':
+            elif value in [u'Dạy môn', u'Chuyên môn']:
                 c_chuyen_mon = c
             elif value == u'Số điện thoại':
                 c_phone = c
-
+            elif value == u'Lớp chủ nhiệm':
+                c_cn = c
+            elif value == u'Phân công chuyên môn':
+                c_pccm = c
+        start_row += 1
+        #Search for class columns
+        c_classes = {}
+        re_class = re.compile('(?P<grade>6|7|8|9|10|11|12)\s*(?P<label>.+)',
+                flags=re.U)
+        for c in range(c_pccm, sheet.ncols):
+            value = sheet.cell_value(start_row, c) 
+            temp = re_class.match(value)
+            if not temp: message += u'<li>Ô %s: Tên lớp không đúng.</li>' \
+                                    % unicode(cellname(start_row, c))
+            else:
+                cl_n = ' '.join(temp.groups()) 
+                if cl_n in c_classes:
+                    message += u'<li>2 Ô %s và %s: Trùng nhau' \
+                                    % (unicode(cellname(start_row,c)),
+                                       unicode(cellname(start_row, c_classes[cl_n])))
+                else:
+                    c_classes[cl_n] = c
         for r in range(start_row + 1, sheet.nrows):
             gt = ''
             dan_toc = ''
@@ -660,6 +688,8 @@ def process_file(file_name, task):
             nhom = ''
             chuyen_mon = ''
             phone = ''
+            lop_cn = ''
+            lop_cmon = []
             name = sheet.cell(r, c_ten).value.strip()
             name = ' '.join([i.capitalize() for i in name.split(' ')])
             if not name.strip():
@@ -680,7 +710,6 @@ def process_file(file_name, task):
                 if not dan_toc.strip(): dan_toc = 'Kinh'
             if c_cho_o_ht > -1:
                 cho_o_ht = sheet.cell(r, c_cho_o_ht).value.strip()
-
             if c_to > -1:
                 to = sheet.cell(r, c_to).value.strip()
             if c_nhom > -1:
@@ -697,14 +726,27 @@ def process_file(file_name, task):
                     if type(birthday) == unicode or type(birthday) == str:
                         birthday = to_date(birthday)
                     else:
-                        date_value = xlrd.xldate_as_tuple(sheet.cell(r, c_ngay_sinh).value, book.datemode)
+                        date_value = xlrd.xldate_as_tuple(
+                                sheet.cell(r, c_ngay_sinh).value,
+                                book.datemode)
                         birthday = date(*date_value[:3])
                 except Exception as e:
                     print e
-                    message += u'<li>Ô ' + unicode(
-                        cellname(r, c_ngay_sinh)) + u':Không đúng định dạng "ngày/tháng/năm" ' + u'</li>'
+                    message += u'<li>Ô ' + unicode( cellname(r, c_ngay_sinh)) \
+                            + u':Không đúng định dạng "ngày/tháng/năm" ' + u'</li>'
                     continue
+            if c_cn:
+                lop_cn = sheet.cell(r, c_cn).value
+                if not re_class.match(lop_cn): lop_cn = ''
 
+            if chuyen_mon:
+                for ele in c_classes.iteritems():
+                    cl_n = ele[0]
+                    c = int(ele[1])
+                    value = sheet.cell(r, c).value
+                    if unicode(value).strip():
+                        lop_cmon.append('-'.join([cl_n, chuyen_mon]))
+             
             data = {'fullname': name,
                     'birthday': birthday,
                     'sex': gt,
@@ -714,10 +756,15 @@ def process_file(file_name, task):
                     'team': to,
                     'group': nhom,
                     'major': chuyen_mon,
-                    'sms_phone': phone
-            }
-            teacher_list.append(data)
-            number_ok += 1
+                    'sms_phone': phone,
+                    'lop_cn': lop_cn,
+                    'lop_cmon': lop_cmon}
+            identifier = name + '-' + unicode(birthday)
+            if identifier in teacher_list:
+                teacher_list[identifier]['lop_cmon'].extend(lop_cmon)
+            else:
+                teacher_list[identifier] = data
+                number_ok += 1
         message += u'</ul>'
         return teacher_list, message, number, number_ok
     return None
@@ -1134,25 +1181,42 @@ def student_import( request, class_id, request_type='' ):
 @operating_permission([u'HIEU_TRUONG', u'HIEU_PHO'])
 def teacher_import( request, request_type=''):
     school = get_school(request)
+    year = get_current_year(request)
     if request.is_ajax():
         if request_type == u'update':
             saving_import_teacher = request.session.pop('saving_import_teacher')
             number_of_updated = 0
             for teacher in saving_import_teacher:
                 try:
-                    add_teacher(full_name=teacher['fullname'],
-                        birthday=teacher['birthday'],
-                        sex=teacher['sex'],
-                        dan_toc=teacher['dan_toc'],
-                        home_town=teacher['home_town'],
-                        current_address=teacher['current_address'],
-                        team_id=teacher['team'],
-                        group_id=teacher['group'],
-                        major=teacher['major'],
-                        sms_phone=teacher['sms_phone'],
-                        school=school,
-                        force_update=True)
+                    added_t = add_teacher(full_name=teacher['fullname'],
+                                birthday=teacher['birthday'],
+                                sex=teacher['sex'],
+                                dan_toc=teacher['dan_toc'],
+                                home_town=teacher['home_town'],
+                                current_address=teacher['current_address'],
+                                team_id=teacher['team'],
+                                group_id=teacher['group'],
+                                major=teacher['major'],
+                                sms_phone=teacher['sms_phone'],
+                                school=school,
+                                force_update=True)
                     number_of_updated += 1
+                    try:
+                        home_cl = year.class_set.get(name=teacher['lop_cn'])
+                        home_cl.teacher_id = added_t
+                        home_cl.save()
+                    except ObjectDoesNotExist:
+                        pass
+                    lop_cmons = teacher['lop_cmon']
+                    for l in lop_cmons:
+                        ele = l.split('-')
+                        try:
+                            lop = year.class_set.get(name=ele[0])
+                            sub = lop.subject_set.get(type=ele[1])
+                            sub.teacher_id = added_t
+                            sub.save()
+                        except ObjectDoesNotExist:
+                            pass
                 except Exception as e:
                     print e
             data = simplejson.dumps({'success': True,
@@ -1191,9 +1255,10 @@ def teacher_import( request, request_type=''):
     else:
         try:
             teacher_list = result
-            for teacher in teacher_list:
+            for teacher in teacher_list.iteritems():
+                teacher = teacher[1]
                 try:
-                    existing = add_teacher(full_name=teacher['fullname'],
+                    added_t = add_teacher(full_name=teacher['fullname'],
                         birthday=teacher['birthday'],
                         sex=teacher['sex'],
                         dan_toc=teacher['dan_toc'],
@@ -1204,12 +1269,32 @@ def teacher_import( request, request_type=''):
                         major=teacher['major'],
                         sms_phone=teacher['sms_phone'],
                         school=school)
-                    if existing:
-                        existing_teacher.append(existing)
+                    if isinstance(added_t, QuerySet):
+                        existing_teacher.append(added_t)
                         saving_import_teacher.append(teacher)
+                    else:
+                        # update lop_cn, lop_cmon
+                        print teacher['lop_cn']
+                        print year
+                        try:
+                            home_cl = year.class_set.get(name=teacher['lop_cn'])
+                            home_cl.teacher_id = added_t
+                            home_cl.save()
+                        except ObjectDoesNotExist:
+                            pass
+                        lop_cmons = teacher['lop_cmon']
+                        for l in lop_cmons:
+                            ele = l.split('-')
+                            print ele, ele[0]
+                            try:
+                                lop = year.class_set.get(name=ele[0])
+                                sub = lop.subject_set.get(type=ele[1])
+                                sub.teacher_id = added_t
+                                sub.save()
+                            except ObjectDoesNotExist:
+                                pass
                 except Exception as e:
                     print e
-
         except Exception as e:
             print e
             #TODO: should have a way to notice user about saving interruption

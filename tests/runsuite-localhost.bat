@@ -1,0 +1,1 @@
+java -jar selenium-server.jar -htmlSuite *firefox "http://localhost:8000/" %1/suite.html %1/results.html

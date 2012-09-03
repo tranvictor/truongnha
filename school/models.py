@@ -261,20 +261,29 @@ class BasicPersonInfo(models.Model):
     #class Admin: pass
 
 class Teacher(BasicPersonInfo):
-    major = models.CharField("Dạy môn(*)", max_length=45, default='', blank=True, choices=SUBJECT_TYPES)
-    user_id = models.OneToOneField(User, verbose_name = "Tài khoản")
-    school_id = models.ForeignKey(Organization, verbose_name = "Trường")
-    group_id = models.ForeignKey(Group, null=True, blank=True, verbose_name="Nhóm", on_delete = models.SET_NULL)
-    team_id = models.ForeignKey(Team, null=True, blank=True, verbose_name="Tổ", on_delete = models.SET_NULL)
-    cmt = models.CharField("Chứng minh thư", null=True, blank=True, max_length=10, validators=[validate_num])
-    ngay_cap = models.DateField("Ngày cấp", null=True, blank=True, validators=[validate_dd_date])
+    major = models.CharField("Dạy môn(*)", max_length=45, default='',
+            blank=True, choices=SUBJECT_TYPES)
+    user_id = models.OneToOneField(User, verbose_name="Tài khoản")
+    school_id = models.ForeignKey(Organization, verbose_name="Trường")
+    group_id = models.ForeignKey(Group, null=True, blank=True, verbose_name="Nhóm",
+            on_delete=models.SET_NULL)
+    team_id = models.ForeignKey(Team, null=True, blank=True, verbose_name="Tổ",
+            on_delete=models.SET_NULL)
+    cmt = models.CharField("Chứng minh thư", null=True, blank=True, max_length=10,
+            validators=[validate_num])
+    ngay_cap = models.DateField("Ngày cấp", null=True, blank=True,
+            validators=[validate_dd_date])
     noi_cap = models.CharField("Nơi cấp", null=True, blank=True, max_length=30)
-    ngay_vao_doan = models.DateField("Ngày vào đoàn", null=True, blank=True, validators=[validate_dd_date])
-    ngay_vao_dang = models.DateField("Ngày vào đảng", null=True, blank=True, validators=[validate_dd_date])
-    muc_luong = models.IntegerField("Mức lương", null=True, blank=True, validators=[validate_muc_luong])
-    hs_luong = models.FloatField("Hệ số lương", null=True, blank=True, validators=[validate_hs_luong])
-    bhxh = models.CharField("Số bảo hiểm xã hội", null=True, blank=True, max_length=10, validators=[validate_num])
-
+    ngay_vao_doan = models.DateField("Ngày vào đoàn", null=True, blank=True,
+            validators=[validate_dd_date])
+    ngay_vao_dang = models.DateField("Ngày vào đảng", null=True, blank=True,
+            validators=[validate_dd_date])
+    muc_luong = models.IntegerField("Mức lương", null=True, blank=True,
+            validators=[validate_muc_luong])
+    hs_luong = models.FloatField("Hệ số lương", null=True, blank=True,
+            validators=[validate_hs_luong])
+    bhxh = models.CharField("Số bảo hiểm xã hội", null=True, blank=True,
+            max_length=10, validators=[validate_num])
 
     def homeroom_class(self):
         _class = Class.objects.filter(teacher_id=self).order_by('-year_id__time')
@@ -291,19 +300,21 @@ class Teacher(BasicPersonInfo):
     def current_teaching_class(self):
         year = Year.objects.filter(school_id=self.school_id).latest('time')
         if not year: raise Exception("SchoolNotStarted")
-        subjects = Subject.objects.filter(teacher_id = self).filter(class_id__year_id=year, class_id__school_id=self.school_id)
+        subjects = Subject.objects.filter(teacher_id=self)\
+                .filter(class_id__year_id=year, class_id__school_id=self.school_id)
         return [subject.class_id for subject in subjects]
     
     def teaching_subject(self, year=None):
-        if year: subjects = Subject.objects.filter(teacher_id = self, class_id__year_id = year)
-        else: subjects = Subject.objects.filter(teacher_id = self)
+        if year: subjects = Subject.objects.filter(teacher_id=self,
+                class_id__year_id=year)
+        else: subjects = Subject.objects.filter(teacher_id=self)
         return subjects
 
     def disable_account(self):
         self.user_id.is_active = False
         self.user_id.save()
         try:
-            subject = u'Vô hiệu hóa Trường Nhà'
+            subject = u'Vô hiệu hóa tài khoản Trường Nhà'
             message = u'Tài khoản tại dịch vụ Trường nhà (www.truongnha.com) đã bị vô hiệu hóa bởi nhân viên quản trị\
             trường' + unicode(self.school_id) + u'\n' + u'\n' + u'Xin cảm ơn.'
             send_email(subject, message, to_addr=[self.email])
@@ -675,12 +686,14 @@ class Subject(models.Model):
     hs = models.FloatField("Hệ số(*)", validators = [validate_hs], default=1)
     nx = models.BooleanField("Là môn nhận xét", default= False)
 
-    primary = models.SmallIntegerField("Tính điểm(*)", default = 0, choices = LOAI_CHOICES)
+    primary = models.SmallIntegerField("Tính điểm(*)", default=0, choices=LOAI_CHOICES)
     index = models.IntegerField("Số thứ tự(*)", default=0)
-    number_lesson = models.IntegerField("Số tiết một tuần", validators = [validate_numberLesson], default = 0)
-    max = models.IntegerField("Số tiết", default = 0)
-    class_id = models.ForeignKey(Class, verbose_name = "Lớp(*)")    
-    teacher_id = models.ForeignKey(Teacher, verbose_name = "Giáo viên", null= True, blank=True) # field nay de cung cap permission cho giao vien de nhap diem
+    number_lesson = models.IntegerField("Số tiết một tuần",
+            validators=[validate_numberLesson], default=0)
+    max = models.IntegerField("Số tiết", default=0)
+    class_id = models.ForeignKey(Class, verbose_name="Lớp(*)")    
+    teacher_id = models.ForeignKey(Teacher, verbose_name="Giáo viên",
+            null=True, blank=True, on_delete=models.SET_NULL)
     
     class Meta:
         verbose_name = "Môn"
