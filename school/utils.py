@@ -976,3 +976,28 @@ def convert_diem_danh(loai):
         return u'Nghỉ học không phép'
     if loai == u'P':
         return u'Nghỉ học có phép'
+
+def to_subject_name(name):
+    name = name.lower()
+    name = to_en(name)
+    sub_toan = [u'Toán',u'toan',u'dai',u'hinh',u'dai so',u'hinh hoc',u'toan hoc']
+    sub_van = [u'Ngữ văn',u'van', u'ngu van']
+    sub_ly = [u'Vật lí',u'vat ly', u'vat li', u'ly', u'li']
+    sub_hoa = [u'Hóa học',u'hoa', u'hoa hoc']
+    sub_sinh = [u'Sinh học',u'sinh', u'sinh hoc']
+    sub_su = [u'Lịch sử',u'lich su', u'su']
+    sub_dia = [u'Địa lí',u'dia', u'dia ly', u'dia li']
+    sub_nn = [u'Ngoại ngữ',u'nn', u'ngoai ngu']
+    sub_nn2 = [u'NN2', u'nn2',u'ngoai ngu 2']
+    sub_gdcd = [u'GDCD',u'gdcd', u'cd', u'cong dan', u'giao duc cong dan']
+    sub_cn = [u'Công nghệ',u'cn', u'cong nghe']
+    sub_td = [u'Thể dục',u'td', u'the duc']
+    sub_nhac = [u'Âm nhạc',u'nhac', u'am nhac', u'an']
+    sub_mt = [u'Mĩ thuật',u'my thuat', u'mt',u've']
+    sub_tin = [u'Tin học',u'tin', u'tin hoc']
+    sub_gdqp = [u'GDQP-AN',u'gdqp', u'gdqp-an', u'gdqpan', u'giao duc quoc phong', u'giao duc quoc phong an ninh']
+    sub_list = [sub_toan,sub_van,sub_ly,sub_hoa,sub_sinh,sub_su,sub_dia,sub_nn,sub_gdcd,
+                sub_gdqp,sub_cn,sub_td,sub_tin,sub_nhac,sub_mt,sub_nn2]
+    for sub in sub_list:
+        if name in sub:
+            return sub[0]
