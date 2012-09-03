@@ -34,7 +34,6 @@
 	<script type="text/javascript" src="/static/js/jquery_file_upload/locale.js?{{ VERSION }}"></script>
 {% endblock %}
 {% block content %}
-{% spaceless %}
 
     <script language="JavaScript" type="text/javascript">
         function submitSubject() {
@@ -112,13 +111,13 @@
         $("#term").val("{{termChoice}}");
         $("#subject").val("{{subjectChoice}}");
     </script>
-
+	
+{% spaceless %}
    {% include "school/mark/js_initiate.html" %} 
     {% ifnotequal subjectChoice -1 %}
         {% if user.userprofile.organization.level == 'T' %}
             {% include "school/mark/header_mark.html" %}
         {% endif %}
-
         {% include "school/mark/mark_for_headmaster.html" %}
         {% include "school/mark/js_save.html" %}
         {% include "school/mark/mien_giam_mark.html" %}

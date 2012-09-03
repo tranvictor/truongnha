@@ -12,6 +12,9 @@ import os.path
 import time 
 import datetime
 import random
+import os.path
+from settings import *
+
 LOCK_MARK =False
 ENABLE_CHANGE_MARK=True
 
@@ -301,11 +304,13 @@ def thu1(request):
     return HttpResponse(t.render(c))
 
 def thu(request):
-    t1= time.time()            
+    t1= time.time()
+    filepath = os.path.join(SITE_ROOT, 'templates/school/mark/dataForMarkTable.xls')
+    print filepath
+    book = xlrd.open_workbook(filepath)
+    s = book.sheet_by_index(0)
 
-    u=u'Họ và Tên'
-    str= u.lower()
-    print str==u"họ và tên"
+
     t = loader.get_template(os.path.join('school','ll.html'))
     t2=time.time()
     print (t2-t1)
