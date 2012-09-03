@@ -1,0 +1,1 @@
+for /d %%i in (*) do java -jar selenium-server.jar -htmlSuite *firefox "http://truongnha.com" %%i/suite.html %%i/results.html
