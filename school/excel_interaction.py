@@ -740,6 +740,9 @@ def process_file(file_name, task):
             if c_cn:
                 lop_cn = sheet.cell(r, c_cn).value
                 if not re_class.match(lop_cn): lop_cn = ''
+                else:
+                    lop_cn = ' '.join(re_class.match(lop_cn).groups())
+                print '------------------', lop_cn
 
             if chuyen_mon:
                 for ele in c_classes.iteritems():
