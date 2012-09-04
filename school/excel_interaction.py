@@ -655,7 +655,7 @@ def process_file(file_name, task):
                 c_nhom = c
             elif value in [u'Dạy môn', u'Chuyên môn']:
                 c_chuyen_mon = c
-            elif value == u'Số điện thoại':
+            elif value in [u'Số điện thoại', u'Điện thoại']:
                 c_phone = c
             elif value == u'Lớp chủ nhiệm':
                 c_cn = c
@@ -720,8 +720,9 @@ def process_file(file_name, task):
             if c_phone > -1:
                 phone = sheet.cell(r, c_phone).value
                 if type(phone) != unicode and type(phone) != str:
-                    phone = unicode( int (phone)).strip()
-                if phone and phone[0] != '0' and phone[0] != '+': phone = '0' + phone
+                    phone = unicode(int(phone)).strip()
+                if phone and phone[0] != '0' and phone[0] != '+':
+                    phone = '0' + phone
             if birthday:
                 try:
                     if type(birthday) == unicode or type(birthday) == str:
