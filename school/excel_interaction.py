@@ -17,12 +17,12 @@ from xlwt.Workbook import Workbook
 from app.models import SystemLesson, SUBJECT_CHOICES
 from decorators import school_function, need_login, operating_permission, year_started
 from school.models import Class, Subject, SchoolLesson, validate_phone, Lesson, TKB
-from school.models import this_year, StartYear
+from school.models import this_year, StartYear, SUBJECT_LIST_ASCII
 from school.templateExcel import *
 from school.utils import get_latest_startyear, get_current_year, in_school,\
                             get_permission , gvcn, get_level, get_school, to_date,\
                             get_current_term, add_many_students, add_teacher, \
-                            get_lower_bound
+                            get_lower_bound, to_subject_name, to_en
 import settings
 #Exporting session
 @school_function
@@ -717,6 +717,12 @@ def process_file(file_name, task):
                 nhom = sheet.cell(r, c_nhom).value.strip()
             if c_chuyen_mon > -1:
                 chuyen_mon = sheet.cell(r, c_chuyen_mon).value.strip()
+                if chuyen_mon.strip():
+                    if to_en(chuyen_mon) not in SUBJECT_LIST_ASCII:
+                        try:
+                            chuyen_mon = to_subject_name(chuyen_mon)
+                        except Exception:
+                            chuyen_mon = ''
             if c_phone > -1:
                 phone = sheet.cell(r, c_phone).value
                 if type(phone) != unicode and type(phone) != str:
@@ -1216,10 +1222,10 @@ def teacher_import( request, request_type=''):
                         ele = l.split('-')
                         try:
                             lop = year.class_set.get(name=ele[0])
-                            sub = lop.subject_set.get(type=ele[1])
+                            sub = lop.subject_set.get(type='-'.join(ele[1:]))
                             sub.teacher_id = added_t
                             sub.save()
-                        except ObjectDoesNotExist:
+                        except ObjectDoesNotExist as e:
                             pass
                 except Exception as e:
                     print e
@@ -1292,7 +1298,7 @@ def teacher_import( request, request_type=''):
                             print ele, ele[0]
                             try:
                                 lop = year.class_set.get(name=ele[0])
-                                sub = lop.subject_set.get(type=ele[1])
+                                sub = lop.subject_set.get(type='-'.join(ele[1:]))
                                 sub.teacher_id = added_t
                                 sub.save()
                             except ObjectDoesNotExist:
