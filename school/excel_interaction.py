@@ -669,7 +669,6 @@ def process_file(file_name, task):
         if c_pccm != -1:
             for c in range(c_pccm, sheet.ncols):
                 value = sheet.cell_value(start_row, c) 
-                print value
                 temp = re_class.match(value)
                 if not temp: message += u'<li>Ô %s: Tên lớp không đúng.</li>' \
                                         % unicode(cellname(start_row, c))
@@ -742,7 +741,6 @@ def process_file(file_name, task):
                 if not re_class.match(lop_cn): lop_cn = ''
                 else:
                     lop_cn = ' '.join(re_class.match(lop_cn).groups())
-                print '------------------', lop_cn
 
             if chuyen_mon:
                 for ele in c_classes.iteritems():
