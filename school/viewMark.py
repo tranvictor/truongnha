@@ -122,9 +122,9 @@ def markTable(request,term_id=-1,class_id=-1,subject_id=-1,move=None):
     maxColMieng=0
     maxCol15Phut=0
     maxColMotTiet=0
-    min_col_mieng = 0
-    min_col_15phut = 0
-    min_col_mot_tiet = 0
+    max_col_mieng = 0
+    max_col_15phut = 0
+    max_col_mot_tiet = 0
     if subjectChoice!=-1:
         selectedSubject=Subject.objects.get(id=subjectChoice)    
         list,maxColMieng,maxCol15Phut,maxColMotTiet=getMark(subjectChoice,selectedTerm)
@@ -171,7 +171,7 @@ def markTable(request,term_id=-1,class_id=-1,subject_id=-1,move=None):
                                 'type':type,
                                 'firstLoop':firstLoop,
                                 'secondLoop':secondLoop,
-                                'MAX_VIEW_COL_MIENG':max_col_15phut,
+                                'MAX_VIEW_COL_MIENG':max_col_mieng,
                                 'MAX_VIEW_COL_15PHUT':max_col_15phut,
                                 'MAX_VIEW_COL_MOT_TIET':max_col_mot_tiet,
                                 'MAX_COL':MAX_COL,
@@ -246,9 +246,14 @@ def markForTeacher(request,type=1,term_id=-1,subject_id=-1,move=None):
     maxColMieng=0
     maxCol15Phut=0
     maxColMotTiet=0
+    max_col_mieng = 0
+    max_col_15phut = 0
+    max_col_mot_tiet = 0
+
     if subjectChoice!=-1:
         list=getMark(subjectChoice,selectedTerm)
         list,maxColMieng,maxCol15Phut,maxColMotTiet=getMark(subjectChoice,selectedTerm)
+        max_col_mieng,max_col_15phut,max_col_mot_tiet = min_col(selectedSubject)
 
     lengthList=0            
     if list!=None:        
@@ -290,11 +295,14 @@ def markForTeacher(request,type=1,term_id=-1,subject_id=-1,move=None):
                                 'move':move,
                                 'firstLoop':firstLoop,
                                 'secondLoop':secondLoop,
-                                'MAX_VIEW':MAX_VIEW,
+                                'MAX_VIEW_COL_MIENG':max_col_mieng,
+                                'MAX_VIEW_COL_15PHUT':max_col_15phut,
+                                'MAX_VIEW_COL_MOT_TIET':max_col_mot_tiet,
                                 'MAX_COL':MAX_COL,
-                                'maxColMieng'  :min(MAX_COL,max(maxColMieng+1,MAX_VIEW)),
-                                'maxCol15Phut' :min(MAX_COL,max(maxCol15Phut+1,MAX_VIEW)),
-                                'maxColMotTiet':min(MAX_COL,max(maxColMotTiet+1,MAX_VIEW)),
+                                'maxColMieng'  :min(MAX_COL,max(maxColMieng+1,max_col_mieng)),
+                                'maxCol15Phut' :min(MAX_COL,max(maxCol15Phut+1,max_col_15phut)),
+                                'maxColMotTiet':min(MAX_COL,max(maxColMotTiet+1,max_col_mot_tiet)),
+
                                 'timeToEdit':timeToEdit,
                                 'timeNow':timeNow,
                                 'now':now,
