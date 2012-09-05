@@ -2,21 +2,6 @@
 // It caculates average score automatically when having final score and 
 // caculates final score of year if having final score of term 1 and term 2.  
 
-var needToConfirm = false;
-window.onbeforeunload = function confirmExit(e)
-{
-	if (document.getElementById("buttonSave").style.display=="")
-	{
-		if (document.getElementById("messageChanging").innerHTML!="Đã lưu")
-			needToConfirm=true;
-		else	needToConfirm=false;
-	}		
-	else	needToConfirm=false;
-	
-	if (needToConfirm)
-		return  "Đang lưu điểm. Xin vui lòng ấn cancel(ở lại trang này) để lưu nốt." ;	
-}
-
 function calculateOldAr()
 {
 	var exp1=/[,]/g	
