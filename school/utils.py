@@ -622,7 +622,10 @@ def add_teacher( first_name=None, last_name=None, full_name=None,
 
     if major.strip():
         if to_en(major) not in SUBJECT_LIST_ASCII:
-            major = ''
+            try:
+                major = to_subject_name(major)
+            except Exception:
+                major = ''
 
     teacher = Teacher()
     teacher.first_name = first_name
@@ -981,7 +984,7 @@ def to_subject_name(name):
     name = name.lower()
     name = to_en(name)
     sub_toan = [u'Toán',u'toan',u'dai',u'hinh',u'dai so',u'hinh hoc',u'toan hoc']
-    sub_van = [u'Ngữ văn',u'van', u'ngu van']
+    sub_van = [u'Ngữ văn',u'van', u'ngu van', u'v', u'nv']
     sub_ly = [u'Vật lí',u'vat ly', u'vat li', u'ly', u'li']
     sub_hoa = [u'Hóa học',u'hoa', u'hoa hoc']
     sub_sinh = [u'Sinh học',u'sinh', u'sinh hoc']
@@ -991,12 +994,14 @@ def to_subject_name(name):
     sub_nn2 = [u'NN2', u'nn2',u'ngoai ngu 2',u'phap',u'tieng phap',u'nhat',u'tieng nhat',
                u'nga',u'tieng nga',u'duc',u'tieng duc',u'trung',u'tieng trung']
     sub_gdcd = [u'GDCD',u'gdcd', u'cd', u'cong dan', u'giao duc cong dan']
-    sub_cn = [u'Công nghệ',u'cn', u'cong nghe']
+    sub_cn = [u'Công nghệ',u'cn', u'cong nghe', u'c/nghe', u'cn']
     sub_td = [u'Thể dục',u'td', u'the duc']
     sub_nhac = [u'Âm nhạc',u'nhac', u'am nhac', u'an']
     sub_mt = [u'Mĩ thuật',u'my thuat', u'mt',u've']
     sub_tin = [u'Tin học',u'tin', u'tin hoc']
-    sub_gdqp = [u'GDQP-AN',u'gdqp', u'gdqp-an', u'gdqpan', u'giao duc quoc phong', u'giao duc quoc phong an ninh']
+    sub_gdqp = [u'GDQP-AN',u'gdqp', u'gdqp-an', u'gdqpan', u'giao duc quoc phong',
+                u'giao duc quoc phong an ninh', u'qs', u'qp', u'quan su',
+                u'quoc phong']
     sub_list = [sub_toan,sub_van,sub_ly,sub_hoa,sub_sinh,sub_su,sub_dia,sub_nn,sub_gdcd,
                 sub_gdqp,sub_cn,sub_td,sub_tin,sub_nhac,sub_mt,sub_nn2]
     for sub in sub_list:
