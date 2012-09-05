@@ -153,14 +153,14 @@ function addColMieng(rowIndex,colIndex)
 		}
 	}	
 	else
-		if ((colIndex==3+maxColMieng ) && (maxColMieng>MAX_VIEW )){	
+		if ((colIndex==3+maxColMieng ) && (maxColMieng>MAX_VIEW_COL_MIENG )){	
 			if (isEmptyCol(colIndex,rowIndex) && isEmptyCol(colIndex+1)  && (mainInput.value.length==0))
 			{
 				document.getElementById("colMieng").colSpan-=1;
 				maxColMieng-=1;		
 				//alert("chao1");
 				setDisplayCol(colIndex+1,"none");					
-				while ((maxColMieng>MAX_VIEW)){
+				while ((maxColMieng > MAX_VIEW_COL_MIENG)){
 					if (isEmptyCol(colIndex-1))
 					{
 						document.getElementById("colMieng").colSpan-=1;
@@ -188,14 +188,14 @@ function addCol15Phut(rowIndex,colIndex)
 		}
 	}	
 	else
-		if ((colIndex==3+MAX_COL+maxCol15Phut ) && (maxCol15Phut>MAX_VIEW )){	
+		if ((colIndex==3+MAX_COL+maxCol15Phut ) && (maxCol15Phut>MAX_VIEW_COL_15PHUT )){	
 			if (isEmptyCol(colIndex,rowIndex) && isEmptyCol(colIndex+1)  && (mainInput.value.length==0))
 			{
 				document.getElementById("col15Phut").colSpan-=1;
 				maxCol15Phut-=1;		
 				//alert("chao1");
 				setDisplayCol(colIndex+1,"none");					
-				while ((maxCol15Phut>MAX_VIEW)){
+				while ((maxCol15Phut>MAX_VIEW_COL_15PHUT )){
 					if (isEmptyCol(colIndex-1))
 					{
 						document.getElementById("col15Phut").colSpan-=1;
@@ -223,14 +223,14 @@ function addColMotTiet(rowIndex,colIndex)
 		}
 	}	
 	else
-		if ((colIndex==3+2*MAX_COL+maxColMotTiet ) && (maxColMotTiet>MAX_VIEW )){	
+		if ((colIndex==3+2*MAX_COL+maxColMotTiet ) && (maxColMotTiet>MAX_VIEW_COL_MOT_TIET )){	
 			if (isEmptyCol(colIndex,rowIndex) && isEmptyCol(colIndex+1)  && (mainInput.value.length==0))
 			{
 				document.getElementById("colMotTiet").colSpan-=1;
 				maxColMotTiet-=1;		
 				//alert("chao1");
 				setDisplayCol(colIndex+1,"none");					
-				while ((maxColMotTiet>MAX_VIEW)){
+				while ((maxColMotTiet>MAX_VIEW_COL_MOT_TIET )){
 					if (isEmptyCol(colIndex-1))
 					{
 						document.getElementById("colMotTiet").colSpan-=1;

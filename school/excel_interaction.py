@@ -17,12 +17,12 @@ from xlwt.Workbook import Workbook
 from app.models import SystemLesson, SUBJECT_CHOICES
 from decorators import school_function, need_login, operating_permission, year_started
 from school.models import Class, Subject, SchoolLesson, validate_phone, Lesson, TKB
-from school.models import this_year, StartYear
+from school.models import this_year, StartYear, SUBJECT_LIST_ASCII
 from school.templateExcel import *
 from school.utils import get_latest_startyear, get_current_year, in_school,\
                             get_permission , gvcn, get_level, get_school, to_date,\
                             get_current_term, add_many_students, add_teacher, \
-                            get_lower_bound
+                            get_lower_bound, to_subject_name, to_en
 import settings
 #Exporting session
 @school_function
@@ -655,7 +655,7 @@ def process_file(file_name, task):
                 c_nhom = c
             elif value in [u'Dạy môn', u'Chuyên môn']:
                 c_chuyen_mon = c
-            elif value == u'Số điện thoại':
+            elif value in [u'Số điện thoại', u'Điện thoại']:
                 c_phone = c
             elif value == u'Lớp chủ nhiệm':
                 c_cn = c
@@ -666,19 +666,20 @@ def process_file(file_name, task):
         c_classes = {}
         re_class = re.compile('(?P<grade>6|7|8|9|10|11|12)\s*(?P<label>.+)',
                 flags=re.U)
-        for c in range(c_pccm, sheet.ncols):
-            value = sheet.cell_value(start_row, c) 
-            temp = re_class.match(value)
-            if not temp: message += u'<li>Ô %s: Tên lớp không đúng.</li>' \
-                                    % unicode(cellname(start_row, c))
-            else:
-                cl_n = ' '.join(temp.groups()) 
-                if cl_n in c_classes:
-                    message += u'<li>2 Ô %s và %s: Trùng nhau' \
+        if c_pccm != -1:
+            for c in range(c_pccm, sheet.ncols):
+                value = sheet.cell_value(start_row, c) 
+                temp = re_class.match(value)
+                if not temp: message += u'<li>Ô %s: Tên lớp không đúng.</li>' \
+                                        % unicode(cellname(start_row, c))
+                else:
+                    cl_n = ' '.join(temp.groups()) 
+                    if cl_n in c_classes:
+                        message += u'<li>2 Ô %s và %s: Trùng nhau' \
                                     % (unicode(cellname(start_row,c)),
                                        unicode(cellname(start_row, c_classes[cl_n])))
-                else:
-                    c_classes[cl_n] = c
+                    else:
+                        c_classes[cl_n] = c
         for r in range(start_row + 1, sheet.nrows):
             gt = ''
             dan_toc = ''
@@ -716,11 +717,18 @@ def process_file(file_name, task):
                 nhom = sheet.cell(r, c_nhom).value.strip()
             if c_chuyen_mon > -1:
                 chuyen_mon = sheet.cell(r, c_chuyen_mon).value.strip()
+                if chuyen_mon.strip():
+                    if to_en(chuyen_mon) not in SUBJECT_LIST_ASCII:
+                        try:
+                            chuyen_mon = to_subject_name(chuyen_mon)
+                        except Exception:
+                            chuyen_mon = ''
             if c_phone > -1:
                 phone = sheet.cell(r, c_phone).value
                 if type(phone) != unicode and type(phone) != str:
-                    phone = unicode( int (phone)).strip()
-                if phone and phone[0] != '0' and phone[0] != '+': phone = '0' + phone
+                    phone = unicode(int(phone)).strip()
+                if phone and phone[0] != '0' and phone[0] != '+':
+                    phone = '0' + phone
             if birthday:
                 try:
                     if type(birthday) == unicode or type(birthday) == str:
@@ -738,6 +746,8 @@ def process_file(file_name, task):
             if c_cn:
                 lop_cn = sheet.cell(r, c_cn).value
                 if not re_class.match(lop_cn): lop_cn = ''
+                else:
+                    lop_cn = ' '.join(re_class.match(lop_cn).groups())
 
             if chuyen_mon:
                 for ele in c_classes.iteritems():
@@ -1212,10 +1222,10 @@ def teacher_import( request, request_type=''):
                         ele = l.split('-')
                         try:
                             lop = year.class_set.get(name=ele[0])
-                            sub = lop.subject_set.get(type=ele[1])
+                            sub = lop.subject_set.get(type='-'.join(ele[1:]))
                             sub.teacher_id = added_t
                             sub.save()
-                        except ObjectDoesNotExist:
+                        except ObjectDoesNotExist as e:
                             pass
                 except Exception as e:
                     print e
@@ -1288,7 +1298,7 @@ def teacher_import( request, request_type=''):
                             print ele, ele[0]
                             try:
                                 lop = year.class_set.get(name=ele[0])
-                                sub = lop.subject_set.get(type=ele[1])
+                                sub = lop.subject_set.get(type='-'.join(ele[1:]))
                                 sub.teacher_id = added_t
                                 sub.save()
                             except ObjectDoesNotExist:

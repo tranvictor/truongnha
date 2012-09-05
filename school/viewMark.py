@@ -19,6 +19,7 @@ import datetime
 from decorators import need_login, school_function, operating_permission
 
 from templateExcel import  MAX_COL,MAX_VIEW,CHECKED_DATE
+from number_col import  NUMBER_COL_MIN
 LOCK_MARK =False
 ENABLE_CHANGE_MARK=True
 e=0.00000001
@@ -63,12 +64,19 @@ def getMark(subjectChoice,selectedTerm):
     return   list,maxColMieng,maxCol15Phut,maxColMotTiet
 
 #@transaction.commit_on_success    
+def min_col(subject):
+    name = subject.name
+    c = subject.class_id.block_id.number
+    i = -1
+    for s in SUBJECT_LIST:
+        i+=1
+        if s == name: break;
+    return NUMBER_COL_MIN[c-6][i][0],NUMBER_COL_MIN[c-6][i][1],NUMBER_COL_MIN[c-6][i][2]
 
 @need_login
 def markTable(request,term_id=-1,class_id=-1,subject_id=-1,move=None):
     tt1=time.time()
     user = request.user
-
     termChoice    = term_id
     classChoice   = class_id    
     subjectChoice = subject_id
@@ -114,10 +122,13 @@ def markTable(request,term_id=-1,class_id=-1,subject_id=-1,move=None):
     maxColMieng=0
     maxCol15Phut=0
     maxColMotTiet=0
+    min_col_mieng = 0
+    min_col_15phut = 0
+    min_col_mot_tiet = 0
     if subjectChoice!=-1:
         selectedSubject=Subject.objects.get(id=subjectChoice)    
         list,maxColMieng,maxCol15Phut,maxColMotTiet=getMark(subjectChoice,selectedTerm)
-            
+        max_col_mieng,max_col_15phut,max_col_mot_tiet = min_col(selectedSubject)
     lengthList=0            
     if list!=None:        
         lengthList=list.__len__()  
@@ -160,11 +171,14 @@ def markTable(request,term_id=-1,class_id=-1,subject_id=-1,move=None):
                                 'type':type,
                                 'firstLoop':firstLoop,
                                 'secondLoop':secondLoop,
-                                'MAX_VIEW':MAX_VIEW,
+                                'MAX_VIEW_COL_MIENG':max_col_15phut,
+                                'MAX_VIEW_COL_15PHUT':max_col_15phut,
+                                'MAX_VIEW_COL_MOT_TIET':max_col_mot_tiet,
                                 'MAX_COL':MAX_COL,
-                                'maxColMieng'  :min(MAX_COL,max(maxColMieng+1,MAX_VIEW)),
-                                'maxCol15Phut' :min(MAX_COL,max(maxCol15Phut+1,MAX_VIEW)),
-                                'maxColMotTiet':min(MAX_COL,max(maxColMotTiet+1,MAX_VIEW)),
+                                'maxColMieng'  :min(MAX_COL,max(maxColMieng+1,max_col_mieng)),
+                                'maxCol15Phut' :min(MAX_COL,max(maxCol15Phut+1,max_col_15phut)),
+                                'maxColMotTiet':min(MAX_COL,max(maxColMotTiet+1,max_col_mot_tiet)),
+
                                 'timeToEdit':timeToEdit,
                                 'timeNow':timeNow,
                                 'isSchool':isSchool,

@@ -12,6 +12,7 @@ urlpatterns = patterns('',
     # sau nay hoan thien, co the bo di
     url(r'viewschool/(?P<school_id>\d+)$', views.ssv, name="view_school"),
     url(r'thu$', makeTest.thu, name="test_thu"),
+    url(r'toolToMakeCol$', makeTest.toolToMakeCol, name="tool_to_make_col"),
     url(r'markTable$', viewMark.markTable, name="mark_table"),
     url(r'markTable/(?P<term_id>\w+)$', viewMark.markTable, name="mark_table"),
     url(r'markTable/(?P<term_id>\w+)/(?P<class_id>\w+)$', viewMark.markTable, name="mark_table"),

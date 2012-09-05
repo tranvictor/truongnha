@@ -22,7 +22,10 @@ window.onerror= function(){
 	//window.location.reload();
 };	
 var MAX_COL ={{MAX_COL}};
-var MAX_VIEW={{MAX_VIEW}};
+var MAX_VIEW_COL_MIENG = {{ MAX_VIEW_COL_MIENG }};
+var MAX_VIEW_COL_15PHUT = {{ MAX_VIEW_COL_15PHUT }};
+var MAX_VIEW_COL_MOT_TIET = {{ MAX_VIEW_COL_MOT_TIET }};
+
 var SIZE  = MAX_COL*3+5;
 var temp = "{{enableChangeMark}}";
 if (temp == "True") enableChangeMark = true;
@@ -40,6 +43,7 @@ else
 var isComment="{{selectedSubject.nx}}"=="True";
 var idTeacher = "{{selectedSubject.teacher_id.id}}";
 var mainInput=document.getElementById("mainInput");
+
 var maxColMieng    ={{maxColMieng}};
 var maxCol15Phut   ={{maxCol15Phut}};
 var maxColMotTiet  ={{maxColMotTiet}};

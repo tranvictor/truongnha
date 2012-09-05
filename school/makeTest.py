@@ -303,14 +303,29 @@ def thu1(request):
     #print (t2-t1)
     return HttpResponse(t.render(c))
 
-def thu(request):
+def toolToMakeCol(request):
     t1= time.time()
     filepath = os.path.join(SITE_ROOT, 'templates/school/mark/dataForMarkTable.xls')
+    file_out_path = os.path.join(SITE_ROOT,'school/number_col.py')
     print filepath
     book = xlrd.open_workbook(filepath)
     s = book.sheet_by_index(0)
-
-
+    col = [[1,2,3],[2,3,1]]
+    f = open(file_out_path, 'w')
+    f.write('NUMBER_COL_MIN = [\n')
+    for i in range(6,13):
+        f.write('[')
+        for j in range(2,17):
+            number1 = int(s.cell(j,(i-6)*3+1).value)
+            number2 = int(s.cell(j,(i-6)*3+2).value)
+            number3 = int(s.cell(j,(i-6)*3+3).value)
+            f.write('['+str(number1)+','+str(number2)+','+str(number3)+']')
+            if j != 16 :
+                f.write(',')
+        if i != 12 :
+            f.write('],\n')
+    f.write(']]')
+    f.close()
     t = loader.get_template(os.path.join('school','ll.html'))
     t2=time.time()
     print (t2-t1)
@@ -319,5 +334,19 @@ def thu(request):
                                  'x':x,
                                 }
                        )
+    #print (t2-t1)
+    return HttpResponse(t.render(c))
+
+def thu(request):
+    t1= time.time()
+
+    t = loader.get_template(os.path.join('school','ll.html'))
+    t2=time.time()
+    print (t2-t1)
+    x='K'
+    c = RequestContext(request, {'list':list,
+                                 'x':x,
+                                 }
+    )
     #print (t2-t1)
     return HttpResponse(t.render(c))
