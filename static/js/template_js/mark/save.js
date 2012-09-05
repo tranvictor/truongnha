@@ -2,7 +2,6 @@
 // It caculates average score automatically when having final score and 
 // caculates final score of year if having final score of term 1 and term 2.  
 
-var table   = document.getElementById("markTable");	
 var needToConfirm = false;
 window.onbeforeunload = function confirmExit(e)
 {
@@ -482,6 +481,7 @@ function viewAverage()
 	}
 	function viewAverageCol()
 	{
+		if (length == 1) return;
 		if (isSecondTerm)
 			var numberCol = 3*MAX_COL + 5;
 		else
