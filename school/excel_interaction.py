@@ -5,7 +5,8 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_POST
 from django.db.models.query import QuerySet
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.validators import validate_email
 import simplejson
 import re
 from utils import to_en1
@@ -630,6 +631,7 @@ def process_file(file_name, task):
         c_nhom = -1
         c_chuyen_mon = -1
         c_phone = -1
+        c_email = -1
         c_pccm = -1
         c_cn = -1
 
@@ -661,6 +663,8 @@ def process_file(file_name, task):
                 c_cn = c
             elif value == u'Phân công chuyên môn':
                 c_pccm = c
+            elif value == u'Email':
+                c_email = c
         start_row += 1
         #Search for class columns
         c_classes = {}
@@ -689,6 +693,7 @@ def process_file(file_name, task):
             nhom = ''
             chuyen_mon = ''
             phone = ''
+            email = ''
             lop_cn = ''
             lop_cmon = []
             name = sheet.cell(r, c_ten).value.strip()
@@ -729,6 +734,15 @@ def process_file(file_name, task):
                     phone = unicode(int(phone)).strip()
                 if phone and phone[0] != '0' and phone[0] != '+':
                     phone = '0' + phone
+            if c_email > -1:
+                email = sheet.cell(r, c_email).value
+                if email:
+                    try:
+                        validate_email(unicode(email))
+                    except ValidationError:
+                        message += u'<li>Ô %s:%s: email không tồn tại' %\
+                            (unicode(cellname(r, c_email)), email)
+                        email = ''
             if birthday:
                 try:
                     if type(birthday) == unicode or type(birthday) == str:
@@ -767,6 +781,7 @@ def process_file(file_name, task):
                     'group': nhom,
                     'major': chuyen_mon,
                     'sms_phone': phone,
+                    'email': email,
                     'lop_cn': lop_cn,
                     'lop_cmon': lop_cmon}
             identifier = name + '-' + unicode(birthday)
@@ -1208,6 +1223,7 @@ def teacher_import( request, request_type=''):
                                 group_id=teacher['group'],
                                 major=teacher['major'],
                                 sms_phone=teacher['sms_phone'],
+                                email=teacher['email'],
                                 school=school,
                                 force_update=True)
                     number_of_updated += 1
@@ -1278,14 +1294,13 @@ def teacher_import( request, request_type=''):
                         group_id=teacher['group'],
                         major=teacher['major'],
                         sms_phone=teacher['sms_phone'],
+                        email=teacher['email'],
                         school=school)
                     if isinstance(added_t, QuerySet):
                         existing_teacher.append(added_t)
                         saving_import_teacher.append(teacher)
                     else:
                         # update lop_cn, lop_cmon
-                        print teacher['lop_cn']
-                        print year
                         try:
                             home_cl = year.class_set.get(name=teacher['lop_cn'])
                             home_cl.teacher_id = added_t
@@ -1295,7 +1310,6 @@ def teacher_import( request, request_type=''):
                         lop_cmons = teacher['lop_cmon']
                         for l in lop_cmons:
                             ele = l.split('-')
-                            print ele, ele[0]
                             try:
                                 lop = year.class_set.get(name=ele[0])
                                 sub = lop.subject_set.get(type='-'.join(ele[1:]))
