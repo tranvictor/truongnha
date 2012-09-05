@@ -45,12 +45,18 @@ def school_index(request):
         uncs = UncategorizedClass.objects.filter(year_id = year)
         cyear = get_current_year(request)
         currentTerm = cyear.term_set.get(number=school.status)
+        if currentTerm.number == 3:
+            selected_term = Term.objects.get(year_id=currentTerm.year_id, number=2)
+        else:
+            selected_term = currentTerm
         context = RequestContext(request)
         return render_to_response(SCHOOL, {'classes': classes,
                                            'grades': grades,
                                            'uncs': uncs,
                                            'grades': grades,
-                                           'currentTerm':currentTerm},
+                                           'currentTerm':currentTerm,
+                                           'selected_term':selected_term,
+                                            },
                                            context_instance=context)
     elif user_type == 'GIAO_VIEN':
         teaching_subjects = Subject.objects.\
