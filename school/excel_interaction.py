@@ -51,7 +51,7 @@ def class_generate(request, class_id, object):
         return HttpResponseRedirect(reverse('school_index'))
 
     if object == 'student_list':
-        student_list = _class.pupil_set.all().order_by('index')
+        student_list = _class.students().order_by('index')
         book = Workbook(encoding='utf-8')
         #renderring xls file
         sheet = book.add_sheet(u'Danh sách học sinh')
@@ -543,7 +543,10 @@ def process_file(file_name, task):
             ban_dk = u'CB'
             sms_phone = ''
             name = sheet.cell(r, c_ten).value.strip()
-            name = ' '.join([i.capitalize() for i in name.split(' ')])
+            temp = []
+            for i in name.split(' '): 
+                if i: temp.append(i)
+            name = ' '.join(temp)
             if not name.strip():
                 message += u'<li>Ô ' + unicode(cellname(r, c_ten)) + u':Trống. </li>'
                 continue

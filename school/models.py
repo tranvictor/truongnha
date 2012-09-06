@@ -456,7 +456,8 @@ class Class(models.Model):
 
     #this function will return list of students those are studying in this class
     def students(self):
-        return self.student_set.filter(attend__is_member = True).order_by('index')
+        return self.student_set.filter(attend__is_member=True)\
+                .order_by('index').distinct()
 
 
     def number_of_pupils(self):
