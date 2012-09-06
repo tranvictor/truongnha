@@ -462,16 +462,18 @@ class Class(models.Model):
 
     def number_of_pupils(self):
         try:
-            return self.student_set.filter(attend__is_member = True).count()
+            return self.student_set.filter(attend__is_member=True)\
+                    .order_by('index').distinct().count()
         except Exception :
             return 0
     #This function count number of students those didn't leave this class
     #because of course repetition or uncategorized.
     def number_of_staying_students(self):
         try:
-            return self.student_set.filter(attend__leave_time = None).count()
+            return self.student_set.filter(attend__leave_time=None).count()
         except Exception:
             return 0
+
     def associated_teacher(self):
         subjects = Subject.objects.filter(class_id = self)
         result = [subject.teacher_id for subject in subjects]
