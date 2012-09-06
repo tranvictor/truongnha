@@ -227,21 +227,27 @@ class Group(models.Model):
         return unicode(self.name)
 
 class BasicPersonInfo(models.Model):
-    last_name = models.CharField("Họ", max_length = 35, blank = True) # tach ra first_name and last_name de sort va import from excel file
-    first_name = models.CharField("Tên(*)", max_length = 55)#vi phan nhap bang tay, ho ten se dc luu vao first_name nen max_length phai dc tang len gap doi
-    birthday = models.DateField("Ngày sinh(*)", null = True, validators = [validate_birthday])
-    birth_place = models.CharField("Nơi sinh", max_length = 200, blank = True)
-    dan_toc = models.CharField("Dân tộc", max_length = 15, blank = True, default = 'Kinh')
-    ton_giao = models.CharField("Tôn giáo", max_length = 20, blank = True)
-    quoc_tich = models.CharField("Quốc tịch", max_length = 20, blank = True, default = 'Việt Nam')
-    home_town = models.CharField("Quê quán", max_length = 100, blank = True) #nguyen quan
-    sex = models.CharField("Giới tính(*)", max_length = 3, choices = GENDER_CHOICES, default = 'Nam')
-    phone = models.CharField("Điện thoại", max_length = 15, blank = True, validators = [validate_phone])
-    sms_phone = models.CharField("Điện thoại nhận tin nhắn", max_length = 15, blank = True, validators = [validate_phone])
-    current_address = models.CharField("Địa chỉ", max_length = 200, blank = True)
-    email = models.EmailField("Email", null = True, blank = True)
+    last_name = models.CharField("Họ", max_length=35, blank=True) # tach ra first_name and last_name de sort va import from excel file
+    first_name = models.CharField("Tên(*)", max_length=55)#vi phan nhap bang tay, ho ten se dc luu vao first_name nen max_length phai dc tang len gap doi
+    birthday = models.DateField("Ngày sinh(*)", null=True,
+            validators=[validate_birthday])
+    birth_place = models.CharField("Nơi sinh", max_length=200, blank=True)
+    dan_toc = models.CharField("Dân tộc", max_length=15, blank=True,
+            default='Kinh')
+    ton_giao = models.CharField("Tôn giáo", max_length=20, blank=True)
+    quoc_tich = models.CharField("Quốc tịch", max_length=20, blank=True,
+            default='Việt Nam')
+    home_town = models.CharField("Quê quán", max_length=100, blank=True) #nguyen quan
+    sex = models.CharField("Giới tính(*)", max_length=3, choices=GENDER_CHOICES,
+            default='Nam')
+    phone = models.CharField("Điện thoại", max_length=15, blank=True,
+            validators=[validate_phone])
+    sms_phone = models.CharField("Điện thoại nhận tin nhắn", max_length=15,
+            blank=True, validators=[validate_phone])
+    current_address = models.CharField("Địa chỉ", max_length=200, blank=True)
+    email = models.EmailField("Email", null=True, blank=True)
     index = models.IntegerField("Số thứ tự(*)", default=0)
-    note = models.TextField("Ghi chú", blank= True)
+    note = models.TextField("Ghi chú", blank=True)
     class Meta:
         abstract = True
     

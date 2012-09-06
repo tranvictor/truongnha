@@ -576,7 +576,7 @@ def completely_del_student( student):
 def add_teacher( first_name=None, last_name=None, full_name=None,
                  birthday=None, sms_phone='', sex='N', dan_toc='Kinh',
                  major='', current_address='', home_town='', birthplace='',
-                 school=None, team_id=None, group_id=None,
+                 school=None, team_id=None, group_id=None, email='',
                  force_update=False):
     if full_name:
         names = full_name.split(" ")
@@ -641,6 +641,7 @@ def add_teacher( first_name=None, last_name=None, full_name=None,
         else:
             return find
     teacher.sms_phone = sms_phone
+    teacher.email = email
     teacher.home_town = home_town
     teacher.sex = sex
     teacher.dan_toc = dan_toc
