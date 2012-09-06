@@ -8,6 +8,7 @@ from django.db import models
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from sms.utils import send_email
 import settings
 from django.core.exceptions import *
 
@@ -465,6 +466,11 @@ class Register(models.Model):
         return '-'.join([unicode(self.register_name), unicode(self.school_name)])
 
 class RegisterForm(forms.ModelForm):
+    def save(self):
+        super(RegisterForm, self).save()
+        message = u'New Register:\nname:%s' % self.cleaned_data['register_name']
+        send_email('New Register', message,
+                to_addr=['vu.tran54@gmail.com', 'truonganhhoang@gmail.com'])
     class Meta:
         model = Register
 

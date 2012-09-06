@@ -86,6 +86,10 @@ class BasicWorkFlow(TestCase):
         self.assertEqual(reg.school_address, self.address)
         print "OK, register's saved to database correctly"
         self.register_id = reg.id
+        print 'Check email sent'
+        print mail.outbox
+        self.assertEqual(len(mail.outbox), 1)
+        mail.outbox = []
 
     def _step2_login_as_admin(self):
         logged = self.client.login(
