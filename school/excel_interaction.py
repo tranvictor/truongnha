@@ -107,6 +107,8 @@ def class_generate(request, class_id, object):
 @school_function
 def teacher_generate(request, type):
     school = get_school(request)
+    year = get_current_year(request)
+    cl_list = year.class_set.all()
     try:
         get_latest_startyear(request)
         year = get_current_year(request)
@@ -117,13 +119,13 @@ def teacher_generate(request, type):
         return HttpResponseRedirect(reverse("school_index"))
 
     permission = get_permission(request)
-    if (not permission in [u'HIEU_TRUONG', u'HIEU_PHO']) and (get_level(request)=='T'):
+    if (not permission in [u'HIEU_TRUONG', u'HIEU_PHO'])\
+        and (get_level(request)=='T'):
         return HttpResponseRedirect(reverse('school_index'))
 
     if type == 'all':
-#        file_name = request.session.session_key + unicode(school) + '_teacher_list.xls'
-#        file_name = os.path.join(settings.TEMP_FILE_LOCATION, file_name)
-        teacher_list = school.teacher_set.all().order_by('first_name', 'last_name', 'birthday')
+        teacher_list = school.teacher_set.all().order_by('first_name',
+                'last_name', 'birthday')
         book = Workbook(encoding='utf-8')
         #renderring xls file
 
@@ -169,41 +171,65 @@ def teacher_generate(request, type):
         sheet.col(8).width = 7000
         sheet.row(4).height = 350
 
-        sheet.write(4, 0, 'STT', style_bold)
-        sheet.write(4, 1, 'Họ và Tên', style_bold)
-        sheet.write(4, 2, 'Ngày sinh', style_bold)
-        sheet.write(4, 3, 'Số điện thoại', style_bold)
-        sheet.write(4, 4, 'Quê quán', style_bold)
-        sheet.write(4, 5, 'Giới tính', style_bold)
-        sheet.write(4, 6, 'Dạy môn', style_bold)
-        sheet.write(4, 7, 'Tổ', style_bold)
-        sheet.write(4, 8, 'Nhóm', style_bold)
-        sheet.write(4, 9, 'Tài Khoản', style_bold)
+        sheet.write_merge(4, 5, 0,0, 'STT', style_bold)
+        sheet.write_merge(4, 5, 1, 1, 'Họ và Tên', style_bold)
+        sheet.write_merge(4, 5, 2, 2, 'Ngày sinh', style_bold)
+        sheet.write_merge(4, 5, 3, 3,'Giới tính', style_bold)
+        sheet.write_merge(4, 5, 4, 4,'Quê quán', style_bold)
+        sheet.write_merge(4, 5, 5, 5,'Dân tộc', style_bold)
+        sheet.write_merge(4, 5, 6, 6,'Số điện thoại', style_bold)
+        sheet.write_merge(4, 5, 7, 7,'Email', style_bold)
+        sheet.write_merge(4, 5, 8, 8,'Chỗ ở hiện tại', style_bold)
+        sheet.write_merge(4, 5, 9, 9,'Tổ', style_bold)
+        sheet.write_merge(4, 5, 10, 10,'Nhóm', style_bold)
+        sheet.write_merge(4, 5, 11, 11,'Chuyên môn', style_bold)
+        sheet.write_merge(4, 5, 12, 12,'Lớp chủ nhiệm', style_bold)
+        sheet.write_merge(4, 4, 13, 13 + len(cl_list),
+                'Phân công chuyên môn', style_bold)
+        col = 13
+        for cl in cl_list:
+            sheet.write(5, col, cl.name, style_bold)
+            col += 1
 
-        row = 5
+        row = 6
+        subjects = Subject.objects.filter(class_id__year_id=year)
         for teacher in teacher_list:
             sheet.row(row).height = 350
-            sheet.write(row, 0, row - 4, style)
+            sheet.write(row, 0, row - 5, style)
             sheet.write(row, 1, teacher.last_name + ' ' + teacher.first_name, style)
             if teacher.birthday:
                 sheet.write(row, 2, teacher.birthday.strftime('%d/%m/%Y'), style)
-            sheet.write(row, 3, teacher.sms_phone, style)
+            sheet.write(row, 3, teacher.sex, style)
             sheet.write(row, 4, teacher.home_town, style)
-            sheet.write(row, 5, teacher.sex, style)
-            if teacher.major and teacher.major != '-1':
-                sheet.write(row, 6, teacher.get_major_display(), style)
-            else:
-                sheet.write(row, 6, '', style)
+            sheet.write(row, 5, teacher.dan_toc, style)
+            sheet.write(row, 6, teacher.sms_phone, style)
+            sheet.write(row, 7, teacher.email, style)
+            sheet.write(row, 8, teacher.current_address, style)
             if teacher.team_id:
-                sheet.write(row, 7, teacher.team_id.name, style)
+                sheet.write(row, 9, teacher.team_id.name, style)
             else:
-                sheet.write(row, 7, '', style)
+                sheet.write(row, 9, '', style)
             if teacher.group_id:
-                sheet.write(row, 8, teacher.group_id.name, style)
+                sheet.write(row, 10, teacher.group_id.name, style)
             else:
-                sheet.write(row, 8, '', style)
-            sheet.write(row, 9, teacher.user_id.username, style)
+                sheet.write(row, 10, '', style)
+            if teacher.major and teacher.major != '-1':
+                sheet.write(row, 11, teacher.get_major_display(), style)
+            else:
+                sheet.write(row, 11, '', style)
+            homeroom_cl = teacher.current_homeroom_class()
+            if homeroom_cl:
+                sheet.write(row, 12, teacher.current_homeroom_class().name, style)
+            else:
+                sheet.write(row, 12, '', style)
+            col = 13
+            for cl in cl_list:
+                teach = subjects.filter(teacher_id=teacher, class_id=cl)
+                if teach:
+                    sheet.write(row, col, 'x')
+                col += 1
             row += 1
+            
             #return HttpResponse
         response = HttpResponse(mimetype='application/ms-excel')
         response['Content-Disposition'] = u'attachment; filename=ds_giao_vien.xls'
