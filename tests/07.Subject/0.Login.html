@@ -13,18 +13,38 @@
 </thead><tbody>
 <tr>
 	<td>open</td>
-	<td>/</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>link=Dùng thử</td>
+	<td>/school/</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>id=demo-login-school</td>
+	<td>css=#626 &gt; span</td>
 	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Môn học</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tr[10]/td[contains(Mĩ Thuật)]/button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertConfirmation</td>
+	<td>Bạn có chắc chắn xóa không?</td>
+	<td></td>
+</tr>
+<tr>
+	<td>chooseOkOnNextConfirmation</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td></td>
+	<td>Đã xóa thành công</td>
 </tr>
 </tbody></table>
 </body>
