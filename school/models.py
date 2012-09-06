@@ -416,6 +416,7 @@ class UncategorizedClass(models.Model):
     block_id = models.ForeignKey(Block, verbose_name = "Khối(*)")
 
     def number_of_students(self):
+        print self.pupil_set.all()
         return self.pupil_set.count()
     def students(self):
         return self.pupil_set.all()
@@ -487,44 +488,69 @@ class Class(models.Model):
     #class Admin: pass
         
 class Pupil(BasicPersonInfo):
-    year = models.IntegerField("Năm học lớp 1", validators = [validate_year], blank = True, null = True) #year that pupil go to class 1
+    year = models.IntegerField("Năm học lớp 1",
+            validators=[validate_year], blank=True, null=True)
+    #year that pupil go to class 1
 
-    school_join_date = models.DateField("Ngày nhập trường(*)", default = date.today(),validators=[validate_join_date])
-    ban_dk = models.CharField("Ban đăng kí(*)", max_length = 5, choices = BAN_CHOICE, default = u'CB')
-    school_join_mark = models.IntegerField("Điểm tuyển sinh", null = True, blank = True, validators = [validate_join_mark])
-    learning_status = models.CharField("Tình trạng học tập", max_length=20, blank = True,
-            choices = LEARNING_STATUS_CHOICES)
+    school_join_date = models.DateField("Ngày nhập trường(*)",
+            default=date.today(),
+            validators=[validate_join_date])
+    ban_dk = models.CharField("Ban đăng kí(*)", max_length=5,
+            choices=BAN_CHOICE, default=u'CB')
+    school_join_mark = models.IntegerField("Điểm tuyển sinh",
+            null=True, blank=True,
+            validators=[validate_join_mark])
+    learning_status = models.CharField("Tình trạng học tập",
+            max_length=20, blank=True,
+            choices=LEARNING_STATUS_CHOICES)
 
     #thong tin ca nhan
-    khu_vuc = models.CharField("Khu vực", max_length = 3, choices = KV_CHOICE, blank = True)
-    doi = models.BooleanField("Là đội viên", blank = True, default = False)
-    ngay_vao_doi = models.DateField("Ngày vào đội", blank = True, null = True, validators=[validate_dd_date])
-    doan = models.BooleanField("Là đoàn viên", blank = True, default = False)
-    ngay_vao_doan = models.DateField("Ngày vào đoàn", blank = True, null = True, validators=[validate_dd_date])
-    dang = models.BooleanField("Là đảng viên", blank = True, default = False)
-    ngay_vao_dang = models.DateField("Ngày vào đảng", blank = True, null = True, validators=[validate_dd_date])
-    uu_tien = models.CharField("Ưu tiên", blank = True, max_length = 100)
+    khu_vuc = models.CharField("Khu vực", max_length=3,
+            choices=KV_CHOICE, blank=True)
+    doi = models.BooleanField("Là đội viên", blank=True,
+            default=False)
+    ngay_vao_doi = models.DateField("Ngày vào đội", blank=True,
+            null=True, validators=[validate_dd_date])
+    doan = models.BooleanField("Là đoàn viên", blank=True, default=False)
+    ngay_vao_doan = models.DateField("Ngày vào đoàn", blank=True,
+            null=True, validators=[validate_dd_date])
+    dang = models.BooleanField("Là đảng viên", blank=True, default=False)
+    ngay_vao_dang = models.DateField("Ngày vào đảng", blank=True, null=True,
+            validators=[validate_dd_date])
+    uu_tien = models.CharField("Ưu tiên", blank=True, max_length=100)
     
     #thong tin gia dinh
-    father_name = models.CharField("Họ và tên bố", max_length = 45, blank = True)
-    father_birthday = models.DateField("Ngày sinh của bố", null = True, blank = True, validators = [validate_birthday])
-    father_phone = models.CharField("Điện thoại của bố", max_length = 15, null = True, blank = True, validators = [validate_phone])
-    father_job = models.CharField("Nghê nghiệp của bố", max_length = 100, blank = True)
-    mother_name = models.CharField("Họ và tên mẹ", max_length = 45, blank = True)
-    mother_birthday = models.DateField("Ngày sinh của mẹ", null = True, blank = True, validators = [validate_birthday])
-    mother_job = models.CharField("Nghê nghiệp của mẹ", max_length = 100, blank = True)    
-    mother_phone = models.CharField("Điện thoại của mẹ", max_length = 15, null = True, blank = True, validators = [validate_phone])
+    father_name = models.CharField("Họ và tên bố", max_length=45, blank=True)
+    father_birthday = models.DateField("Ngày sinh của bố", null=True,
+            blank=True, validators=[validate_birthday])
+    father_phone = models.CharField("Điện thoại của bố", max_length=15,
+            null=True, blank=True,
+            validators=[validate_phone])
+    father_job = models.CharField("Nghê nghiệp của bố",
+            max_length=100, blank=True)
+    mother_name = models.CharField("Họ và tên mẹ",
+            max_length=45, blank=True)
+    mother_birthday = models.DateField("Ngày sinh của mẹ",
+            null=True, blank=True, validators=[validate_birthday])
+    mother_job = models.CharField("Nghê nghiệp của mẹ", max_length=100,
+            blank=True)    
+    mother_phone = models.CharField("Điện thoại của mẹ", max_length=15,
+            null=True, blank=True, validators=[validate_phone])
     
-    current_status = models.CharField("Tình trạng", max_length = 200, blank = True, null = True, default = 'OK')
-    disable = models.BooleanField("Không còn trong trường", default = False)
+    current_status = models.CharField("Tình trạng",
+            max_length=200, blank=True, null=True, default='OK')
+    disable = models.BooleanField("Không còn trong trường", default=False)
     
-    user_id = models.OneToOneField(User, verbose_name = "tài khoản", null = True, blank = True) # nullable is temporary 
-    start_year_id = models.ForeignKey(StartYear, verbose_name = "khóa")
-    class_id = models.ForeignKey(Class, verbose_name = "lớp", null = True, blank = True)
-    school_id = models.ForeignKey(Organization, verbose_name = "trường", null = True, blank = True)
-    classes = models.ManyToManyField(Class, through="Attend", related_name='student_set')
-    unc_class_id = models.ForeignKey(UncategorizedClass, verbose_name = u'Chưa\
-            phân lớp', null = True, blank = True)
+    user_id = models.OneToOneField(User, verbose_name="tài khoản",
+            null=True, blank=True) # nullable is temporary 
+    start_year_id = models.ForeignKey(StartYear, verbose_name="khóa")
+    class_id = models.ForeignKey(Class, verbose_name="lớp", null=True, blank=True)
+    school_id = models.ForeignKey(Organization, verbose_name="trường",
+            null=True, blank=True)
+    classes = models.ManyToManyField(Class, through="Attend",
+            related_name='student_set')
+    unc_class_id = models.ForeignKey(UncategorizedClass,
+            verbose_name=u'Chưa phân lớp', null=True, blank=True)
 
     def get_attended_classes(self):
         classes = Class.objects.filter(pupil__id=self.id)
