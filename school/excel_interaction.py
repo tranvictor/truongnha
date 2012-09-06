@@ -998,25 +998,25 @@ def processFileSystemAgenda(request, subject, grade, term, file_name, request_ty
 
 def match_subject (subject, subject_name):
     sub_type = to_en1(subject.type).strip().lower()
-    sub_name =to_en1(subject.name).strip().lower()
-    subject_name = to_en1(subject_name).strip().lower()
+    sub_name = to_en1(subject.name).strip().lower()
+    if sub_type == subject_name or sub_name == subject_name: return True
     try:
 #        print sub_type + u' ' + sub_name + u' ' + subject_name + '11111'
         sub_list = {}
         sub_list[1] = [u'toan']
         sub_list[2] = [u'vat ly', u'vat li', u'ly', u'li']
-        sub_list[3] = [ u'dia ly', u'dia li']
+        sub_list[3] = [ u'dia ly', u'dia li', u'dia']
         sub_list[4] = [u'van', u'ngu van', u'van hoc']
         sub_list[5] = [u'sinh', u'sinh hoc', u'sinh vat']
         sub_list[6] = [u'hoa hoc', u'hoa']
-        sub_list[7] = [u'ngoai ngu', u'tieng anh', u'anh van', u'anh']
+        sub_list[7] = [u'ngoai ngu', u'tieng anh', u'anh van', u'anh', u'nn']
         sub_list[8] = [u'gdcd']
-        sub_list[9] = [u'cong nghe']
-        sub_list[10] = [u'the duc']
+        sub_list[9] = [u'cong nghe', u'cn']
+        sub_list[10] = [u'the duc', u'td']
         sub_list[11] = [u'am nhac']
         sub_list[12] = [u'mi thuat', u'my thuat', u've']
-        sub_list[13] = [u'tin hoc']
-        sub_list[14] = [u'gdqp-an',u'quan su', u'gdqpan']
+        sub_list[13] = [u'tin hoc', u'tin']
+        sub_list[14] = [u'gdqp-an',u'quan su', u'gdqpan', u'gdqp']
         sub_list[15] = [u'nn2', u'ngoai ngu 2']
         sub_list[16] = [u'lich su', u'su']
 
@@ -1084,6 +1084,7 @@ def processFileTKB(request, file_name):
             print e
             return {'error': u'File tải lên không phải file Excel'}
         sbj = cl.subject_set.all()
+        out_cache = []
         for d in range(2, 8):
             try:
                 t = TKB()
@@ -1097,12 +1098,14 @@ def processFileTKB(request, file_name):
             for i in range(0, 10):
                 sb = None
                 subjectName = sheet.cell(r + i, c).value
-                sub_name =to_en1(subjectName).strip().lower()
+                sub_name =to_en1(subjectName).split('-')[0].strip().lower()
+                if sub_name in out_cache:
+                    continue
                 if sub_name in cache:
                     sb = cache[sub_name]
-                else:
+                elif sub_name != u'':
                     for _sb in sbj:
-                        if match_subject(_sb, subjectName):
+                        if match_subject(_sb, sub_name):
                             sb = _sb
                             cache[sub_name] = _sb
                             break
@@ -1115,6 +1118,7 @@ def processFileTKB(request, file_name):
                     else:
                         message += u'<li>Không tồn tại môn ' + sheet.cell(r+i, c).value + u' trong lớp ' + sheet.cell(start_row,
                         c).value.strip() + u'</li>'
+                        out_cache.append(sub_name)
             t.save()
 
     #get warning for duplications
