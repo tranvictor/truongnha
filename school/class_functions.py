@@ -302,7 +302,10 @@ def viewClassDetail(request, class_id):
     currentTerm = cyear.term_set.get(number=school.status)
     if currentTerm.number == 3:
         currentTerm = Term.objects.get(year_id=currentTerm.year_id, number=2)
-
+    if cl.year_id != currentTerm.year_id :
+        selected_term = Term.objects.get(year_id=cl.year_id, number=2)
+    else:
+        selected_term = currentTerm
     t = loader.get_template(os.path.join('school', 'classDetail.html'))
     c = RequestContext(request, {'form': form,
                                  'message': message,
@@ -314,6 +317,7 @@ def viewClassDetail(request, class_id):
                                  'gvcn': cn,
                                  'student_id': id,
                                  'currentTerm': currentTerm,
+                                 'selected_term':selected_term,
                                  'move_to_cls': move_to_cls,
                                  'move_to_cls1': move_to_cls1,
                                  'default_date': default_date
