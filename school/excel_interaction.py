@@ -1037,7 +1037,7 @@ def processFileTKB(request, file_name):
         all_t = cl.tkb_set.all().delete()
 
     message = u'<ul>'
-
+    cache = {}
     for c in range(start_col + 2, sheet.ncols):
         try:
             className = sheet.cell(start_row, c).value.strip().lower().replace(' ', '')
@@ -1054,7 +1054,7 @@ def processFileTKB(request, file_name):
         except Exception as e:
             print e
             return {'error': u'File tải lên không phải file Excel'}
-
+        sbj = cl.subject_set.all()
         for d in range(2, 8):
             try:
                 t = TKB()
@@ -1065,20 +1065,23 @@ def processFileTKB(request, file_name):
                 return {'error': u'File tải lên không phải file Excel'}
 
             r = start_row + 10 * (d - 2) + 1
-            sbj = cl.subject_set.all()
             for i in range(0, 10):
                 sb = None
                 subjectName = sheet.cell(r + i, c).value
-                for _sb in sbj:
-                    if match_subject(_sb, subjectName):
-                        sb = _sb
-                        break
+                sub_name =to_en1(subjectName).strip().lower()
+                if sub_name in cache:
+                    sb = cache[sub_name]
+                else:
+                    for _sb in sbj:
+                        if match_subject(_sb, subjectName):
+                            sb = _sb
+                            cache[sub_name] = _sb
+                            break
                 setattr(t, 'period_' + str(i+1), sb)
                 if not sb and subjectName:
-                    convert_subjectName = to_en1(subjectName).strip().lower()
-                    if convert_subjectName == u'chao co':
+                    if sub_name == u'chao co':
                         setattr(t, 'chaoco', i+1)
-                    elif convert_subjectName == u'sinh hoat':
+                    elif sub_name == u'sinh hoat' or sub_name == u'sh':
                         setattr(t, 'sinhhoat', i+1)
                     else:
                         message += u'<li>Không tồn tại môn ' + sheet.cell(r+i, c).value + u' trong lớp ' + sheet.cell(start_row,
