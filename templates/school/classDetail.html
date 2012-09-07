@@ -33,13 +33,13 @@
         <div class="btn-group">
             {% if pos > 3 or user.userprofile.organization.level == 'S' %}
                 <a title="Nhập hoặc chỉnh sửa điểm các môn học" class="btn btn-primary"
-                   href="{%url mark_table currentTerm.id class.id %}">
+                   href="{%url mark_table selected_term.id class.id %}">
                     <i class="icon-star-empty"></i>
                     Điểm</a>
             {% else %}
                 {% if gvcn %}
                     <a title="Xem điểm các môn do người dùng chủ nhiệm" class="btn btn-primary"
-                       href="{% url mark_for_teacher 2 currentTerm.id %}">
+                       href="{% url mark_for_teacher 2 selected_term.id %}">
                         <i class="icon-star-empty"></i>
                         Điểm</a>
                 {% endif %}

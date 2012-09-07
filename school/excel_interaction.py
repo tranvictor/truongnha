@@ -51,7 +51,7 @@ def class_generate(request, class_id, object):
         return HttpResponseRedirect(reverse('school_index'))
 
     if object == 'student_list':
-        student_list = _class.pupil_set.all().order_by('index')
+        student_list = _class.students().order_by('index')
         book = Workbook(encoding='utf-8')
         #renderring xls file
         sheet = book.add_sheet(u'Danh sách học sinh')
@@ -107,6 +107,8 @@ def class_generate(request, class_id, object):
 @school_function
 def teacher_generate(request, type):
     school = get_school(request)
+    year = get_current_year(request)
+    cl_list = year.class_set.all()
     try:
         get_latest_startyear(request)
         year = get_current_year(request)
@@ -117,13 +119,13 @@ def teacher_generate(request, type):
         return HttpResponseRedirect(reverse("school_index"))
 
     permission = get_permission(request)
-    if (not permission in [u'HIEU_TRUONG', u'HIEU_PHO']) and (get_level(request)=='T'):
+    if (not permission in [u'HIEU_TRUONG', u'HIEU_PHO'])\
+        and (get_level(request)=='T'):
         return HttpResponseRedirect(reverse('school_index'))
 
     if type == 'all':
-#        file_name = request.session.session_key + unicode(school) + '_teacher_list.xls'
-#        file_name = os.path.join(settings.TEMP_FILE_LOCATION, file_name)
-        teacher_list = school.teacher_set.all().order_by('first_name', 'last_name', 'birthday')
+        teacher_list = school.teacher_set.all().order_by('first_name',
+                'last_name', 'birthday')
         book = Workbook(encoding='utf-8')
         #renderring xls file
 
@@ -169,41 +171,65 @@ def teacher_generate(request, type):
         sheet.col(8).width = 7000
         sheet.row(4).height = 350
 
-        sheet.write(4, 0, 'STT', style_bold)
-        sheet.write(4, 1, 'Họ và Tên', style_bold)
-        sheet.write(4, 2, 'Ngày sinh', style_bold)
-        sheet.write(4, 3, 'Số điện thoại', style_bold)
-        sheet.write(4, 4, 'Quê quán', style_bold)
-        sheet.write(4, 5, 'Giới tính', style_bold)
-        sheet.write(4, 6, 'Dạy môn', style_bold)
-        sheet.write(4, 7, 'Tổ', style_bold)
-        sheet.write(4, 8, 'Nhóm', style_bold)
-        sheet.write(4, 9, 'Tài Khoản', style_bold)
+        sheet.write_merge(4, 5, 0,0, 'STT', style_bold)
+        sheet.write_merge(4, 5, 1, 1, 'Họ và Tên', style_bold)
+        sheet.write_merge(4, 5, 2, 2, 'Ngày sinh', style_bold)
+        sheet.write_merge(4, 5, 3, 3,'Giới tính', style_bold)
+        sheet.write_merge(4, 5, 4, 4,'Quê quán', style_bold)
+        sheet.write_merge(4, 5, 5, 5,'Dân tộc', style_bold)
+        sheet.write_merge(4, 5, 6, 6,'Số điện thoại', style_bold)
+        sheet.write_merge(4, 5, 7, 7,'Email', style_bold)
+        sheet.write_merge(4, 5, 8, 8,'Chỗ ở hiện tại', style_bold)
+        sheet.write_merge(4, 5, 9, 9,'Tổ', style_bold)
+        sheet.write_merge(4, 5, 10, 10,'Nhóm', style_bold)
+        sheet.write_merge(4, 5, 11, 11,'Chuyên môn', style_bold)
+        sheet.write_merge(4, 5, 12, 12,'Lớp chủ nhiệm', style_bold)
+        sheet.write_merge(4, 4, 13, 13 + len(cl_list),
+                'Phân công chuyên môn', style_bold)
+        col = 13
+        for cl in cl_list:
+            sheet.write(5, col, cl.name, style_bold)
+            col += 1
 
-        row = 5
+        row = 6
+        subjects = Subject.objects.filter(class_id__year_id=year)
         for teacher in teacher_list:
             sheet.row(row).height = 350
-            sheet.write(row, 0, row - 4, style)
+            sheet.write(row, 0, row - 5, style)
             sheet.write(row, 1, teacher.last_name + ' ' + teacher.first_name, style)
             if teacher.birthday:
                 sheet.write(row, 2, teacher.birthday.strftime('%d/%m/%Y'), style)
-            sheet.write(row, 3, teacher.sms_phone, style)
+            sheet.write(row, 3, teacher.sex, style)
             sheet.write(row, 4, teacher.home_town, style)
-            sheet.write(row, 5, teacher.sex, style)
-            if teacher.major and teacher.major != '-1':
-                sheet.write(row, 6, teacher.get_major_display(), style)
-            else:
-                sheet.write(row, 6, '', style)
+            sheet.write(row, 5, teacher.dan_toc, style)
+            sheet.write(row, 6, teacher.sms_phone, style)
+            sheet.write(row, 7, teacher.email, style)
+            sheet.write(row, 8, teacher.current_address, style)
             if teacher.team_id:
-                sheet.write(row, 7, teacher.team_id.name, style)
+                sheet.write(row, 9, teacher.team_id.name, style)
             else:
-                sheet.write(row, 7, '', style)
+                sheet.write(row, 9, '', style)
             if teacher.group_id:
-                sheet.write(row, 8, teacher.group_id.name, style)
+                sheet.write(row, 10, teacher.group_id.name, style)
             else:
-                sheet.write(row, 8, '', style)
-            sheet.write(row, 9, teacher.user_id.username, style)
+                sheet.write(row, 10, '', style)
+            if teacher.major and teacher.major != '-1':
+                sheet.write(row, 11, teacher.get_major_display(), style)
+            else:
+                sheet.write(row, 11, '', style)
+            homeroom_cl = teacher.current_homeroom_class()
+            if homeroom_cl:
+                sheet.write(row, 12, teacher.current_homeroom_class().name, style)
+            else:
+                sheet.write(row, 12, '', style)
+            col = 13
+            for cl in cl_list:
+                teach = subjects.filter(teacher_id=teacher, class_id=cl)
+                if teach:
+                    sheet.write(row, col, 'x')
+                col += 1
             row += 1
+            
             #return HttpResponse
         response = HttpResponse(mimetype='application/ms-excel')
         response['Content-Disposition'] = u'attachment; filename=ds_giao_vien.xls'
@@ -517,7 +543,10 @@ def process_file(file_name, task):
             ban_dk = u'CB'
             sms_phone = ''
             name = sheet.cell(r, c_ten).value.strip()
-            name = ' '.join([i.capitalize() for i in name.split(' ')])
+            temp = []
+            for i in name.split(' '): 
+                if i: temp.append(i)
+            name = ' '.join(temp)
             if not name.strip():
                 message += u'<li>Ô ' + unicode(cellname(r, c_ten)) + u':Trống. </li>'
                 continue
@@ -969,25 +998,25 @@ def processFileSystemAgenda(request, subject, grade, term, file_name, request_ty
 
 def match_subject (subject, subject_name):
     sub_type = to_en1(subject.type).strip().lower()
-    sub_name =to_en1(subject.name).strip().lower()
-    subject_name = to_en1(subject_name).strip().lower()
+    sub_name = to_en1(subject.name).strip().lower()
+    if sub_type == subject_name or sub_name == subject_name: return True
     try:
 #        print sub_type + u' ' + sub_name + u' ' + subject_name + '11111'
         sub_list = {}
         sub_list[1] = [u'toan']
         sub_list[2] = [u'vat ly', u'vat li', u'ly', u'li']
-        sub_list[3] = [ u'dia ly', u'dia li']
+        sub_list[3] = [ u'dia ly', u'dia li', u'dia']
         sub_list[4] = [u'van', u'ngu van', u'van hoc']
         sub_list[5] = [u'sinh', u'sinh hoc', u'sinh vat']
         sub_list[6] = [u'hoa hoc', u'hoa']
-        sub_list[7] = [u'ngoai ngu', u'tieng anh', u'anh van', u'anh']
+        sub_list[7] = [u'ngoai ngu', u'tieng anh', u'anh van', u'anh', u'nn']
         sub_list[8] = [u'gdcd']
-        sub_list[9] = [u'cong nghe']
-        sub_list[10] = [u'the duc']
+        sub_list[9] = [u'cong nghe', u'cn']
+        sub_list[10] = [u'the duc', u'td']
         sub_list[11] = [u'am nhac']
         sub_list[12] = [u'mi thuat', u'my thuat', u've']
-        sub_list[13] = [u'tin hoc']
-        sub_list[14] = [u'gdqp-an',u'quan su', u'gdqpan']
+        sub_list[13] = [u'tin hoc', u'tin']
+        sub_list[14] = [u'gdqp-an',u'quan su', u'gdqpan', u'gdqp']
         sub_list[15] = [u'nn2', u'ngoai ngu 2']
         sub_list[16] = [u'lich su', u'su']
 
@@ -1037,7 +1066,7 @@ def processFileTKB(request, file_name):
         all_t = cl.tkb_set.all().delete()
 
     message = u'<ul>'
-
+    cache = {}
     for c in range(start_col + 2, sheet.ncols):
         try:
             className = sheet.cell(start_row, c).value.strip().lower().replace(' ', '')
@@ -1054,7 +1083,8 @@ def processFileTKB(request, file_name):
         except Exception as e:
             print e
             return {'error': u'File tải lên không phải file Excel'}
-
+        sbj = cl.subject_set.all()
+        out_cache = []
         for d in range(2, 8):
             try:
                 t = TKB()
@@ -1065,24 +1095,30 @@ def processFileTKB(request, file_name):
                 return {'error': u'File tải lên không phải file Excel'}
 
             r = start_row + 10 * (d - 2) + 1
-            sbj = cl.subject_set.all()
             for i in range(0, 10):
                 sb = None
                 subjectName = sheet.cell(r + i, c).value
-                for _sb in sbj:
-                    if match_subject(_sb, subjectName):
-                        sb = _sb
-                        break
+                sub_name =to_en1(subjectName).split('-')[0].strip().lower()
+                if sub_name in out_cache:
+                    continue
+                if sub_name in cache:
+                    sb = cache[sub_name]
+                elif sub_name != u'':
+                    for _sb in sbj:
+                        if match_subject(_sb, sub_name):
+                            sb = _sb
+                            cache[sub_name] = _sb
+                            break
                 setattr(t, 'period_' + str(i+1), sb)
                 if not sb and subjectName:
-                    convert_subjectName = to_en1(subjectName).strip().lower()
-                    if convert_subjectName == u'chao co':
+                    if sub_name == u'chao co':
                         setattr(t, 'chaoco', i+1)
-                    elif convert_subjectName == u'sinh hoat':
+                    elif sub_name == u'sinh hoat' or sub_name == u'sh':
                         setattr(t, 'sinhhoat', i+1)
                     else:
                         message += u'<li>Không tồn tại môn ' + sheet.cell(r+i, c).value + u' trong lớp ' + sheet.cell(start_row,
                         c).value.strip() + u'</li>'
+                        out_cache.append(sub_name)
             t.save()
 
     #get warning for duplications

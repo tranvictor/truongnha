@@ -215,7 +215,7 @@ INSTALLED_APPS = (
     'sms',
     'api',
     'pagination',
-    'south', #for database migration/upgrade
+    #'south', #for database migration/upgrade
 #    'django_jenkins',
 )
 

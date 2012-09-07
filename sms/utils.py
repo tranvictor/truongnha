@@ -60,7 +60,8 @@ def sendSMS(phone,content,user, save_to_db = True):
             content = to_ascii(u'Truong ' + unicode(school) + u' thong bao:' + '\n' + content)
             s = None
             if save_to_db:
-                s = sms(phone=phone, content=content, sender=user, recent=True, success=True)
+                s = sms(phone=phone, content=content,
+                        sender=user, recent=True, success=True)
                 s.save()
             client = Client(url, username = username, password = password)
             message = \

@@ -29,12 +29,15 @@ class TeacherForm(forms.ModelForm):
             if value > date.today()-timedelta(days=3650) or value < date(1900,1,1):
                 raise ValidationError(u'Ngày nằm ngoài khoảng cho phép')
         super(TeacherForm,self).__init__(*args, **kwargs)
-        school = Organization.objects.get(id = school_id)
-        self.fields['birthday'] = forms.DateField(required=True, label=u'Ngày sinh', validators=[validate_teacher_birthday],
-            widget=forms.DateInput(attrs={'class':'datepicker input-small'}))
-        self.fields['team_id'] = forms.ModelChoiceField(queryset= school.team_set.all(), required=False, label=u'Tổ')
-        self.fields['group_id'] = forms.ModelChoiceField(queryset= Group.objects.filter(team_id__school_id = school),
-                                                         required= False, label=u'Nhóm')
+        school = Organization.objects.get(id=school_id)
+        self.fields['birthday'] = forms.DateField(required=True,
+                    label=u'Ngày sinh', validators=[validate_teacher_birthday],
+                widget=forms.DateInput(attrs={'class':'datepicker input-small'}))
+        self.fields['team_id'] = forms.ModelChoiceField(queryset=school.team_set.all(),
+                required=False, label=u'Tổ')
+        self.fields['group_id'] = forms.ModelChoiceField(
+                 queryset=Group.objects.filter(team_id__school_id=school),
+                 required=False, label=u'Nhóm')
 
 class TeacherITForm(forms.ModelForm):
     class Meta:
@@ -47,8 +50,10 @@ class TeacherITForm(forms.ModelForm):
         super(TeacherITForm,self).__init__(*args, **kwargs)
         team = Team.objects.get(id = team_id)
         school = team.school_id
-        self.fields['team_id'] = forms.ModelChoiceField(queryset= school.team_set.all(), required=False, label=u'Tổ')
-        self.fields['group_id'] = forms.ModelChoiceField(queryset= team.group_set.all(), required=False, label=u'Nhóm')
+        self.fields['team_id'] = forms.ModelChoiceField(
+                queryset=school.team_set.all(), required=False, label=u'Tổ')
+        self.fields['group_id'] = forms.ModelChoiceField(
+                queryset=team.group_set.all(), required=False, label=u'Nhóm')
 
 class TeacherGroupForm(forms.ModelForm):
     class Meta:
@@ -60,7 +65,8 @@ class TeacherGroupForm(forms.ModelForm):
             self.fields['group_id'] = forms.ChoiceField(label=u'Nhóm')
         else:
             team = Team.objects.get(id = team_id)
-            self.fields['group_id'] = forms.ModelChoiceField(queryset= team.group_set.all(), required=False, label=u'Nhóm')
+            self.fields['group_id'] = forms.ModelChoiceField(
+                    queryset=team.group_set.all(), required=False, label=u'Nhóm')
         for field in self.fields:
             self.fields[field].widget.attrs['disabled'] = 'disabled'
 
@@ -75,7 +81,8 @@ class TeacherTTCNForm(forms.ModelForm):
     def __init__(self, school_id, *args, **kwargs):
         super(TeacherTTCNForm, self).__init__(*args, **kwargs)
         school = Organization.objects.get(id = school_id)
-        self.fields['team_id'] = forms.ModelChoiceField(queryset= school.team_set.all(), required=False, label=u'Tổ')
+        self.fields['team_id'] = forms.ModelChoiceField(
+                queryset=school.team_set.all(), required=False, label=u'Tổ')
         for field in self.fields:
             self.fields[field].widget.attrs['disabled'] = 'disabled'
 
@@ -104,10 +111,11 @@ class TeacherTTLLForm(forms.ModelForm):
 class TeacherTTCBForm(forms.ModelForm):
     class Meta:
         model = Teacher
-        fields = ('cmt','ngay_cap','noi_cap','ngay_vao_doan','ngay_vao_dang','muc_luong','hs_luong','bhxh')
+        fields = ('cmt','ngay_cap','noi_cap','ngay_vao_doan',
+                'ngay_vao_dang','muc_luong','hs_luong','bhxh')
         widgets = {
-            'ngay_vao_doan' : DateInput(attrs= {'class': 'datepicker'}),
-            'ngay_vao_dang' : DateInput(attrs= {'class': 'datepicker'})
+            'ngay_vao_doan' : DateInput(attrs={'class': 'datepicker'}),
+            'ngay_vao_dang' : DateInput(attrs={'class': 'datepicker'})
         }
 
     def __init__(self, *args, **kwargs):
@@ -132,30 +140,36 @@ class PupilForm(forms.ModelForm):
         super(PupilForm, self).__init__(*args, **kwargs)
         school = Organization.objects.get(id = school_id)
         year_id = school.year_set.latest('time').id
-        self.fields['start_year_id'] = forms.ModelChoiceField(queryset = StartYear.objects.filter(school_id = school_id),label='Khóa')
-        self.fields['class_id'] = forms.ModelChoiceField(queryset = Class.objects.filter(year_id = year_id),label='Lớp')
+        self.fields['start_year_id'] = forms.ModelChoiceField(
+                queryset=StartYear.objects.filter(school_id=school_id),label='Khóa')
+        self.fields['class_id'] = forms.ModelChoiceField(
+                queryset=Class.objects.filter(year_id=year_id),label='Lớp')
 
 class ThongTinCaNhanForm(forms.ModelForm):
     class Meta:
         model = Pupil
-        fields = ('last_name','first_name','birthday','sex','start_year_id','birth_place','dan_toc','ton_giao','uu_tien','quoc_tich','home_town','ban_dk','school_join_date','school_join_mark')
+        fields = ('last_name','first_name','birthday',
+                'sex','start_year_id','birth_place','dan_toc',
+                'ton_giao','uu_tien','quoc_tich','home_town',
+                'ban_dk','school_join_date','school_join_mark')
         widgets = {
-            'birthday' : DateInput(attrs = {'class':'datepicker'}),
-            'school_join_date' : DateInput(attrs = {'class':'datepicker'})
+            'birthday' : DateInput(attrs={'class':'datepicker'}),
+            'school_join_date' : DateInput(attrs={'class':'datepicker'})
         }
         
     def __init__(self, school_id, *args, **kwargs):
         super(ThongTinCaNhanForm, self).__init__(*args, **kwargs)
-        #school = Organization.objects.get(id = school_id)
-        #year_id = school.year_set.latest('time').id
-        self.fields['start_year_id'] = forms.ModelChoiceField(queryset = StartYear.objects.filter(school_id = school_id),label='Khóa')
+        self.fields['start_year_id'] = forms.ModelChoiceField(
+                queryset=StartYear.objects.filter(school_id=school_id),label='Khóa')
         for field in self.fields:
             self.fields[field].widget.attrs['disabled'] = 'disabled'
 
 class ThongTinLienLacForm(forms.ModelForm):
     class Meta:
         model = Pupil
-        fields = ('current_address','phone','father_phone','mother_phone','sms_phone','email')
+        fields = ('current_address','phone','father_phone',
+                'mother_phone','sms_phone','email')
+
     def __init__(self, *args, **kwargs):
         super(ThongTinLienLacForm, self).__init__(*args, **kwargs)
         for field in self.fields:
@@ -164,10 +178,11 @@ class ThongTinLienLacForm(forms.ModelForm):
 class ThongTinGiaDinhForm(forms.ModelForm):
     class Meta:
         model = Pupil
-        fields = ('father_name','father_birthday','father_job','mother_name','mother_birthday','mother_job')
+        fields = ('father_name','father_birthday','father_job',
+                'mother_name','mother_birthday','mother_job')
         widgets = {
-            'father_birthday': DateInput(attrs = {'class':'datepicker'}),
-            'mother_birthday': DateInput(attrs = {'class':'datepicker'}),
+            'father_birthday': DateInput(attrs={'class':'datepicker'}),
+            'mother_birthday': DateInput(attrs={'class':'datepicker'}),
         }
     def __init__(self, *args, **kwargs):
         super(ThongTinGiaDinhForm, self).__init__(*args, **kwargs)
@@ -176,15 +191,28 @@ class ThongTinGiaDinhForm(forms.ModelForm):
         
 class ThongTinDoanDoiForm(forms.ModelForm):
     def __init__(self, student_id, *args, **kw):
-        student = Pupil.objects.get(id = student_id)
+        student = Pupil.objects.get(id=student_id)
+        
         def validate_ttdd_date(value):
             if value < student.birthday+timedelta(days=2190) or value > date.today():
                 raise ValidationError(u'Ngày nằm ngoài khoảng cho phép')
+
         super(ThongTinDoanDoiForm, self).__init__(*args, **kw)
-        self.fields.keyOrder = ['doi','ngay_vao_doi','doan','ngay_vao_doan','dang','ngay_vao_dang']
-        self.fields['ngay_vao_doi'] = forms.DateField(required=False, label=u'Ngày vào đội', validators=[validate_ttdd_date], widget=forms.DateInput(attrs={'class':'datepicker'}))
-        self.fields['ngay_vao_doan'] = forms.DateField(required=False, label=u'Ngày vào đoàn', validators=[validate_ttdd_date], widget=forms.DateInput(attrs={'class':'datepicker'}))
-        self.fields['ngay_vao_dang'] = forms.DateField(required=False, label=u'Ngày vào đảng', validators=[validate_ttdd_date], widget=forms.DateInput(attrs={'class':'datepicker'}))
+        self.fields.keyOrder = ['doi','ngay_vao_doi','doan',
+                'ngay_vao_doan','dang','ngay_vao_dang']
+        self.fields['ngay_vao_doi'] = forms.DateField(
+                required=False, label=u'Ngày vào đội',
+                validators=[validate_ttdd_date],
+                widget=forms.DateInput(attrs={'class':'datepicker'}))
+        self.fields['ngay_vao_doan'] = forms.DateField(required=False,
+                label=u'Ngày vào đoàn',
+                validators=[validate_ttdd_date],
+                widget=forms.DateInput(attrs={'class':'datepicker'}))
+        self.fields['ngay_vao_dang'] = forms.DateField(required=False,
+                label=u'Ngày vào đảng',
+                validators=[validate_ttdd_date],
+                widget=forms.DateInput(attrs={'class':'datepicker'}))
+
         for field in self.fields:
             self.fields[field].widget.attrs['disabled'] = 'disabled'
         
@@ -198,8 +226,10 @@ class MoveClassForm(forms.Form):
         current_class = student.current_class()
         if current_class:
             block = current_class.block_id
-            self.fields['move_to'] = forms.ModelChoiceField(label=u'Chuyển tới',
-                                    queryset=Class.objects.filter(block_id = block).exclude(id = current_class.id).order_by('name'))
+            self.fields['move_to'] = forms.ModelChoiceField(
+                    label=u'Chuyển tới',
+                    queryset=Class.objects.filter(block_id=block)\
+                            .exclude(id=current_class.id).order_by('name'))
 
 class SchoolForm(forms.Form):
     def __init__(self, *args, **kwargs):
@@ -213,9 +243,12 @@ class SchoolForm(forms.Form):
             if school.status in [1,2]:
                 self.fields['school_level'].widget.attrs['disabled'] = 'disabled'
                 self.fields['school_level'].required = False
-            self.fields['address'] = forms.CharField(label=u"Địa chỉ:", max_length = 255, required = False) #
-            self.fields['phone'] = forms.CharField(label="Điện thoại:", max_length = 20, validators=[validate_phone], required = False)
-            self.fields['email'] = forms.EmailField(max_length = 50,  required = False) 
+            self.fields['address'] = forms.CharField(label=u"Địa chỉ:",
+                    max_length=255, required=False) #
+            self.fields['phone'] = forms.CharField(label="Điện thoại:",
+                    max_length=20, validators=[validate_phone], required=False)
+            self.fields['email'] = forms.EmailField(max_length=50, required=False) 
+
     def save_to_model(self):
         try:
             school = get_school(self.request)
@@ -238,21 +271,26 @@ class SettingForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request')
         super(SettingForm, self).__init__(*args, **kwargs)
-        self.fields['lock_time'] = forms.IntegerField(label=u"Không cho sửa điểm sau:",
-                                                      required = True,
-                                                      help_text=u"Khoảng thời gian được sửa điểm từ lúc nhập") #
+        self.fields['lock_time'] = forms.IntegerField(
+                label=u"Không cho sửa điểm sau:",
+                required=True,
+                help_text=u"Khoảng thời gian được sửa điểm từ lúc nhập") #
 
-        self.fields['semester_start_time'] = forms.DateField(label=u'Ngày bắt đầu học kỳ:', required=False,
-            widget=forms.DateInput(attrs={'class':'datepicker'}))
+        self.fields['semester_start_time'] = forms.DateField(
+                label=u'Ngày bắt đầu học kỳ:',
+                required=False,
+                widget=forms.DateInput(attrs={'class':'datepicker'}))
 
-        self.fields['semester_finish_time'] = forms.DateField(label=u'Ngày kết thúc học kỳ:', required=False,
-            widget=forms.DateInput(attrs={'class':'datepicker'}))
+        self.fields['semester_finish_time'] = forms.DateField(
+                label=u'Ngày kết thúc học kỳ:',
+                required=False,
+                widget=forms.DateInput(attrs={'class':'datepicker'}))
 
-        self.fields['class_labels'] = forms.CharField(label=u"Danh sách lớp học:",
-                                                      max_length = 512,
-                                                      validators=[validate_class_label],
-                                                      widget= forms.Textarea,
-                                                      required = False)
+        self.fields['class_labels'] = forms.CharField(
+                label=u"Danh sách lớp học:", max_length=512,
+                validators=[validate_class_label],
+                widget=forms.Textarea,
+                required = False)
     def save_to_model(self):
         try:
             school = get_school(self.request)
@@ -273,14 +311,12 @@ class SettingForm(forms.Form):
             if self.cleaned_data['semester_start_time']:
                 #TODO: validate start time
                 school.save_settings('semester_start_time',
-                                     self.cleaned_data['semester_start_time'].strftime('%d/%m/%Y'))
+                        self.cleaned_data['semester_start_time'].strftime('%d/%m/%Y'))
             if self.cleaned_data['semester_finish_time']:
                 school.save_settings('semester_finish_time',
-                                     self.cleaned_data['semester_finish_time'].strftime('%d/%m/%Y'))
+                        self.cleaned_data['semester_finish_time'].strftime('%d/%m/%Y'))
         except Exception as e:
             print e
-
-
 
 class ClassForm(forms.ModelForm):
     class Meta:

@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 import urlparse
-import smtplib
 import thread
 import urllib
-from email.mime.text import MIMEText
 from recaptcha.client import captcha
 from django.contrib.auth.forms import PasswordChangeForm
 from school.forms import UsernameChangeForm
@@ -31,7 +29,8 @@ MANAGE_REGISTER = os.path.join('app', 'manage_register.html')
 class SchoolAdminAddForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(SchoolAdminAddForm, self).__init__(*args, **kwargs)
-        users = [i.user for i in UserProfile.objects.all() if i.organization is None or i.organization.level == 'T']
+        users = [i.user for i in UserProfile.objects.all()
+                if i.organization is None or i.organization.level == 'T']
 
         for u in User.objects.all():
             if u in users:
@@ -75,10 +74,11 @@ def register(request):
                 data = request.POST.copy()
                 data['status'] = 'CHUA_CAP'
                 data['register_date'] = date.today()
-                register_form = RegisterForm(data= data)
+                register_form = RegisterForm(data=data)
                 if register_form.is_valid():
                     register_form.save()
-                    message = u'Bạn đã đăng ký thành công. Tài khoản của bạn sẽ được gửi vào email sớm nhất có thể.'
+                    message = u'Bạn đã đăng ký thành công. \
+                            Tài khoản của bạn sẽ được gửi vào email sớm nhất có thể.'
                     success = True
                     if request.is_ajax():
                         response = simplejson.dumps({

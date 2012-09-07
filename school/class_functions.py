@@ -34,7 +34,7 @@ def viewUncategorizedClassDetail(request, class_id, l_class_id=None):
     year = school.get_current_year()
     try:
         last_year = Year.objects.get(school_id=school, time=year.time-1)
-        cl_list = last_year.class_set.order_by('index')
+        cl_list = last_year.class_set.order_by('name')
     except ObjectDoesNotExist:
         cl_list = []
     try:
@@ -42,19 +42,25 @@ def viewUncategorizedClassDetail(request, class_id, l_class_id=None):
         last_year = Year.objects.get(school_id=school, time=year.time-1)
         number = unc_cl.block_id.number
         cl_list1 = last_year.class_set.filter(block_id__number=number)\
-                    .order_by('index')
+                    .order_by('name')
         cl_list2 = last_year.class_set.filter(block_id__number=number-1)\
-                    .order_by('index')
+                    .order_by('name')
         cl_list = list(chain(cl_list1, cl_list2))
         if not l_class_id:
-            l_class = cl_list[0]
+            for i in range(0, len(cl_list)):
+                number = cl_list[i].student_set\
+                        .filter(attend__leave_time=None)\
+                        .count()
+                if number:
+                    l_class = cl_list[i]
+                    break
         else:
             l_class = Class.objects.get(id=l_class_id)
     except ObjectDoesNotExist:
         return HttpResponseNotFound()
     cls1 = year.class_set.filter(block_id__number = unc_cl.block_id.number)
     cls2 = year.class_set.filter(block_id__number = unc_cl.block_id.number + 1)
-    students = l_class.student_set.filter(attend__leave_time = None)
+    students = l_class.student_set.filter(attend__leave_time=None)
     if request.method == 'POST':
         if request.is_ajax():
             if not 'request_type' in request.POST:
@@ -302,7 +308,10 @@ def viewClassDetail(request, class_id):
     currentTerm = cyear.term_set.get(number=school.status)
     if currentTerm.number == 3:
         currentTerm = Term.objects.get(year_id=currentTerm.year_id, number=2)
-
+    if cl.year_id != currentTerm.year_id :
+        selected_term = Term.objects.get(year_id=cl.year_id, number=2)
+    else:
+        selected_term = currentTerm
     t = loader.get_template(os.path.join('school', 'classDetail.html'))
     c = RequestContext(request, {'form': form,
                                  'message': message,
@@ -314,6 +323,7 @@ def viewClassDetail(request, class_id):
                                  'gvcn': cn,
                                  'student_id': id,
                                  'currentTerm': currentTerm,
+                                 'selected_term':selected_term,
                                  'move_to_cls': move_to_cls,
                                  'move_to_cls1': move_to_cls1,
                                  'default_date': default_date
