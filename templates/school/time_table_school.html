@@ -24,7 +24,7 @@
             {% endfor %}
 
             $("td").each(function () {
-                var attr = $(this).attr('id');
+                var attr = $(this).attr('number');
                 if (typeof attr == 'undefined' || attr == false) return;
                 var day = attr.split(' ')[0];
                 var cl = $(this).parent("tr").attr('class').split(' ')[0];
@@ -101,7 +101,7 @@
                                             <p class="teacher">{{ t.period_1.teacher_id|default_if_none:"" }}</p>
                                         </td>
                                     {% else %}
-                                        <td id="{{ w }}{{ i }}"></td>
+                                        <td number="{{w}}{{ i }}"></td>
                                     {% endif %}
                                 {% endif %}
 
@@ -113,7 +113,7 @@
                                             <p class="teacher">{{ t.period_2.teacher_id|default_if_none:"" }}</p>
                                         </td>
                                     {% else %}
-                                        <td id="{{ w }}{{i}}"></td>
+                                        <td number="{{w}}{{i}}"></td>
                                     {% endif %}
                                 {% endif %}
 
@@ -125,7 +125,7 @@
                                             <p class="teacher">{{ t.period_3.teacher_id|default_if_none:"" }}</p>
                                         </td>
                                     {% else %}
-                                        <td id="{{ w }}{{i}}"></td>
+                                        <td number="{{w}}{{i}}"></td>
                                     {% endif %}
                                 {% endif %}
 
@@ -138,7 +138,7 @@
                                             </p>
                                         </td>
                                     {% else %}
-                                        <td id="{{ w }}{{i}}"></td>
+                                        <td number="{{w}}{{i}}"></td>
                                     {% endif %}
                                 {% endif %}
 
@@ -150,7 +150,7 @@
                                             <p class="teacher">{{ t.period_5.teacher_id|default_if_none:"" }}</p>
                                         </td>
                                     {% else %}
-                                        <td id="{{ w }}{{i}}"></td>
+                                        <td number="{{w}}{{i}}"></td>
                                     {% endif %}
                                 {% endif %}
 
@@ -162,7 +162,7 @@
                                             <p class="teacher">{{ t.period_6.teacher_id|default_if_none:"" }}</p>
                                         </td>
                                     {% else %}
-                                        <td id="{{ w }}{{i}}"></td>
+                                        <td number="{{w}}{{i}}"></td>
                                     {% endif %}
                                 {% endif %}
 
@@ -174,7 +174,7 @@
                                             <p class="teacher">{{ t.period_7.teacher_id|default_if_none:"" }}</p>
                                         </td>
                                     {% else %}
-                                        <td id="{{ w }}{{i}}"></td>
+                                        <td number="{{w}}{{i}}"></td>
                                     {% endif %}
                                 {% endif %}
 
@@ -186,7 +186,7 @@
                                             <p class="teacher">{{ t.period_8.teacher_id|default_if_none:"" }}</p>
                                         </td>
                                     {% else %}
-                                        <td id="{{ w }}{{i}}"></td>
+                                        <td number="{{w}}{{i}}"></td>
                                     {% endif %}
                                 {% endif %}
 
@@ -198,7 +198,7 @@
                                             <p class="teacher">{{ t.period_9.teacher_id|default_if_none:"" }}</p>
                                         </td>
                                     {% else %}
-                                        <td id="{{ w }}{{i}}"></td>
+                                        <td number="{{w}}{{i}}"></td>
                                     {% endif %}
                                 {% endif %}
 
@@ -210,7 +210,7 @@
                                             <p class="teacher">{{ t.period_10.teacher_id|default_if_none:"" }}</p>
                                         </td>
                                     {% else %}
-                                        <td id="{{ w }}{{i}}"></td>
+                                        <td number="{{w}}{{i}}"></td>
                                     {% endif %}
                                 {% endif %}
                             {% endif %}
