@@ -578,6 +578,11 @@ button.win-hidefocus:focus {
     color: rgba(0, 0, 0, .5)
 }
 
+.tenlop:hover .gvcn, .tenlop:hover .siso {
+    font-size: 0.75em;
+    overflow: visible;
+    color: rgba(0, 0, 0, 1)
+}
 .tenlop .siso {
     position: absolute;;
     right: 0;

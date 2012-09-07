@@ -125,13 +125,13 @@
             <i class="icon-home" style="color: rgba(0, 136, 204, 0.75);margin-left: -.5em;" ></i>
 {#            Trường#}
         </a>
-        {% if user.is_authenticated %}
-            {% block breadcrumb %}
-                {% load breadcrumb_tags %}
-                {% add_crumb '' 'index' %}
-            {% endblock %}
-            {% render_breadcrumbs %}
+        {% block breadcrumb %}
+            {% load breadcrumb_tags %}
+            {% add_crumb '' 'index' %}
+        {% endblock %}
+        {% render_breadcrumbs %}
 
+        {% if user.is_authenticated %}
             <a class="pull-right" href="{%url django.contrib.auth.views.logout %}"
                title="Thoát ra, kết thúc phiên làm việc. BẠN PHẢI ĐĂNG XUẤT NẾU ĐĂNG NHẬP TRÊN CÁC MÁY TÍNH DÙNG CHUNG ĐỂ TRÁNH NGƯỜI KHÁC THAY ĐỔI DỮ LIỆU.">
                 Đăng xuất <i class="icon-signout"></i>

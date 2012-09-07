@@ -11,7 +11,7 @@
         {% for class in classes %}
             {% if class.block_id == grade %}
                 <div class="row-fluid">
-                    <div class="lophoc" class="span12">
+                    <div class="lophoc span12">
                         <a class="tenlop" id="{{ class.id }}" href="{% url class_detail class.id %}">
                             <span title="Tên lớp">{{ class.name }} </span>
 

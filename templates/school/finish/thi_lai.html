@@ -69,8 +69,8 @@
             {% for tkMonList,tbNam in list %}
                 <br>
                 <br>
-                {{ tbNam.student_id.last_name }} &nbsp {{ tbNam.student_id.first_name }}
-				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                {{ tbNam.student_id.last_name }} &nbsp; {{ tbNam.student_id.first_name }}
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				{{ tbNam.student_id.birthday|date:"SHORT_DATE_FORMAT" }}
                 <table class="table table-bordered ">
                     <tr>
@@ -114,7 +114,7 @@
                             Yếu
                         </td>
                         <td>
-                            &nbsp
+                            &nbsp;
                         </td>
                     </tr>
 					
@@ -183,7 +183,7 @@
                                 {% if tbNam.len_lop != None %}
                                     Không được lên lớp
                                 {% else %}
-                                    &nbsp
+                                    &nbsp;
                                 {% endif %}
                             {% endif %}
                         </td>
