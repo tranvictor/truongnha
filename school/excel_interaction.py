@@ -1066,7 +1066,6 @@ def processFileTKB(request, file_name):
         all_t = cl.tkb_set.all().delete()
 
     message = u'<ul>'
-    cache = {}
     for c in range(start_col + 2, sheet.ncols):
         try:
             className = sheet.cell(start_row, c).value.strip().lower().replace(' ', '')
@@ -1084,6 +1083,7 @@ def processFileTKB(request, file_name):
             print e
             return {'error': u'File tải lên không phải file Excel'}
         sbj = cl.subject_set.all()
+        cache = {}
         out_cache = []
         for d in range(2, 8):
             try:
