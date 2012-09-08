@@ -557,91 +557,98 @@ def viewStudentDetail(request, student_id):
     ttllform = ThongTinLienLacForm(instance=pupil)
     ttgdform = ThongTinGiaDinhForm(instance=pupil)
     ttddform = ThongTinDoanDoiForm(student_id, instance=pupil)
-    if request.method == 'POST':
+    if request.method == 'POST' and request.is_ajax():
         data = request.POST.copy()
         data['first_name'] = data['first_name'].strip()
         data['last_name'] = data['last_name'].strip()
         data['start_year_id'] = pupil.start_year_id_id
         data['class_id'] = pupil.current_class().id
         pupilform = PupilForm(school_id, data, instance=pupil)
-        if pupilform.is_valid():
+        first_name = ''
+        last_name = ''
+        birthday = ''
+        school_join_date = ''
+        school_join_mark = ''
+        phone = ''
+        father_phone = ''
+        mother_phone = ''
+        email = ''
+        sms_phone = ''
+        father_birthday = ''
+        mother_birthday = ''
+        ngay_vao_doi = ''
+        ngay_vao_doan = ''
+        ngay_vao_dang = ''
+        find = pupil.current_class().student_set.filter( first_name__exact = data['first_name'])\
+        .filter(last_name__exact = data['last_name'])\
+        .filter(birthday__exact = to_date(data['birthday']))\
+        .exclude(id__exact = pupil.id)
+        if find:
+            dup_student = find[0]
+            message = u'Thông tin học sinh vừa sửa trùng với học sinh STT {} {} {}.'.format(dup_student.index,dup_student.last_name,
+            dup_student.first_name)
+        elif pupilform.is_valid():
             pupilform.save()
-            message = 'Bạn đã cập nhật thành công thông tin học sinh'
-        if request.is_ajax():
-            if request.method == 'POST':
-                first_name = ''
-                last_name = ''
-                birthday = ''
-                school_join_date = ''
-                school_join_mark = ''
-                phone = ''
-                father_phone = ''
-                mother_phone = ''
-                email = ''
-                sms_phone = ''
-                father_birthday = ''
-                mother_birthday = ''
-                ngay_vao_doi = ''
-                ngay_vao_doan = ''
-                ngay_vao_dang = ''
-                if not pupilform.is_valid():
-                    message = 'Có lỗi ở dữ liệu nhập vào'
-                    for a in pupilform:
-                        if a.errors:
-                            print a.name
-                        if a.name == 'first_name':
-                            if a.errors:
-                                first_name = str(a.errors)
-                        if a.name == 'last_name':
-                            if a.errors:
-                                last_name = str(a.errors)
-                        if a.name == 'birthday':
-                            if a.errors:
-                                birthday = str(a.errors)
-                        if a.name == 'school_join_date':
-                            if a.errors:
-                                school_join_date = str(a.errors)
-                        if a.name == 'school_join_mark':
-                            if a.errors:
-                                school_join_mark = str(a.errors)
-                        if a.name == 'phone':
-                            if a.errors:
-                                phone = str(a.errors)
-                        if a.name == 'father_phone':
-                            if a.errors:
-                                father_phone = str(a.errors)
-                        if a.name == 'mother_phone':
-                            if a.errors:
-                                mother_phone = str(a.errors)
-                        if a.name == 'email':
-                            if a.errors:
-                                email = str(a.errors)
-                        if a.name == 'sms_phone':
-                            if a.errors:
-                                sms_phone = str(a.errors)
-                        if a.name == 'father_birthday':
-                            father_birthday = str(a.errors)
-                        if a.name == 'mother_birthday':
-                            mother_birthday = str(a.errors)
-                        if a.name == 'ngay_vao_doan':
-                            if a.errors:
-                                ngay_vao_doan = str(a.errors)
-                        if a.name == 'ngay_vao_doi':
-                            if a.errors:
-                                ngay_vao_doi = str(a.errors)
-                        if a.name == 'ngay_vao_dang':
-                            if a.errors:
-                                ngay_vao_dang = str(a.errors)
-                response = simplejson.dumps({'message': message, 'response_type': 'tths',
-                                             'first_name': first_name, 'last_name': last_name,
-                                             'birthday': birthday, 'school_join_date': school_join_date,
-                                             'school_join_mark': school_join_mark,
-                                             'father_phone': father_phone, 'mother_phone': mother_phone,
-                                             'phone': phone, 'email': email, 'sms_phone': sms_phone,
-                                             'father_birthday': father_birthday, 'mother_birthday': mother_birthday,
-                                             'ngay_vao_doi': ngay_vao_doi, 'ngay_vao_doan': ngay_vao_doan,
-                                             'ngay_vao_dang': ngay_vao_dang})
-                return HttpResponse(response, mimetype='json')
+            message = 'Bạn đã cập nhật thành công thông tin học sinh.'
+        if not pupilform.is_valid():
+            if not message:
+                message = 'Có lỗi ở dữ liệu nhập vào.'
+            for a in pupilform:
+                if a.errors:
+                    print a.name
+                if a.name == 'first_name':
+                    if a.errors:
+                        first_name = str(a.errors)
+                if a.name == 'last_name':
+                    if a.errors:
+                        last_name = str(a.errors)
+                if a.name == 'birthday':
+                    if a.errors:
+                        birthday = str(a.errors)
+                if a.name == 'school_join_date':
+                    if a.errors:
+                        school_join_date = str(a.errors)
+                if a.name == 'school_join_mark':
+                    if a.errors:
+                        school_join_mark = str(a.errors)
+                if a.name == 'phone':
+                    if a.errors:
+                        phone = str(a.errors)
+                if a.name == 'father_phone':
+                    if a.errors:
+                        father_phone = str(a.errors)
+                if a.name == 'mother_phone':
+                    if a.errors:
+                        mother_phone = str(a.errors)
+                if a.name == 'email':
+                    if a.errors:
+                        email = str(a.errors)
+                if a.name == 'sms_phone':
+                    if a.errors:
+                        sms_phone = str(a.errors)
+                if a.name == 'father_birthday':
+                    father_birthday = str(a.errors)
+                if a.name == 'mother_birthday':
+                    mother_birthday = str(a.errors)
+                if a.name == 'ngay_vao_doan':
+                    if a.errors:
+                        ngay_vao_doan = str(a.errors)
+                if a.name == 'ngay_vao_doi':
+                    if a.errors:
+                        ngay_vao_doi = str(a.errors)
+                if a.name == 'ngay_vao_dang':
+                    if a.errors:
+                        ngay_vao_dang = str(a.errors)
+        response = simplejson.dumps({'message': message, 'response_type': 'tths',
+                                     'first_name': first_name, 'last_name': last_name,
+                                     'birthday': birthday, 'school_join_date': school_join_date,
+                                     'school_join_mark': school_join_mark,
+                                     'father_phone': father_phone, 'mother_phone': mother_phone,
+                                     'phone': phone, 'email': email, 'sms_phone': sms_phone,
+                                     'father_birthday': father_birthday, 'mother_birthday': mother_birthday,
+                                     'ngay_vao_doi': ngay_vao_doi, 'ngay_vao_doan': ngay_vao_doan,
+                                     'ngay_vao_dang': ngay_vao_dang})
+        return HttpResponse(response, mimetype='json')
     attended = pupil.get_attended()
     t = loader.get_template(os.path.join('school', 'student_detail.html'))
     c = RequestContext(request, {'form': form,
