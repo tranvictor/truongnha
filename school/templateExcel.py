@@ -163,6 +163,12 @@ f82 = easyxf(
 'font:name Times New Roman ,height 240 ;'
 'borders: right thin,left no_line,bottom thin,top no_line')
 
+htb = easyxf(
+    'font:name Times New Roman ,height 240 ;align:horz left;'
+    'borders: right thin,left thin,bottom thin')
+htbdot = easyxf(
+    'font:name Times New Roman ,height 240 ;align:horz left;'
+    'borders: right thin,left thin,bottom dotted')
 def printHeader(s,x,y,school,width=4,heigh=3):
     name = school.name.strip()
     if name.lower().find(u'trường')<0:

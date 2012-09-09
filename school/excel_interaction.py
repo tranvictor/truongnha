@@ -1522,37 +1522,71 @@ def import_timeTable(request):
 
 @need_login
 @school_function
+def export_timetable(request):
+    school = get_school(request)
+    year = get_current_year(request)
+    term = get_current_term(request)
+    classList = Class.objects.filter(year_id=year).order_by('name')
+    book = Workbook(encoding='utf-8')
+    #renderring xls file
+
+    sheet = book.add_sheet('Thời khóa biểu')
+    sheet.set_portrait(0)
+    sheet.write_merge(0, 0, 0, 15, u'%s' % unicode(school).upper(), h9)
+    sheet.write_merge(1, 1, 0, 15, u'THỜI KHÓA BIỂU KÌ ' + unicode(term.number) + u', NĂM HỌC ' +unicode (year), h9)
+
+    sheet.col(0).width = 3000
+    sheet.col(1).width = 2000
+
+    col_titles = [u'Thứ 2', u'Thứ 3', u'Thứ 4', u'Thứ 5', u'Thứ 6', u'Thứ 7']
+    sheet.write(4, 0, u'Thứ', h4)
+    sheet.write(4, 1, u'Tiết', h4)
+    start_row = 5
+    for col in range(0, 6):
+        tmp = col*10 + start_row
+        for i in range(1, 11):
+            sheet.write(tmp + i - 1, 1, i, h4)
+        sheet.write_merge(tmp, tmp + 9, 0, 0, col_titles[col], h4)
+
+    i = 2
+    for cl in classList:
+        sheet.col(i).width = 5000
+        sheet.write(4, i, unicode(cl.name).upper(), h4)
+        for day in range (2, 8):
+            tkb = cl.tkb_set.get(day=day)
+            for ilesson in range(1, 11):
+                if ilesson == 10:
+                    hwrite = htb
+                else:
+                    hwrite = htbdot
+                tmp = getattr(tkb, "period_" + str(ilesson))
+                row = (day - 2)*10 + start_row + ilesson - 1
+                if tmp:
+                    if tmp.teacher_id:
+                        sheet.write(row, i, unicode(tmp) + u" - " +  unicode(tmp.teacher_id.short_name()), hwrite)
+                    else:
+                        sheet.write(row, i, unicode(tmp), hwrite)
+                else:
+                    if getattr(tkb, "chaoco") == ilesson:
+                        sheet.write(row, i, u'Chào cờ', hwrite)
+                    elif getattr(tkb, "sinhhoat") == ilesson:
+                        sheet.write(row, i, u'Sinh hoạt', hwrite)
+                    else:
+                        sheet.write(row, i, " ", hwrite)
+        i += 1
+
+
+    response = HttpResponse(mimetype='application/ms-excel')
+    response['Content-Disposition'] = u'attachment; filename=thoi_khoa_bieu.xls'
+    book.save(response)
+    return response
+@need_login
+@school_function
 def export_hanh_kiem(request, class_id):
     school = get_school(request)
     cl = Class.objects.get(id = class_id)
     book = Workbook(encoding='utf-8')
     #renderring xls file
-    fnt = Font()
-    fnt.name = 'Arial'
-    fnt.height = 240
-
-    fnt_bold = Font()
-    fnt_bold.name = 'Arial'
-    fnt_bold.height = 240
-    fnt_bold.bold = True
-
-    borders = Borders()
-    borders.left = Borders.THIN
-    borders.right = Borders.THIN
-    borders.top = Borders.THIN
-    borders.bottom = Borders.THIN
-    borders.left_colour = 0x17
-    borders.right_colour = 0x17
-    borders.top_colour = 0x17
-    borders.bottom_colour = 0x17
-
-    style = XFStyle()
-    style.font = fnt
-    style.borders = borders
-
-    style_bold = XFStyle()
-    style_bold.font = fnt_bold
-    style_bold.borders = borders
 
     sheet = book.add_sheet('Hạnh kiểm')
     sheet.set_portrait(0)
@@ -1615,7 +1649,7 @@ def export_hanh_kiem(request, class_id):
         TK = ipupil.tbnam_set.get(year_id__exact=year.id)
         if irow % 5 !=4:
             h=h61
-        else        :
+        else:
             h=h71
         sheet.row(irow).height = 500
         sheet.write(irow, 0, irow - 4, h)
