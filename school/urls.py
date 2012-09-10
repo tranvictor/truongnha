@@ -1,8 +1,8 @@
 from django.conf.urls import patterns, include, url
 import school.report_urls as report_urls
 from school import views
-import viewMark, viewCount, viewFinish, exam, helptools,\
-    writeExcel, importMark, departmentReport, school_functions, class_functions, excel_interaction, makeTest
+import viewMark, viewFinish, exam, helptools,\
+    writeExcel, importMark, school_functions, class_functions, excel_interaction, makeTest
 
 urlpatterns = patterns('',
     url(r'^$', views.school_index , name = "school_index"),

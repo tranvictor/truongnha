@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
-
+import os
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.forms import forms
 from django.forms.widgets import  DateInput, TextInput
-from school.utils import *
-from school.models import *
-from app.models import *
-from school.widgets import *
-from datetime import timedelta
+from datetime import timedelta, date
 import xlrd
 import datetime
-    
 from django.conf import settings
+from app.models import Organization, TERMS, SUBJECT_CHOICES, KHOI_CHOICES
+from school.models import Teacher, Block, Group, Team, GRADES_CHOICES3, Pupil, Class, StartYear, validate_phone, validate_class_label, TBNam, Subject, KhenThuong, DiemDanh, KiLuat, TKDiemDanh, DIEM_DANH_TYPE, Mark, Term, TKB, Lesson, GRADES_CHOICES2
+from school.utils import get_school, get_permission, save_file
 
 EXPORTED_FILE_LOCATION = settings.EXPORTED_FILE_LOCATION
 class BlockForm(forms.ModelForm):

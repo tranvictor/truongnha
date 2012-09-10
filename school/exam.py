@@ -1,25 +1,17 @@
 # -*- coding: utf-8 -*-
 # -*- coding: utf-8 -*-
-#from school.views import *
 
 from django.http import HttpResponse, HttpResponseRedirect
-from school.models import *
-from django.shortcuts import render_to_response
 from django.template import RequestContext, loader
-from school.utils import *
 from django.core.urlresolvers import reverse
-from django.utils import simplejson
-from django.db import transaction
-from decorators import need_login, school_function, operating_permission
-
+from decorators import need_login
 import os.path
 import time
-import random
+from school.models import Block, Class, Pupil, Year
+from school.templateExcel import LASTNAME_WIDTH, STT_WIDTH, FIRSTNAME_WIDTH, BIRTHDAY_WIDTH, h40, printHeader, printCongHoa, h4, last_name1, h82, first_name1
+from school.utils import in_school, get_position, get_current_year
 
-from templateExcel import *
-from xlwt import Workbook, XFStyle, Borders, Font, easyxf ,Alignment
-import xlwt
-import xlrd
+from xlwt import Workbook
 
 def getClassList(selectedYear):
 
@@ -38,7 +30,7 @@ def getClassList(selectedYear):
         aClassList = Class.objects.filter(block_id = b,year_id = selectedYear).order_by("id")
         for c in aClassList:
             classList[j*numberBlock+i] = c
-            aPupilList=Pupil.objects.filter(classes=c.id,attend__is_member=True).order_by('index','first_name','last_name','birthday')
+            aPupilList = Pupil.objects.filter(classes=c.id,attend__is_member=True).order_by('index','first_name','last_name','birthday')
             pupilList[j*numberBlock+i] = aPupilList
             j+=1
         i+=1
@@ -146,9 +138,9 @@ def createListExam(request):
     message=None
     year_id=None
     if year_id==None:
-        year_id=get_current_year(request).id
+        year_id = get_current_year(request).id
 
-    selectedYear =Year.objects.get(id=year_id)
+    selectedYear = Year.objects.get(id=year_id)
     try:
         if in_school(request,selectedYear.school_id) == False:
             return HttpResponseRedirect('/school')

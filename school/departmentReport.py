@@ -1,22 +1,16 @@
 # -*- coding: utf-8 -*-
 
 from django.http import HttpResponse, HttpResponseRedirect
-from school.models import *
-from app.models import *
-from sms.models import *
-
-from django.shortcuts import render_to_response
 from django.template import RequestContext, loader
 from django.core.urlresolvers import reverse
 import os.path
 import time
 from datetime import datetime
-from school.utils import *
-from school.templateExcel import *
-from school.writeExcel import count1Excel,count2Excel,printDanhHieuExcel,printNoPassExcel,practisingByGradeExcel,\
+from school.models import TBNam, BAN_CHOICE, TBHocKy, Year, Term, SUBJECT_LIST, TKMon, Mark
+from school.writeExcel import practisingByGradeExcel,\
 practisingByMajorExcel,learningByGradeExcel,learningByMajorExcel,titleByGradeExcel,titleByMajorExcel,\
 practisingByDistrictExcel,learningByDistrictExcel,titleByDistrictExcel,countFinalMarkExcel
-from decorators import need_login, school_function, operating_permission
+from decorators import need_login
 
 @need_login
 def departmentReport(request):
@@ -42,7 +36,7 @@ def defineYearList(yearNumber,termNumber,type='1'):
     else:
         lastestYear = now.year+1
 
-    if yearNumber==None:
+    if yearNumber is None:
         yearNumber = now.year-1
         if 5>=month:
             termNumber = 1

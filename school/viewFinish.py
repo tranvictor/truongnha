@@ -1,24 +1,22 @@
 ﻿# author: luulethe@gmail.com 
 
 # -*- coding: utf-8 -*-
-#from school.views import *
-from django.db import  connection
-
+import datetime
 from django.http import HttpResponse, HttpResponseRedirect
-from school.models import *
-from django.shortcuts import render_to_response
 from django.template import RequestContext, loader
-from school.viewCount import *
-from school.utils import *
 from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.utils import simplejson
 import time
-import os.path 
-from school.sms_views import sendSMS
-#from qlnt.school.models import Term
-from templateExcel import *
-from decorators import need_login, school_function, operating_permission
+import os.path
+from school.models import TBNam, TBHocKy, TKDiemDanh, Class, Term, DiemDanh, Subject, Mark, Year, TKMon, Pupil
+from decorators import need_login
+from school.templateExcel import convertMarkToCharacter1, convertMarkToCharacter
+from school.utils import in_school, get_current_term, get_position, get_level, get_current_year, get_school, to_en1,\
+    convertHlToVietnamese, convertHkToVietnamese, convertDanhHieu
+from school.viewCount import countDanhHieuInYear, countTotalLearningInYear, countTotalPractisingInYear,\
+    countDanhHieuInTerm, countTotalLearningInTerm, countTotalPractisingInTerm
+from sms.utils import sendSMS
 
 ENABLE_CHANGE_MARK=True
 e=0.00000001
@@ -26,7 +24,7 @@ e=0.00000001
 @need_login
 def finish(request, active_term=0, term_number=None, year_number=None,is_calculate=0):
     user = request.user
-    current_term=get_current_term(request)
+    current_term = get_current_term(request)
     try:
         if in_school(request,current_term.year_id.school_id) == False:
             return HttpResponseRedirect('/school')
@@ -134,17 +132,17 @@ def defineHl(tb,monChuyen,monToan,monVan,minMark,minComment):
 @transaction.commit_on_success
 def calculateOverallMarkTerm(class_id,termNumber):
     
-    selectedClass=Class.objects.get(id=class_id)
-    selectedTerm =Term.objects.get(year_id=selectedClass.year_id,number=termNumber)     
-    ddhkList    =TKDiemDanh.objects.filter(student_id__classes=class_id,term_id=selectedTerm,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
+    selectedClass= Class.objects.get(id=class_id)
+    selectedTerm = Term.objects.get(year_id=selectedClass.year_id,number=termNumber)
+    ddhkList    = TKDiemDanh.objects.filter(student_id__classes=class_id,term_id=selectedTerm,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
     for ddhk in ddhkList:        
-        ddhk.co_phep=DiemDanh.objects.filter(student_id=ddhk.student_id,term_id=selectedTerm,loai='P').count()
-        ddhk.khong_phep=DiemDanh.objects.filter(student_id=ddhk.student_id,term_id=selectedTerm,loai='K').count()
-        ddhk.tong_so=ddhk.co_phep+ddhk.khong_phep
+        ddhk.co_phep = DiemDanh.objects.filter(student_id=ddhk.student_id,term_id=selectedTerm,loai='P').count()
+        ddhk.khong_phep = DiemDanh.objects.filter(student_id=ddhk.student_id,term_id=selectedTerm,loai='K').count()
+        ddhk.tong_so= ddhk.co_phep+ddhk.khong_phep
         ddhk.save()
         
     pupilNoSum =0
-    subjectList=Subject.objects.filter(class_id=class_id,primary__in=[0,termNumber]).order_by('index','name')    
+    subjectList = Subject.objects.filter(class_id=class_id,primary__in=[0,termNumber]).order_by('index','name')
     markList = Mark.objects.filter(subject_id__class_id=class_id,term_id=selectedTerm,current=True,subject_id__primary__in=[0,termNumber]).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday','subject_id__index','subject_id__name')
     tbHocKyList = TBHocKy.objects.filter(student_id__classes=class_id,term_id=selectedTerm,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
     hkList      = TBNam.objects.filter(year_id=selectedClass.year_id, student_id__classes=class_id,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
@@ -420,8 +418,8 @@ def xepLoaiHlTheoLop(request,class_id,termNumber,isCalculate=0):
 
 
     message=None
-    selectedYear  =selectedClass.year_id
-    pupilList     =Pupil.objects.filter(classes=class_id,attend__is_member=True).order_by('index','first_name','last_name','birthday')    
+    selectedYear = selectedClass.year_id
+    pupilList = Pupil.objects.filter(classes=class_id,attend__is_member=True).order_by('index','first_name','last_name','birthday')
 
     
     yearString = str(selectedYear.time)+"-"+str(selectedYear.time+1)

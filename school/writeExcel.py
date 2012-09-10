@@ -2,24 +2,24 @@
 #from school.views import *
 
 from django.http import HttpResponse, HttpResponseRedirect
-from school.models import *
-from django.shortcuts import render_to_response
 from django.template import RequestContext, loader
-from school.utils import *
 from django.core.urlresolvers import reverse
-from django.db import transaction
-from django.utils import simplejson
 import time
 import os.path
-from xlwt import Workbook, XFStyle, Borders, Font, easyxf ,Alignment
-import xlwt 
-import xlrd
-from xlrd import cellname
-from school.templateExcel import *
-from school.viewMark import  getDecodeMark
+from xlwt import Workbook
+from school.models import Term, Class, Mark, TBHocKy, TBNam, Subject, Pupil, TKMon, BAN_CHOICE, Block, DiemDanh,\
+    TKDiemDanh, Year
+from school.templateExcel import h4, noneSubject, h5, h1, first_name1, s3, s2, s1, last_name1, first_name, last_name,\
+    h6, h7, h2, m1, m2, m3, m4, m5, h3, h8, h9, d1, h10, h61, h71, LASTNAME_WIDTH, SIZE_PAGE_WIDTH, h82, normalize, d2,\
+    d3, h81, h91, hh1, f5, f6, STT_WIDTH, FIRSTNAME_WIDTH, A4_WIDTH, printCongHoa, h40, h92, h74, f2, f4, f3, hh2,\
+    BIRTHDAY_WIDTH, PLACE_WIDTH, SEX_WIDTH, DAN_TOC_WIDTH, UU_TIEN_WIDTH, A3_WIDTH, f1, f81, f8, f71, f7, f82, m6,\
+    m7, m8, m9, m10, printHeader, SIZE_PAGE_WIDTH1, s4, h72, h73, h41, MAX_VIEW, h8center
+from school.utils import get_current_term, in_school, get_position, get_level, to_en1, convertDanhHieu,\
+    convertHkToVietnamese, convertHlToVietnamese
+from school.viewMark import  getDecodeMark, e
 import datetime
 from excel_interaction import class_generate
-from decorators import need_login, school_function, operating_permission
+from decorators import need_login
 
 def printASubject(class_id,termNumber,s,sub,x,y,ls,number):
     if sub!=None:
@@ -159,7 +159,7 @@ def printPage20(class_id,termNumber,s,length,subjectList):
     s.col(1).width = s2
     s.col(2).width = s3
     for i in range(length):
-        s.col(i+3).width =d1
+        s.col(i+3).width = d1
         
     s.col(length+3).width = d1
     s.col(length+4).width = d1
@@ -250,11 +250,11 @@ def printPage31(class_id,s,tbNamList,x,y):
     s.col(y+1).width = s2
     s.col(y+2).width = s3
     for i in range(3,12):
-        s.col(y+i).width =d2
+        s.col(y+i).width = d2
         if (i==7) | (i==10):         
-            s.col(y+i).width =d2+500
+            s.col(y+i).width = d2+500
 
-    s.col(y+12).width =d3
+    s.col(y+12).width = d3
     
     printName(class_id,s,x+1,y,1)
                 
@@ -344,7 +344,7 @@ def printPage31(class_id,s,tbNamList,x,y):
     s.write(x+31,y+12,'(Ký tên, đóng dấu)',hh1)        
     
 def printPage30(class_id,book):
-    subjectList =Subject.objects.filter(class_id=class_id).order_by("index",'name')
+    subjectList = Subject.objects.filter(class_id=class_id).order_by("index",'name')
     for s in subjectList:
         pass
         #print s.index
@@ -731,10 +731,10 @@ def printDiemDanh(class_id,book):
     for i in range(10):
         sum[i]=[0]*34
     for (i,p) in enumerate(pupilList):
-        diemDanhList=DiemDanh.objects.filter(student_id=p.id,time__gte=beginDay,time__lt=endDay)
+        diemDanhList = DiemDanh.objects.filter(student_id=p.id,time__gte=beginDay,time__lt=endDay)
         #diemDanhList=DiemDanh.objects.filter(student_id=p.id)
-        tongCoPhep=[0]*13
-        tongKoPhep=[0]*13
+        tongCoPhep = [0]*13
+        tongKoPhep = [0]*13
         for dd in diemDanhList:
             month=dd.time.month
             if month >=8:
@@ -1776,8 +1776,8 @@ def printNoPassExcel(list,type,currentYear):
 def excelClassList(request,class_id=-2):
     user = request.user
 
-    message=None
-    currentTerm=get_current_term(request)
+    message = None
+    currentTerm = get_current_term(request)
     try:
         if in_school(request,currentTerm.year_id.school_id) == False:
             return HttpResponseRedirect('/school')

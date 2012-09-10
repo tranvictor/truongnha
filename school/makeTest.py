@@ -1,19 +1,16 @@
 # -*- coding: utf-8 -*-
-from django.http import HttpResponse, HttpResponseRedirect
-from school.models import *
-from django.shortcuts import render_to_response
+from django.http import HttpResponse
 from django.template import RequestContext, loader
-from school.utils import *
-from django.core.urlresolvers import reverse
 from django.db import transaction
-import xlrd  
+import xlrd
+from school.models import Class, TBNam, DiemDanh, Term, Pupil, TKMon, Mark
+from school.utils import get_school, to_en1
+import settings
 from  views import save_file 
 import os.path 
-import time 
-import datetime
+import time
 import random
 import os.path
-from settings import *
 
 LOCK_MARK =False
 ENABLE_CHANGE_MARK=True
@@ -50,7 +47,7 @@ def thu111(request):
 
     return HttpResponse(t.render(c))
 
-@transaction.commit_on_success                                                              
+@transaction.commit_on_success
 def thu11111(request):
     t1= time.time()
     school=get_school(request)
@@ -305,8 +302,8 @@ def thu1(request):
 
 def toolToMakeCol(request):
     t1= time.time()
-    filepath = os.path.join(SITE_ROOT, 'templates/school/mark/dataForMarkTable.xls')
-    file_out_path = os.path.join(SITE_ROOT,'school/number_col.py')
+    filepath = os.path.join(settings.SITE_ROOT, 'templates/school/mark/dataForMarkTable.xls')
+    file_out_path = os.path.join(settings.SITE_ROOT,'school/number_col.py')
     print filepath
     book = xlrd.open_workbook(filepath)
     s = book.sheet_by_index(0)

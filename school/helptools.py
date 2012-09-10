@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
-from django.http import HttpResponseNotAllowed
-from school.school_settings import *
-from school.utils import to_en1, add_subject, get_lower_bound
-from sms.views import *
-from school.models import *
+from datetime import datetime
+import os
+from django.http import HttpResponseNotAllowed, HttpResponse
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+from app.models import Organization
+from school.models import Pupil, TKDiemDanh, Attend, StartYear, Mark, Class, Teacher, MarkTime, Subject, TKMon, DiemDanh
+from school.school_settings import CAP2_DS_MON, CAP1_DS_MON, CAP3_DS_MON
+from school.templateExcel import normalize, CHECKED_DATE
+from school.utils import to_en1, add_subject
 from django.db import transaction
 import thread
 SYNC_RESULT = os.path.join('helptool','recover_marktime.html')

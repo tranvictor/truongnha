@@ -1,13 +1,20 @@
 # -*- coding: utf-8 -*-
+import os
+import random
+from django.contrib.auth.hashers import make_password
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
-from school.models import *
 import unicodedata
 import re
 import datetime as root_dt
 from django.db.models import get_model
-from django.contrib.auth.models import SiteProfileNotAvailable
+from django.contrib.auth.models import SiteProfileNotAvailable, User
+from django.forms import forms
+from app.models import UserProfile, Organization
+from school.models import syllables, Pupil, Mark, TKMon, TBHocKy, TBNam, TKDiemDanh, Team, SUBJECT_LIST_ASCII,\
+    Group, Subject, Teacher
+import settings
 
-# date-month-year => time object
 def to_date(value):
     v = None
     if '-' in value:
@@ -19,7 +26,7 @@ def to_date(value):
     try:
         if int(v[2])<1900:
             raise Exception("PharseDateException")
-        result = date(int(v[2]), int(v[1]), int(v[0]))
+        result = root_dt.date(int(v[2]), int(v[1]), int(v[0]))
     except Exception as e:
         print e
         raise Exception("PharseDateException")

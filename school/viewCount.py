@@ -1,20 +1,17 @@
 # -*- coding: utf-8 -*-
 
 from django.http import HttpResponse, HttpResponseRedirect
-from school.models import *
-from app.models import *
-from sms.models import *
-
-from django.shortcuts import render_to_response
 from django.template import RequestContext, loader
 from django.core.urlresolvers import reverse
 import os.path
 import time
 from datetime import datetime
-from school.utils import *
-from school.templateExcel import *
-from school.writeExcel import count1Excel,count2Excel,printDanhHieuExcel,printNoPassExcel,practisingByGradeExcel
-from decorators import need_login, school_function, operating_permission
+from app.models import Organization
+from school.models import Year, Term, TBNam, TBHocKy, Class, Pupil, Block, Subject, Mark, TKMon
+from school.utils import get_current_year, in_school, get_position, get_level, get_current_term, get_school
+from school.writeExcel import count1Excel,count2Excel,printDanhHieuExcel,printNoPassExcel
+from decorators import need_login
+from sms.models import sms
 
 @need_login
 def report(request,school_id=None):
@@ -41,9 +38,9 @@ def report(request,school_id=None):
     if (get_position(request) != 4) & (get_level(request)=='T' ):
        return HttpResponseRedirect('/school')
 
-    currentTerm=get_current_term(request)
+    currentTerm = get_current_term(request)
     yearString = str(currentTerm.number)+"-"+str(currentTerm.number+1)
-    firstTerm  =Term.objects.get(year_id=currentTerm.year_id,number=1)
+    firstTerm  = Term.objects.get(year_id=currentTerm.year_id,number=1)
     secondTerm  =Term.objects.get(year_id=currentTerm.year_id,number=2)
 
     number_no_pass    = TBNam.objects.filter(len_lop=False,year_id = selected_year).count()
@@ -77,15 +74,15 @@ def countTotalPractisingInTerm(term_id):
     sum=0.0
     string=['T','K','TB','Y',None]
 
-    selectedTerm=Term.objects.get(id=term_id)
+    selectedTerm = Term.objects.get(id=term_id)
     year_id  = selectedTerm.year_id
     if selectedTerm.number==1:
         for i in range(string.__len__()):
-            slList[i]=TBNam.objects.filter(year_id=year_id,term1=string[i]).count()
+            slList[i] = TBNam.objects.filter(year_id=year_id,term1=string[i]).count()
             sum+=slList[i]
     else:
         for i in range(string.__len__()):
-            slList[i]=TBNam.objects.filter(year_id=year_id,term2=string[i]).count()
+            slList[i] = TBNam.objects.filter(year_id=year_id,term2=string[i]).count()
             sum+=slList[i]
 
     if sum!=0:
@@ -776,7 +773,7 @@ def count1(request,year_id=None,number=None,isExcel=0,):
 
     return HttpResponse(t.render(c))
 def listSubject(year_id):
-    subjectList=Subject.objects.filter(class_id__year_id=year_id).order_by("index",'name')
+    subjectList = Subject.objects.filter(class_id__year_id=year_id).order_by("index",'name')
     list=[]
     for s in subjectList:
         if not (s.type in list):
@@ -862,10 +859,10 @@ def count2(request,type=None,modeView=None,year_id=None,number=None,index=-1,isE
                     if type==1:
                         if number<3:
                             for i in range(numberLevel):
-                                slList[i]=Mark.objects.filter(term_id=term_id,subject_id=selectedSubject.id,tb__lt=level[i],tb__gt=level[i+1],current=True).count()
+                                slList[i] = Mark.objects.filter(term_id=term_id,subject_id=selectedSubject.id,tb__lt=level[i],tb__gt=level[i+1],current=True).count()
                         else:
                             for i in range(numberLevel):
-                                slList[i]=TKMon.objects.filter(subject_id=selectedSubject.id,tb_nam__lt=level[i],tb_nam__gt=level[i+1],current=True).count()
+                                slList[i] = TKMon.objects.filter(subject_id=selectedSubject.id,tb_nam__lt=level[i],tb_nam__gt=level[i+1],current=True).count()
                     elif type==2:
                         for i in range(numberLevel):
                             slList[i]=Mark.objects.filter(term_id=term_id,subject_id=selectedSubject.id,ck__lt=level[i],ck__gt=level[i+1],current=True).count()
@@ -1119,15 +1116,15 @@ def countSMS(request,type=None,day=None,month=None,year=None,day1=None,month1=No
         month = day_of_before_month.month
         year = day_of_before_month.year
 
-    firstDay  =datetime(year,month,day)
-    secondDay =datetime(year1,month1,day1,23, 59, 0)
-    school=get_school(request)
+    firstDay  = datetime(year,month,day)
+    secondDay = datetime(year1,month1,day1,23, 59, 0)
+    school = get_school(request)
     if   int(type)==1:
-        list=sms.objects.filter(created__gte=firstDay,created__lte=secondDay, sender__userprofile__organization=school).order_by("-created")
+        list = sms.objects.filter(created__gte=firstDay,created__lte=secondDay, sender__userprofile__organization=school).order_by("-created")
     elif int(type)==2:
-        list=sms.objects.filter(created__gte=firstDay,created__lte=secondDay, sender__userprofile__organization=school,success=True).order_by("-created")
+        list = sms.objects.filter(created__gte=firstDay,created__lte=secondDay, sender__userprofile__organization=school,success=True).order_by("-created")
     elif int(type)==3:
-        list=sms.objects.filter(created__gte=firstDay,created__lte=secondDay, sender__userprofile__organization=school,success=False).order_by("-created")
+        list = sms.objects.filter(created__gte=firstDay,created__lte=secondDay, sender__userprofile__organization=school,success=False).order_by("-created")
     tt2=time.time()
     print "time",tt2-tt1
     t = loader.get_template(os.path.join('school/report','countSMS.html'))

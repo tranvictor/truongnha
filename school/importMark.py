@@ -1,22 +1,20 @@
 # -*- coding: utf-8 -*-
 from django.http import HttpResponse, HttpResponseRedirect
-from school.models import *
-from django.shortcuts import render_to_response
-from django.template import RequestContext, loader
-from school.utils import *
 from django.core.urlresolvers import reverse
 from django.db import transaction
 from  excel_interaction import save_file
 from django.utils import simplejson
-from writeExcel import normalize
 import xlrd  
 from xlrd import cellname 
 import os.path 
 import time 
 import datetime
-from decorators import need_login, school_function, operating_permission
+from decorators import need_login
+from school.models import Subject, Term, Mark, Pupil, TKMon
+from school.templateExcel import MAX_COL, CHECKED_DATE
+from school.utils import convertCharToDigit, in_school, get_position
+import settings
 
-import random
 LOCK_MARK =False
 ENABLE_CHANGE_MARK=True
 def validate(s,isNx):

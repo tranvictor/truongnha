@@ -2,23 +2,18 @@
 # author: luulethe@gmail.com 
 
 from django.http import HttpResponse, HttpResponseRedirect
-from school.models import *
-from django.shortcuts import render_to_response
 from django.template import RequestContext, loader
-from school.utils import *
 from django.core.urlresolvers import reverse
 from django.utils import simplejson
-from school.sms_views import sendSMS
 from django.db import transaction
-
 import os.path 
 import time
-import random
 import datetime
-#from viewFinish import *
-from decorators import need_login, school_function, operating_permission
-
-from templateExcel import  MAX_COL,MAX_VIEW,CHECKED_DATE
+from decorators import need_login
+from school.models import Term, Mark, Subject, Pupil, TKMon, SUBJECT_LIST, Class, Teacher
+from school.utils import get_current_term, get_position, in_school, get_level, to_en1, get_school, get_student
+from sms.utils import sendSMS
+from templateExcel import  MAX_COL,CHECKED_DATE
 from number_col import  NUMBER_COL_MIN
 LOCK_MARK =False
 ENABLE_CHANGE_MARK=True
@@ -45,18 +40,18 @@ def getMark(subjectChoice,selectedTerm):
     
     selectedSubject = Subject.objects.get(id= subjectChoice)
     class_id = selectedSubject.class_id.id
-    pupilList=Pupil.objects.filter(classes=class_id,attend__is_member=True).order_by('index','first_name','last_name','birthday')
+    pupilList = Pupil.objects.filter(classes=class_id,attend__is_member=True).order_by('index','first_name','last_name','birthday')
     tbhk1List=[]
     tbnamList=[]
     if selectedTerm.number==1:            
-        markList     =Mark.objects.filter(term_id=selectedTerm.id,subject_id=subjectChoice,current=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
+        markList = Mark.objects.filter(term_id=selectedTerm.id,subject_id=subjectChoice,current=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
         decodeMarkList,maxColMieng,maxCol15Phut,maxColMotTiet = getDecodeMark(markList)
         list=zip(pupilList,markList,decodeMarkList)
     else:
-        beforeTerm   =Term.objects.get(year_id=selectedTerm.year_id,number=1).id
-        markList     =Mark.objects.filter(term_id=selectedTerm.id,subject_id=subjectChoice,current=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
-        tbhk1List    =Mark.objects.filter(term_id=beforeTerm,subject_id=subjectChoice,current=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
-        tbnamList    =TKMon.objects.filter(subject_id=subjectChoice,current=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
+        beforeTerm = Term.objects.get(year_id=selectedTerm.year_id,number=1).id
+        markList = Mark.objects.filter(term_id=selectedTerm.id,subject_id=subjectChoice,current=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
+        tbhk1List = Mark.objects.filter(term_id=beforeTerm,subject_id=subjectChoice,current=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
+        tbnamList = TKMon.objects.filter(subject_id=subjectChoice,current=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
                     
         decodeMarkList,maxColMieng,maxCol15Phut,maxColMotTiet = getDecodeMark(markList)
         list=zip(pupilList,markList,decodeMarkList,tbhk1List,tbnamList)
@@ -77,11 +72,11 @@ def min_col(subject):
 def markTable(request,term_id=-1,class_id=-1,subject_id=-1,move=None):
     tt1=time.time()
     user = request.user
-    termChoice    = term_id
-    classChoice   = class_id    
+    termChoice = term_id
+    classChoice = class_id
     subjectChoice = subject_id
     if termChoice==-1:
-        selectedTerm=get_current_term(request)
+        selectedTerm = get_current_term(request)
         if selectedTerm.number ==3:
             selectedTerm=Term.objects.get(year_id=selectedTerm.year_id,number=2)
     else             :  selectedTerm=Term.objects.get(id=termChoice) 
@@ -115,8 +110,8 @@ def markTable(request,term_id=-1,class_id=-1,subject_id=-1,move=None):
     
     selectedClass=None
     if classChoice !=-1: 
-        subjectList=Subject.objects.filter(class_id=classChoice,primary__in=[0,selectedTerm.number,3,4]).order_by("index",'name')
-        selectedClass=Class.objects.get(id=classChoice)   
+        subjectList = Subject.objects.filter(class_id=classChoice,primary__in=[0,selectedTerm.number,3,4]).order_by("index",'name')
+        selectedClass = Class.objects.get(id=classChoice)
    
     selectedSubject=None
     maxColMieng=0
@@ -127,7 +122,7 @@ def markTable(request,term_id=-1,class_id=-1,subject_id=-1,move=None):
     max_col_mot_tiet = 0
     if subjectChoice!=-1:
         selectedSubject=Subject.objects.get(id=subjectChoice)    
-        list,maxColMieng,maxCol15Phut,maxColMotTiet=getMark(subjectChoice,selectedTerm)
+        list,maxColMieng,maxCol15Phut,maxColMotTiet = getMark(subjectChoice,selectedTerm)
         max_col_mieng,max_col_15phut,max_col_mot_tiet = min_col(selectedSubject)
     lengthList=0            
     if list!=None:        
@@ -682,7 +677,7 @@ def sendSMSForAPupil(s,user):
             if tbhk1 != None:
                 tbhk1.save()
             """
-            sent1=sendSMS(m.student_id.sms_phone,smsString,user)
+            sent1 = sendSMS(m.student_id.sms_phone,smsString,user)
             if sent1=='1':
                 m.save()
                 if tbNam != None:

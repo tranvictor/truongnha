@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
-from app.models import *
+from datetime import date
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.db import models
+from app.models import Organization, KHOI_CHOICES, SUBJECT_CHOICES, GRADES_CHOICES, TERMS
+from school.templateExcel import MAX_COL, normalize, convertMarkToCharacter1
 from sms.utils import sendSMS, send_email
-from templateExcel import *
+
 import random, string
 import itertools
 import urllib2
@@ -257,8 +262,7 @@ class BasicPersonInfo(models.Model):
     #This method return a short name to present a person's name
     #eg: Tran Huy Vu -> TH Vu
     def short_name(self):
-        l = [''.join([w[0] for w in self.last_name.split(' ')])]
-        l.append(self.first_name)
+        l = [''.join([w[0] for w in self.last_name.split(' ')]), self.first_name]
         return ' '.join(l)
 
     def __unicode__(self):

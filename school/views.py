@@ -1,20 +1,24 @@
 ﻿# coding=utf-8﻿
 # Create your views here.
+from datetime import date, datetime
+import os
+from django.contrib.auth.forms import PasswordChangeForm
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect
+from django.middleware import transaction
 from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.template import RequestContext, loader
 from django.http import HttpResponseNotAllowed
 from django.core.urlresolvers import reverse
 from django.utils import simplejson
-from django.contrib.auth.forms import *
 from django.contrib.auth import logout
-
-
-from school.forms import *
-from school.school_settings import *
+from app.models import SystemLesson, SUBJECT_CHOICES
+from school.forms import UsernameChangeForm, SchoolForm, SettingForm, TKDiemDanhForm, TKBForm, SelectSchoolLessonForm3, SelectSchoolLessonForm2, LessonForm
+from school.models import UncategorizedClass, Term, Subject, Pupil, Class, DiemDanh, StartYear, Year, Lesson, TKDiemDanh, TKB, SchoolLesson, Block
 from decorators import need_login, school_function, operating_permission
-from sms.utils import *
-from app.models import *
+from school.school_settings import CAP2_DS_MON, CAP1_DS_MON, CAP3_DS_MON
+from school.utils import get_current_year, get_school, get_permission, get_current_term, move_student, get_position, in_school, inClass, get_teacher, to_date, get_lower_bound, get_upper_bound, to_en1, add_subject, make_default_password
+from sms.utils import send_email, sendSMS
 
 START_YEAR = os.path.join('school', 'start_year.html')
 SCHOOL = os.path.join('school', 'school.html')

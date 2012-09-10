@@ -1,7 +1,5 @@
 from django.conf.urls import patterns, url
-from school import views
-import viewMark, viewCount, viewFinish, exam, helptools,\
-    writeExcel, importMark,departmentReport, school_functions, class_functions, excel_interaction, makeTest
+import viewCount,writeExcel,departmentReport
 urlpatterns = patterns('',
     url(r'^$' ,  viewCount.report, name="report"),
     url(r'viewSchool/(?P<school_id>\w+)$' ,  viewCount.report, name="report"),
