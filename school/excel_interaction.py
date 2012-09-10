@@ -560,7 +560,7 @@ def process_file(file_name, task):
                 continue
             if c_gioi_tinh > -1:
                 gt = sheet.cell(r, c_gioi_tinh).value.strip().capitalize()
-                if not gt: gt = 'Nam'
+                if not gt in [u'Nam', u'Nữ']: gt = 'Nam'
             if c_noi_sinh > -1:
                 noi_sinh = sheet.cell(r, c_noi_sinh).value.strip()
             if c_dan_toc > -1:
@@ -739,7 +739,7 @@ def process_file(file_name, task):
                 birthday = None
             if c_gioi_tinh > -1:
                 gt = sheet.cell(r, c_gioi_tinh).value.strip().capitalize()
-                if not gt: gt = 'Nam'
+                if not gt in [u'Nam', u'Nữ']: gt = 'Nam'
             if c_que_quan > -1:
                 que_quan = sheet.cell(r, c_que_quan).value.strip()
             if c_dan_toc > -1:
