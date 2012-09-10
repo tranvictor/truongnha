@@ -2,7 +2,7 @@
 import os
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.forms import forms
+from django import forms
 from django.forms.widgets import  DateInput, TextInput
 from datetime import timedelta, date
 import xlrd

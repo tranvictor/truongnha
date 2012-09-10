@@ -3,6 +3,7 @@ from ConfigParser import SafeConfigParser
 import os
 import codecs
 from datetime import date
+from django.core.exceptions import ObjectDoesNotExist
 from recaptcha.client import captcha
 from django.db import models
 from django import forms
@@ -10,7 +11,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from sms.utils import send_email
 import settings
-from django.core.exceptions import *
 
 
 SCHOOL_SETTING_FOLDER = settings.SCHOOL_SETTING_FOLDER

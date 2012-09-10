@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-from app.models import *
+from app.models import UserProfile, Organization, Feedback, Register, IP
 
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('username', 'first_name', 'last_name', 'organization', 'position', 'email', 'phone')

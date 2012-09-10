@@ -4,9 +4,8 @@ from django.template import RequestContext, loader
 from django.db import transaction
 import xlrd
 from school.models import Class, TBNam, DiemDanh, Term, Pupil, TKMon, Mark
-from school.utils import get_school, to_en1
+from school.utils import get_school, to_en1, save_file
 import settings
-from  views import save_file 
 import os.path 
 import time
 import random

@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
+from datetime import date
+import os
 import urlparse
 import thread
 import urllib
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
+from django import forms
 from recaptcha.client import captcha
 from django.contrib.auth.forms import PasswordChangeForm
 from school.forms import UsernameChangeForm
@@ -18,10 +23,13 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
-
 from decorators import need_login, operating_permission
-from school.utils import *
-from app.models import SUBJECT_CHOICES as SUBJECT
+from app.models import SUBJECT_CHOICES as SUBJECT, UserProfile, RegisterForm, KHOI_CHOICES, TINH_CHOICES, Organization, Register, ChangePasswordForm, AuthenticationForm, IP, Feedback, SystemLesson, FeedbackForm, selectForm
+from school.models import log_action
+from school.utils import make_username, make_default_password, get_school, get_profile_form
+import settings
+from sms.utils import send_email, sendSMS
+
 REGISTER = os.path.join('app', 'register.html')
 MANAGE_REGISTER = os.path.join('app', 'manage_register.html')
 

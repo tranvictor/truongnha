@@ -1,11 +1,12 @@
 ﻿# coding=utf-8﻿
 # Create your views here.
-from datetime import date, datetime
+from datetime import date
+import datetime
 import os
 from django.contrib.auth.forms import PasswordChangeForm
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect
-from django.middleware import transaction
+from django.db import transaction
 from django.shortcuts import render_to_response
 from django.template import RequestContext, loader
 from django.http import HttpResponseNotAllowed

@@ -5,7 +5,6 @@ from django.test import TestCase
 from django.test.client import Client, RequestFactory
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
-from views import send_email
 from app.models import Register
 from django.core import mail 
 import random
@@ -18,6 +17,8 @@ import re
 # 3. create account for the register above
 # 4. save username, password to self.user, self.password
 # 5. delete the register above
+from sms.utils import send_email
+
 class BasicWorkFlow(TestCase):
     step_chain = []
     def setUp(self):
