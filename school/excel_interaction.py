@@ -77,9 +77,12 @@ def class_generate(request, class_id, object):
         sheet.write(4, 4, 'Giới tính',h4)
         sheet.write(4, 5, 'Dân tộc', h4)
         sheet.write(4, 6, 'Chỗ ở hiện tại', h4)
-        sheet.write(4, 7, 'Số điện thoại', h4)
-        sheet.write(4, 8, 'Số điện thoại nhắn tin',h4)
-        sheet.write(4, 9, 'Ghi chú', h4)
+        sheet.write(4, 7, 'Số điện thoại nhắn tin',h4)
+        sheet.write(4, 8, 'Họ tên bố',h4)
+        sheet.write(4, 9, 'Số điện thoại của bố',h4)
+        sheet.write(4, 10, 'Họ tên mẹ',h4)
+        sheet.write(4, 11, 'Số điện thoại của mẹ',h4)
+        sheet.write(4, 12, 'Ghi chú', h4)
         row = 5
         for student in student_list:
             sheet.row(row).height = 350
@@ -90,9 +93,12 @@ def class_generate(request, class_id, object):
             sheet.write(row, 4, student.sex, h7)
             sheet.write(row, 5, student.dan_toc, h7)
             sheet.write(row, 6, student.current_address, h7)
-            sheet.write(row, 7, student.phone, h7)
-            sheet.write(row, 8, student.sms_phone, h7)
-            sheet.write(row, 9, '', h7)
+            sheet.write(row, 7, student.sms_phone, h7)
+            sheet.write(row, 8, student.father_name, h7)
+            sheet.write(row, 9, student.father_phone, h7)
+            sheet.write(row, 10, student.mother_name, h7)
+            sheet.write(row, 11, student.mother_phone, h7)
+            sheet.write(row, 12, '', h7)
             row += 1
             #return HttpResponse
         response = HttpResponse(mimetype='application/ms-excel')
