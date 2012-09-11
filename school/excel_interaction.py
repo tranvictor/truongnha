@@ -9,9 +9,6 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.validators import validate_email
 import simplejson
 import re
-from school.templateExcel import first_name1, last_name1, h6, h7, h4, h9, h40,\
-    htb, htbdot, h5, first_name, last_name, STT_WIDTH, A4_WIDTH, LASTNAME_WIDTH,\
-    FIRSTNAME_WIDTH, BIRTHDAY_WIDTH, h61, h71, printHeader, printCongHoa
 from utils import to_en1
 import xlrd
 from xlrd.formula import cellname
@@ -22,6 +19,7 @@ from app.models import SystemLesson, SUBJECT_CHOICES
 from decorators import school_function, need_login, operating_permission, year_started
 from school.models import Class, Subject, SchoolLesson, validate_phone, Lesson, TKB
 from school.models import this_year, StartYear, SUBJECT_LIST_ASCII
+from school.templateExcel import *
 from school.utils import get_latest_startyear, get_current_year, in_school,\
                             get_permission , gvcn, get_level, get_school, to_date,\
                             get_current_term, add_many_students, add_teacher, \

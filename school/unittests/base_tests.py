@@ -176,6 +176,7 @@ class AddStudentTest(SchoolSetupTest):
         res = self.client.get(reverse('class_detail', args=[cl.id]))
         print 'Going to check response status code'
         self.assertEqual(res.status_code, 200)
+        print res.context
 
     def phase9_add_a_student(self):
         classes = self.year.class_set.all()
@@ -229,6 +230,38 @@ class AddStudentTest(SchoolSetupTest):
         tkmon_num = pupil.tkmon_set.count()
         print 'Check if student have enough TKMon'
         self.assertEqual(tkmon_num, subject_num)
+
+    def phase10_add_a_student_fail_sex(self):
+        classes = self.year.class_set.all()
+        # get a class
+        self.assertEqual(len(classes)>0, True)
+        cl = classes[0]
+        response = self.client.post(
+            reverse('class_detail',args=[cl.id]),
+                {
+                'request_type':u'add',
+                'first_name': u'Nguyễn',
+                'last_name': u'Xuân',
+                'birthday': u'20/20/1995',
+                'sex': u'12903',
+                'birth_place': u'Ninh Bình',
+                'current_address': u'Tam Điệp',
+                'ban_dk': u'CB',
+                'dan_toc':u'1',
+                'quoc_tich': u'Việt Nam',
+                'mother_name': u'Võ Thị Hương',
+                'father_name': u'Nguyễn Văn An',
+                'sms_phone': u'0987438383'
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(len(cont),1)
+        return True
 
     def phase10_add_a_student_fail_birthday(self):
         classes = self.year.class_set.all()
