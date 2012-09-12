@@ -300,8 +300,19 @@ class Teacher(BasicPersonInfo):
         if _class: return _class
         else: return None
 
-    def current_homeroom_class(self):
+    def lastest_homeroom_class(self):
         classes = Class.objects.filter(teacher_id=self).order_by('-year_id__time')
+        if classes:
+            return classes[0]
+        else:
+            return None
+
+    def current_homeroom_class(self):
+        current_year = self.school_id.get_current_year()
+        classes = Class.objects.filter(
+                teacher_id=self,
+                year_id=current_year
+                ).order_by('-year_id__time')
         if classes:
             return classes[0]
         else:

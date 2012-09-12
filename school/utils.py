@@ -519,7 +519,6 @@ def add_many_students( student_list = None,
         if force_update and changed:
             st.save()
             number_of_change += 1
-            print st
         elif not force_update:
             st.save()
             if st.unc_class_id:
