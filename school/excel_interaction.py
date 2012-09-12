@@ -23,7 +23,7 @@ from school.templateExcel import *
 from school.utils import get_latest_startyear, get_current_year, in_school,\
                             get_permission , gvcn, get_level, get_school, to_date,\
                             get_current_term, add_many_students, add_teacher, \
-                            get_lower_bound, to_subject_name, to_en
+                            get_lower_bound, to_subject_name, to_en, normalize
 import settings
 #Exporting session
 @school_function
@@ -573,14 +573,14 @@ def process_file(file_name, task):
             if c_cho_o_ht > -1:
                 cho_o_ht = sheet.cell(r, c_cho_o_ht).value.strip()
             if c_ten_bo > -1:
-                ten_bo = sheet.cell(r, c_ten_bo).value.strip().capitalize()
+                ten_bo = normalize(sheet.cell(r, c_ten_bo).value)
             if c_so_dt_bo > -1:
                 dt_bo = sheet.cell(r, c_so_dt_bo).value
                 if dt_bo and (type(dt_bo)!= unicode or type(dt_bo)!=str):
                     dt_bo = unicode(int(dt_bo)).strip()
                 if dt_bo and dt_bo[0] != '0' and dt_bo[0] != '+' and not dt_bo.startswith('84'): dt_bo = '0' + dt_bo
             if c_ten_me > -1:
-                ten_me = sheet.cell(r, c_ten_me).value.strip().capitalize()
+                ten_me = normalize(sheet.cell(r, c_ten_me).value)
             if c_so_dt_me > -1:
                 dt_bo = sheet.cell(r, c_so_dt_me).value
                 if dt_me and (type(dt_me)!= unicode or type(dt_me)!=str):
@@ -731,8 +731,7 @@ def process_file(file_name, task):
             email = ''
             lop_cn = ''
             lop_cmon = []
-            name = sheet.cell(r, c_ten).value.strip()
-            name = ' '.join([i.capitalize() for i in name.split(' ')])
+            name = normalize(sheet.cell(r, c_ten).value)
             if not name.strip():
                 message += u'<li>Ô ' + unicode(cellname(r, c_ten)) + u':Trống. </li>'
                 continue

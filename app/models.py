@@ -19,9 +19,13 @@ ORGANIZATION_LEVEL_CHOICES = (('T', u'Trường'),
                               ('P', u'Phòng'),
                               ('S', u'Sở'))
 
-POSITION_CHOICE = (('HOC_SINH', u'Học sinh'), ('GIAO_VU', u'Giáo vụ'), ('GIAO_VIEN', u'Giáo viên'),
-                   ('HIEU_PHO', u'Hiệu phó'), ('HIEU_TRUONG', u'Hiệu trưởng'),
-                   ('GIAM_DOC_SO', u'Giám đốc sở'), ('TRUONG_PHONG', u'Trưởng phòng'))
+POSITION_CHOICE = (('HOC_SINH', u'Học sinh'),
+                    ('GIAO_VU', u'Giáo vụ'),
+                    ('GIAO_VIEN', u'Giáo viên'),
+                   ('HIEU_PHO', u'Hiệu phó'),
+                   ('HIEU_TRUONG', u'Hiệu trưởng'),
+                   ('GIAM_DOC_SO', u'Giám đốc sở'),
+                   ('TRUONG_PHONG', u'Trưởng phòng'))
 
 KHOI_CHOICES = (('2', u'Cấp 2'),
                 ('3', u'Cấp 3'))

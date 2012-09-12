@@ -418,9 +418,6 @@ def viewTeacherDetail(request, teacher_id):
         ttllform = TeacherTTLLForm(data, instance=teacher)
         if pos == 4:
             ttcbform = TeacherTTCBForm(data, instance=teacher)
-            print teacher.muc_luong
-            print ttcbform.is_valid()
-            print teacher.muc_luong
             data['first_name'] = data['first_name'].strip()
             data['last_name'] = data['last_name'].strip()
             ttcnform = TeacherTTCNForm(school.id, data, instance=teacher)
@@ -431,9 +428,7 @@ def viewTeacherDetail(request, teacher_id):
                             t1 = school.team_set.get(id = request.POST['team_id'])
                             g = t1.group_set.get(id = request.POST['group_id'])
                             teacher.group_id = g
-                            print teacher.muc_luong
                             teacher.save()
-                            print teacher.muc_luong
                             ttcnform.save()
                         except Exception:
                             message = 'Có lỗi ở thông tin tổ nhóm'
@@ -823,7 +818,6 @@ def classtab(request, block_id=0):
                 return HttpResponse(data, mimetype='json')
         elif request.POST['request_type'] == 'update_all':
             teacher_list = request.POST.getlist('teacher_id')
-            print teacher_list
             i = 0
             c = None
             for c in classList:

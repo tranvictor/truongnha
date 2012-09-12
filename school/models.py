@@ -420,7 +420,6 @@ class UncategorizedClass(models.Model):
     block_id = models.ForeignKey(Block, verbose_name = "Khối(*)")
 
     def number_of_students(self):
-        print self.pupil_set.all()
         return self.pupil_set.count()
     def students(self):
         return self.pupil_set.all()
@@ -564,6 +563,13 @@ class Pupil(BasicPersonInfo):
         attended = Attend.objects.filter(pupil__id=self.id)
         return attended
 
+    def first_class(self):
+        attends = Attend.objects.filter(pupil=self).order_by('attend_time')
+        if not attends:
+            pass
+        else:
+            return attends[0]._class
+
     def current_class(self):
         attends = Attend.objects.filter(pupil=self, leave_time=None)
         if not attends:
@@ -575,7 +581,6 @@ class Pupil(BasicPersonInfo):
 
     def graduate(self):
         attends = Attend.objects.filter(pupil=self, leave_time=None)
-        print 'attends', attends
         if not attends:
             #print classes
             #raise Exception('InvalidClassSet_%s' % self.id)

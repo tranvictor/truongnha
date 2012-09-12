@@ -5,10 +5,11 @@ from django.http import HttpResponseNotAllowed, HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from app.models import Organization
-from school.models import Pupil, TKDiemDanh, Attend, StartYear, Mark, Class, Teacher, MarkTime, Subject, TKMon, DiemDanh
+from school.models import Pupil, TKDiemDanh, Attend, StartYear, Mark, Class,\
+        Teacher, MarkTime, Subject, TKMon, DiemDanh, Year
 from school.school_settings import CAP2_DS_MON, CAP1_DS_MON, CAP3_DS_MON
 from school.templateExcel import normalize, CHECKED_DATE
-from school.utils import to_en1, add_subject
+from school.utils import to_en1, add_subject, get_lower_bound, normalize
 from django.db import transaction
 import thread
 SYNC_RESULT = os.path.join('helptool','recover_marktime.html')
@@ -76,6 +77,62 @@ def sync_start_year(request):
         if dups:
             print sty.school_id, sty.school_id_id, sty.time, dups[0].id, sty.id
             number += 1
+    wrong_number = 0
+    for year in Year.objects.all():
+        school = year.school_id
+        lb = get_lower_bound(school)
+        sts = Pupil.objects.filter(school_id=school)
+        for st in sts:
+            first_cl = st.first_class()
+            if first_cl:
+                syear = first_cl.year_id.time - first_cl.block_id.number + lb
+                if st.start_year_id.time != syear:
+                    sty, temp = StartYear.objects.get_or_create(school_id=school,
+                                    time=syear)
+                    st.start_year_id = sty
+                    st.save()
+                    wrong_number += 1
+                    print st, st.school_id, first_cl, st.start_year_id.time, syear
+            
+    verified = True
+    invalid_name = 0
+    sts = Pupil.objects.all()
+    for st in sts:
+#        birthyear = st.birthday.year
+#        school = st.school_id
+#        if school.school_level == '3':
+#            syear = birthyear + 15
+#        elif school.school_level == '2':
+#            syear = birthyear + 11
+#        if not st.start_year_id:
+#            print '**', st, st.school_id
+#        if syear != st.start_year_id.time:
+#            verified = False
+#            print '--',st, st.school_id, st.current_class(), st.start_year_id, syear
+        firstname = st.first_name
+        lastname = st.last_name
+        father_name = st.father_name
+        mother_name = st.mother_name
+        new_firstname = normalize(firstname)
+        new_lastname = normalize(lastname)
+        new_father_name = normalize(father_name)
+        new_mother_name = normalize(mother_name)
+
+        if new_firstname != firstname or new_lastname != lastname or\
+            new_father_name != father_name or new_mother_name != mother_name:
+
+            st.first_name = new_firstname
+            st.last_name = new_lastname
+            st.father_name = new_father_name
+            st.mother_name = new_mother_name
+            invalid_name += 1
+            try:
+                st.save()
+            except Exception as e:
+                print e
+                print st.id, st.first_name, st.last_name, st.school_id, st.current_class()
+
+    print wrong_number, verified, invalid_name
     message = 'Done'
     context = RequestContext(request)
     return render_to_response( SYNC_RESULT, { 'message' : message},
