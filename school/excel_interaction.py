@@ -582,7 +582,7 @@ def process_file(file_name, task):
             if c_ten_me > -1:
                 ten_me = normalize(sheet.cell(r, c_ten_me).value)
             if c_so_dt_me > -1:
-                dt_bo = sheet.cell(r, c_so_dt_me).value
+                dt_me = sheet.cell(r, c_so_dt_me).value
                 if dt_me and (type(dt_me)!= unicode or type(dt_me)!=str):
                     dt_me = unicode(int(dt_me)).strip()
                 if dt_me and dt_me[0] != '0' and dt_me[0] != '+' and not dt_me.startswith('84'): dt_me = '0' + dt_me
