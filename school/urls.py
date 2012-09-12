@@ -126,7 +126,8 @@ urlpatterns = patterns('',
 
     url(r'generate/(?P<class_id>\w+)/(?P<object>\w+)/$', excel_interaction.class_generate, name = "class_generate"),
     url(r'generate_teacher/(?P<type>\w+)/$', excel_interaction.teacher_generate, name = "teacher_generate"),
-    url(r'start_year/import/student/(?P<class_id>\w+)/(?P<request_type>\w+)$',  excel_interaction.student_import, name="student_import"),
+    url(r'start_year/import/student/(?P<class_id>\w+)/(?P<request_type>\w+)$',
+            excel_interaction.student_import, name="student_import"),
     url(r'import/teacher/(?P<request_type>\w+)$',  excel_interaction.teacher_import, name = "teacher_import"),
 
     url(r'deleteTeacher/(?P<teacher_id>\w+)/(?P<team_id>\w+)$',  school_functions.deleteTeacher, name="delete_teacher"),

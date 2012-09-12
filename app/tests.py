@@ -10,6 +10,7 @@ from django.core import mail
 import random
 import simplejson
 import re
+import sys
 
 # This class will test the very first steps on a workflow
 # 1. create a register
@@ -62,16 +63,16 @@ class BasicWorkFlow(TestCase):
             'school_address': self.address,
             'csrfmiddlewaretoken': self.csrf},
             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        print 'Going to check response status'
+        #print 'Going to check response status'
         self.assertEqual(res.status_code, 200)
-        print 'Going to check response content type'
+        #print 'Going to check response content type'
         self.assertEqual(res['Content-Type'], 'json')
-        print 'Going to check response content'
+        #print 'Going to check response content'
         content = simplejson.loads(res.content)
         self.assertEqual(content['success'], True)
         self.assertEqual(content['redirect'], reverse('login'))
-        print 'OK, response correctly'
-        print 'Going to check database for saved register'
+        #print 'OK, response correctly'
+        #print 'Going to check database for saved register'
         reg = Register.objects.filter(
                 register_name=self.name,
                 register_email=self.email)
@@ -85,10 +86,10 @@ class BasicWorkFlow(TestCase):
         self.assertEqual(reg.school_province, self.province)
         self.assertEqual(reg.register_phone, self.phone)
         self.assertEqual(reg.school_address, self.address)
-        print "OK, register's saved to database correctly"
+        #print "OK, register's saved to database correctly"
         self.register_id = reg.id
-        print 'Check email sent'
-        print mail.outbox
+        #print 'Check email sent'
+        #print mail.outbox
         self.assertEqual(len(mail.outbox), 1)
         mail.outbox = []
 
@@ -96,7 +97,7 @@ class BasicWorkFlow(TestCase):
         logged = self.client.login(
                 username=self.admin_uname,
                 password=self.admin_pwd)
-        print 'Going to check user'
+        #print 'Going to check user'
         self.assertEqual(logged, True)
 
     def _step3_create_account_for_register(self):
@@ -105,47 +106,47 @@ class BasicWorkFlow(TestCase):
             'data': str(self.register_id) + '-',
             'csrfmiddlewaretoken': self.csrf
             }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        print 'Going to check response status'
+        #print 'Going to check response status'
         self.assertEqual(res.status_code, 200)
-        print 'Going to check response content type'
+        #print 'Going to check response content type'
         self.assertEqual(res['Content-Type'], 'json')
-        print 'Going to check response content'
+        #print 'Going to check response content'
         cont = simplejson.loads(res.content)
         self.assertEqual(cont['success'], True)
         acc_info = cont['account_info']
         acc_info = acc_info.split(',')[0].split('-')
         self.username = acc_info[1]
         self.password = acc_info[2]
-        print 'Going to check sent email'
+        #print 'Going to check sent email'
         self.assertEqual(len(mail.outbox), 1)
 
         self.client.logout()
-        print 'Going to log in as registered account'
+        #print 'Going to log in as registered account'
         logged = self.client.login(
                 username=self.username,
                 password=self.password)
         self.assertEqual(logged, True)
 
     def _step4_remove_register(self):
-        print 'Going to log in as admin'
+        #print 'Going to log in as admin'
         logged = self.client.login(
                 username=self.admin_uname,
                 password=self.admin_pwd)
         self.assertEqual(logged, True)
-        print 'Going to remove register'
+        #print 'Going to remove register'
         res = self.client.post(reverse('manage_register'),{
             'request_type': 'del',
             'data': str(self.register_id) + '-',
             'csrfmiddlewaretoken': self.csrf
             }, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
-        print 'Going to check response status'
+        #print 'Going to check response status'
         self.assertEqual(res.status_code, 200)
-        print 'Going to check response content type'
+        #print 'Going to check response content type'
         self.assertEqual(res['Content-Type'], 'json')
-        print 'Going to check response content'
+        #print 'Going to check response content'
         cont = simplejson.loads(res.content)
         self.assertEqual(cont['success'], True)
-        print 'Going to check database'
+        #print 'Going to check database'
         reg = Register.objects.filter(id=self.register_id)
         self.assertEqual(len(reg), 0)
 
@@ -205,9 +206,9 @@ class BasicWorkFlow(TestCase):
         try:
             for name, method in self._steps():
                 number += 1
-                print
-                print "<----------------------------------------------->"
-                print "RUN STEP %d: %s" % (number, name)
+                sys.stdout.write('_')
+                #print "<----------------------------------------------->"
+                #print "RUN STEP %d: %s" % (number, name)
                 failed_scenario = method()
                 if failed_scenario: break
         except Exception as e:
@@ -250,7 +251,7 @@ class SendEmailTest(TestCase):
         # now, check the email box if it receives the email correctly
         from time import sleep
         sleep(5) # sleep for 5s to ensure that receiver received the email, better solution?
-        print 'Going to check sent email'
+        #print 'Going to check sent email'
         self.assertEqual(self.subject in mail.outbox[0].subject, True)
 
 #class UserFunctionTest(TestCase):

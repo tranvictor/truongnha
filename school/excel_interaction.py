@@ -1240,7 +1240,7 @@ def student_import( request, class_id, request_type='' ):
                  'number': number,
                  'number_ok': number_ok - len(existing_student),
                  'message': u'Nhập dữ liệu thành công'}]
-    return HttpResponse(simplejson.dumps(data))
+    return HttpResponse(simplejson.dumps(data), mimetype='json')
 
 @need_login
 @require_POST
