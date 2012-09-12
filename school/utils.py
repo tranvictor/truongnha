@@ -461,6 +461,7 @@ def add_many_students( student_list = None,
                        class_id = _class,
                        index = index,
                        school_id = school)
+        changed = False
         if 'sex' in student:
             if st.sex != student['sex']:
                 st.sex = student['sex']
@@ -536,9 +537,9 @@ def add_many_students( student_list = None,
                     number_subject += _class.subject_set.filter(primary = 0).count()
                     number_subject += _class.subject_set.filter(primary = 3).count()
                     if i == 1:
-                        number_subject = _class.subject_set.filter(primary = 1).count()
+                        number_subject = _class.subject_set.filter(primary=1).count()
                     if i == 2:
-                        number_subject = _class.subject_set.filter(primary = 2).count()
+                        number_subject = _class.subject_set.filter(primary=2).count()
 
                 TBHocKy.objects.get_or_create(student_id = st,
                                             number_subject = number_subject,
@@ -549,7 +550,7 @@ def add_many_students( student_list = None,
 
             number_subject = 0
             if _class:
-                number_subject += _class.subject_set.filter(primary = 0).count()
+                number_subject += _class.subject_set.filter(primary=0).count()
             TBNam.objects.get_or_create(student_id = st,
                                         number_subject = number_subject,
                                         year_id = year)
