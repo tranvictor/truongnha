@@ -249,8 +249,8 @@
                         {% ifequal n  0 %}
                             <td>
 								<a class="btn sm delete"
-								href="{% url delete_class class.id  %}">
-                                xóa
+								href="{% url delete_class class.id  %}" title="Xóa lớp {{ class.name }}">
+                                Xóa
 								</a>
 							</td>
                         {% else %}
@@ -258,7 +258,7 @@
 								<a class="btn sm disabled"
 								title="Không được xóa các lớp vẫn còn học sinh"
 								href="">
-                                xóa
+                                Xóa
 								</a>
                             </td>
                         {% endifequal %}
