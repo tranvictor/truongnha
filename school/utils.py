@@ -268,12 +268,10 @@ def add_student( student = None, index = 0, start_year = None , year = None,
     if not ( student and start_year and term and school ):
         raise Exception("Phải có giá trị cho các trường: Student,Start_Year,Term,School.")
     if 'fullname' in student:
-        names = student['fullname'].split(" ")
-        last_name = ' '.join(names[:len(names)-1])
-        first_name = names[len(names)-1]
+        first_name, last_name = extract_fullname(student['fullname'])
     else:
-        last_name = student['last_name']
-        first_name = student['first_name']
+        last_name = normalize(student['last_name'])
+        first_name = normalize(student['first_name'])
     if not school_join_date:
         school_join_date = root_dt.date.today()
     birthday = student['birthday']
@@ -401,12 +399,10 @@ def add_many_students( student_list = None,
     for student in student_list:
         index += 1
         if 'fullname' in student:
-            names = student['fullname'].split(" ")
-            last_name = (' '.join(names[:len(names)-1])).strip()
-            first_name = names[len(names)-1]
+            first_name, last_name = extract_fullname(student['fullname'])
         else:
-            last_name = student['last_name']
-            first_name = student['first_name']
+            last_name = normalize(student['last_name'])
+            first_name = normalize(student['first_name'])
 
         if not school_join_date:
             school_join_date = root_dt.date.today()
@@ -461,6 +457,7 @@ def add_many_students( student_list = None,
                        class_id = _class,
                        index = index,
                        school_id = school)
+        changed = False
         if 'sex' in student:
             if st.sex != student['sex']:
                 st.sex = student['sex']
@@ -536,9 +533,9 @@ def add_many_students( student_list = None,
                     number_subject += _class.subject_set.filter(primary = 0).count()
                     number_subject += _class.subject_set.filter(primary = 3).count()
                     if i == 1:
-                        number_subject = _class.subject_set.filter(primary = 1).count()
+                        number_subject = _class.subject_set.filter(primary=1).count()
                     if i == 2:
-                        number_subject = _class.subject_set.filter(primary = 2).count()
+                        number_subject = _class.subject_set.filter(primary=2).count()
 
                 TBHocKy.objects.get_or_create(student_id = st,
                                             number_subject = number_subject,
@@ -549,7 +546,7 @@ def add_many_students( student_list = None,
 
             number_subject = 0
             if _class:
-                number_subject += _class.subject_set.filter(primary = 0).count()
+                number_subject += _class.subject_set.filter(primary=0).count()
             TBNam.objects.get_or_create(student_id = st,
                                         number_subject = number_subject,
                                         year_id = year)
@@ -586,14 +583,15 @@ def add_teacher( first_name=None, last_name=None, full_name=None,
                  school=None, team_id=None, group_id=None, email='',
                  force_update=False):
     if full_name:
-        names = full_name.split(" ")
-        last_name = ' '.join(names[:len(names)-1])
-        first_name = names[len(names)-1]
+        first_name, last_name = extract_fullname(full_name)
+    else:
+        first_name = normalize(first_name)
+        last_name = normalize(last_name)
     if team_id:
         if (type(team_id) == str or type(team_id) == unicode) and team_id.strip():
             name = team_id.strip()
             try:
-                team_id = school.team_set.get( name = name)
+                team_id = school.team_set.get(name=name)
             except Exception as e:
                 print e
                 team_id = Team()
@@ -1016,3 +1014,19 @@ def to_subject_name(name):
         if name in sub:
             return sub[0]
     raise Exception(u'Can not recognize')
+
+def normalize(name):
+    return ' '.join([e.capitalize() for e in name.split(' ') if e])
+
+def extract_fullname(name):
+    eles = [e.capitalize() for e in name.split(' ') if e]
+    if not eles: raise Exception('BadName')
+    firstname = eles[-1]
+    lastname = ''
+    if len(firstname) == 1 and len(eles)>=2:
+        firstname = ' '.join(eles[-2:])
+        lastname = ' '.join(eles[:-2])
+    else:
+        firstname = eles[-1]
+        lastname = ' '.join(eles[:-1])
+    return firstname, lastname

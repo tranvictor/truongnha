@@ -390,7 +390,7 @@ def feedback(request):
                     (
                         subject,
                         message,
-                        GMAIL_LOGIN,
+                        '',
                         [
                             'vu.tran54@gmail.com',
                             'truonganhhoang@gmail.com',

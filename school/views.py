@@ -612,7 +612,6 @@ def student_account(request, student_id):
             student.user_id.set_password(new_password)
             student.user_id.is_active = True
             student.user_id.save()
-            print student.user_id.is_active
             content = u'Tài khoản Trường Nhà của bạn đã được đổi.\n' +\
                       u'Tên đăng nhập: ' +\
                       student.user_id.username + u'\nMật khẩu: ' + raw_password

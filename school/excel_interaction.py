@@ -9,9 +9,6 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.validators import validate_email
 import simplejson
 import re
-from school.templateExcel import first_name1, last_name1, h6, h7, h4, h9, h40,\
-    htb, htbdot, h5, first_name, last_name, STT_WIDTH, A4_WIDTH, LASTNAME_WIDTH,\
-    FIRSTNAME_WIDTH, BIRTHDAY_WIDTH, h61, h71, printHeader, printCongHoa
 from utils import to_en1
 import xlrd
 from xlrd.formula import cellname
@@ -22,10 +19,11 @@ from app.models import SystemLesson, SUBJECT_CHOICES
 from decorators import school_function, need_login, operating_permission, year_started
 from school.models import Class, Subject, SchoolLesson, validate_phone, Lesson, TKB
 from school.models import this_year, StartYear, SUBJECT_LIST_ASCII
+from school.templateExcel import *
 from school.utils import get_latest_startyear, get_current_year, in_school,\
                             get_permission , gvcn, get_level, get_school, to_date,\
                             get_current_term, add_many_students, add_teacher, \
-                            get_lower_bound, to_subject_name, to_en
+                            get_lower_bound, to_subject_name, to_en, normalize
 import settings
 #Exporting session
 @school_function
@@ -79,9 +77,12 @@ def class_generate(request, class_id, object):
         sheet.write(4, 4, 'Giới tính',h4)
         sheet.write(4, 5, 'Dân tộc', h4)
         sheet.write(4, 6, 'Chỗ ở hiện tại', h4)
-        sheet.write(4, 7, 'Số điện thoại', h4)
-        sheet.write(4, 8, 'Số điện thoại nhắn tin',h4)
-        sheet.write(4, 9, 'Ghi chú', h4)
+        sheet.write(4, 7, 'Số điện thoại nhắn tin',h4)
+        sheet.write(4, 8, 'Họ tên bố',h4)
+        sheet.write(4, 9, 'Số điện thoại của bố',h4)
+        sheet.write(4, 10, 'Họ tên mẹ',h4)
+        sheet.write(4, 11, 'Số điện thoại của mẹ',h4)
+        sheet.write(4, 12, 'Ghi chú', h4)
         row = 5
         for student in student_list:
             sheet.row(row).height = 350
@@ -92,9 +93,12 @@ def class_generate(request, class_id, object):
             sheet.write(row, 4, student.sex, h7)
             sheet.write(row, 5, student.dan_toc, h7)
             sheet.write(row, 6, student.current_address, h7)
-            sheet.write(row, 7, student.phone, h7)
-            sheet.write(row, 8, student.sms_phone, h7)
-            sheet.write(row, 9, '', h7)
+            sheet.write(row, 7, student.sms_phone, h7)
+            sheet.write(row, 8, student.father_name, h7)
+            sheet.write(row, 9, student.father_phone, h7)
+            sheet.write(row, 10, student.mother_name, h7)
+            sheet.write(row, 11, student.mother_phone, h7)
+            sheet.write(row, 12, '', h7)
             row += 1
             #return HttpResponse
         response = HttpResponse(mimetype='application/ms-excel')
@@ -569,16 +573,16 @@ def process_file(file_name, task):
             if c_cho_o_ht > -1:
                 cho_o_ht = sheet.cell(r, c_cho_o_ht).value.strip()
             if c_ten_bo > -1:
-                ten_bo = sheet.cell(r, c_ten_bo).value.strip().capitalize()
+                ten_bo = normalize(sheet.cell(r, c_ten_bo).value)
             if c_so_dt_bo > -1:
                 dt_bo = sheet.cell(r, c_so_dt_bo).value
                 if dt_bo and (type(dt_bo)!= unicode or type(dt_bo)!=str):
                     dt_bo = unicode(int(dt_bo)).strip()
                 if dt_bo and dt_bo[0] != '0' and dt_bo[0] != '+' and not dt_bo.startswith('84'): dt_bo = '0' + dt_bo
             if c_ten_me > -1:
-                ten_me = sheet.cell(r, c_ten_me).value.strip().capitalize()
+                ten_me = normalize(sheet.cell(r, c_ten_me).value)
             if c_so_dt_me > -1:
-                dt_bo = sheet.cell(r, c_so_dt_me).value
+                dt_me = sheet.cell(r, c_so_dt_me).value
                 if dt_me and (type(dt_me)!= unicode or type(dt_me)!=str):
                     dt_me = unicode(int(dt_me)).strip()
                 if dt_me and dt_me[0] != '0' and dt_me[0] != '+' and not dt_me.startswith('84'): dt_me = '0' + dt_me
@@ -727,8 +731,7 @@ def process_file(file_name, task):
             email = ''
             lop_cn = ''
             lop_cmon = []
-            name = sheet.cell(r, c_ten).value.strip()
-            name = ' '.join([i.capitalize() for i in name.split(' ')])
+            name = normalize(sheet.cell(r, c_ten).value)
             if not name.strip():
                 message += u'<li>Ô ' + unicode(cellname(r, c_ten)) + u':Trống. </li>'
                 continue
@@ -1236,7 +1239,7 @@ def student_import( request, class_id, request_type='' ):
                  'number': number,
                  'number_ok': number_ok - len(existing_student),
                  'message': u'Nhập dữ liệu thành công'}]
-    return HttpResponse(simplejson.dumps(data))
+    return HttpResponse(simplejson.dumps(data), mimetype='json')
 
 @need_login
 @require_POST

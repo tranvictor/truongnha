@@ -29,9 +29,9 @@ class SchoolSetupTest(BasicWorkFlow):
 
     def phase2_test_redirect_to_setup_page(self):
         res = self.client.get(reverse('index'), follow=True)
-        print 'Going to check redirect to Setup page'
+        #print 'Going to check redirect to Setup page'
         self.assertRedirects(res, reverse('setup'))
-        print 'Going to check response content'
+        #print 'Going to check response content'
         form = res.context['form']
         self.assertEqual(form.data['name'], str(self.school_name))
         self.assertEqual(form.data['email'], str(self.email))
@@ -49,11 +49,11 @@ class SchoolSetupTest(BasicWorkFlow):
                 'email': self.email,
                 'update_school_detail': True
                 }, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
-        print 'Going to check response status'
+        #print 'Going to check response status'
         self.assertEqual(res.status_code, 200)
-        print 'Going to check response type'
+        #print 'Going to check response type'
         self.assertEqual(res['Content-Type'], 'json')
-        print 'Going to check response content'
+        #print 'Going to check response content'
         cont = simplejson.loads(res.content)
         self.assertEqual(cont['status'], 'done')
     
@@ -63,11 +63,11 @@ class SchoolSetupTest(BasicWorkFlow):
                 'labels': self.school_cl_list,
                 'update_class_name': True
                 }, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
-        print 'Going to check response status'
+        #print 'Going to check response status'
         self.assertEqual(res.status_code, 200)
-        print 'Going to check response type'
+        #print 'Going to check response type'
         self.assertEqual(res['Content-Type'], 'json')
-        print 'Going to check response content'
+        #print 'Going to check response content'
         cont = simplejson.loads(res.content)
         self.assertEqual(cont['status'], True)
         res_cls = cont['classes']
@@ -103,11 +103,11 @@ class SchoolSetupTest(BasicWorkFlow):
                 'labels': self.school_cl_list,
                 'update_class_name': True
                 }, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
-        print 'Going to check response status'
+        #print 'Going to check response status'
         self.assertEqual(res.status_code, 200)
-        print 'Going to check response type'
+        #print 'Going to check response type'
         self.assertEqual(res['Content-Type'], 'json')
-        print 'Going to check response content'
+        #print 'Going to check response content'
         cont = simplejson.loads(res.content)
         self.assertEqual(cont['status'], True)
         res_cls = cont['classes']
@@ -132,19 +132,19 @@ class SchoolSetupTest(BasicWorkFlow):
         res = self.client.post(reverse('setup'),{
                 'start_year': True
                 }, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
-        print 'Going to check response status'
+        #print 'Going to check response status'
         self.assertEqual(res.status_code, 200)
-        print 'Going to check response type'
+        #print 'Going to check response type'
         self.assertEqual(res['Content-Type'], 'json')
-        print 'Going to check response content'
+        #print 'Going to check response content'
         cont = simplejson.loads(res.content)
         self.assertEqual(cont['status'], 'done')
         res = self.client.get(reverse('start_year'))
-        print 'Going to check response status'
+        #print 'Going to check response status'
         self.assertRedirects(res, reverse('classes'))
 
     def phase7_check_new_school(self):
-        print 'Going to get school'
+        #print 'Going to get school'
         school = Organization.objects.filter(
                 name=self.school_name,
                 school_level=self.school_level,
@@ -153,17 +153,17 @@ class SchoolSetupTest(BasicWorkFlow):
         self.assertEqual(len(school), 1)
         self.school = school[0]
         years = self.school.year_set.all()
-        print 'This school should have a Year object'
+        #print 'This school should have a Year object'
         self.assertEqual(len(years), 1)
         stys = self.school.startyear_set.all()
-        print 'This school should have a StartYear objects'
+        #print 'This school should have a StartYear objects'
         self.assertEqual(len(stys), 1)
         year = years[0]
         self.year = year
         self.sty = stys[0]
         terms = year.term_set.all()
         actual_term = {1: '', 2: '', 3: ''}
-        print 'This school should have 3 terms 1, 2, 3'
+        #print 'This school should have 3 terms 1, 2, 3'
         for term in terms:
             self.assertEqual(actual_term.pop(term.number, None), '')
 
@@ -174,8 +174,9 @@ class AddStudentTest(SchoolSetupTest):
         self.assertEqual(len(classes)>0, True)
         cl = classes[0]
         res = self.client.get(reverse('class_detail', args=[cl.id]))
-        print 'Going to check response status code'
+        #print 'Going to check response status code'
         self.assertEqual(res.status_code, 200)
+        #print res.context
 
     def phase9_add_a_student(self):
         classes = self.year.class_set.all()
@@ -202,33 +203,65 @@ class AddStudentTest(SchoolSetupTest):
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
         self.assertEqual(response.status_code, 200)
-        print 'Going to check response content type'
+        #print 'Going to check response content type'
         self.assertEqual(response['Content-Type'], 'json')
-        print 'Going to check response content'
+        #print 'Going to check response content'
         cont = simplejson.loads(response.content)
         self.assertEqual(cont['success'], True)
         self.assertEqual(cont['message'],u'Bạn vừa thêm 1 học sinh')
         pupil = Pupil.objects.get(first_name=u'Nguyễn',
                 last_name=u'Xuân',
                 birthday=u'1995-03-20')
-        print 'Check if student in the right class'
+        #print 'Check if student in the right class'
         self.assertEqual(pupil.current_class().id,cl.id)
         subject_num = cl.subject_set.count()
         marks_num = pupil.mark_set.count()
-        print 'Check if student have enough mark table'
+        #print 'Check if student have enough mark table'
         self.assertEqual(marks_num,subject_num*2)
         tbhk_num = pupil.tbhocky_set.count()
-        print 'Check if student have enough TBHocky'
+        #print 'Check if student have enough TBHocky'
         self.assertEqual(tbhk_num,2)
         tbnam_num = pupil.tbnam_set.count()
-        print 'Check if student have enough TBNam'
+        #print 'Check if student have enough TBNam'
         self.assertEquals(tbnam_num,1)
         tkdh_num = pupil.tkdiemdanh_set.count()
-        print 'Check if student have enough TKDiemDanh'
+        #print 'Check if student have enough TKDiemDanh'
         self.assertEqual(tkdh_num,2)
         tkmon_num = pupil.tkmon_set.count()
-        print 'Check if student have enough TKMon'
+        #print 'Check if student have enough TKMon'
         self.assertEqual(tkmon_num, subject_num)
+
+    def phase10_add_a_student_fail_sex(self):
+        classes = self.year.class_set.all()
+        # get a class
+        self.assertEqual(len(classes)>0, True)
+        cl = classes[0]
+        response = self.client.post(
+            reverse('class_detail',args=[cl.id]),
+                {
+                'request_type':u'add',
+                'first_name': u'Nguyễn',
+                'last_name': u'Xuân',
+                'birthday': u'20/20/1995',
+                'sex': u'12903',
+                'birth_place': u'Ninh Bình',
+                'current_address': u'Tam Điệp',
+                'ban_dk': u'CB',
+                'dan_toc':u'1',
+                'quoc_tich': u'Việt Nam',
+                'mother_name': u'Võ Thị Hương',
+                'father_name': u'Nguyễn Văn An',
+                'sms_phone': u'0987438383'
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        #print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        #print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(len(cont),1)
+        return True
 
     def phase10_add_a_student_fail_birthday(self):
         classes = self.year.class_set.all()
@@ -255,9 +288,9 @@ class AddStudentTest(SchoolSetupTest):
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
         self.assertEqual(response.status_code, 200)
-        print 'Going to check response content type'
+        #print 'Going to check response content type'
         self.assertEqual(response['Content-Type'], 'json')
-        print 'Going to check response content'
+        #print 'Going to check response content'
         cont = simplejson.loads(response.content)
         self.assertEqual(len(cont),1)
         return True
@@ -287,9 +320,9 @@ class AddStudentTest(SchoolSetupTest):
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
         self.assertEqual(response.status_code, 200)
-        print 'Going to check response content type'
+        #print 'Going to check response content type'
         self.assertEqual(response['Content-Type'], 'json')
-        print 'Going to check response content'
+        #print 'Going to check response content'
         cont = simplejson.loads(response.content)
         self.assertEqual(len(cont),1)
         return True
