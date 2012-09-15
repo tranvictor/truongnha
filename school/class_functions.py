@@ -260,31 +260,22 @@ def viewClassDetail(request, class_id):
                             term=get_current_term(request),
                             school=get_school(request),
                             school_join_date=school_join_date)
-                    temp = os.path.join('school','classDetail_one_student.html')
-                    count = _class.number_of_pupils()
-                    student_detail = render_to_string(temp, {'student':student,
-                                                            'count':count})
-                    message = u'Bạn vừa thêm 1 học sinh'
-                    data = simplejson.dumps({'message': message,
-                                             'success': True,
-                                             'student_detail': student_detail})
-                    return HttpResponse(data, mimetype='json')
 
-                    #if not added:
-                    #        message = u'<li>Học sinh đã tồn tại ở lớp %s</li>'\
-                    #                % student.current_class()
-                    #        data = simplejson.dumps({'message': message})
-                    #        return HttpResponse(data, mimetype='json')
-                    #else:
-                    #    temp = os.path.join('school','classDetail_one_student.html')
-                    #    count = _class.number_of_pupils()
-                    #    student_detail = render_to_string(temp, {'student':student,
-                    #                                            'count':count})
-                    #    message = u'Bạn vừa thêm 1 học sinh'
-                    #    data = simplejson.dumps({'message': message,
-                    #                             'success': True,
-                    #                             'student_detail': student_detail})
-                    #    return HttpResponse(data, mimetype='json')
+                    if not added:
+                            message = u'<li>Học sinh đã tồn tại ở lớp %s</li>'\
+                                    % student.current_class()
+                            data = simplejson.dumps({'message': message})
+                            return HttpResponse(data, mimetype='json')
+                    else:
+                        temp = os.path.join('school','classDetail_one_student.html')
+                        count = _class.number_of_pupils()
+                        student_detail = render_to_string(temp, {'student':student,
+                                                                'count':count})
+                        message = u'Bạn vừa thêm 1 học sinh'
+                        data = simplejson.dumps({'message': message,
+                                                 'success': True,
+                                                 'student_detail': student_detail})
+                        return HttpResponse(data, mimetype='json')
                     #form = PupilForm(school.id)
                 else:
                     message = ''
