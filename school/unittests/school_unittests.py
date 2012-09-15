@@ -16,9 +16,9 @@ class AddSubjectTest(SchoolSetupTest):
         cl = classes[0]
         #go to subjects per class
         res = self.client.get(reverse('subject_per_class', args=[cl.id]))
-        #print 'Going to check response status code'
+        print 'Going to check response status code'
         self.assertEqual(res.status_code, 200)
-        #print 'Going to check response content'
+        print 'Going to check response content'
         context = res.context
         self.assertEqual(context['class'].id, cl.id)
 
@@ -44,9 +44,9 @@ class AddSubjectTest(SchoolSetupTest):
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
         self.assertEqual(response.status_code, 200)
-        #print 'Going to check response content type'
+        print 'Going to check response content type'
         self.assertEqual(response['Content-Type'], 'json')
-        #print 'Going to check response content'
+        print 'Going to check response content'
         cont = simplejson.loads(response.content)
         self.assertEqual(cont['success'], True)
         self.assertEqual(cont['message'],u'Môn học mới đã được thêm.')
@@ -66,9 +66,9 @@ class AddSubjectTest(SchoolSetupTest):
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
         self.assertEqual(response.status_code, 200)
-        #print 'Going to check response content type'
+        print 'Going to check response content type'
         self.assertEqual(response['Content-Type'], 'json')
-        #print 'Going to check response content'
+        print 'Going to check response content'
         cont = simplejson.loads(response.content)
         self.assertEqual(cont['message'], u'Đã xóa thành công.')
     def phase12_delete_toan_or_nguvan(self):
@@ -86,9 +86,9 @@ class AddSubjectTest(SchoolSetupTest):
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
         self.assertEqual(response.status_code, 200)
-        #print 'Going to check response content type'
+        print 'Going to check response content type'
         self.assertEqual(response['Content-Type'], 'json')
-        #print 'Going to check response content'
+        print 'Going to check response content'
         cont = simplejson.loads(response.content)
         self.assertEqual(cont['message'], u'Bad request.')
     def phase13_modify_subject(self):
@@ -97,7 +97,7 @@ class AddSubjectTest(SchoolSetupTest):
         self.assertEqual(len(classes)>0, True)
         cl = classes[0]
         sub = cl.subject_set.get(type = u'Toán')
-        #print 'Update with negative heso'
+        print 'Update with negative heso'
         response = self.client.post(
             reverse('subject_per_class',args=[cl.id]),
                 {
@@ -108,13 +108,13 @@ class AddSubjectTest(SchoolSetupTest):
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
         self.assertEqual(response.status_code, 200)
-        #print 'Going to check response content type'
+        print 'Going to check response content type'
         self.assertEqual(response['Content-Type'], 'json')
-        #print 'Going to check response content'
+        print 'Going to check response content'
         cont = simplejson.loads(response.content)
         self.assertEqual(cont['message'], u'Hệ số không được nhỏ hơn 0')
 
-        #print 'Update with valid heso'
+        print 'Update with valid heso'
         response = self.client.post(
             reverse('subject_per_class',args=[cl.id]),
                 {
@@ -125,9 +125,9 @@ class AddSubjectTest(SchoolSetupTest):
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
         self.assertEqual(response.status_code, 200)
-        #print 'Going to check response content type'
+        print 'Going to check response content type'
         self.assertEqual(response['Content-Type'], 'json')
-        #print 'Going to check response content'
+        print 'Going to check response content'
         cont = simplejson.loads(response.content)
         self.assertEqual(cont['message'], u'Cập nhật thành công.')
         
@@ -143,9 +143,9 @@ class DiemDanhTest(AddStudentTest):
                 'data': data,
                 'request_type': 'dd',
                 }, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
-        #print 'Going to check response status'
+        print 'Going to check response status'
         self.assertEqual(res.status_code, 200)
-        #print 'Going to check database'
+        print 'Going to check database'
         dd_list = DiemDanh.objects.filter(
                 student_id=st,
                 time=today)
@@ -155,7 +155,7 @@ class DiemDanhTest(AddStudentTest):
             self.assertEqual(len(dd_list), 0)
         for dd in dd_list:
             self.assertEqual(dd.loai, t)
-        #print 'Going to check update dd to %s' % t
+        print 'Going to check update dd to %s' % t
 
     def phase12_add_diem_danh(self):
         cl = self.year.class_set.all()
@@ -164,11 +164,11 @@ class DiemDanhTest(AddStudentTest):
         today = date.today()
         res = self.client.get(reverse('dd',
             args=[cl.id, today.day, today.month, today.year]))
-        #print 'Going to check response status'
+        print 'Going to check response status'
         self.assertEqual(res.status_code, 200)
-        #print 'Going to check response content'
+        print 'Going to check response content'
         context = res.context
-        #print 'Going to check response context'
+        print 'Going to check response context'
         self.assertEqual(context['class'].id, cl.id)
         self.assertEqual(context['date'], today)
         # done check get request
@@ -186,9 +186,9 @@ class HanhKiemTest(AddStudentTest):
         cl = classes[0]
         #go to subjects per class
         res = self.client.get(reverse('hanh_kiem', args=[cl.id]))
-        #print 'Going to check response status'
+        print 'Going to check response status'
         self.assertEqual(res.status_code, 200)
-        #print 'Going to check response context'
+        print 'Going to check response context'
         self.assertEqual(res.context['class'].id,cl.id)
 
     def phase13_edit_current_term_hk(self):
@@ -205,15 +205,15 @@ class HanhKiemTest(AddStudentTest):
             'id': student.id,
             'val':u'T',
             }, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
-        #print 'Going to check response status'
+        print 'Going to check response status'
         self.assertEqual(res.status_code, 200)
-        #print 'Going to check response content type'
+        print 'Going to check response content type'
         self.assertEqual(res['Content-Type'], 'json')
         cont = simplejson.loads(res.content)
-        #print 'Going to check response content'
+        print 'Going to check response content'
         self.assertEqual(cont['success'],True)
         hk = student.tbnam_set.get(year_id__exact= self.year.id)
-        #print 'Going to check if hk is save'
+        print 'Going to check if hk is save'
         self.assertEqual(hk.term1,'T')
         res = self.client.post(reverse('hanh_kiem',
             args=[cl.id]), {
@@ -221,15 +221,15 @@ class HanhKiemTest(AddStudentTest):
             'id': student.id,
             'val':u'T',
             }, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
-        #print 'Going to check response status'
+        print 'Going to check response status'
         self.assertEqual(res.status_code, 200)
-        #print 'Going to check response content type'
+        print 'Going to check response content type'
         self.assertEqual(res['Content-Type'], 'json')
         cont = simplejson.loads(res.content)
-        #print 'Going to check response content'
+        print 'Going to check response content'
         self.assertEqual(cont['success'],True)
         hk = student.tbnam_set.get(year_id__exact= self.year.id)
-        #print 'Going to check if hk is save'
+        print 'Going to check if hk is save'
         self.assertEqual(hk.hk_thang_10,u'T')
 
 class KhenThuongTest(AddStudentTest):
@@ -248,11 +248,11 @@ class KhenThuongTest(AddStudentTest):
             'noi_dung':'',
             'time': date.today().strftime("%d/%m/%Y")
         })
-        #print 'Going to check response status'
+        print 'Going to check response status'
         self.assertEqual(res.status_code, 302)
-        #print 'Going to check response content type'
+        print 'Going to check response content type'
         self.assertEqual(res['Content-Type'],'text/html; charset=utf-8')
-        #print 'Going to check if kt is save'
+        print 'Going to check if kt is save'
         num_kt = student.khenthuong_set.count()
         self.assertEqual(num_kt,1)
 
@@ -272,11 +272,11 @@ class KhenThuongTest(AddStudentTest):
             'noi_dung':'',
             'time': date.today().strftime("%d/%m/%Y")
         })
-        #print 'Going to check response status'
+        print 'Going to check response status'
         self.assertEqual(res.status_code, 302)
-        #print 'Going to check response content type'
+        print 'Going to check response content type'
         self.assertEqual(res['Content-Type'],'text/html; charset=utf-8')
-        #print 'Going to check if kt is save'
+        print 'Going to check if kt is save'
         kt = student.khenthuong_set.all()[0]
         self.assertEqual(kt.dia_diem,u'HN')
         self.assertEqual(kt.hinh_thuc,u'Được khen thưởng đặc biệt')
@@ -292,11 +292,11 @@ class KhenThuongTest(AddStudentTest):
         self.assertEqual(kts.count(),1)
         kt = kts[0]
         res = self.client.get(reverse('delete_khen_thuong',args=[kt.id]))
-        #print 'Going to check response status'
+        print 'Going to check response status'
         self.assertEqual(res.status_code, 302)
-        #print 'Going to check response content type'
+        print 'Going to check response content type'
         self.assertEqual(res['Content-Type'],'text/html; charset=utf-8')
-        #print 'Going to check if kt is delete'
+        print 'Going to check if kt is delete'
         num_kt = student.khenthuong_set.count()
         self.assertEqual(num_kt,0)
 
@@ -316,11 +316,11 @@ class KiLuatTest(AddStudentTest):
             'noi_dung':'',
             'time': date.today().strftime("%d/%m/%Y")
         })
-        #print 'Going to check response status'
+        print 'Going to check response status'
         self.assertEqual(res.status_code, 302)
-        #print 'Going to check response content type'
+        print 'Going to check response content type'
         self.assertEqual(res['Content-Type'],'text/html; charset=utf-8')
-        #print 'Going to check if kt is save'
+        print 'Going to check if kt is save'
         num_kl = student.kiluat_set.count()
         self.assertEqual(num_kl,1)
     def phase13_edit_kiluat(self):
@@ -339,11 +339,11 @@ class KiLuatTest(AddStudentTest):
             'noi_dung':'',
             'time': date.today().strftime("%d/%m/%Y")
         })
-        #print 'Going to check response status'
+        print 'Going to check response status'
         self.assertEqual(res.status_code, 302)
-        #print 'Going to check response content type'
+        print 'Going to check response content type'
         self.assertEqual(res['Content-Type'],'text/html; charset=utf-8')
-        #print 'Going to check if kl is save'
+        print 'Going to check if kl is save'
         kl = student.kiluat_set.all()[0]
         self.assertEqual(kl.dia_diem,u'TB')
         self.assertEqual(kl.hinh_thuc,u'Đình chỉ học')
@@ -359,11 +359,11 @@ class KiLuatTest(AddStudentTest):
         self.assertEqual(kls.count(),1)
         kl = kls[0]
         res = self.client.get(reverse('delete_ki_luat',args=[kl.id]))
-        #print 'Going to check response status'
+        print 'Going to check response status'
         self.assertEqual(res.status_code, 302)
-        #print 'Going to check response content type'
+        print 'Going to check response content type'
         self.assertEqual(res['Content-Type'],'text/html; charset=utf-8')
-        #print 'Going to check if kt is delete'
+        print 'Going to check if kt is delete'
         num_kl = student.kiluat_set.count()
         self.assertEqual(num_kl,0)
 
