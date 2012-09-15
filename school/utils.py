@@ -282,15 +282,16 @@ def add_student( student = None, index = 0, start_year = None , year = None,
         ban = student['ban_dk']
     else: ban = None
     find = start_year.pupil_set.filter( first_name__exact = first_name)\
-    .filter(last_name__exact = last_name)\
-    .filter(birthday__exact = birthday)
+            .filter(last_name__exact = last_name)\
+            .filter(birthday__exact = birthday)
     # count primary subjects
+    print find, 'find'
     number_subject = 0
     if _class:
-        number_subject = _class.subject_set.filter( primary = True).count()
+        number_subject = _class.subject_set.filter( primary=True).count()
     if find: # the student exists:
         transaction.commit()
-        return None
+        return False, find[0]
     else:    # the student does not exist
         try:
             st = Pupil()
@@ -314,13 +315,13 @@ def add_student( student = None, index = 0, start_year = None , year = None,
             if 'phone' in student: st.phone = student['phone']
             if 'sms_phone' in student: st.sms_phone = student['sms_phone']
 
-
             if 'sex' in student:
                 st.sex = student['sex']
             else:
                 st.sex = 'Nam'
             user = User()
-            user.username = make_username( first_name = first_name, last_name = last_name, start_year = start_year)
+            user.username = make_username( first_name=first_name,
+                    last_name=last_name, start_year=start_year)
             user.password, raw_password = make_default_password()
             user.first_name = st.first_name
             user.last_name = st.last_name
@@ -374,8 +375,7 @@ def add_student( student = None, index = 0, start_year = None , year = None,
                     tkmon = TKMon(student_id = st, subject_id = subject)
                     tkmon.save()
             transaction.commit()
-            return st
-
+            return True, st
         except Exception as e:
             print e
     #end for student in students

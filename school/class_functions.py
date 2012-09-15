@@ -220,11 +220,12 @@ def viewClassDetail(request, class_id):
                     raise e
 
             elif request.POST[u'request_type'] == u'add' and pos > 3:
-                start_year = StartYear.objects.filter(school_id=school.id).latest('time')
+                start_year = StartYear.objects.filter(school_id=school.id)\
+                        .latest('time')
                 lb = get_lower_bound(school)
                 syear = this_year() - cl.block_id.number + lb
-                start_year, temp = StartYear.objects.get_or_create(time=syear,
-                                                                    school_id = school)
+                start_year, temp = StartYear.objects.get_or_create(
+                        time=syear, school_id = school)
                 data = None
                 try:
                     data = {'first_name': request.POST['first_name'],
@@ -252,22 +253,28 @@ def viewClassDetail(request, class_id):
                     data['birthday'] = birthday
                     _class = Class.objects.get(id=class_id)
                     index = _class.max + 1
-                    student = add_student(student=data, start_year=start_year,
-                        year=get_current_year(request),
-                        _class=_class,
-                        index=index,
-                        term=get_current_term(request),
-                        school=get_school(request),
-                        school_join_date=school_join_date)
-                    temp = os.path.join('school','classDetail_one_student.html')
-                    count = _class.number_of_pupils()
-                    student_detail = render_to_string(temp, {'student':student,
-                                                            'count':count})
-                    message = u'Bạn vừa thêm 1 học sinh'
-                    data = simplejson.dumps({'message': message,
-                                             'success': True,
-                                             'student_detail': student_detail})
-                    return HttpResponse(data, mimetype='json')
+                    added, student = add_student(student=data, start_year=start_year,
+                            year=get_current_year(request),
+                            _class=_class,
+                            index=index,
+                            term=get_current_term(request),
+                            school=get_school(request),
+                            school_join_date=school_join_date)
+                    if not added:
+                            message = u'<li>Học sinh đã tồn tại ở lớp %s</li>'\
+                                    % student.current_class()
+                            data = simplejson.dumps({'message': message})
+                            return HttpResponse(data, mimetype='json')
+                    else:
+                        temp = os.path.join('school','classDetail_one_student.html')
+                        count = _class.number_of_pupils()
+                        student_detail = render_to_string(temp, {'student':student,
+                                                                'count':count})
+                        message = u'Bạn vừa thêm 1 học sinh'
+                        data = simplejson.dumps({'message': message,
+                                                 'success': True,
+                                                 'student_detail': student_detail})
+                        return HttpResponse(data, mimetype='json')
                     #form = PupilForm(school.id)
                 else:
                     message = ''
@@ -275,9 +282,10 @@ def viewClassDetail(request, class_id):
                         birthday = to_date(request.POST['birthday'])
                         if birthday >= date.today():
                             message += u'<li> ' + u'Ngày không hợp lệ' + u'</li>'
-                        find = start_year.pupil_set.filter(first_name__exact=request.POST['first_name'])\
-                        .filter(last_name__exact=request.POST['last_name'])\
-                        .filter(birthday__exact=birthday)
+                        find = start_year.pupil_set.filter(
+                                first_name__exact=request.POST['first_name'])\
+                                .filter(last_name__exact=request.POST['last_name'])\
+                                .filter(birthday__exact=birthday)
                         if find:
                             message += u'<li> ' + u'Học sinh đã tồn tại' + u'</li>'
                     except Exception as e:

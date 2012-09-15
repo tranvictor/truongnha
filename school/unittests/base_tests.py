@@ -295,13 +295,52 @@ class AddStudentTest(SchoolSetupTest):
         self.assertEqual(len(cont),1)
         return True
 
-    def phase10_add_a_student_duplicate(self):
+    def phase10_add_a_student_duplicate_in_same_class(self):
         classes = self.year.class_set.all()
         # get a class
         self.assertEqual(len(classes)>0, True)
         cl = classes[0]
         response = self.client.post(
             reverse('class_detail',args=[cl.id]),
+                {
+                'request_type':u'add',
+                'first_name': u'Nguyễn',
+                'last_name': u'Xuân',
+                'birthday': u'20/3/1995',
+                'sex': u'Nam',
+                'birth_place': u'Ninh Bình',
+                'current_address': u'Tam Điệp',
+                'ban_dk': u'CB',
+                'dan_toc':u'1',
+                'quoc_tich': u'Việt Nam',
+                'mother_name': u'Võ Thị Hương',
+                'father_name': u'Nguyễn Văn An',
+                'sms_phone': u'0987438383'
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        #print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        #print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(len(cont),1)
+        return True
+    def phase10_add_a_student_duplicate_in_other_class(self):
+        classes = self.year.class_set.all()
+        # get a class
+        self.assertEqual(len(classes)>0, True)
+        cl = classes[0]
+        other = None
+        # find another class in the same grade
+        for other in cl.block_id.class_set.all():
+            if other.id != cl.id:
+                cl = other
+                break
+        self.assertEqual(other!=None, True)
+        self.assertEqual(other.block_id, cl.block_id)
+        response = self.client.post(
+            reverse('class_detail',args=[other.id]),
                 {
                 'request_type':u'add',
                 'first_name': u'Nguyễn',
