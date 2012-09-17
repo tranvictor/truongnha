@@ -4,32 +4,37 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://app.truongnha.com/" />
-<title>Delete_class_unsuccessfully</title>
+<title>Delete_group_successfully</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">Delete_class_unsuccessfully</td></tr>
+<tr><td rowspan="1" colspan="3">Delete_group_successfully</td></tr>
 </thead><tbody>
 <tr>
 	<td>open</td>
-	<td>/school/classes</td>
+	<td>/school/teachers</td>
 	<td></td>
 </tr>
 <tr>
+	<td>click</td>
+	<td>css=a.remove-team[data-original-title=Xóa tổ 'Tổ 2']</td>
 	<td></td>
+</tr>
+<tr>
+	<td>assertConfirmation</td>
+	<td>Bạn có muốn xóa tổ này không?</td>
+	<td></td>
+</tr>
+<tr>
+	<td>chooseOkOnNextConfirmation</td>
 	<td></td>
 	<td></td>
 </tr>
 <tr>
-	<td>assertTextPresent</td>
+	<td>waitForTextPresent</td>
 	<td></td>
-	<td>Bạn có chắc chắn muốn xóa?</td>
-</tr>
-<tr>
-	<td>chooseCancelOnNextConfirmation</td>
-	<td></td>
-	<td></td>
+	<td>Đã xóa xong</td>
 </tr>
 </tbody></table>
 </body>
