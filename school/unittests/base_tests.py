@@ -176,7 +176,6 @@ class AddStudentTest(SchoolSetupTest):
         res = self.client.get(reverse('class_detail', args=[cl.id]))
         print 'Going to check response status code'
         self.assertEqual(res.status_code, 200)
-        print res.context
 
     def phase9_add_a_student(self):
         classes = self.year.class_set.all()
@@ -230,6 +229,9 @@ class AddStudentTest(SchoolSetupTest):
         tkmon_num = pupil.tkmon_set.count()
         print 'Check if student have enough TKMon'
         self.assertEqual(tkmon_num, subject_num)
+
+    def phase10_empty_node(self):
+        pass
 
     def phase10_add_a_student_fail_sex(self):
         classes = self.year.class_set.all()

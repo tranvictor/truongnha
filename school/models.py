@@ -921,26 +921,43 @@ class Mark(models.Model):
         return x
 class MarkTime(models.Model):
     
-    mieng_1 = models.DateTimeField("Thời gian cập nhật điểm miệng 1", null = True, blank = True)
-    mieng_2 = models.DateTimeField("Thời gian cập nhật điểm miệng 2", null = True, blank = True)
-    mieng_3 = models.DateTimeField("Thời gian cập nhật điểm miệng 3", null = True, blank = True)
+    mieng_1 = models.DateTimeField("Thời gian cập nhật điểm miệng 1",
+            null=True, blank=True)
+    mieng_2 = models.DateTimeField("Thời gian cập nhật điểm miệng 2",
+            null=True, blank=True)
+    mieng_3 = models.DateTimeField("Thời gian cập nhật điểm miệng 3",
+            null=True, blank=True)
 
-    mieng_4 = models.DateTimeField("Thời gian cập nhật điểm miệng 4", null = True, blank = True)
-    mieng_5 = models.DateTimeField("Thời gian cập nhật điểm miệng 5", null = True, blank = True)
-    mlam_1 = models.DateTimeField("Thời gian cập nhật điểm 15' 1", null = True, blank = True)
-    mlam_2 = models.DateTimeField("Thời gian cập nhật điểm 15' 2", null = True, blank = True)
-    mlam_3 = models.DateTimeField("Thời gian cập nhật điểm 15' 3", null = True, blank = True)
-    mlam_4 = models.DateTimeField("Thời gian cập nhật điểm 15' 4", null = True, blank = True)
-    mlam_5 = models.DateTimeField("Thời gian cập nhật điểm 15' 5", null = True, blank = True)
+    mieng_4 = models.DateTimeField("Thời gian cập nhật điểm miệng 4",
+            null=True, blank=True)
+    mieng_5 = models.DateTimeField("Thời gian cập nhật điểm miệng 5",
+            null=True, blank=True)
+    mlam_1 = models.DateTimeField("Thời gian cập nhật điểm 15' 1",
+            null=True, blank=True)
+    mlam_2 = models.DateTimeField("Thời gian cập nhật điểm 15' 2",
+            null=True, blank=True)
+    mlam_3 = models.DateTimeField("Thời gian cập nhật điểm 15' 3",
+            null=True, blank=True)
+    mlam_4 = models.DateTimeField("Thời gian cập nhật điểm 15' 4",
+            null=True, blank=True)
+    mlam_5 = models.DateTimeField("Thời gian cập nhật điểm 15' 5",
+            null=True, blank=True)
     
-    mot_tiet_1 = models.DateTimeField("Thời gian cập nhật điểm 1 tiết 1", null = True, blank = True)
-    mot_tiet_2 = models.DateTimeField("Thời gian cập nhật điểm 1 tiết 2", null = True, blank = True)
-    mot_tiet_3 = models.DateTimeField("Thời gian cập nhật điểm 1 tiết 3", null = True, blank = True)
-    mot_tiet_4 = models.DateTimeField("Thời gian cập nhật điểm 1 tiết 4", null = True, blank = True)
-    mot_tiet_5 = models.DateTimeField("Thời gian cập nhật điểm 1 tiết 5", null = True, blank = True)
+    mot_tiet_1 = models.DateTimeField("Thời gian cập nhật điểm 1 tiết 1",
+            null=True, blank=True)
+    mot_tiet_2 = models.DateTimeField("Thời gian cập nhật điểm 1 tiết 2",
+            null=True, blank=True)
+    mot_tiet_3 = models.DateTimeField("Thời gian cập nhật điểm 1 tiết 3",
+            null=True, blank=True)
+    mot_tiet_4 = models.DateTimeField("Thời gian cập nhật điểm 1 tiết 4",
+            null=True, blank=True)
+    mot_tiet_5 = models.DateTimeField("Thời gian cập nhật điểm 1 tiết 5",
+            null=True, blank=True)
     
-    ck = models.DateTimeField("Thời gian cập nhật điểm thi cuối kì", null = True, blank = True)
-    tb = models.DateTimeField("Thời gian cập nhật điểm trung bình", null = True, blank = True)
+    ck = models.DateTimeField("Thời gian cập nhật điểm thi cuối kì",
+            null=True, blank=True)
+    tb = models.DateTimeField("Thời gian cập nhật điểm trung bình",
+            null=True, blank=True)
     mark_id = models.OneToOneField(Mark, verbose_name = "Điểm")
     
     class Meta:
@@ -1175,16 +1192,16 @@ class TKDiemDanh(models.Model):
 class TKB(models.Model):
     class_id = models.ForeignKey(Class, verbose_name= "Lớp")
     day = models.SmallIntegerField("Thứ", choices=DAY_CHOICE)
-    period_1 = models.ForeignKey(Subject, related_name="Tiet_1",  null = True)
-    period_2 = models.ForeignKey(Subject, related_name="Tiet_2",  null = True)
-    period_3 = models.ForeignKey(Subject, related_name="Tiet_3",  null = True)
-    period_4 = models.ForeignKey(Subject, related_name="Tiet_4",  null = True)
-    period_5 = models.ForeignKey(Subject, related_name="Tiet_5",  null = True)
-    period_6 = models.ForeignKey(Subject, related_name="Tiet_6",  null = True)
-    period_7 = models.ForeignKey(Subject, related_name="Tiet_7",  null = True)
-    period_8 = models.ForeignKey(Subject, related_name="Tiet_8",  null = True)
-    period_9 = models.ForeignKey(Subject, related_name="Tiet_9",  null = True)
-    period_10 = models.ForeignKey(Subject, related_name="Tiet_10",  null = True)
+    period_1 = models.ForeignKey(Subject, related_name="Tiet_1",  null=True)
+    period_2 = models.ForeignKey(Subject, related_name="Tiet_2",  null=True)
+    period_3 = models.ForeignKey(Subject, related_name="Tiet_3",  null=True)
+    period_4 = models.ForeignKey(Subject, related_name="Tiet_4",  null=True)
+    period_5 = models.ForeignKey(Subject, related_name="Tiet_5",  null=True)
+    period_6 = models.ForeignKey(Subject, related_name="Tiet_6",  null=True)
+    period_7 = models.ForeignKey(Subject, related_name="Tiet_7",  null=True)
+    period_8 = models.ForeignKey(Subject, related_name="Tiet_8",  null=True)
+    period_9 = models.ForeignKey(Subject, related_name="Tiet_9",  null=True)
+    period_10 = models.ForeignKey(Subject, related_name="Tiet_10",  null=True)
     chaoco = models.IntegerField("Tiết chào cơ", null= True)
     sinhhoat= models.IntegerField("Tiết sinh hoạt", null= True)
 
