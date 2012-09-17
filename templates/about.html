@@ -7,12 +7,21 @@
     {% add_crumb 'Liên hệ' %}
 {% endblock %}
 
+{% block css %}
+    <style type="text/css">
+        p {
+            text-align: justify;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
-    <div class="row-fluid text-justify">
-        <div class="span6">
+    <div class="row-fluid ">
+        <div class="span6 ">
             <h3>Giới thiệu</h3>
 
-            <p>Đây là dịch vụ phần mềm hỗ trợ quản lý cho các trường Trung học Cơ sở và Trung học Phổ thông (cấp 2 và cấp 3).
+            <p>Đây là dịch vụ phần mềm hỗ trợ quản lý cho các trường Trung học Cơ sở và Trung học Phổ thông (cấp 2 và
+                cấp 3).
                 Phần mềm phục vụ các đối tượng chính là: Hiệu trưởng, Hiệu phó, Giáo viên, Học sinh, Phụ huynh
                 và Cán bộ cấp Sở, Phòng Giáo dục.</p>
             <ul>
@@ -26,38 +35,53 @@
             </ul>
 
 
-            <h3>Nhóm phát triển</h3>
-            <p>Phần mềm do <a href="http://www.viettel.com.vn">Tập đoàn viễn thông Viettel</a> và
-                <a href="http://www.vnu.edu.vn">Đại học Quốc gia Hà Nội</a> hợp tác phát triển và cung cấp dưới
-                dạng
-                dịch vụ phần mềm. Dự án hình thành từ đề tài nghiên cứu phát triển của <a
-                        href="http://www.dost.hanoi.gov.vn/">Sở Khoa học và Công nghệ Hà Nội</a>.
+            <h3>Công nghệ</h3>
+
+            <p>
+                Phần mềm được xây dựng dựa trên 100% nền tảng mã nguồn mở và được cung cấp dưới dạng dịch vụ phần mềm.
+                Sản
+                phẩm được thiết kế và xây dựng ở qui mô quốc gia, có thể phục vụ các trường trên phạm vi toàn quốc. Sản
+                phẩm
+                sẵn sàng triển khai trên các nền tảng điện toán đám mây.
             </p>
 
-
-            <p>Nhóm nghiên cứu và phát triển chính từ <a href="http://www.uet.vnu.edu.vn">Trường Đại
-                học Công Nghệ - Đại học Quốc Gia Hà Nội</a> gồm
-                <strong>Trần Minh Đức, Lưu Thế Lợi, Lê Thế Lưu và Trần Huy Vũ (Trưởng nhóm)</strong>,
-                dưới sự phụ trách của <a href="http://www.uet.vnu.edu.vn/~hoangta/"> TS. Trương Anh Hoàng</a>.
+            <p>
+                Phần mềm được thiết kế cho cả máy tính bảng, điện thoại cao cấp và hỗ trợ màn hình cảm ứng. Ngoài ra còn
+                có các ứng dụng trên nền Android và iPhone tối ưu hơn cho giáo viên, phụ huynh có thể dễ dàng sử dụng hệ
+                thống.
             </p>
 
-            <p>Sản phẩm cũng được nhiều giáo viên, sinh viên chạy thử và góp ý hoàn thiện hệ thống.</p>
-
-{#            <h3>Điều khoản</h3>#}
-{#            <p> TODO </p>#}
-{##}
         </div>
 
 
         <div class="span6">
+            <h3>Tác giả</h3>
+
+            <p>Phần mềm do một nhóm sinh viên và giảng viên <a href="http://www.uet.vnu.edu.vn">Trường Đại
+                học Công Nghệ - Đại học Quốc Gia Hà Nội</a> phát triển. Các thành viên chính gồm:
+                <strong>Trần Minh Đức, Lưu Thế Lợi, Lê Thế Lưu và Trần Huy Vũ (Trưởng nhóm)</strong>,
+                dưới sự phụ trách của <a href="http://www.uet.vnu.edu.vn/~hoangta/"> TS. Trương Anh Hoàng</a>.
+
+                Phần mềm được hoàn thành với sự trợ giúp của nhiều sinh viên, học viên, và giáo viên cấp hai, cấp ba đã
+                sử dụng thử nghiệm và góp ý hoàn thiện sản phẩm.
+            </p>
+
+            <p>Sản phẩm được hình thành từ đề tài nghiên cứu phát triển do <a
+                    href="http://www.dost.hanoi.gov.vn/">Sở Khoa học và Công nghệ Hà Nội</a> hỗ trợ
+                và được <a href="http://www.viettel.com.vn">Tập đoàn Viễn thông Quân đội - Viettel</a> tài trợ trong
+                chương trình hợp tác với
+                <a href="http://www.vnu.edu.vn">Đại học Quốc gia Hà Nội</a>.
+            </p>
+
             <h3>Liên hệ</h3>
 
-            <p>Xin có thể gửi email cho chúng tôi qua hòm thư: <a
+            <p>Xin gửi email cho chúng tôi qua hòm thư: <a
                     href="mailto:contact@truongnha.com">contact@truongnha.com</a>.
             </p>
 
 
-            <p>Liên hệ qua Google+:</p>
+            <p>Liên hệ qua mạng xã hội:</p>
+
             <div class="g-plusone"></div>
 
             <!-- Place this tag after the last +1 button tag. -->
@@ -74,26 +98,25 @@
                 })();
             </script>
 
-            <p>Để lại góp ý của bạn trên Facebook:
-                {#                <i class="icon-large icon-google-plus"></i>,#}
-                <!-- Place this tag where you want the +1 button to render. -->
-
-
-            <div id="fb-root"></div>
-            <script>(function (d, s, id) {
-                var js, fjs = d.getElementsByTagName(s)[0];
-                if (d.getElementById(id)) return;
-                js = d.createElement(s);
-                js.id = id;
-                js.src = "//connect.facebook.net/vi_VN/all.js#xfbml=1";
-                fjs.parentNode.insertBefore(js, fjs);
-            }(document, 'script', 'facebook-jssdk'));
-            </script>
-            <div class="fb-comments" data-href="http://truongnha.com/" data-num-posts="5" data-width="400"></div>
-
+            {#            <p>Để lại góp ý của bạn trên Facebook:#}
+            {#                <i class="icon-large icon-google-plus"></i>,#}
+            {#                <!-- Place this tag where you want the +1 button to render. -->#}
+            {##}
+            {##}
+            {#            <div id="fb-root"></div>#}
+            {#            <script>(function (d, s, id) {#}
+            {#                var js, fjs = d.getElementsByTagName(s)[0];#}
+            {#                if (d.getElementById(id)) return;#}
+            {#                js = d.createElement(s);#}
+            {#                js.id = id;#}
+            {#                js.src = "//connect.facebook.net/vi_VN/all.js#xfbml=1";#}
+            {#                fjs.parentNode.insertBefore(js, fjs);#}
+            {#            }(document, 'script', 'facebook-jssdk'));#}
+            {#            </script>#}
+            {#            <div class="fb-comments" data-href="http://truongnha.com/" data-num-posts="5" data-width="400"></div>#}
             {#            <i class="icon-large icon-twitter"></i>#}
             {#            .#}
-            </p>
+            {#            </p>#}
 
         </div>
     </div>
