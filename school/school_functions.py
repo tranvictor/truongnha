@@ -356,7 +356,7 @@ def teachers(request):
                     except ObjectDoesNotExist:
                         group = school_groups.get(id=request.POST['id'])
                         group.name = request.POST['name'].strip()
-                        if group.name > 30:
+                        if len(group.name) > 30:
                             message = u'Tên quá dài'
                             success = False
                         else:

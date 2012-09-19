@@ -4,6 +4,7 @@ import settings
 import os
 from django.core import mail
 from suds.client import Client
+from celery import task
 
 def to_ascii(string):
     result = ''
@@ -28,6 +29,12 @@ def to_ascii(string):
         result += c
     return result
 
+@task()
+def temp(subject, message, from_addr=None, to_addr=[]):
+    mail.send_mail(settings.EMAIL_SUBJECT_PREFIX + subject,
+            message,
+            settings.EMAIL_HOST_USER,
+            to_addr)
 
 def send_email(subject, message, from_addr=None, to_addr=[]):
     #msg = MIMEText(message.encode('utf-8'), _charset='utf-8')
@@ -42,11 +49,8 @@ def send_email(subject, message, from_addr=None, to_addr=[]):
     #    msg['To'] = to_address
     #    server.sendmail(from_addr, to_address, msg.as_string())
     #server.close()
-    mail.send_mail(settings.EMAIL_SUBJECT_PREFIX + subject,
-            message,
-            settings.EMAIL_HOST_USER,
-            to_addr)
-
+    return temp.delay(subject, message,  from_addr, to_addr)
+    
 def sendSMS(phone, content, user, save_to_db=True):
     phone = checkValidPhoneNumber(phone)
     school = user.userprofile.organization
