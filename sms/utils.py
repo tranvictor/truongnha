@@ -4,7 +4,7 @@ import settings
 import os
 from django.core import mail
 from suds.client import Client
-from celery import task
+#from celery import task
 
 def to_ascii(string):
     result = ''
@@ -29,28 +29,33 @@ def to_ascii(string):
         result += c
     return result
 
-@task()
-def temp(subject, message, from_addr=None, to_addr=[]):
+#@task()
+#def temp(subject, message, from_addr=None, to_addr=[]):
+#    mail.send_mail(settings.EMAIL_SUBJECT_PREFIX + subject,
+#            message,
+#            settings.EMAIL_HOST_USER,
+#            to_addr)
+#
+#def send_email(subject, message, from_addr=None, to_addr=[]):
+#    #msg = MIMEText(message.encode('utf-8'), _charset='utf-8')
+#    #server = smtplib.SMTP('smtp.gmail.com',587) #port 465 or 587
+#    #server.ehlo()
+#    #server.starttls()
+#    #server.ehlo()
+#    #server.login(GMAIL_LOGIN,GMAIL_PASSWORD)
+#    #for to_address in to_addr:
+#    #    msg['Subject'] = subject
+#    #    msg['From'] = from_addr
+#    #    msg['To'] = to_address
+#    #    server.sendmail(from_addr, to_address, msg.as_string())
+#    #server.close()
+#    return temp.delay(subject, message,  from_addr, to_addr)
+def send_email(subject, message, from_addr=None, to_addr=[]):
     mail.send_mail(settings.EMAIL_SUBJECT_PREFIX + subject,
             message,
             settings.EMAIL_HOST_USER,
             to_addr)
 
-def send_email(subject, message, from_addr=None, to_addr=[]):
-    #msg = MIMEText(message.encode('utf-8'), _charset='utf-8')
-    #server = smtplib.SMTP('smtp.gmail.com',587) #port 465 or 587
-    #server.ehlo()
-    #server.starttls()
-    #server.ehlo()
-    #server.login(GMAIL_LOGIN,GMAIL_PASSWORD)
-    #for to_address in to_addr:
-    #    msg['Subject'] = subject
-    #    msg['From'] = from_addr
-    #    msg['To'] = to_address
-    #    server.sendmail(from_addr, to_address, msg.as_string())
-    #server.close()
-    return temp.delay(subject, message,  from_addr, to_addr)
-    
 def sendSMS(phone, content, user, save_to_db=True):
     phone = checkValidPhoneNumber(phone)
     school = user.userprofile.organization

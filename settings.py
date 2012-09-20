@@ -3,9 +3,10 @@
 
 # open path for template folder
 import os
-import djcelery
-djcelery.setup_loader()
-BROKER_URL = 'amqp://guest:guest@localhost:5672/'
+import sys
+#import djcelery
+#djcelery.setup_loader()
+#BROKER_URL = 'amqp://guest:guest@localhost:5672/'
 DEBUG = True
 if os.environ.pop('DJANGO_SETTINGS_TESTING', None):
     IS_TESTING = True
@@ -205,6 +206,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "truongnha_context_processor.truongnha_global_variable",
 )
 
+#sys.path.append(os.getcwd())
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -218,8 +220,8 @@ INSTALLED_APPS = (
     'sms',
     'api',
     'pagination',
-    'djcelery',
-    'south', #for database migration/upgrade
+#    'djcelery',
+#    'south', #for database migration/upgrade
 #    'django_jenkins',
 )
 

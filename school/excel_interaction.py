@@ -1271,6 +1271,10 @@ def teacher_import( request, request_type=''):
                     try:
                         home_cl = year.class_set.get(name=teacher['lop_cn'])
                         home_cl.teacher_id = added_t
+                        cr_home_cl = added_t.current_homeroom_class()
+                        if cr_home_cl:
+                            cr_home_cl.teacher_id = None
+                            cr_home_cl.save()
                         home_cl.save()
                     except ObjectDoesNotExist:
                         pass

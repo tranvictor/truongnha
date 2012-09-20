@@ -1,6 +1,6 @@
 # coding=utf-8
 import os
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.core.urlresolvers import reverse
 from django.template import loader
 from django.template.context import RequestContext
@@ -745,6 +745,8 @@ def classes(request):
                     tc = cyear.class_set.get(teacher_id__exact=teacher)
                 except ObjectDoesNotExist as e:
                     print e, 'caught'
+                except MultipleObjectsReturned as e:
+                    tc = True
             if not tc:
                 try:
                     c.teacher_id = teacher
