@@ -27,10 +27,7 @@ function focusCell(cell)
 }
 function returnMove()
 {
-	if ($("[name=nextcell]:checked").val()=='move-right')
-		return 0
-	else 
-		return 1;
+	return move;
 }
 function direction(cell,valueOfMove)
 {
@@ -418,6 +415,15 @@ function controlDirection(cell,event)
 		});
 		$("#markTable").delegate('th[id^="col_"]',"click",function(){
 			checkCol(this);
+		});
+		$("#nextcell").click(function(){
+			if (move == 1){ 
+				$("#textNextcell").text("Nhập điểm theo cột");
+			}	
+			else{	
+				$("#textNextcell").text("Nhập điểm theo hàng");
+			}	
+			move = 1 - move;
 		});
 		var time2 = new Date().getTime();
 		console.log(time2-time1);	

@@ -61,22 +61,18 @@
 			
         {% if enableChangeMark %}
 				<li>
-				<label>
-					<span title="Chuyển sang CỘT tiếp theo bằng {enter} hoặc {tab}">
-						<input type="radio" name="nextcell" id="move-right" value="move-right">
-						Nhập theo chiều ngang
+					<a  id = "nextcell" 	
+					 title="Chuyển sang ô tiếp theo bằng {enter} hoặc {tab}" >
+                    <i class="icon-move"></i>					 
+					<span id="textNextcell">	
+					{% if move == '0' %}
+						Nhập điểm theo cột
+					{% else %}	
+						Nhập điểm theo hàng 
+					{% endif %}	
 					</span>
-				</label>
-				</li>	
-				
-				<li>
-					<label>
-					<span title="Chuyển sang HÀNG tiếp theo bằng {enter} hoặc {tab}"> 
-						<input type="radio" name="nextcell" id="move-down" value="move-down" checked> 
-							Nhập theo chiều dọc 
-					</span>		
-					</label>
-				</li>	
+					</a>	
+				</li>					
 			</ul>
 			<label> &nbsp;&nbsp; </label> 
             <label>
@@ -95,10 +91,6 @@
         {% endif %}
     </div>
 </div>
-<script>
-    m = document.getElementById("{{nextcell}}")
-    if (m) m.checked = true;
-</script>
 <div id="editWindow" class="popup-windows">
     <section style="width: 350px; padding: 3px; float: right; background-color: #f5f5f5; margin-top: 0;">
         <div class="mainSMS">

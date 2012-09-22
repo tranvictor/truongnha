@@ -38,7 +38,7 @@
     <script language="JavaScript" type="text/javascript">
         function submitSubject() {
             if ($("#subject").val() != -1)
-                if ($("[name=nextcell]").val() && ($("[name=nextcell]").val() == 'move-right'))
+                if (move == 0 )
                     window.location.href = "/school/markTable/" + {{termChoice}} +"/" + {{classChoice}} +"/" + $("#subject").val() + "/0";
                 else
                     window.location.href = "/school/markTable/" + {{termChoice}} +"/" + {{classChoice}} +"/" + $("#subject").val();
@@ -46,7 +46,7 @@
 
         function submitSubject1() {
             if ($("#subject").val() != -1)
-                if ($("[name=nextcell]").val() && ($("[name=nextcell]").val() == 'move-right'))
+                if (move == 0)
                     window.location.href = "/school/markForTeacher/" + {{type}} +"/" + {{termChoice}} +"/" + $("#subject").val() + "/0";
                 else
                     window.location.href = "/school/markForTeacher/" + {{type}} +"/" + {{termChoice}} +"/" + $("#subject").val();

@@ -84,6 +84,11 @@ var primary = "{{selectedSubject.primary}}";
 var idUser = {{ user.id}};
 var termChoice = {{ termChoice }};
 var subjectChoice = {{ subjectChoice }};
+if ("{{move}}" == "0")
+	var	move = 0;
+else	
+var move = 1 ;
+
 for(var i=1;i<length;i++)
 {	
 	oldAr[i]      = new Array(SIZE);
