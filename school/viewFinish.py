@@ -1,13 +1,13 @@
 ﻿# author: luulethe@gmail.com 
 
 # -*- coding: utf-8 -*-
+import time
 import datetime
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader
 from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.utils import simplejson
-import time
 import os.path
 from school.models import TBNam, TBHocKy, TKDiemDanh, Class, Term, DiemDanh, Subject, Mark, Year, TKMon, Pupil
 from decorators import need_login
@@ -83,7 +83,7 @@ def finish(request, active_term=0, term_number=None, year_number=None,is_calcula
     list.append((number_finish_learning3,number_finish_practising3,number_finish_title3,not_finish_learning3,not_finish_practising3,not_finish_all3))
     school = get_school(request)
     grades = school.block_set.all()
-    cy_time = datetime.now().year
+    cy_time = datetime.datetime.now().year
     t = loader.get_template(os.path.join('school/finish','finish.html'))
     c = RequestContext(request, {'message':message,
                                  'current_term':current_term,
