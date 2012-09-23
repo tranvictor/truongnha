@@ -66,13 +66,13 @@ function selectAllToSend() {
         document.getElementById(name).checked = true;
     }
 
-    for (var i = 1; i < SIZE + 2; i++) {
+    for (var i = 1; i < SIZE + 5; i++) {
         var name = "colCheckbox" + i;
         if (document.getElementById(name))
             document.getElementById(name).checked = true;
 
-        if (table.rows[2].cells[i - 1])
-            table.rows[2].cells[i - 1].className = "selected";
+        if ((table.rows[2].cells[i-1]) && (i!= 3 && i!=4 && (i!=5)))
+            table.rows[2].cells[i-1].className = "selected";
     }
     document.getElementById("checkAllRow").checked = true;
 }
@@ -98,11 +98,11 @@ function cancelAll() {
         var name = "rowCheckbox" + i;
         document.getElementById(name).checked = false;
     }
-    for (var i = 1; i < SIZE + 2; i++) {
+    for (var i = 1; i < SIZE + 5; i++) {
         var name = "colCheckbox" + i;
         if (document.getElementById(name))
             document.getElementById(name).checked = false;
-        if (table.rows[2].cells[i - 1])
+        if ((table.rows[2].cells[i-1]) && (i!= 3 && i!=4 && (i!=5)))
             table.rows[2].cells[i - 1].className = "";
     }
     document.getElementById("checkAllRow").checked = false;
@@ -246,23 +246,23 @@ function select(tb) {
     }
 }
 function checkCol(tb, rowIndex) {
-    console.log("chao");
     if (activeMode == 0) return;
     var rowIndex = tb.parentElement.rowIndex;
     if (rowIndex == 1)
         var number = tb.cellIndex + 1;
     else
-        var number = tb.cellIndex - 1;
+        var number = tb.cellIndex - 4;
+			
     var boxName = "colCheckbox" + number;
 
     var temp = document.getElementById(boxName)
 
     if (tb.className == "selected") {
-        table.rows[2].cells[number + 1].className = "";
+        table.rows[2].cells[number + 4].className = "";
         temp.checked = false;
     }
     else {
-        table.rows[2].cells[number + 1].className = "selected";
+        table.rows[2].cells[number + 4].className = "selected";
         temp.checked = true;
     }
 

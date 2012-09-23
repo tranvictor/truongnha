@@ -134,7 +134,7 @@ function isEmptyCol(colIndex,excepCol)
 function setDisplayCol(colIndex,value)
 {
 	table.rows[1].cells[colIndex-5].style.display=value;
-	table.rows[2].cells[colIndex-3].style.display=value;
+	table.rows[2].cells[colIndex].style.display=value;
 	for(var i=1;i<length;i++)	
 		table.rows[i+2].cells[colIndex].style.display=value;	
 }
