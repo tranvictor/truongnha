@@ -4,14 +4,12 @@
 # open path for template folder
 import os
 import sys
-#import djcelery
-#djcelery.setup_loader()
-#BROKER_URL = 'amqp://guest:guest@localhost:5672/'
 DEBUG = True
 if os.environ.pop('DJANGO_SETTINGS_TESTING', None):
     IS_TESTING = True
 else:
     IS_TESTING = False
+
 TEMPLATE_DEBUG = True
 
 VERSION = '0.9.9'
@@ -23,13 +21,6 @@ ADMINS = (
 MANAGERS = ADMINS
 if IS_TESTING:
     DATABASES = {
-    #    'default': {
-    #        'ENGINE': 'django.db.backends.mysql',
-    #        'NAME': 'freeschool',
-    #        'USER': 'freeschool',
-    #        'PASSWORD':'freeschool',
-    #        'OPTIONS': { 'init_command': 'SET storage_engine=INNODB',},
-    #    },
        'default': {
            'ENGINE': 'django.db.backends.sqlite3', 
            'NAME': os.path.join(os.path.dirname(__file__), 'sqlite3.db'), 
@@ -48,14 +39,6 @@ else:
             'PASSWORD':'freeschool',
             'OPTIONS': { 'init_command': 'SET storage_engine=INNODB',},
         },
-    #   'default': {
-    #       'ENGINE': 'django.db.backends.sqlite3', 
-    #       'NAME': os.path.join(os.path.dirname(__file__), 'sqlite3.db'), 
-    #       'USER': '', # Not used with sqlite3.
-    #       'PASSWORD': '', # Not used with sqlite3.
-    #       'HOST': '', # Set to empty string for localhost. Not used with sqlite3.
-    #       'PORT': '', # Set to empty string for default. Not used with sqlite3.
-    #   },
     }
 STATIC_PORT = 8080
 STOMP_PORT = 9000
@@ -206,7 +189,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "truongnha_context_processor.truongnha_global_variable",
 )
 
-#sys.path.append(os.getcwd())
+sys.path.append(os.getcwd())
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -220,7 +203,7 @@ INSTALLED_APPS = (
     'sms',
     'api',
     'pagination',
-#    'djcelery',
+    'djcelery',
 #    'south', #for database migration/upgrade
 #    'django_jenkins',
 )
@@ -231,6 +214,13 @@ STATICFILES_FINDERS = (
     # other finders..
     #'compressor.finders.CompressorFinder',
 )
+
+# Celery configuration
+if not DEBUG:
+    import djcelery
+    djcelery.setup_loader()
+    BROKER_URL = 'amqp://guest@localhost//'
+    CELERY_IMPORTS = ("sms.utils", )
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
