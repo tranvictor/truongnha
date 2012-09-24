@@ -3,7 +3,7 @@
 {% block breadcrumb %}
     {{ block.super }}
     {% load breadcrumb_tags %}
-    {% add_crumb 'Thiết lập thông số nhà trường' %}
+    {% add_crumb 'Thông tin nhà trường' %}
 {% endblock %}
 
 {% block content %}
@@ -32,7 +32,6 @@
                         $("#id_lock_time").parents("td").append(json.lock_time);
                         $("#notify").showNotification(json.message);
                     }
-
                 };
 
                 $("#submit").click(function () {

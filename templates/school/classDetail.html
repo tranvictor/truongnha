@@ -59,7 +59,7 @@
             {% endif %}
         </div>
 
-        <div class="btn-group ">
+        <div class="btn-group">
             {% if pos > 1 or inClass == 1 %}
                 <a title="Xem tất cả thông tin của của môn học trong lớp" class="btn "
                    href="{%url subject_per_class class.id  %}">
@@ -74,17 +74,17 @@
         {% if pos > 3 or gvcn == 1 or user.userprofile.organization.level == 'S' %}
             <div class="btn-group ">
                 {% ifequal class.year_id.school_id.status 1 %}
-                    <a title="Tính trung bình học lực của cả lớp" class="btn "
+                    <a title="Tính trung bình học lực của cả lớp" class="btn"
                        href="{%url xep_loai_hl_theo_lop class.id 1 %}">
                         Tổng kết </a>
                 {% else %}
-                    <a title="Tính trung bình học lực của cả lớp" class="btn "
+                    <a title="Tính trung bình học lực của cả lớp" class="btn"
                        href="{%url xep_loai_hl_theo_lop class.id 2 %}">
                         Tổng kết </a>
                 {% endifequal %}
 
                 <a title=" Xem xếp loại, lên lớp, ở lại lớp, kiểm tra lại, rèn luyện thêm trong hè"
-                   class="btn "
+                   class="btn"
                    href="{%url xl_ca_nam_theo_lop class.id 1 %}">
                     Xếp loại</a>
             </div>
@@ -93,7 +93,7 @@
 
 
         {% if pos == 3 and gvcn == 1 %}
-            <div class="btn-group ">
+            <div class="btn-group">
                 <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                     Phiếu/Sổ điểm
                     <span class="caret"></span>
@@ -119,7 +119,7 @@
 
         {% if pos > 3 or gvcn == 1 %}
             <div class="pull-right">
-                <div class="btn-group ">
+                <div class="btn-group">
                     <a class="btn"
                        title="Nhắn tin kết quả học tập"
                        href="/school/sendSMSResult/{{class.id}}">
@@ -135,8 +135,8 @@
                     {% endif %}
                 </div>
 
-                <div class="btn-group ">
-                    <a class="btn dropdown-toggle " data-toggle="dropdown" href="#">
+                <div class="btn-group">
+                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                         Chỉnh
                         <span class="caret"></span>
                     </a>
@@ -562,7 +562,7 @@
                         <button id="send" class="btn btn-danger" disabled="disabled"><i class="icon-envelope-alt"></i>
                             Gửi tin nhắn
                         </button>
-                        <button id="smsClose" class="btn ">Thôi</button>
+                        <button id="smsClose" class="btn">Thôi</button>
                     </td>
                 </tr>
 

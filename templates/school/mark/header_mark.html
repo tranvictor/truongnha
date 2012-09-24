@@ -8,10 +8,10 @@
 <div id="submenu" class="btn-toolbar">
     <div class="btn-group">
         <button onclick="showMessageTable(1);" class="btn btn-info pull-right" id="show_SMS_buttons">
-            Nhắn tin <i class=" icon-chevron-right"></i></button>
+            Nhắn tin <i class="icon-chevron-right"></i></button>
         <span style="display:none" id="hide_SMS_buttons">
                 <button onclick="showMessageTable(0);" class="btn btn-info">
-                    <i class=" icon-chevron-left"></i>
+                    <i class="icon-chevron-left"></i>
                     {% if enableChangeMark %}
                         Nhập điểm
                     {% else %}
@@ -19,11 +19,11 @@
                     {% endif %}
                 </button>
                 <button onclick="selectNoSent()" class="btn btn-success sms-toolbar">
-                    <i class=" icon-check"></i>
+                    <i class="icon-check"></i>
                     Chọn điểm chưa nhắn
                 </button>
                 <button onclick="sendSMS()" class="btn btn-warning sms-toolbar">
-                    <i class=" icon-envelope"></i>
+                    <i class="icon-envelope"></i>
                     Gửi tin nhắn
                 </button>
         </span>
@@ -31,8 +31,8 @@
 
     <div class="form-inline pull-right">
         {% if enableChangeMark %}
-            <div class="btn-group ">		
-			<a class="btn dropdown-toggle " data-toggle="dropdown" href="#">
+            <div class="btn-group">
+			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
 				Khác
 				<span class="caret"></span>
 			</a>
@@ -66,9 +66,9 @@
                     <i class="icon-move"></i>					 
 					<span id="textNextcell">	
 					{% if move == '0' %}
-						Nhập điểm theo cột
+						Nhập theo cột
 					{% else %}	
-						Nhập điểm theo hàng 
+						Nhập theo hàng
 					{% endif %}	
 					</span>
 					</a>	
@@ -112,7 +112,7 @@
                         <button id="saveNote" class="btn btn-primary">
                             Lưu
                         </button>
-                        <button id="editClose" class="btn ">
+                        <button id="editClose" class="btn">
                             Thôi
                         </button>
                     </td>
