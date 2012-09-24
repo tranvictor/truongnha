@@ -10,3 +10,5 @@ xlwt==0.7.4
 recaptcha-client==1.0.6
 djangorestframework==0.3.3
 simplejson
+rabbitmq-server
+django-celery

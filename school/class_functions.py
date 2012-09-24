@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
 from django.utils import simplejson
 from django.shortcuts import render_to_response
-from sms.utils import sendSMS, send_email
+from sms.utils import sendSMS, send_email, send_SMS_then_email
 from decorators import need_login, school_function, operating_permission
 from school.utils import get_position, gvcn, inClass, in_school,\
         get_student, get_current_term, get_school, get_current_year,\
@@ -176,38 +176,47 @@ def viewClassDetail(request, class_id):
                     number_of_failed = 0
                     number_of_email_sent = 0
                     for student in students:
-                        sms_sent = False
                         if student.sms_phone:
                             try:
                                 if include_name == 'true':
-                                    if sendSMS( student.sms_phone,
-                                        to_en1('Em ' + student.last_name + ' ' + student.first_name + ' ' + content),
-                                        user) == '1':
-                                        number_of_sent += 1
-                                        sms_sent = True
-                                    else:
-                                        number_of_failed += 1
+                                    smsed, emailed = send_SMS_then_email(
+                                                student.sms_phone,
+                                                to_en1('Em ' + student.last_name +\
+                                                        ' ' + student.first_name +\
+                                                        ' ' + content),
+                                                user,
+                                                True,
+                                                u'Trường Nhà thông báo',
+                                                content,
+                                                to_addr=[student.email]) 
                                 else:
-                                    if sendSMS(student.sms_phone,
-                                            to_en1(content),
-                                            user) == '1':
-                                        number_of_sent += 1
-                                        sms_sent = True
-                                    else:
-                                        number_of_failed += 1
-                                
+                                    smsed, emailed = send_SMS_then_email(
+                                                student.sms_phone,
+                                                to_en1(content),
+                                                user,
+                                                True,
+                                                u'Trường Nhà thông báo',
+                                                content,
+                                                to_addr=[student.email]) 
+
+                                if emailed:
+                                        number_of_email_sent += 1
+                                if smsed:
+                                        number_of_sent += 1 
+
                             except Exception:
                                 number_of_failed += 1
                         else:
                             number_of_blank += 1
-                        if not sms_sent and student.email:
-                            try:
-                                send_email(u'Trường Nhà thông báo',
+                            if student.email:
+                                try:
+                                    emailed = send_email(
+                                            u'Trường Nhà thông báo',
                                             content,
                                             to_addr=[student.email])
-                                number_of_email_sent += 1
-                            except Exception as e:
-                                pass
+                                    number_of_email_sent += 1
+                                except Exception:
+                                    pass
                     data = simplejson.dumps({
                         'number_of_sent': number_of_sent,
                         'number_of_blank': number_of_blank,
