@@ -179,8 +179,16 @@ def viewClassDetail(request, class_id):
                     for student in students:
                         if student.sms_phone:
                             try:
+
+                                print checkValidPhoneNumber(student.sms_phone)
+                                if checkValidPhoneNumber(student.sms_phone):
+                                        number_of_sent += 1 
+                                else:
+                                    if student.email:
+                                            number_of_email_sent += 1
+
                                 if include_name == 'true':
-                                    smsed, emailed = send_SMS_then_email(
+                                    temp = send_SMS_then_email(
                                                 student.sms_phone,
                                                 to_en1('Em ' + student.last_name +\
                                                         ' ' + student.first_name +\
@@ -191,7 +199,7 @@ def viewClassDetail(request, class_id):
                                                 content,
                                                 to_addr=[student.email]) 
                                 else:
-                                    smsed, emailed = send_SMS_then_email(
+                                    temp = send_SMS_then_email(
                                                 student.sms_phone,
                                                 to_en1(content),
                                                 user,
@@ -200,13 +208,9 @@ def viewClassDetail(request, class_id):
                                                 content,
                                                 to_addr=[student.email]) 
 
-                                if checkValidPhoneNumber(student.sms_phone):
-                                        number_of_sent += 1 
-                                else:
-                                    if student.email:
-                                            number_of_email_sent += 1
-
-                            except Exception:
+                                
+                            except Exception as e:
+                                print e
                                 number_of_failed += 1
                         else:
                             number_of_blank += 1
