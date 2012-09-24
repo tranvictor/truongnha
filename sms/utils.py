@@ -137,11 +137,17 @@ def send_SMS_then_email(phone, content, user, save_to_db=True,
         temp =  task_send_SMS_then_email.delay(
                     phone, content, user, save_to_db,
                     subject, message, from_addr, to_addr)
-        return temp
+        return temp.get()
     else:
         smsed = sendSMS(phone, content, user, save_to_db)
         if smsed != '1':
-            send_email(subject, message, from_addr, to_addr)
+            if to_addr and to_addr[0]:
+                send_email(subject, message, from_addr, to_addr)
+                return False, True
+            else:
+                return False, False
+        else:
+            return True, False
 
 def checkValidPhoneNumber(phone):
     if not int(phone[0]):

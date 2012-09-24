@@ -10,8 +10,7 @@ from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
 from django.utils import simplejson
 from django.shortcuts import render_to_response
-from sms.utils import sendSMS, send_email, send_SMS_then_email,\
-        checkValidPhoneNumber
+from sms.utils import sendSMS, send_email, send_SMS_then_email
 from decorators import need_login, school_function, operating_permission
 from school.utils import get_position, gvcn, inClass, in_school,\
         get_student, get_current_term, get_school, get_current_year,\
@@ -179,38 +178,32 @@ def viewClassDetail(request, class_id):
                     for student in students:
                         if student.sms_phone:
                             try:
-
-                                print checkValidPhoneNumber(student.sms_phone)
-                                if checkValidPhoneNumber(student.sms_phone):
-                                        number_of_sent += 1 
-                                else:
-                                    if student.email:
-                                            number_of_email_sent += 1
-
                                 if include_name == 'true':
-                                    temp = send_SMS_then_email(
-                                                student.sms_phone,
-                                                to_en1('Em ' + student.last_name +\
-                                                        ' ' + student.first_name +\
-                                                        ' ' + content),
-                                                user,
-                                                True,
-                                                u'Trường Nhà thông báo',
-                                                content,
-                                                to_addr=[student.email]) 
+                                    smsed, emailed = send_SMS_then_email(
+                                                    student.sms_phone,
+                                                    to_en1('Em ' + student.last_name +\
+                                                            ' ' + student.first_name +\
+                                                            ' ' + content),
+                                                    user,
+                                                    True,
+                                                    u'Trường Nhà thông báo',
+                                                    content,
+                                                    to_addr=[student.email]) 
                                 else:
-                                    temp = send_SMS_then_email(
-                                                student.sms_phone,
-                                                to_en1(content),
-                                                user,
-                                                True,
-                                                u'Trường Nhà thông báo',
-                                                content,
-                                                to_addr=[student.email]) 
+                                    smsed, emailed = send_SMS_then_email(
+                                                    student.sms_phone,
+                                                    to_en1(content),
+                                                    user,
+                                                    True,
+                                                    u'Trường Nhà thông báo',
+                                                    content,
+                                                    to_addr=[student.email]) 
 
-                                
+                                if smsed:
+                                    number_of_sent += 1
+                                if emailed:
+                                    number_of_email_sent += 1
                             except Exception as e:
-                                print e
                                 number_of_failed += 1
                         else:
                             number_of_blank += 1
