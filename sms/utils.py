@@ -2,6 +2,7 @@
 from models import sms
 import settings
 import os
+import re
 from django.core import mail
 from suds.client import Client
 
@@ -149,17 +150,43 @@ def send_SMS_then_email(phone, content, user, save_to_db=True,
         else:
             return True, False
 
+MOBI_HEAD = ['90', '93', '122', '126', '121', '128', '120']
+VINA_HEAD = ['91', '94', '123', '125', '127']
+VIETTEL_HEAD = ['97', '98', '165', '166', '167', '168', '169']
+EVN_HEAD = ['96', '95']
+VIETNAMMOBILE_HEAD = ['92']
+BEELINE_HEAD = ['199']
+re_phone = re.compile('(84|\+84|0)(90|93|122|126|121|128|120|91|94|123|125|127|97|98|165|166|167|168|169|96|95|92|199)(\d{7})')
+#this function check if phone number is valid or not
+#return: True - valid, False - invalid
+def regc(phone):
+    return re_phone.match(phone)
+
 def checkValidPhoneNumber(phone):
-    if not int(phone[0]):
-        phone = '84' + phone[1:]
-        return phone
-    elif phone[:2] != '84':
-        return None
+    temp = regc(phone)
+    if not temp: return None
+    gr = temp.groups()
+    if gr[0] == '0':
+        return '%s%s' % ('84', ''.join(gr[1:]))
     else:
-        return phone
+        return ''.join(gr)
+
+def get_tsp(phone):
+    temp = regc(phone)
+    if not temp: return None
+    head = temp.groups()[1]
+    if head in VIETTEL_HEAD: return 'VIETTEL'
+    if head in MOBI_HEAD: return 'MOBI'
+    if head in VINA_HEAD: return 'VINA'
+    if head in EVN_HEAD: return 'EVN'
+    if head in VIETNAMMOBILE_HEAD: return 'VIETNAMMOBILE'
+    if head in BEELINE_HEAD: return 'BEELINE'
+    return None
 
 def save_file(file):
-    saved_file = open(os.path.join(settings.TEMP_FILE_LOCATION, 'sms_input.xls'), 'wb+')
+    saved_file = open(os.path.join(settings.TEMP_FILE_LOCATION,
+        'sms_input.xls'),
+        'wb+')
     for chunk in file.chunks():
         saved_file.write(chunk)
     saved_file.close()
