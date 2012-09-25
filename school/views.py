@@ -1390,10 +1390,18 @@ def ssv(request,school_id):
         return render_to_response(os.path.join('school','soerror.html'))
     grades = school.block_set.all()
     classes = year.class_set.order_by('name')
+
+    if currentTerm.number == 3:
+        selected_term = Term.objects.get(year_id=currentTerm.year_id, number=2)
+    else:
+        selected_term = currentTerm
+
     context = RequestContext(request)
     return render_to_response(SCHOOL, {'classes': classes,
                                        'grades': grades,
-                                       'currentTerm':currentTerm}, context_instance=context)
+                                       'currentTerm':currentTerm,
+                                       'selected_term':selected_term,
+    }, context_instance=context)
 
 @need_login
 def school_subject_agenda(request, subject = 1, grade = 6, term = 1):
