@@ -140,7 +140,10 @@ def send_SMS_then_email(phone, content, user, save_to_db=True,
                     subject, message, from_addr, to_addr)
         return temp.get()
     else:
-        smsed = sendSMS(phone, content, user, save_to_db)
+        try:
+            smsed = sendSMS(phone, content, user, save_to_db)
+        except Exception:
+            smsed = None
         if smsed != '1':
             if to_addr and to_addr[0]:
                 send_email(subject, message, from_addr, to_addr)
