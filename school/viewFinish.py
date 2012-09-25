@@ -134,7 +134,7 @@ def calculateOverallMarkTerm(class_id,termNumber):
     
     selectedClass= Class.objects.get(id=class_id)
     selectedTerm = Term.objects.get(year_id=selectedClass.year_id,number=termNumber)
-    ddhkList    = TKDiemDanh.objects.filter(student_id__classes=class_id,term_id=selectedTerm,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
+    ddhkList    = TKDiemDanh.objects.filter(student_id__classes=class_id,term_id=selectedTerm,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday').distinct()
     for ddhk in ddhkList:        
         ddhk.co_phep = DiemDanh.objects.filter(student_id=ddhk.student_id,term_id=selectedTerm,loai='P').count()
         ddhk.khong_phep = DiemDanh.objects.filter(student_id=ddhk.student_id,term_id=selectedTerm,loai='K').count()
@@ -144,8 +144,8 @@ def calculateOverallMarkTerm(class_id,termNumber):
     pupilNoSum =0
     subjectList = Subject.objects.filter(class_id=class_id,primary__in=[0,termNumber]).order_by('index','name')
     markList = Mark.objects.filter(subject_id__class_id=class_id,term_id=selectedTerm,current=True,subject_id__primary__in=[0,termNumber]).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday','subject_id__index','subject_id__name')
-    tbHocKyList = TBHocKy.objects.filter(student_id__classes=class_id,term_id=selectedTerm,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
-    hkList      = TBNam.objects.filter(year_id=selectedClass.year_id, student_id__classes=class_id,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
+    tbHocKyList = TBHocKy.objects.filter(student_id__classes=class_id,term_id=selectedTerm,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday').distinct()
+    hkList      = TBNam.objects.filter(year_id=selectedClass.year_id, student_id__classes=class_id,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday').distinct()
     length=len(subjectList)
     i=0   
     vtMonChuyen=-1
@@ -288,7 +288,7 @@ def calculateOverallMarkYear(class_id=7):
     pupilNoSum =0
     subjectList= Subject.objects.filter(class_id=class_id,primary__in=[0,1,2]).order_by("index",'name')    
     markList   = TKMon.objects.filter(subject_id__class_id=class_id,subject_id__primary__in=[0,1,2],current=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday','subject_id__index','subject_id__name') 
-    tbNamList  = TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
+    tbNamList  = TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday').distinct()
     #calculateTKMon(class_id)
 
     length = len(subjectList)
@@ -419,7 +419,7 @@ def xepLoaiHlTheoLop(request,class_id,termNumber,isCalculate=0):
 
     message=None
     selectedYear = selectedClass.year_id
-    pupilList = Pupil.objects.filter(classes=class_id,attend__is_member=True).order_by('index','first_name','last_name','birthday')
+    pupilList = Pupil.objects.filter(classes=class_id,attend__is_member=True).order_by('index','first_name','last_name','birthday').distinct()
 
     
     yearString = str(selectedYear.time)+"-"+str(selectedYear.time+1)
@@ -447,8 +447,8 @@ def xepLoaiHlTheoLop(request,class_id,termNumber,isCalculate=0):
         selectedTerm = Term.objects.get(year_id= selectedYear, number=termNumber)
         subjectList=Subject.objects.filter(class_id=class_id,primary__in=[0,termNumber,3,4]).order_by("index",'name')
         markList = Mark.objects.filter(subject_id__class_id=class_id,term_id=selectedTerm,subject_id__primary__in=[0,termNumber,3,4],current=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday','subject_id__index','subject_id__name')
-        tbHocKyList = TBHocKy.objects.filter(student_id__classes=class_id,term_id=selectedTerm,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
-        hkList      = TBNam.objects.filter(year_id=selectedYear, student_id__classes=class_id,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
+        tbHocKyList = TBHocKy.objects.filter(student_id__classes=class_id,term_id=selectedTerm,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday').distinct()
+        hkList      = TBNam.objects.filter(year_id=selectedYear, student_id__classes=class_id,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday').distinct()
         hkList1 = []
 
         if termNumber==1:
@@ -484,7 +484,7 @@ def xepLoaiHlTheoLop(request,class_id,termNumber,isCalculate=0):
         idYear = selectedYear.id
         subjectList=Subject.objects.filter(class_id=class_id).order_by("index",'name')    
         markList   =TKMon.objects.filter(subject_id__class_id=class_id,current=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday','subject_id__index','subject_id__name') 
-        tbNamList = TBNam.objects.filter(year_id=selectedYear, student_id__classes=class_id,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
+        tbNamList = TBNam.objects.filter(year_id=selectedYear, student_id__classes=class_id,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday').distinct()
         length = len(subjectList)
 
         i=0    
@@ -534,9 +534,9 @@ def xepLoaiLop(class_id):
     selected_year = selected_class.year_id
     term1 = Term.objects.get(year_id=selected_year, number=1)
     term2 = Term.objects.get(year_id=selected_year, number=2)
-    tbNamList    =TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
-    ddhk1List    =TKDiemDanh.objects.filter(student_id__classes=class_id, term_id=term1, student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
-    ddhk2List    =TKDiemDanh.objects.filter(student_id__classes=class_id, term_id=term2, student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
+    tbNamList    =TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday').distinct()
+    ddhk1List    =TKDiemDanh.objects.filter(student_id__classes=class_id, term_id=term1, student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday').distinct()
+    ddhk2List    =TKDiemDanh.objects.filter(student_id__classes=class_id, term_id=term2, student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday').distinct()
     #repr(tbNamList)
     noHk=0
     noHl=0
@@ -662,9 +662,9 @@ def xlCaNamTheoLop(request,class_id,type,xepLoai=0):
 
     message=None
     selected_year = selectedClass.year_id
-    pupilNoSum=0
-    pupilList    =Pupil.objects.filter(classes=class_id, attend__is_member=True).order_by('index','first_name','last_name','birthday')
-    tbNamList    =TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
+    pupilNoSum = 0
+    pupilList = Pupil.objects.filter(classes=class_id,attend__is_member=True).order_by('index','first_name','last_name','birthday').distinct()
+    tbNamList = TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday').distinct()
     
     pupilList1=[]
     tbNamList1=[]
@@ -694,13 +694,13 @@ def xlCaNamTheoLop(request,class_id,type,xepLoai=0):
             
     list= zip(pupilList1,tbNamList1)
 
-    number_no_calculated = TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,student_id__attend__is_member=True, len_lop=None, thi_lai=None, ren_luyen_lai=None).count()
-    number_good_title = TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,student_id__attend__is_member=True, danh_hieu_nam='G').count()
-    number_advanced_title = TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,student_id__attend__is_member=True, danh_hieu_nam='TT').count()
-    number_passed = TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,student_id__attend__is_member=True, len_lop=True).count()
-    number_no_passed = TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,student_id__attend__is_member=True, len_lop=False).count()
-    number_exam_again = TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,student_id__attend__is_member=True, thi_lai=True).count()
-    number_practising_again = TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,student_id__attend__is_member=True, ren_luyen_lai=True).count()
+    number_no_calculated = TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,student_id__attend__is_member=True, len_lop=None, thi_lai=None, ren_luyen_lai=None).distinct().count()
+    number_good_title = TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,student_id__attend__is_member=True, danh_hieu_nam='G').distinct().count()
+    number_advanced_title = TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,student_id__attend__is_member=True, danh_hieu_nam='TT').distinct().count()
+    number_passed = TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,student_id__attend__is_member=True, len_lop=True).distinct().count()
+    number_no_passed = TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,student_id__attend__is_member=True, len_lop=False).distinct().count()
+    number_exam_again = TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,student_id__attend__is_member=True, thi_lai=True).distinct().count()
+    number_practising_again = TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,student_id__attend__is_member=True, ren_luyen_lai=True).distinct().count()
 
     #print list
     yearString=str(selectedClass.year_id.time)+"-"+str(selectedClass.year_id.time+1)
@@ -757,20 +757,20 @@ def countDetailTerm(term_id):
     classList=Class.objects.filter(year_id=selectedTerm.year_id)
     
     for c in classList:
-        number = TBHocKy.objects.filter(term_id=term_id,student_id__classes=c.id,hl_hk=None,student_id__attend__is_member=True).count()
+        number = TBHocKy.objects.filter(term_id=term_id,student_id__classes=c.id,hl_hk=None,student_id__attend__is_member=True).distinct().count()
         if number==0:   finishLearning.append(c)
         else        :  notFinishLearning.append([c,number])
 
         if selectedTerm.number==1:        
-            number = TBNam.objects.filter(year_id=selectedTerm.year_id,student_id__classes=c.id,term1=None,student_id__attend__is_member=True).count()
+            number = TBNam.objects.filter(year_id=selectedTerm.year_id,student_id__classes=c.id,term1=None,student_id__attend__is_member=True).distinct().count()
             if number==0:  finishPractising.append(c)
             else        :  notFinishPractising.append([c,number])
         else:
-            number = TBNam.objects.filter(year_id=selectedTerm.year_id,student_id__classes=c.id,term2=None,student_id__attend__is_member=True).count()
+            number = TBNam.objects.filter(year_id=selectedTerm.year_id,student_id__classes=c.id,term2=None,student_id__attend__is_member=True).distinct().count()
             if number==0:  finishPractising.append(c)
             else        :  notFinishPractising.append([c,number])
                 
-        number = TBHocKy.objects.filter(term_id=term_id,student_id__classes=c.id,danh_hieu_hk=None,student_id__attend__is_member=True).count()
+        number = TBHocKy.objects.filter(term_id=term_id,student_id__classes=c.id,danh_hieu_hk=None,student_id__attend__is_member=True).distinct().count()
         if number==0:  finishAll.append(c)
         else        :  notFinishAll.append([c,number])
     return  finishLearning,notFinishLearning,finishPractising,notFinishPractising,finishAll,notFinishAll       
@@ -855,15 +855,15 @@ def countDetailYear(year_id):
     
     for c in classList:
         
-        number = TBNam.objects.filter(year_id=year_id,student_id__classes=c.id,hl_nam=None,student_id__attend__is_member=True).count()
+        number = TBNam.objects.filter(year_id=year_id,student_id__classes=c.id,hl_nam=None,student_id__attend__is_member=True).distinct().count()
         if number==0:   finishLearning.append(c)
         else        :  notFinishLearning.append([c,number])
         
-        number = TBNam.objects.filter(year_id=year_id,student_id__classes=c.id,year=None,student_id__attend__is_member=True).count()
+        number = TBNam.objects.filter(year_id=year_id,student_id__classes=c.id,year=None,student_id__attend__is_member=True).distinct().count()
         if number==0:  finishPractising.append(c)
         else        :  notFinishPractising.append([c,number])
                 
-        number = TBNam.objects.filter(year_id=year_id,student_id__classes=c.id,danh_hieu_nam=None,student_id__attend__is_member=True).count()
+        number = TBNam.objects.filter(year_id=year_id,student_id__classes=c.id,danh_hieu_nam=None,student_id__attend__is_member=True).distinct().count()
         if number==0:  finishAll.append(c)
         else        :  notFinishAll.append([c,number])
 
@@ -952,7 +952,7 @@ def thilai(request,class_id):
 
     message=None
     selected_year = selectedClass.year_id
-    tbNamList=TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,thi_lai=True,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
+    tbNamList=TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,thi_lai=True,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday').distinct()
     tbMonList=[]
     aTKMonList=[]
     for tbNam in tbNamList:
@@ -1173,7 +1173,7 @@ def renluyenthem(request,class_id):
 
     message=None
     selected_year = selectedClass.year_id
-    hkList=TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,ren_luyen_lai=True,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
+    hkList=TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,ren_luyen_lai=True,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday').distinct()
     
     lengthList = len(hkList)
     if lengthList==0:
@@ -1228,11 +1228,11 @@ def getContentSendSMSResult(class_id,termNumber):
     selected_year = selected_class.year_id
     tempList=[]
     list=[]
-    pupilList     =Pupil.objects.filter(classes=class_id,attend__is_member=True).order_by('index','first_name','last_name','birthday')
+    pupilList = Pupil.objects.filter(classes=class_id,attend__is_member=True).order_by('index','first_name','last_name','birthday').distinct()
     if termNumber<3:
         selected_term = Term.objects.get(year_id=selected_year, number=termNumber)
-        tbHocKyList = TBHocKy.objects.filter(student_id__classes=class_id,term_id=selected_term, student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
-        hkList      = TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
+        tbHocKyList = TBHocKy.objects.filter(student_id__classes=class_id,term_id=selected_term, student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday').distinct()
+        hkList      = TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday').distinct()
         hkList1 =[]
         if termNumber==1:
             for hk in hkList:
@@ -1242,7 +1242,7 @@ def getContentSendSMSResult(class_id,termNumber):
                 hkList1.append(hk.term2)
         list1=zip(pupilList,tbHocKyList,hkList1)
     else:
-        tbNamList = TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
+        tbNamList = TBNam.objects.filter(year_id=selected_year, student_id__classes=class_id,student_id__attend__is_member=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday').distinct()
         list1=zip(pupilList,tbNamList,tbNamList)
 
     contentList=[]
@@ -1293,6 +1293,7 @@ def getContentSendSMSResult(class_id,termNumber):
             i+=1
 
     i=1
+
     for p,tb,hk in list1:
         smsString=''
         markOfAPupil=tempList[i-1]

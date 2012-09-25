@@ -259,11 +259,11 @@ def countPractisingInClassInTerm(class_id,term_id):
     year_id = selectedTerm.year_id
     if selectedTerm.number ==1:
         for i in range(string.__len__()):
-            slList[i]=TBNam.objects.filter(year_id=year_id,student_id__classes=class_id,term1=string[i],student_id__attend__is_member=True).count()
+            slList[i]=TBNam.objects.filter(year_id=year_id,student_id__classes=class_id,term1=string[i],student_id__attend__is_member=True).distinct().count()
             sum+=slList[i]
     else:
         for i in range(string.__len__()):
-            slList[i]=TBNam.objects.filter(year_id=year_id,student_id__classes=class_id,term2=string[i],student_id__attend__is_member=True).count()
+            slList[i]=TBNam.objects.filter(year_id=year_id,student_id__classes=class_id,term2=string[i],student_id__attend__is_member=True).distinct().count()
             sum+=slList[i]
 
     if sum!=0:
@@ -330,7 +330,7 @@ def countPractisingInClassInYear(class_id):
     sum=0.0
     string=['T','K','TB','Y',None]
     for i in range(string.__len__()):
-        slList[i]=TBNam.objects.filter(year_id=year_id, student_id__classes=class_id,year=string[i],student_id__attend__is_member=True).count()
+        slList[i]=TBNam.objects.filter(year_id=year_id, student_id__classes=class_id,year=string[i],student_id__attend__is_member=True).distinct().count()
         sum+=slList[i]
     if sum!=0:
         for i in range(string.__len__()):
@@ -393,7 +393,7 @@ def countLearningInClassInTerm(class_id,term_id):
     sum=0.0
     string=['G','K','TB','Y','Kem',None]
     for i in range(string.__len__()):
-        slList[i]=TBHocKy.objects.filter(term_id=term_id,hl_hk=string[i],student_id__classes=class_id,student_id__attend__is_member=True).count()
+        slList[i]=TBHocKy.objects.filter(term_id=term_id,hl_hk=string[i],student_id__classes=class_id,student_id__attend__is_member=True).distinct().count()
         sum+=slList[i]
     if sum!=0:
         for i in range(string.__len__()):
@@ -457,7 +457,7 @@ def countLearningInClassInYear(class_id):
     sum=0.0
     string=['G','K','TB','Y','Kem',None]
     for i in range(string.__len__()):
-        slList[i]=TBNam.objects.filter(year_id=year_id, student_id__classes=class_id,hl_nam=string[i],student_id__attend__is_member=True).count()
+        slList[i]=TBNam.objects.filter(year_id=year_id, student_id__classes=class_id,hl_nam=string[i],student_id__attend__is_member=True).distinct().count()
         sum+=slList[i]
     if sum!=0:
         for i in range(string.__len__()):
@@ -520,7 +520,7 @@ def countAllInClassInTerm(class_id,term_id):
     sum=0.0
     string=['G','TT','K',None]
     for i in range(string.__len__()):
-        slList[i]=TBHocKy.objects.filter(term_id=term_id, student_id__classes=class_id,danh_hieu_hk=string[i],student_id__attend__is_member=True).count()
+        slList[i]=TBHocKy.objects.filter(term_id=term_id, student_id__classes=class_id,danh_hieu_hk=string[i],student_id__attend__is_member=True).distinct().count()
         sum+=slList[i]
     if sum!=0:
         for i in range(string.__len__()):
@@ -585,9 +585,9 @@ def countAllInClassInYear(class_id):
     slList=[0,0,0,0]
     ptList=[0,0,0,0]
 
-    slList[0]=TBNam.objects.filter(year_id=year_id, student_id__classes=class_id,danh_hieu_nam='G',student_id__attend__is_member=True).count()
-    slList[1]=TBNam.objects.filter(year_id=year_id, student_id__classes=class_id,danh_hieu_nam='TT',student_id__attend__is_member=True).count()
-    slList[3]=TBNam.objects.filter(year_id=year_id, student_id__classes=class_id,danh_hieu_nam=None,student_id__attend__is_member=True).count()
+    slList[0]=TBNam.objects.filter(year_id=year_id, student_id__classes=class_id,danh_hieu_nam='G',student_id__attend__is_member=True).distinct().count()
+    slList[1]=TBNam.objects.filter(year_id=year_id, student_id__classes=class_id,danh_hieu_nam='TT',student_id__attend__is_member=True).distinct().count()
+    slList[3]=TBNam.objects.filter(year_id=year_id, student_id__classes=class_id,danh_hieu_nam=None,student_id__attend__is_member=True).distinct().count()
     #slList[2]=
     #slList[2]=TBNam.objects.filter(year_id=year_id,student_id__classes=class_id,len_lop=True).count()
     #slList[3]=TBNam.objects.filter(year_id=year_id,student_id__classes=class_id,len_lop=False).count()
@@ -597,7 +597,7 @@ def countAllInClassInYear(class_id):
     #sl2=TBNam.objects.filter(year_id=year_id,student_id__classes=class_id,len_lop=False).count()
     #sl3=TBNam.objects.filter(year_id=year_id,student_id__classes=class_id,thi_lai=True).count()
     #sl4=TBNam.objects.filter(year_id=year_id,student_id__classes=class_id,ren_luyen_lai=True).count()    
-    sum = Pupil.objects.filter(classes=class_id,attend__is_member=True).count()
+    sum = Pupil.objects.filter(classes=class_id,attend__is_member=True).distinct().count()
 
     #slList[2] = sum-sl1-sl2-sl3-sl4            
 
@@ -867,7 +867,7 @@ def count2(request,type=None,modeView=None,year_id=None,number=None,index=-1,isE
                         for i in range(numberLevel):
                             slList[i]=Mark.objects.filter(term_id=term_id,subject_id=selectedSubject.id,ck__lt=level[i],ck__gt=level[i+1],current=True).count()
 
-                    sum=Pupil.objects.filter(classes=c.id,attend__is_member=True).count()
+                    sum=Pupil.objects.filter(classes=c.id,attend__is_member=True).distinct().count()
                     for i in range(numberLevel):
                         if sum!=0:
                             ptList[i]=float(slList[i])/sum*100
@@ -922,7 +922,7 @@ def count2(request,type=None,modeView=None,year_id=None,number=None,index=-1,isE
                     for i in range(numberLevel):
                         slList[i]=Mark.objects.filter(term_id=term_id,subject_id=s.id,ck__lt=level[i],ck__gt=level[i+1],current=True).count()
 
-                sum=Pupil.objects.filter(classes=s.class_id.id,attend__is_member=True).count()
+                sum=Pupil.objects.filter(classes=s.class_id.id,attend__is_member=True).distinct().count()
                 for i in range(numberLevel):
                     if sum!=0:
                         ptList[i]=float(slList[i])/sum*100
@@ -998,18 +998,18 @@ def printDanhHieu(request,year_id=None, term_number=None,type=None,isExcel=None)
         for c in classList:
             if int(term_number)<3:
                 if type == 1:
-                    danhHieus=TBHocKy.objects.filter(term_id=term_id, student_id__classes=c.id,danh_hieu_hk__in=['G','TT'],student_id__attend__is_member=True).order_by("danh_hieu_hk","student_id__index")
+                    danhHieus=TBHocKy.objects.filter(term_id=term_id, student_id__classes=c.id,danh_hieu_hk__in=['G','TT'],student_id__attend__is_member=True).order_by("danh_hieu_hk","student_id__index").distinct()
                 elif type == 2:
-                    danhHieus=TBHocKy.objects.filter(term_id=term_id, student_id__classes=c.id,danh_hieu_hk='G',student_id__attend__is_member=True).order_by("student_id__index")
+                    danhHieus=TBHocKy.objects.filter(term_id=term_id, student_id__classes=c.id,danh_hieu_hk='G',student_id__attend__is_member=True).order_by("student_id__index").distinct()
                 elif type == 3:
-                    danhHieus=TBHocKy.objects.filter(term_id=term_id, student_id__classes=c.id,danh_hieu_hk='TT',student_id__attend__is_member=True).order_by("student_id__index")
+                    danhHieus=TBHocKy.objects.filter(term_id=term_id, student_id__classes=c.id,danh_hieu_hk='TT',student_id__attend__is_member=True).order_by("student_id__index").distinct()
             else:
                 if   type==1:
-                    danhHieus=TBNam.objects.filter(year_id=year_id, student_id__classes=c.id,danh_hieu_nam__in=['G','TT'],student_id__attend__is_member=True).order_by("danh_hieu_nam","student_id__index")
+                    danhHieus=TBNam.objects.filter(year_id=year_id, student_id__classes=c.id,danh_hieu_nam__in=['G','TT'],student_id__attend__is_member=True).order_by("danh_hieu_nam","student_id__index").distinct()
                 elif type==2:
-                    danhHieus=TBNam.objects.filter(year_id=year_id, student_id__classes=c.id,danh_hieu_nam='G',student_id__attend__is_member=True).order_by("student_id__index")
+                    danhHieus=TBNam.objects.filter(year_id=year_id, student_id__classes=c.id,danh_hieu_nam='G',student_id__attend__is_member=True).order_by("student_id__index").distinct()
                 elif type==3:
-                    danhHieus=TBNam.objects.filter(year_id=year_id, student_id__classes=c.id,danh_hieu_nam='TT',student_id__attend__is_member=True).order_by("student_id__index")
+                    danhHieus=TBNam.objects.filter(year_id=year_id, student_id__classes=c.id,danh_hieu_nam='TT',student_id__attend__is_member=True).order_by("student_id__index").distinct()
             list.append((c.name,danhHieus))
     if isExcel:
         return printDanhHieuExcel(list,term_number,type,selected_term)
@@ -1059,11 +1059,11 @@ def printNoPass(request,type=None,isExcel=None):
         classList = Class.objects.filter(block_id=b,year_id=selected_year.id).order_by("id")
         for c in classList:
             if   type==1:
-                pupils=TBNam.objects.filter(year_id=selected_year, student_id__classes=c.id,len_lop=False,student_id__attend__is_member=True).order_by("student_id__index")
+                pupils=TBNam.objects.filter(year_id=selected_year, student_id__classes=c.id,len_lop=False,student_id__attend__is_member=True).order_by("student_id__index").distinct()
             elif type==2:
-                pupils=TBNam.objects.filter(year_id=selected_year, student_id__classes=c.id,thi_lai=True,student_id__attend__is_member=True).order_by("student_id__index")
+                pupils=TBNam.objects.filter(year_id=selected_year, student_id__classes=c.id,thi_lai=True,student_id__attend__is_member=True).order_by("student_id__index").distinct()
             elif type==3:
-                pupils=TBNam.objects.filter(year_id=selected_year, student_id__classes=c.id,ren_luyen_lai=True,student_id__attend__is_member=True).order_by("student_id__index")
+                pupils=TBNam.objects.filter(year_id=selected_year, student_id__classes=c.id,ren_luyen_lai=True,student_id__attend__is_member=True).order_by("student_id__index").distinct()
             list.append((c.name,pupils))
     if isExcel:
         return printNoPassExcel(list,type,selected_year)

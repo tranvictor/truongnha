@@ -30,7 +30,7 @@ def getClassList(selectedYear):
         aClassList = Class.objects.filter(block_id = b,year_id = selectedYear).order_by("id")
         for c in aClassList:
             classList[j*numberBlock+i] = c
-            aPupilList = Pupil.objects.filter(classes=c.id,attend__is_member=True).order_by('index','first_name','last_name','birthday')
+            aPupilList = Pupil.objects.filter(classes=c.id,attend__is_member=True).order_by('index','first_name','last_name','birthday').distinct()
             pupilList[j*numberBlock+i] = aPupilList
             j+=1
         i+=1
@@ -175,11 +175,11 @@ def createListExam(request):
         print exceptionalPupil
 
         if  classifiedType=="1":
-            pupilList = Pupil.objects.filter(classes__in=classSet,attend__is_member=True).order_by('classes__block_id__number','first_name','last_name','birthday')
+            pupilList = Pupil.objects.filter(classes__in=classSet,attend__is_member=True).order_by('classes__block_id__number','first_name','last_name','birthday').distinct()
         elif  classifiedType=="2":
-            pupilList = Pupil.objects.filter(classes__in=classSet,attend__is_member=True).order_by('classes__block_id__number','classes','first_name','last_name','birthday')
+            pupilList = Pupil.objects.filter(classes__in=classSet,attend__is_member=True).order_by('classes__block_id__number','classes','first_name','last_name','birthday').distinct()
         elif  classifiedType=="3":
-            pupilList = Pupil.objects.filter(classes__in=classSet,attend__is_member=True).order_by('first_name','last_name','birthday')
+            pupilList = Pupil.objects.filter(classes__in=classSet,attend__is_member=True).order_by('first_name','last_name','birthday').distinct()
 
 
         book = Workbook(encoding = 'utf-8')

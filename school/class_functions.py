@@ -857,6 +857,7 @@ def diem_danh(request, class_id, day, month, year, api_called=False, data = None
     dncdata = {'date': date(int(year), int(month), int(day)), 'class_id': class_id}
     year_id = get_current_year(request).id
     dncform = DateAndClassForm(year_id, dncdata)
+    print "ddddddddddddddddddddddddddddddddd"
     if request.is_ajax() or api_called:
         if request.method == 'POST':
             request_type = request.POST[u'request_type']
@@ -937,7 +938,8 @@ def diem_danh(request, class_id, day, month, year, api_called=False, data = None
         else:
             raise Exception('StrangeRequestMethod')
     pupilList = Pupil.objects.filter(attend___class=class_id, attend__is_member=True).order_by('index', 'first_name',
-        'last_name')
+        'last_name').distinct()
+    print "okkkkkkkkkkkkkkkkkkkkk"
     time = date(int(year), int(month), int(day))
     term = get_current_term(request)
     form = []
@@ -1028,7 +1030,7 @@ def ds_nghi(request, class_id, day, month, year):
         year_id = get_current_year(request).id
 
     pupilList = Pupil.objects.filter(attend___class=class_id, attend__is_member=True).order_by('first_name',
-        'last_name')
+        'last_name').distinct()
     time = date(int(year), int(month), int(day))
     dncdata = {'date': date(int(year), int(month), int(day)), 'class_id': class_id}
     dncform = DateAndClassForm(year_id, dncdata)

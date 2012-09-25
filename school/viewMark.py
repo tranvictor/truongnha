@@ -40,7 +40,7 @@ def getMark(subjectChoice,selectedTerm):
     
     selectedSubject = Subject.objects.get(id= subjectChoice)
     class_id = selectedSubject.class_id.id
-    pupilList = Pupil.objects.filter(classes=class_id,attend__is_member=True).order_by('index','first_name','last_name','birthday')
+    pupilList = Pupil.objects.filter(classes=class_id,attend__is_member=True).order_by('index','first_name','last_name','birthday').distinct()
     tbhk1List=[]
     tbnamList=[]
     if selectedTerm.number==1:            

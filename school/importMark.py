@@ -177,7 +177,7 @@ def importMark(request,term_id,subject_id,checkDiff = 1):
         isNx=selectedSubject.nx        
         if validateMessage=='': 
             markList  = Mark.objects.filter(subject_id=subject_id,term_id=term_id,current=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
-            pupilList = Pupil.objects.filter(classes=selectedSubject.class_id,attend__is_member=True).order_by('index','first_name','last_name','birthday')
+            pupilList = Pupil.objects.filter(classes=selectedSubject.class_id,attend__is_member=True).order_by('index','first_name','last_name','birthday').distinct()
             if (isNx & (selectedTerm.number==2)):
                 tkMonList=TKMon.objects.filter(subject_id=subject_id,current=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
             x=11
