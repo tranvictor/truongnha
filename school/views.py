@@ -1002,11 +1002,13 @@ def timeTable(request, class_id):
 
     if request.method == "POST":
         if request.is_ajax():
+            print request.POST
             try:
                 d = int(request.POST['day'])
                 t = cl.tkb_set.get(day=d)
+                if not t:
+                    raise Exception('StrangeRequestMethod')
                 if request.POST['sub']:
-                    print request.POST
                     if request.POST['sub'] == u'-1':
                         setattr(t, request.POST['request_type'], None)
                         if getattr(t, 'sinhhoat') == int(request.POST['request_type'].split("_")[1]):
@@ -1031,7 +1033,14 @@ def timeTable(request, class_id):
                         setattr(t, 'chaoco', None)
                 t.save()
             except Exception as e:
+                message = u"Có lỗi xảy ra."
                 print e
+                data = simplejson.dumps({'message': message})
+                return HttpResponse(data, mimetype='json')
+            print '222'
+            message = u"Thời khóa biểu thay đổi thành công."
+            data = simplejson.dumps({'message': message})
+            return HttpResponse(data, mimetype='json')
         else:
             for d in range(2, 8):
                 t = cl.tkb_set.get(day=d)
