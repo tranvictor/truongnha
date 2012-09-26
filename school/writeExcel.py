@@ -990,7 +990,6 @@ def exportMark(request,term_id,subject_id,colMieng=4,col15Phut=4,colMotTiet=4):
         else:
             s.write(11+i,1,m.student_id.last_name,last_name1)
             s.write(11+i,2,m.student_id.first_name,first_name1)
-        print m.student_id.last_name, m.student_id.first_name, m.student_id.id
 
         tempStr = m.student_id.birthday.strftime('%d/%m/%Y')
         s.write(11+i,3,tempStr,h)
@@ -2077,7 +2076,6 @@ def titleByGradeExcel(list,yearNumber,termNumber,so):
             for sl in subList:
                 j+=1
                 s.write(x+i-4,y+j,sl,h5)
-                print subList
 
     if int(termNumber) <3 :
         term ='Ky'+str(termNumber)

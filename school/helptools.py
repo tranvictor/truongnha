@@ -9,14 +9,83 @@ from school.models import Pupil, TKDiemDanh, Attend, StartYear, Mark, Class,\
         Teacher, MarkTime, Subject, TKMon, DiemDanh, Year
 from school.school_settings import CAP2_DS_MON, CAP1_DS_MON, CAP3_DS_MON
 from school.templateExcel import normalize, CHECKED_DATE
-from school.utils import to_en1, add_subject, get_lower_bound, normalize
+from school.utils import to_en1, add_subject, get_lower_bound
+from school.utils import normalize as norm
 from django.db import transaction
+from django.core.exceptions import ObjectDoesNotExist
 import thread
 SYNC_RESULT = os.path.join('helptool','recover_marktime.html')
 SYNC_SUBJECT = os.path.join('helptool','sync_subject.html')
 TEST_TABLE = os.path.join('helptool','test_table.html')
 REALTIME = os.path.join('helptool','realtime_test.html')
 CONVERT_MARK= os.path.join('helptool','convert_mark.html')
+
+def _sync_current():
+    def finish_class(cl, st):
+        at = Attend.objects.filter(pupil=st, _class=cl)
+        for a in at:
+            if a.is_member: return True
+        return False
+
+    sts = Pupil.objects.all()
+    print len(sts)
+    number = 0
+    for st in sts:
+        number += 1
+        cl = st.current_class()
+        marks = st.mark_set.all()
+        for m in marks:
+            #check current = False
+            if not m.current:
+                the_cl = m.subject_id.class_id
+                if the_cl == cl or finish_class(the_cl, st):
+                    print '--'
+                    print 'number', number
+                    print st
+                    print the_cl
+                    print m, the_cl.block_id.school_id, the_cl.block_id.school_id.id
+                    m.current = True
+                    m.save()
+            else:
+                the_cl = m.subject_id.class_id
+                if the_cl != cl and not finish_class(the_cl, st):
+                    print '--'
+                    print 'number', number
+                    print st
+                    print the_cl
+                    print m, the_cl.block_id.school_id, the_cl.block_id.school_id.id
+                    m.current = False
+                    m.save()
+        tkmons = st.tkmon_set.all()
+        for m in tkmons:
+            if not m.current:
+                the_cl = m.subject_id.class_id
+                if the_cl == cl or finish_class(the_cl, st):
+                    print '--'
+                    print 'number', number
+                    print st
+                    print the_cl
+                    print m, the_cl.block_id.school_id, the_cl.block_id.school_id.id
+                    m.current = True
+                    m.save()
+            else:
+                the_cl = m.subject_id.class_id
+                if the_cl != cl and not finish_class(the_cl, st):
+                    print '--'
+                    print 'number', number
+                    print st
+                    print the_cl
+                    print m, the_cl.block_id.school_id, the_cl.block_id.school_id.id
+                    m.current = False
+                    m.save()
+                    
+@transaction.commit_on_success
+def sync_current(request):
+    _sync_current()
+    message = 'Done'
+    context = RequestContext(request)
+    return render_to_response( SYNC_RESULT, { 'message' : message},
+        context_instance = context )
 
 @transaction.commit_on_success
 def fix_tkdd(request):
@@ -113,10 +182,10 @@ def sync_start_year(request):
         lastname = st.last_name
         father_name = st.father_name
         mother_name = st.mother_name
-        new_firstname = normalize(firstname)
-        new_lastname = normalize(lastname)
-        new_father_name = normalize(father_name)
-        new_mother_name = normalize(mother_name)
+        new_firstname = norm(firstname)
+        new_lastname = norm(lastname)
+        new_father_name = norm(father_name)
+        new_mother_name = norm(mother_name)
 
         if new_firstname != firstname or new_lastname != lastname or\
             new_father_name != father_name or new_mother_name != mother_name:

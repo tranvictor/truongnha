@@ -248,6 +248,9 @@ def move_student(school, student, new_class):
                     if not m.current:
                         m.current = True
                         m.save()
+                tkmon = student.tkmon_set.get(subject_id=_subject)
+                tkmon.current = True
+                tkmon.save()
 
         student.join_class(new_class)
         return student

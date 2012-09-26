@@ -728,8 +728,9 @@ class Attend(models.Model):
     _class = models.ForeignKey(Class, verbose_name=u"Lớp")
     attend_time = models.DateTimeField("Thời gian nhập lớp")
     leave_time = models.DateTimeField("Thời gian rời lớp", null = True)
-    is_member = models.BooleanField("Học xong lớp", default= True) #this field take value True when student is
-                                                                    #member of this class that attend class till the end
+    is_member = models.BooleanField("Học xong lớp", default= True)
+    #this field take value True when student is
+    #member of this class that attend class till the end
     def get_class(self):
         return self._class
     def get_class_id(self):

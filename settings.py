@@ -273,7 +273,7 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'support@truongnha.com'
 EMAIL_HOST_PASSWORD = 'truongnhadotcom'
 EMAIL_SUBJECT_PREFIX = '[www.truongnha.com]'
-
+TEST_RUNNER = 'django_coverage.coverage_runner.CoverageRunner'
 #JENKINS_TASKS = (
 #    'django_jenkins.tasks.run_pylint',
 #    'django_jenkins.tasks.with_coverage',
