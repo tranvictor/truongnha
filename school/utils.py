@@ -687,6 +687,8 @@ def add_teacher( first_name=None, last_name=None, full_name=None,
     return teacher
 
 def del_teacher( teacher):
+    if teacher.user_id.username == settings.DEMO_LOGIN_TEACHER:
+        return None
     _class = teacher.current_homeroom_class()
     if _class:
         _class.teacher_id = None
