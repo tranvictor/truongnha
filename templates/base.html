@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html lang="vi">
 <head>
     <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -145,7 +146,7 @@
 
         {% if user.is_authenticated %}
             <div class="pull-right dimmed">
-                <a id="feedback" href="#">Góp ý</a>
+                <a id="feedback" href="#feedbackWindow">Góp ý</a>
                 &nbsp;
                 <a href="{% url django.contrib.auth.views.logout %}"
                    title="Thoát ra, kết thúc phiên làm việc. BẠN PHẢI ĐĂNG XUẤT NẾU ĐĂNG NHẬP TRÊN CÁC MÁY TÍNH DÙNG CHUNG ĐỂ TRÁNH NGƯỜI KHÁC THAY ĐỔI DỮ LIỆU.">
@@ -204,3 +205,4 @@
 {#    </script>#}
 
 </body>
+</html>
