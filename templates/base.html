@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<head xmlns="http://www.w3.org/1999/xhtml">
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block title %}
         {% if user.is_anonymous %}
@@ -9,7 +9,7 @@
             <title>Trường Nhà - {{ user.userprofile.organization.name }}</title>
         {% endif %}
     {% endblock %}
-    <link rel="shortcut icon" href="/static/images/favicon.ico" />
+    <link rel="shortcut icon" href="/static/images/favicon.ico"/>
 
     <link href="/static/css/smoothness/jquery-ui-1.8.21.custom.css" rel="stylesheet" type="text/css" media="screen"/>
     <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
@@ -29,29 +29,29 @@
     {% endblock %}
 
     <script type="text/javascript"
-        src="/static/js/jquery-1.7.2.min.js"></script>
+            src="/static/js/jquery-1.7.2.min.js"></script>
     <script type="text/javascript"
-        src="/static/js/jquery-ui-1.8.21.custom.min.js"></script>
+            src="/static/js/jquery-ui-1.8.21.custom.min.js"></script>
     <script type="text/javascript"
-        src="/static/bootstrap/js/bootstrap.min.js"></script>
+            src="/static/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript"
-        src="/static/js/bootstrap-datepicker.min.js"></script>
+            src="/static/js/bootstrap-datepicker.min.js"></script>
     <script type="text/javascript"
-        src="/static/js/jquery_file_upload/tmpl.min.js"></script>
+            src="/static/js/jquery_file_upload/tmpl.min.js"></script>
     <script type="text/javascript"
-        src="/static/js/jquery_file_upload/jquery.fileupload.min.js"></script>
+            src="/static/js/jquery_file_upload/jquery.fileupload.min.js"></script>
     <script type="text/javascript"
-        src="/static/js/jquery_file_upload/jquery.fileupload-ui.min.js"></script>
+            src="/static/js/jquery_file_upload/jquery.fileupload-ui.min.js"></script>
     <script type="text/javascript"
-        src="/static/js/jquery_file_upload/jquery.iframe-transport.min.js"></script>
+            src="/static/js/jquery_file_upload/jquery.iframe-transport.min.js"></script>
     <script type="text/javascript"
-        src="/static/js/Class.create.min.js"></script>
+            src="/static/js/Class.create.min.js"></script>
     <script type="text/javascript"
-        src="/static/js/jquery-encoder-0.1.0.js"></script>
+            src="/static/js/jquery-encoder-0.1.0.js"></script>
     <script type="text/javascript"
-        src="/static/js/template_js/base.js?{{ VERSION }}"></script>
+            src="/static/js/template_js/base.js?{{ VERSION }}"></script>
     <script type="text/javascript"
-        src="/static/joyride/jquery.joyride-1.0.3.min.js"></script>
+            src="/static/joyride/jquery.joyride-1.0.3.min.js"></script>
 
     <script type="text/javascript">
         var _gaq = _gaq || [];
@@ -78,7 +78,7 @@
 </head>
 
 <body>
-<header id="top-header">
+<header id="top-header" class="dimmed">
     <div class="container-fluid">
         <div id="school-info" class="pull-left">
             <span class="lead">
@@ -97,7 +97,7 @@
         <div id="user-info" class="pull-right">
             {% if user.is_authenticated %}
                 {% if not user.is_superuser %}
-                    <a href="/app/{{user.username}}"
+                    <a href="/app/{{ user.username }}"
                        title="Sửa thông tin người sử dụng, đổi mật khẩu, đổi tên tài khoản.">
                         <i class="icon-user"></i>
                         {% if user.pupil %}
@@ -115,13 +115,13 @@
                     {{ user.last_name }} {{ user.first_name }}
                     <small>({{ user.username }})</small>
 
-                    <a href="{%url django.contrib.auth.views.logout %}">
+                    <a href="{% url django.contrib.auth.views.logout %}">
                         Đăng xuất <i class="icon-signout"></i>
                     </a>
                 {% endif %}
             {% endif %}
 
-            <a href="{%url index %}">
+            <a href="{% url index %}">
                 <img id="logo" src="/static/images/logo.png" alt="logo"
                      title="Dịch vụ phần mềm quản lý trường học"/></a>
         </div>
@@ -130,12 +130,12 @@
 
 <section id="main" class="container-fluid">
     <div id="breadcrumb">
-        <a id="breadcrumb-home" href="{%url index %}" title="Trang bắt đầu" >
+        <a id="breadcrumb-home" href="{% url index %}" title="Trang bắt đầu">
             {#            <img id="breadcrumb-home" src="/static/images/favicon.png" title="Xuất phát"/></a>#}
-{#            <i class="icon-home icon-large "></i> #}
-            <i class="icon-home" style="color: rgba(255, 69, 0, 0.75);" ></i>
-            <i class="icon-home" style="color: rgba(0, 136, 204, 0.75);margin-left: -.5em;" ></i>
-{#            Trường#}
+            {#            <i class="icon-home icon-large "></i> #}
+            <i class="icon-home" style="color: rgba(255, 69, 0, 0.75);"></i>
+            <i class="icon-home" style="color: rgba(0, 136, 204, 0.75);margin-left: -.5em;"></i>
+            {#            Trường#}
         </a>
         {% block breadcrumb %}
             {% load breadcrumb_tags %}
@@ -144,10 +144,16 @@
         {% render_breadcrumbs %}
 
         {% if user.is_authenticated %}
-            <a class="pull-right" href="{%url django.contrib.auth.views.logout %}"
-               title="Thoát ra, kết thúc phiên làm việc. BẠN PHẢI ĐĂNG XUẤT NẾU ĐĂNG NHẬP TRÊN CÁC MÁY TÍNH DÙNG CHUNG ĐỂ TRÁNH NGƯỜI KHÁC THAY ĐỔI DỮ LIỆU.">
-                Đăng xuất <i class="icon-signout"></i>
-            </a>
+            <div class="pull-right dimmed">
+                <a id="feedback" href="#">Góp ý</a>
+                &nbsp;
+                <a href="{% url django.contrib.auth.views.logout %}"
+                   title="Thoát ra, kết thúc phiên làm việc. BẠN PHẢI ĐĂNG XUẤT NẾU ĐĂNG NHẬP TRÊN CÁC MÁY TÍNH DÙNG CHUNG ĐỂ TRÁNH NGƯỜI KHÁC THAY ĐỔI DỮ LIỆU.">
+                    Đăng xuất <i class="icon-signout"></i>
+                </a>
+
+            </div>
+
         {% endif %}
     </div>
 
@@ -158,7 +164,7 @@
     <div class="placeholder" style="clear: both;"></div>
 </section>
 
-<div id="feedbackWindow" class="popup-windows" >
+<div id="feedbackWindow" class="popup-windows">
     <form>
         {% if user.is_anonymous %}
             <label for="feedbackUsername">Họ và tên</label>

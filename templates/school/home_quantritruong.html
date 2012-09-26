@@ -41,7 +41,7 @@
         {% for unc in uncs %}
             {% if unc.block_id == grade and unc.number_of_students %}
                 <div class="row-fluid">
-                    <div class="lophoc" class="span12 ">
+                    <div class="lophoc span12">
                         <a class="tenlop" id="{{ unc.id }}"
                            href="{% url unc_class_detail unc.id '' %}">
                                     <span title="Danh sách học sinh chưa được phân lớp học" style="color: #777;">
