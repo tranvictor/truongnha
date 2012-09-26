@@ -415,3 +415,67 @@ class ImportStudentTest(SchoolSetupTest):
             content = simplejson.loads(res.content)
             self.assertEqual(content['success'], True)
             self.assertEqual(content['message'], u'Thông tin không thay đổi')
+
+class TimetableTest(SchoolSetupTest):
+    def phase8_enter_class_timetable(self):
+        classes = self.year.class_set.all()
+        # get a class
+        self.assertEqual(len(classes)>0, True)
+        cl = classes[0]
+        self.cl = cl
+        #go to subjects per class
+        res = self.client.get(reverse('timetable', args=[cl.id]))
+        print 'Going to check response status'
+        self.assertEqual(res.status_code, 200)
+        print 'Going to check response context'
+        self.assertEqual(res.context['class'].id,cl.id)
+    def phase9_change_a_normal_lesson(self):
+        response = self.client.post(
+            reverse('timetable',args=[self.cl.id]),
+                {
+                'day': u'2',
+                'sub' : u'',
+                'request_type' : 'period_2',
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['message'], u'Thời khóa biểu thay đổi thành công.')
+
+    def phase10_change_a_special_lesson(self):
+        response = self.client.post(
+            reverse('timetable',args=[self.cl.id]),
+                {
+                'day': u'2',
+                'sub' : u'-1',
+                'request_type' : 'period_1',
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['message'], u'Thời khóa biểu thay đổi thành công.')
+
+    def phase11_change_an_invalid_day(self):
+        response = self.client.post(
+            reverse('timetable',args=[self.cl.id]),
+                {
+                'day': u'-2',
+                'sub' : u'-1',
+                'request_type' : 'period_1',
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['message'], u'Có lỗi xảy ra.')
