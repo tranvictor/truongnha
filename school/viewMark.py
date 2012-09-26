@@ -60,14 +60,16 @@ def getMark(subjectChoice,selectedTerm):
 
 #@transaction.commit_on_success    
 def min_col(subject):
-    name = subject.name
-    c = subject.class_id.block_id.number
-    i = -1
-    for s in SUBJECT_LIST:
-        i+=1
-        if s == name: break;
-    return NUMBER_COL_MIN[c-6][i][0],NUMBER_COL_MIN[c-6][i][1],NUMBER_COL_MIN[c-6][i][2]
-
+    try:
+        name = subject.name
+        c = subject.class_id.block_id.number
+        i = -1
+        for s in SUBJECT_LIST:
+            i+=1
+            if s == name: break;
+        return NUMBER_COL_MIN[c-6][i][0],NUMBER_COL_MIN[c-6][i][1],NUMBER_COL_MIN[c-6][i][2]
+    except Exception as e :
+        return NUMBER_COL_MIN[0][0][0],NUMBER_COL_MIN[0][0][1],NUMBER_COL_MIN[0][0][2]
 @need_login
 def markTable(request,term_id=-1,class_id=-1,subject_id=-1,move=None):
     tt1=time.time()

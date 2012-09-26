@@ -311,12 +311,12 @@ def toolToMakeCol(request):
     f.write('NUMBER_COL_MIN = [\n')
     for i in range(6,13):
         f.write('[')
-        for j in range(2,17):
+        for j in range(2,18):
             number1 = int(s.cell(j,(i-6)*3+1).value)
             number2 = int(s.cell(j,(i-6)*3+2).value)
             number3 = int(s.cell(j,(i-6)*3+3).value)
             f.write('['+str(number1)+','+str(number2)+','+str(number3)+']')
-            if j != 16 :
+            if j != 17 :
                 f.write(',')
         if i != 12 :
             f.write('],\n')
