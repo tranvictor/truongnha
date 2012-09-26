@@ -909,21 +909,26 @@ def exportMark(request,term_id,subject_id,colMieng=4,col15Phut=4,colMotTiet=4):
     else:    
             return HttpResponseRedirect('/school')
 
-    markList = Mark.objects.filter(subject_id=subject_id,term_id=term_id,current=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
-    decodeMarkList,maxColMieng,maxCol15Phut,maxColMotTiet = getDecodeMark(markList)
+    markList = Mark.objects.filter(subject_id=subject_id, term_id=term_id,
+            current=True).order_by('student_id__index',
+                    'student_id__first_name',
+                    'student_id__last_name',
+                    'student_id__birthday')
+    decodeMarkList, maxColMieng, maxCol15Phut, maxColMotTiet = getDecodeMark(markList)
     maxColMieng  = max(maxColMieng,MAX_VIEW,int(colMieng))
     maxCol15Phut = max(maxCol15Phut,MAX_VIEW,int(col15Phut))
     maxColMotTiet= max(maxColMotTiet,MAX_VIEW,int(colMotTiet))
 
-    selectedTerm   = Term.objects.get(id=term_id)
+    selectedTerm = Term.objects.get(id=term_id)
     book = Workbook(encoding = 'utf-8')
-    str1=u'BẢNG ĐIỂM LỚP '+selectedSubject.class_id.name.upper()+u' MÔN '+selectedSubject.name.upper()+u'  HỌC KỲ'    
+    str1 = u'BẢNG ĐIỂM LỚP '+selectedSubject.class_id.name.upper()+u' MÔN '+selectedSubject.name.upper()+u'  HỌC KỲ'    
     if selectedTerm.number==1:
         str1+=' I'
     else:
         str1+=' II'  
               
-    str3 =selectedSubject.class_id.name+'_'+selectedSubject.name+'_HK'+str(selectedTerm.number)       
+    str3 = selectedSubject.class_id.name + '_' + selectedSubject.name\
+            + '_HK' + str(selectedTerm.number)       
     sstr2='bang_diem_'+str3
     sstr2=sstr2.replace(' ','_')  
     s=book.add_sheet(str3,True)
