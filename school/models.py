@@ -659,14 +659,14 @@ class Pupil(BasicPersonInfo):
             print e
             raise e
 
-    def move_to_new_class(self, _class):
+    def _move_to_class(self, _class):
         year = _class.year_id
         TBNam.objects.get_or_create(student_id=self,
                                     year_id=year)
         subjects = _class.subject_set.all()
         number_subject = 0
-        number_subject += _class.subject_set.filter(primary = 0).count()
-        number_subject += _class.subject_set.filter(primary = 3).count()
+        number_subject += _class.subject_set.filter(primary=0).count()
+        number_subject += _class.subject_set.filter(primary=3).count()
 
         for t in year.term_set.all():
             if t.number == 1:
@@ -676,19 +676,30 @@ class Pupil(BasicPersonInfo):
             TBHocKy.objects.get_or_create(student_id=self,
                                            term_id=t,
                                            number_subject=number_subject)
-            TKDiemDanh.objects.get_or_create( student_id=self, term_id=t)
+            TKDiemDanh.objects.get_or_create(student_id=self, term_id=t)
         for subject in subjects:
             for i in range(1,3):
-                term1 = year.term_set.get( number__exact = i)
-                Mark.objects.get_or_create(student_id = self,
-                                          subject_id = subject,
-                                          term_id = term1)
+                term1 = year.term_set.get(number__exact=i)
+                Mark.objects.get_or_create(student_id=self,
+                                          subject_id=subject,
+                                          term_id=term1)
 
-            TKMon.objects.get_or_create(student_id = self,
-                                        subject_id = subject)
+            TKMon.objects.get_or_create(student_id=self,
+                                        subject_id=subject)
         self.join_class(_class)
         return self
 
+    def move_to_new_class(self, _class):
+        return self._move_to_class(_class)
+    # This method is rarely used, it moves a student to an upper class
+    # in the same year, this short of action usually illegal
+    def _move_to_upper_class(self, _class):
+        cur_cl = self.current_class()
+        Mark.objects.filter(subject_id__class_id=cur_cl, student_id=self)\
+                .update(current=False)
+        self.tkmon_set.filter(subject_id__class_id=cur_cl)\
+                .update(current=False)
+        return self._move_to_class(_class)
     def get_school(self):
         return self.school_id
 

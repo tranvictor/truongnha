@@ -173,27 +173,33 @@ def move_student(school, student, new_class):
             tkmon.save()
         student.join_class(new_class)
         return student
+    if old_class.year_id.time > new_class.year_id.time:
+        raise Exception('CantMoveToPreviousYear')
     if old_class.block_id.number != new_class.block_id.number:
         if new_class.block_id.number - old_class.block_id.number != 1:
             raise Exception(u"chuyển học sinh tới khối không phù hợp")
         else:
-            year = new_class.year_id
-            last_year = old_class.year_id
-            if student.tbnam_set.get(year_id = last_year).len_lop: # hs nay dc len lop
-                return student.move_to_new_class(new_class)
+            if old_class.year_id.time != new_class.year_id.time:
+                year = new_class.year_id
+                last_year = old_class.year_id
+                if student.tbnam_set.get(year_id = last_year).len_lop: # hs nay dc len lop
+                    return student.move_to_new_class(new_class)
+                else:
+                    return student.move_to_new_class(new_class)
             else:
-                return student.move_to_new_class(new_class)
+                return student._move_to_upper_class(new_class) 
     else:
         if student.unc_class_id: return student.move_to_new_class(new_class)
         subjects = old_class.subject_set.all()
         for _subject in subjects:
             try:
-                subject_in_new_class = new_class.subject_set.get( type__exact = _subject.type)
-                marks = _subject.mark_set.filter( student_id__exact = student)
+                subject_in_new_class = new_class.subject_set.get(
+                        type__exact=_subject.type)
+                marks = _subject.mark_set.filter(student_id__exact=student)
                 for mark in marks:
                     mark.subject_id = subject_in_new_class
                     mark.save()
-                tkmons = _subject.tkmon_set.filter( student_id__exact = student)
+                tkmons = _subject.tkmon_set.filter(student_id__exact=student)
                 for tkmon in tkmons:
                     tkmon.subject_id = subject_in_new_class
                     tkmon.save()
@@ -201,23 +207,23 @@ def move_student(school, student, new_class):
             except ObjectDoesNotExist as e:
                 #there are no subject as same as subject in old class
                 print e
-                m_set = _subject.mark_set.filter( student_id__exact = student)
+                m_set = _subject.mark_set.filter(student_id__exact=student)
                 for m in m_set:
                     m.current = False
                     m.save()
-                tk_set = _subject.tkmon_set.filter( student_id__exact = student)
+                tk_set = _subject.tkmon_set.filter(student_id__exact=student)
                 for tk in tk_set:
                     tk.current = False
                     tk.save()
 
         subject_in_new_class = new_class.subject_set.all()
         for _subject in subject_in_new_class:
-            marks = _subject.mark_set.filter( student_id__exact = student )
+            marks = _subject.mark_set.filter(student_id__exact=student)
             if not marks:
-                old_mark = student.mark_set.filter( subject_id__type = _subject.type)
+                old_mark = student.mark_set.filter(subject_id__type=_subject.type)
                 if not old_mark:
                     for i in range(1,3):
-                        term1 = new_class.year_id.term_set.get( number__exact = i)
+                        term1 = new_class.year_id.term_set.get(number__exact=i)
                         the_mark = Mark()
                         the_mark.student_id = student
                         the_mark.subject_id = _subject
@@ -231,16 +237,20 @@ def move_student(school, student, new_class):
                         m.current = True
                         m.save()
                     try:
-                        tk = student.tkmon_set.get( subject_id__type = _subject.type)
+                        tk = student.tkmon_set.get(subject_id__type=_subject.type)
                         tk.current = True
                         tk.subject_id = _subject
                         tk.save()
                     except ObjectDoesNotExist:
                         raise Exception('SubjectTypeWereNotFullyBuilt')
+            else:
+                for m in marks:
+                    if not m.current:
+                        m.current = True
+                        m.save()
 
         student.join_class(new_class)
         return student
-
 
 # This function will handle a change of students in a particular class
 # where: students: is a list of dictionaries those have 'full_name','birthday','ban' keys
