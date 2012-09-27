@@ -91,11 +91,12 @@
                                        title="Thêm nhóm mới">
                                         <span class="icon-plus-sign"></span>
                                     </a>
-                                    <a class="{{ t.id }} rename-team"
+                                    <a title="Sửa tên '{{ t.name }}'"
+                                       class="{{ t.id }} rename-team"
                                        href="#rename-team-modal"
                                        data-toggle="modal"
                                        association="team-display-name-{{ t.id }}"
-                                       title="Sửa tên '{{ t.name }}'">
+                                       >
                                         <span class="icon-edit"></span>
                                     </a>
                                     <a class="{{ t.id }} remove-team" href="#" title="Xóa tổ '{{ t.name }}'">
@@ -216,6 +217,16 @@
                         {% endif %}
                         <colgroup style="width: 5%;"></colgroup>
                     {% endif %}
+                    <colgroup></colgroup>
+                    <colgroup></colgroup>
+                    <colgroup></colgroup>
+                    <colgroup></colgroup>
+                    <colgroup></colgroup>
+                    <colgroup></colgroup>
+                    <colgroup></colgroup>
+                    <colgroup></colgroup>
+                    <colgroup></colgroup>
+                    <colgroup></colgroup>
 
                     <thead>
                     <tr>
@@ -354,7 +365,6 @@
                             </tr>
                         </table>
                     </form>
-                    </tr>
                 </div>
                 <div class="modal-footer">
                     <button id="submitaddTeacher" class="btn btn-primary">Thêm</button>
@@ -484,7 +494,7 @@
             </div>
         </div>
 
-        <div class="modal fade" id="rename-team-modal" data-toggle="" request-type="" style="display: none;">
+        <div class="modal fade" id="rename-team-modal" data-toggle="" style="display: none;">
             <div class="modal-header">
                 <a class="close" data-dismiss="modal">x</a>
 
