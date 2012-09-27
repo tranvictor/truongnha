@@ -37,6 +37,8 @@ def _send_email(subject, message, from_addr=None, to_addr=[]):
 
 def _send_sms(phone, content, user, save_to_db=True):
     phone = checkValidPhoneNumber(phone)
+    tsp = get_tsp(phone)
+    if not tsp in settings.ALLOWED_TSP: raise Exception('NotAllowTSP')
     school = user.userprofile.organization
     if school.id in [42, 44]: raise Exception('NotAllowedSMS')
     if phone:
@@ -98,7 +100,9 @@ def send_email(subject, message, from_addr=None, to_addr=[]):
 
 def sendSMS(phone, content, user, save_to_db=True):
     if not settings.DEBUG:
-        return task_send_sms.delay(phone, content, user, save_to_db)
+        task = task_send_sms.delay(phone, content, user, save_to_db)
+        if task: return '1'
+        else: return None
     else:
         return _send_sms(phone, content, user, save_to_db)
 
