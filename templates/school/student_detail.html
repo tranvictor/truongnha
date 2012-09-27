@@ -11,15 +11,10 @@
 {% block content %}
     <script>
     $(document).ready(function () {
-        $("#tabs").tabs({
-            ajaxOptions:{
-                error:function (xhr, status, index, anchor) {
-                    $(anchor.hash).html(
-                            "Có lỗi khi lấy dữ liệu từ máy chủ. Xin hãy thử lại");
-                },
-                global:false
-            }
-        });
+        $("#tabs a").click(function (e) {
+            e.preventDefault();
+            $(this).tab('show');
+        })
         {% if pos > 3 %}
             $("input").attr('disabled', false);
             $("select").attr('disabled', false);
@@ -144,49 +139,6 @@
             $.ajax(arg);
             return false;
         });
-        $("a.onPage").live("click", function () {
-            $.ajax({
-                url:this.href,
-                global:false,
-                dataType:'html',
-                type:'GET',
-                success:function (response) {
-                    $('.ui-tabs-panel:visible').html(response);
-                    applyListener();
-                }
-            });
-            return false;
-        });
-        $("a.delOnPage").live("click", function () {
-            var c = confirm("Bạn có muốn xóa thông tin này không");
-            if (!c) return false;
-            $.ajax({
-                url:this.href,
-                global:false,
-                dataType:'html',
-                type:'GET',
-                success:function (response) {
-                    $('.ui-tabs-panel:visible').html(response);
-                    applyListener();
-                }
-            });
-            return false;
-        });
-        $("form.onPage").live("submit", function () {
-            var data = $(this).serialize();
-            var arg = {
-                data:data,
-                type:$(this).attr("method"),
-                url:$(this).attr("action"),
-                global:false,
-                success:function (response) {
-                    $('.ui-tabs-panel:visible').html(response);
-                    applyListener();
-                }
-            };
-            $.ajax(arg);
-            return false;
-        });
         $("form.tttk").live("submit", function () {
             var data = $(this).serialize();
             var arg = {
@@ -201,46 +153,60 @@
             $.ajax(arg);
             return false;
         });
-        $("form.moveStudent").live("submit", function () {
+        var changemarktable = function() {
+            var arg = {
+                url:"{% url mark_for_a_student class.id id %}/" + $(this).val(),
+                success:function (response) {
+                    $("#tabs-4").html(response);
+                },
+                global:false
+            };
+            $.ajax(arg);
+        };
+        var ktkllink = function(){
+            var url = $(this).attr("href");
+            var arg = {
+                url:url,
+                success:function (response) {
+                    $("#tabs-2").html(response);
+                },
+                global:false
+            };
+            $.ajax(arg);
+            return false;
+        };
+        var ktklform = function () {
             var data = $(this).serialize();
             var arg = {
                 data:data,
                 type:$(this).attr("method"),
                 url:$(this).attr("action"),
                 global:false,
-                error:function () {
-                    $("input").attr('disabled', false);
-                },
                 success:function (response) {
-                    location.reload(true);
+                    $("#tabs-2").html(response);
                 }
             };
-            $("#notify").text('Hệ thống đang chuyển lớp cho học sinh.\n Xin bạn vui lòng chờ');
-            $("#notify").show();
-            $("input").attr('disabled', true);
             $.ajax(arg);
             return false;
-        });
-        $("button.history").live("click", function () {
-            if ($(this).hasClass("warning")) {
-                var ans = confirm("Trong lịch sử này có điểm cũ của học sinh.\n Nếu bạn xóa toàn bộ điểm này sẽ mất.\n Bạn có muốn xóa không?");
-                if (!ans) return false;
-            }
-            var id = $(this).attr("class").split(" ")[0];
-            var data = {request_type:'delete_history',
-                id:id
-            };
-            var arg = {data:data,
-                url:"/school/movestudent/{{ student.id }}",
-                type:'POST',
-                success:function () {
-                    $("#notify").showNotification("Đã xóa xong");
-                    var select = "button.history." + id;
-                    $(select).parents("tr").remove();
+        };
+        var ktkldel = function () {
+            var c = confirm("Bạn có muốn xóa thông tin này không");
+            if (!c) return false;
+            $.ajax({
+                url:this.href,
+                global:false,
+                dataType:'html',
+                type:'GET',
+                success:function (response) {
+                    $("#tabs-2").html(response);
                 }
-            };
-            $.ajax(arg);
-        });
+            });
+            return false;
+        };
+        $(".bangdiem").live("change",changemarktable);
+        $("a.onPage").live("click",ktkllink);
+        $("form.onPage").live("submit",ktklform);
+        $("a.delOnPage").live("click",ktkldel );
         {% if pos > 3 %}
             $.ajax({
                 url:"{% url cap_nhap_mien_giam class.id student.id %}",
@@ -269,7 +235,7 @@
             dataType:'html',
             type:'GET',
             success:function (response) {
-                $("#tabs-3 > div").append(response);
+                $("#lscl").append(response);
                 applyListener();
             }
         });
@@ -279,10 +245,29 @@
             dataType:'html',
             type:'GET',
             success:function (response) {
-                $("#tabs-3 > div").append(response);
+                $("#ddhs").append(response);
                 applyListener();
             }
         });
+        $.ajax({
+            url:"{% url mark_for_a_student class.id id %}",
+            global:false,
+            dataType:'html',
+            type:'GET',
+            success:function(response){
+                $("#tabs-4").html(response);
+            }
+        });
+        $.ajax({
+            url:"{% url ktkl id %}",
+            global:false,
+            dataType:'html',
+            type:'GET',
+            success:function(response){
+                $("#tabs-2").html(response);
+            }
+        });
+
     });
     </script>
 
@@ -296,60 +281,66 @@
 
 
     <div id="tabs">
-        <ul>
-            <li><a href="#tabs-1">Thông tin học sinh</a></li>
-            <li><a href="{% url ktkl id %}">Khen thưởng, kỷ luật</a></li>
+        <ul class="nav-pills">
+            <li class="active"><a href="#tabs-1">Thông tin học sinh</a></li>
+            <li><a href="#tabs-2">Khen thưởng, kỷ luật</a></li>
             <li><a href="#tabs-3">Nghỉ học, chuyển lớp</a></li>
-            <li><a href="{% url mark_for_a_student class.id id %}">Bảng điểm</a></li>
-            <li><a href="#tabs-2">Miễn giảm</a></li>
+            <li><a href="#tabs-4">Bảng điểm</a></li>
+            <li><a href="#tabs-5">Miễn giảm</a></li>
         </ul>
-        <div id="tabs-1">
-            <div id="taikhoan"></div>
-            <form action="{% url student_detail id %}" method="post" class="student_detail">
-                {% csrf_token %}
-                <div class="container-fluid">
-                    <div class="row-fluid">
-                        <div id="ttcn" class="span6">
-                            <h3> Thông tin cá nhân </h3>
-                            <table class="table table-condensed no-border dataform">
-                                {{ ttcnform.as_table }}
-                            </table>
-                        </div>
-                        <div id="ttll" class="span6">
-                            <h3> Thông tin liên lạc </h3>
-                            <table class="table table-condensed no-border dataform">
-                                {{ ttllform.as_table }}
-                            </table>
-                        </div>
-                        <div id="ttgd" class="span6">
-                            <h3> Thông tin gia đình </h3>
-                            <table class="table table-condensed no-border dataform">
-                                {{ ttgdform.as_table }}
-                            </table>
-                        </div>
-                        <div id="ttdd" class="span6">
-                            <h3>Thông tin đoàn đội </h3>
-                            <table class="table table-condensed no-border dataform">
-                                {{ ttddform.as_table }}
-                            </table>
+        <div class="tab-content">
+            <div id="tabs-1" class="tab-pane active">
+                <div id="taikhoan"></div>
+                <form action="{% url student_detail id %}" method="post" class="student_detail">
+                    {% csrf_token %}
+                    <div class="container-fluid">
+                        <div class="row-fluid">
+                            <div id="ttcn" class="span6">
+                                <h3> Thông tin cá nhân </h3>
+                                <table class="table table-condensed no-border dataform">
+                                    {{ ttcnform.as_table }}
+                                </table>
+                            </div>
+                            <div id="ttll" class="span6">
+                                <h3> Thông tin liên lạc </h3>
+                                <table class="table table-condensed no-border dataform">
+                                    {{ ttllform.as_table }}
+                                </table>
+                            </div>
+                            <div id="ttgd" class="span6">
+                                <h3> Thông tin gia đình </h3>
+                                <table class="table table-condensed no-border dataform">
+                                    {{ ttgdform.as_table }}
+                                </table>
+                            </div>
+                            <div id="ttdd" class="span6">
+                                <h3>Thông tin đoàn đội </h3>
+                                <table class="table table-condensed no-border dataform">
+                                    {{ ttddform.as_table }}
+                                </table>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="form-actions pagination-centered">
-                    <input class="btn btn-primary" type="submit" value="Lưu"/>
+                    <div class="form-actions pagination-centered">
+                        <input class="btn btn-primary" type="submit" value="Lưu"/>
+                    </div>
+                </form>
+            </div>
+            <div id="tabs-2" class="tab-pane"></div>
+            <div id="tabs-3" class="tab-pane">
+                <div class="row-fluid">
+                    <div id="ddhs" class="span6"></div>
+                    <div id="lscl" class="span6"></div>
                 </div>
-            </form>
-        </div>
-        <div id="tabs-2">
-            <div class="row-fluid">
-                <div id="miengiam" class="span4"></div>
+            </div>
+            <div id="tabs-4" class="tab-pane"></div>
+            <div id="tabs-5" class="tab-pane">
+                <div class="row-fluid">
+                    <div id="miengiam" class="span4"></div>
+                </div>
             </div>
         </div>
-        <div id="tabs-3">
-            <div class="row-fluid">
 
-            </div>
-        </div>
     </div>
 {% endblock %}

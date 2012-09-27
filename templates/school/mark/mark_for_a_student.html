@@ -11,18 +11,6 @@
                 };
                 $.ajax(arg);
             });
-            {% if pos > 3 %}
-                $.ajax({
-                    url:"{% url cap_nhap_mien_giam class.id student.id %}",
-                    global:false,
-                    dataType:'html',
-                    type:'GET',
-                    success:function (response) {
-                        $("#miengiam").html(response);
-                        applyListener();
-                    }
-                });
-            {% endif %}
         });
     </script>
 {% endblock %}
@@ -42,7 +30,7 @@
         <form action="{% url mark_for_a_student class_id student_id %}" name="info" method="post"
               id='myform'> {% csrf_token %}
             Bảng điểm học kỳ
-            <select name="term">
+            <select name="term" class="bangdiem">
                 {% for term in termList %}
                     <option value={{ term.id }} selected> {{ term }} </option>
                 {% endfor %}
