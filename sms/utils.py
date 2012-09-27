@@ -39,15 +39,22 @@ def _send_sms(phone, content, user, save_to_db=True):
     phone = checkValidPhoneNumber(phone)
     tsp = get_tsp(phone)
     if not tsp in settings.ALLOWED_TSP: raise Exception('NotAllowTSP')
-    school = user.userprofile.organization
-    if school.id in [42, 44]: raise Exception('NotAllowedSMS')
+    school = None
+    try:
+        school = user.userprofile.organization
+        if school.id in [42, 44]: raise Exception('NotAllowedSMS')
+    except Exception:
+        pass
     if phone:
         url = settings.SMS_WSDL_URL
         username = settings.WSDL_USERNAME
         password = settings.WSDL_PASSWORD
         mt_username = settings.MT_USERNAME
         mt_password = settings.MT_PASSWORD
-        content = to_ascii(u'Truong ' + unicode(school) + u' thong bao:' + '\n' + content)
+        if school:
+            content = to_ascii(u'Truong ' + unicode(school) + u' thong bao:' + '\n' + content)
+        else:
+            content = to_ascii(u'truongnha.com thong bao:' + '\n' + content)
         s = None
         if save_to_db:
             s = sms(phone=phone, content=content,

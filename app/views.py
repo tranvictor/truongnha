@@ -149,56 +149,76 @@ def manage_register(request, sort_by_date=0, sort_by_status=0):
                     account_info = ''
                     for id in ids:
                         if id:
-                            reg = Register.objects.get(id= int(id))
-                            org_name = reg.school_name
-                            org_level = 'T'
-                            org_school_level = reg.school_level
-                            org_status = 0
-                            org_manager_name = reg.register_name
-                            org_address = reg.school_address
-                            phone = reg.register_phone
-                            email = reg.register_email
-                            school = Organization.objects.create(
-                                        name= org_name,
-                                        level= org_level,
-                                        school_level= org_school_level,
-                                        status= org_status,
-                                        manager_name= org_manager_name,
-                                        address= org_address,
-                                        phone= phone,
-                                        email= email)
-                            user = User()
-                            user.username = make_username( full_name=org_manager_name)
-                            user.password, raw_password = make_default_password()
-                            if reg.register_name:
-                                temp = reg.register_name.split(' ')
-                                user.first_name = temp[-1]
-                                user.last_name = ' '.join(temp[:-1])
-                            user.save()
-                            userprofile = UserProfile()
-                            userprofile.user = user
-                            userprofile.organization = school
-                            userprofile.position = 'HIEU_TRUONG'
-                            userprofile.save()
-                            reg.status = 'DA_CAP'
-                            reg.default_user_name = user.username
-                            reg.default_password = raw_password
-                            reg.save()
-                            #notify users about their account via email
-                            if school.phone:
-                                sms_msg = 'Tai khoan truongnha.com:\n\
-                                        Ten dang nhap:%s\nMat khau:%s\n\
-                                        Cam on ban da su dung dich vu!'\
-                                        % (unicode(user.username),
-                                                unicode(raw_password))
-                                try:
-                                    sendSMS(school.phone, sms_msg, request.user)
-                                except Exception:
-                                    pass
-                            send_email(u'Tài khoản Trường Nhà',
-                                    u'Cảm ơn bạn đã đăng ký để sử dụng dịch vụ Trường Nhà.\nTài khoản của bạn như sau:\n'+ u'Tên đăng nhập:' + unicode(user.username) + u'\n' + u'Mật khẩu:' + unicode(raw_password),
-                                    to_addr=[reg.register_email])
-                            account_info += str(id) + '-' + user.username + '-' + raw_password + ','
+                            reg = Register.objects.get(id=int(id))
+                            if reg.status == 'CHUA_CAP':
+                                org_name = reg.school_name
+                                org_level = 'T'
+                                org_school_level = reg.school_level
+                                org_status = 0
+                                org_manager_name = reg.register_name
+                                org_address = reg.school_address
+                                phone = reg.register_phone
+                                email = reg.register_email
+                                school = Organization.objects.create(
+                                            name= org_name,
+                                            level= org_level,
+                                            school_level= org_school_level,
+                                            status= org_status,
+                                            manager_name= org_manager_name,
+                                            address= org_address,
+                                            phone= phone,
+                                            email= email)
+                                user = User()
+                                user.username = make_username( full_name=org_manager_name)
+                                user.password, raw_password = make_default_password()
+                                if reg.register_name:
+                                    temp = reg.register_name.split(' ')
+                                    user.first_name = temp[-1]
+                                    user.last_name = ' '.join(temp[:-1])
+                                user.save()
+                                userprofile = UserProfile()
+                                userprofile.user = user
+                                userprofile.organization = school
+                                userprofile.position = 'HIEU_TRUONG'
+                                userprofile.save()
+                                reg.status = 'DA_CAP'
+                                reg.default_user_name = user.username
+                                reg.default_password = raw_password
+                                reg.save()
+                                #notify users about their account via email
+                                if school.phone:
+                                    sms_msg = 'Tai khoan truongnha.com:\n\
+                                            Ten dang nhap:%s\nMat khau:%s\n\
+                                            Cam on ban da su dung dich vu!'\
+                                            % (unicode(user.username),
+                                                    unicode(raw_password))
+                                    try:
+                                        print 'tag'
+                                        sendSMS(school.phone, sms_msg, request.user)
+                                    except Exception:
+                                        pass
+                                send_email(u'Tài khoản Trường Nhà',
+                                        u'Cảm ơn bạn đã đăng ký để sử dụng dịch vụ Trường Nhà.\nTài khoản của bạn như sau:\n'+ u'Tên đăng nhập:' + unicode(user.username) + u'\n' + u'Mật khẩu:' + unicode(raw_password),
+                                        to_addr=[reg.register_email])
+                                account_info += str(id) + '-' + user.username + '-' + raw_password + ','
+                            else:
+                                if reg.register_phone:
+                                    sms_msg = 'Tai khoan truongnha.com:\nTen dang nhap:%s\nMat khau:%s\nCam on ban da su dung dich vu!' % (unicode(reg.default_user_name),
+                                                 unicode(reg.default_password))
+                                    try:
+                                        sendSMS(reg.register_phone, sms_msg, request.user)
+                                    except Exception:
+                                        pass
+                                send_email(u'Tài khoản Trường Nhà',
+                                        u'Cảm ơn bạn đã đăng ký để sử dụng dịch' +
+                                        u'vụ Trường Nhà.\nTài khoản của bạn như' +
+                                        u'sau:\n'+ u'Tên đăng nhập:' +
+                                        unicode(reg.default_user_name) + u'\n'
+                                        + u'Mật khẩu:' +
+                                        unicode(reg.default_password),
+                                        to_addr=[reg.register_email])
+                                account_info += str(id) + '-' + reg.default_user_name + '-' + reg.default_password + ','
+
                     message = u'Tạo tài khoản thành công'
                     success = True
                     data = simplejson.dumps({
@@ -282,10 +302,13 @@ def login(request, template_name='app/login.html',
     error_type = None
     login_failure_exceed = False
     if request.method == "POST":
-        if api_called: form = AuthenticationForm(data=request.POST, request= request, api_called=True)
+        if api_called:
+            form = AuthenticationForm(data=request.POST,
+                    request=request,
+                    api_called=True)
         else:
             if demo_account: request.POST['login_type'] = demo_account
-            form = AuthenticationForm(data=request.POST, request= request)
+            form = AuthenticationForm(data=request.POST, request=request)
 
         if form.is_valid():
             netloc = urlparse.urlparse(redirect_to)[1]
