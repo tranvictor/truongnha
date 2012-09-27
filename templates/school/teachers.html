@@ -218,6 +218,7 @@
                     {% endif %}
 
                     <thead>
+                    <tr>
                     {% if pos >= 3 %}
                         {% if pos > 3 %}
                         <th class="align-left" title="Tài khoản">
@@ -238,6 +239,7 @@
                     <th class="align-left">Dạy môn</th>
                     <th class="align-left">Tổ</th>
                     <th class="align-left">Nhóm</th>
+                    </tr>
                     </thead>
 
                     <tbody>
@@ -283,7 +285,7 @@
                             {% else %}
                                 <td></td>
                             {% endif %}
-                            <td gender="{{ teacher.sex }}"> {{ teacher.sex }} </td>
+                            <td data-gender="{{ teacher.sex }}"> {{ teacher.sex }} </td>
 
                             <td>
                                 {{ teacher.major }}

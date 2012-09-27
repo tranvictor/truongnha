@@ -12,7 +12,7 @@
                               href="{%url student_detail student.id %}">{{ student.first_name }}</a>
         </td>
         <td> {{ student.birthday|date:"SHORT_DATE_FORMAT" }} </td>
-        <td gender="{{ student.sex }}"> {{ student.sex }} </td>
+        <td data-gender="{{ student.sex }}"> {{ student.sex }} </td>
         <td class="smsPhone"> {{ student.sms_phone }}</td>
         {% if student.email %}
           <td title="{{ student.email }}">

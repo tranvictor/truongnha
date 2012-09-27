@@ -146,7 +146,7 @@
 
     <div id="submenu" class="form-inline pagination-centered">
         <p><label>Lớp</label>
-            <select name="class" class="span1">
+            <select name="class" class="input-medium">
                 {% for cl in classList %}
                     {% if cl.id != class.id %}
                         <option value={{ cl.id }}> {{ cl }}</option>

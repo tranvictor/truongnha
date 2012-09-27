@@ -140,7 +140,7 @@
                 });
 
                 $(this).blur(function () {
-                    var old_value = $(this).parents("td").attr("hanhkiem");
+                    var old_value = $(this).parents("td").attr("data-hanhkiem");
                     var id = $(this).parents("tr").attr('class').split(' ')[0];
                     var value = getval($(this).val());
                     var name = $(this).attr("name");
@@ -156,7 +156,7 @@
                         }
                     };
                     if (value != old_value){
-                        $(this).parents("td").attr("hanhkiem", value);
+                        $(this).parents("td").attr("data-hanhkiem", value);
                         $.ajax(arg);
                     }
                     return false;
@@ -192,7 +192,7 @@
 
                 $(this).blur(function () {
                     var id = $(this).parents("tr").attr('class').split(' ')[0];
-                    var old_value = $(this).parents("td").attr("hanhkiem");
+                    var old_value = $(this).parents("td").attr("data-hanhkiem");
                     var y = getval($(this).val());
                     $(this).val(y);
                     $(this).attr('value', $(this).val());
@@ -206,7 +206,7 @@
                         }
                     };
                     if (y != old_value){
-                        $(this).parents("td").attr("hanhkiem", y);
+                        $(this).parents("td").attr("data-hanhkiem", y);
                         $.ajax(arg);
                     }
                     return false;
@@ -242,7 +242,7 @@
 
                 $(this).blur(function () {
                     var id = $(this).parents("tr").attr('class').split(' ')[0];
-                    var old_value = $(this).parents("td").attr("hanhkiem");
+                    var old_value = $(this).parents("td").attr("data-hanhkiem");
                     var value = getval($(this).val());
                     $(this).val(value);
                     $(this).attr('value', $(this).val());
@@ -257,7 +257,7 @@
                         }
                     };
                     if (value != old_value){
-                        $(this).parents("td").attr("hanhkiem", value);
+                        $(this).parents("td").attr("data-hanhkiem", value);
                         $.ajax(arg);
                     }
                     return false;
@@ -429,21 +429,21 @@
 
                     {% if pos > 2 %}
                         {% if term.number == 1 %}
-                            <td class="hk1" hanhkiem="{{ v.term1}}">{{ f.term1|default_if_none:"" }}</td>
+                            <td class="hk1" data-hanhkiem="{{ v.term1}}">{{ f.term1|default_if_none:"" }}</td>
                             <td class="hk2"></td>
                             <td class="cn"></td>
                         {% else %}
                             {% if pos < 4 %}
                                 <td class="hk {{ v.term1}}">{{ v.term1|default_if_none:"" }}</td>
                             {% else %}
-                                <td class="hk1" hanhkiem="{{ v.term1 }}">{{ f.term1|default_if_none:"" }}</td>
+                                <td class="hk1" data-hanhkiem="{{ v.term1 }}">{{ f.term1|default_if_none:"" }}</td>
                             {% endif %}
-                            <td class="hk2" hanhkiem="{{ v.term2 }}">{{ f.term2|default_if_none:""  }}</td>
-                            <td class="cn" hanhkiem="{{ v.year }}">{{ f.year|default_if_none:""  }}</td>
+                            <td class="hk2" data-hanhkiem="{{ v.term2 }}">{{ f.term2|default_if_none:""  }}</td>
+                            <td class="cn" data-hanhkiem="{{ v.year }}">{{ f.year|default_if_none:""  }}</td>
                         {% endif %}
 
                         {% for field in f.get_list_month %}
-                            <td class="col{{ forloop.counter }} hk-thang" hanhkiem="{{ field.value }}">{{ field }}</td>
+                            <td class="col{{ forloop.counter }} hk-thang" data-hanhkiem="{{ field.value }}">{{ field }}</td>
                         {% endfor %}
                     {% else %}
                         <td class="{{ v.term1 }}">{{ v.term1|default_if_none:"" }}</td>

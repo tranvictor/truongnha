@@ -253,7 +253,7 @@
                         <td> {{ ss.first_name }} </td>
                     {% endif %}
                     <td> {{ ss.birthday|date:"SHORT_DATE_FORMAT" }} </td>
-                    <td gender="{{ ss.sex }}"> {{ ss.sex }} </td>
+                    <td data-gender="{{ ss.sex }}"> {{ ss.sex }} </td>
                     <td class="smsPhone"> {{ ss.sms_phone }}</td>
                     {% if ss.email %}
                         <td title="{{ ss.email }}">

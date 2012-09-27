@@ -610,8 +610,8 @@ button.win-hidefocus:focus {
 }
 
 /* data values formatting*/
-td[gender="Nam"] {
-    color: #888;
+td[data-gender="Nam"]{
+    color: #ddd;
 }
 
 
