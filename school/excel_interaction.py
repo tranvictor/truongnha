@@ -1779,10 +1779,12 @@ def process_file_hanh_kiem(request, file_name, class_id):
             attr_list = {4: 'hk_thang_9', 5: 'hk_thang_10', 6: 'hk_thang_11', 7: 'hk_thang_12', 8: 'hk_thang_1', 9: 'hk_thang_2', 10: 'hk_thang_3', 11: 'hk_thang_4', 12: 'hk_thang_5', 13: 'term1', 14: 'term2', 15: 'year'}
 
             for num, attr in attr_list.iteritems():
-                try:
-                    setattr(TK, attr, sheet.cell_value(r, num).strip())
-                except Exception as ex:
-                    message += u'<ul>Gía trị tại ô ' + str(r) + u' ' + str(num) + u' không hợp lệ</ul>'
+                    val = sheet.cell_value(r, num).strip().upper()
+                    if val in [u'', u'T', u'K', u'TB', u'Y']:
+                        setattr(TK, attr, val)
+                    else:
+                        message += u'<ul>Gía trị ' + unicode(val) + u' tại ô (' + str(r) + u', ' + str(num) + u') không hợp lệ</ul>'
+                        setattr(TK, attr, u'')
             TK.save()
         except Exception as e:
             print str(e)
