@@ -67,7 +67,7 @@
                 $("#popupLockTimeValue").val($("#id_lock_time").val());
                 $("#lockTimePopup").find('li.value').each(function () {
                     $(this).bind('click', function () {
-                        $("#popupLockTimeValue").val($(this).attr('value'));
+                        $("#popupLockTimeValue").val($(this).attr('data-value'));
                         $('li').each(function () {
                             $(this).removeClass('selected');
                         });
@@ -112,15 +112,15 @@
                     <br/>
                 {% endif %}
                 <div class="row-fluid form-horizontal">
-                    <div class="span6 ">
-                        <legend>Thiết lập thông số</legend>
+                    <div class="span6">
+                        <h2>Thiết lập thông số</h2>
                         <table class="table no-border">
                             {{ setting_form.as_table }}
                         </table>
                     </div>
 
-                    <div class="span6 ">
-                        <legend>Liên hệ</legend>
+                    <div class="span6">
+                        <h2>Liên hệ</h2>
                         <table class="table no-border">
                             {{ form.as_table }}
                         </table>
@@ -128,13 +128,13 @@
 
                     <div class="googlePlusPopupDiv" id="lockTimePopup" style="display: none; padding-left: 20px;">
                         <ul>
-                            <li class="value" value="1" style="padding-left: 10px; cursor: pointer;">Một giờ</li>
-                            <li class="value" value="24" style="padding-left: 10px;cursor: pointer;">Một ngày</li>
-                            <li class="value" value="168" style="padding-left: 10px;cursor: pointer;">Một tuần</li>
-                            <li class="value" value="10000" style="padding-left: 10px;cursor: pointer;">Cả học kỳ</li>
-                            <li value="" id="customLockTime" style="padding-left: 10px;cursor: pointer;">Giá trị khác
+                            <li class="value" data-value="1" style="padding-left: 10px; cursor: pointer;">Một giờ</li>
+                            <li class="value" data-value="24" style="padding-left: 10px;cursor: pointer;">Một ngày</li>
+                            <li class="value" data-value="168" style="padding-left: 10px;cursor: pointer;">Một tuần</li>
+                            <li class="value" data-value="10000" style="padding-left: 10px;cursor: pointer;">Cả học kỳ</li>
+                            <li data-value="" id="customLockTime" style="padding-left: 10px;cursor: pointer;">Giá trị khác
                             </li>
-                            <li value="" style="padding-left: 10px;cursor: pointer;">
+                            <li data-value="" style="padding-left: 10px;cursor: pointer;">
                                 <div class="input-append" id="divLockTimeValue" style="display: none;">
                                     <input class="input-mini"
                                            type="text" id="popupLockTimeValue"
