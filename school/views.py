@@ -1002,34 +1002,37 @@ def timeTable(request, class_id):
 
     if request.method == "POST":
         if request.is_ajax():
-            print request.POST
             try:
                 d = int(request.POST['day'])
                 t = cl.tkb_set.get(day=d)
                 if not t:
                     raise Exception('StrangeRequestMethod')
+                request_type = request.POST['request_type'].strip()
+                if not (request_type in ['period_' + str(i) for i in range(1, 11)]):
+                    raise Exception('StrangeRequestMethod')
                 if request.POST['sub']:
                     if request.POST['sub'] == u'-1':
-                        setattr(t, request.POST['request_type'], None)
-                        if getattr(t, 'sinhhoat') == int(request.POST['request_type'].split("_")[1]):
+                        setattr(t, request_type, None)
+                        if getattr(t, 'sinhhoat') == int(request_type.split("_")[1]):
                             setattr(t, 'sinhhoat', None)
-                        setattr(t, 'chaoco', int(request.POST['request_type'].split("_")[1]))
+                        setattr(t, 'chaoco', int(request_type.split("_")[1]))
                     elif request.POST['sub'] == u'-2':
-                        setattr(t, request.POST['request_type'], None)
-                        if getattr(t, 'chaoco') == int(request.POST['request_type'].split("_")[1]):
+                        setattr(t, request_type, None)
+                        if getattr(t, 'chaoco') == int(request_type.split("_")[1]):
                             setattr(t, 'chaoco', None)
-                        setattr(t, 'sinhhoat', int(request.POST['request_type'].split("_")[1]))
+                        setattr(t, 'sinhhoat', int(request_type.split("_")[1]))
                     else:
-                        if getattr(t, 'sinhhoat') == int(request.POST['request_type'].split("_")[1]):
+                        if getattr(t, 'sinhhoat') == int(request_type.split("_")[1]):
                             setattr(t, 'sinhhoat', None)
-                        if getattr(t, 'chaoco') == int(request.POST['request_type'].split("_")[1]):
+                        if getattr(t, 'chaoco') == int(request_type.split("_")[1]):
                             setattr(t, 'chaoco', None)
-                        setattr(t, request.POST['request_type'], Subject.objects.get(id=int(request.POST['sub'])))
+                        sub = cl.subject_set.get(id = int(request.POST['sub']))
+                        setattr(t, request_type, sub)
                 else:
-                    setattr(t, request.POST['request_type'], None)
-                    if getattr(t, 'sinhhoat') == int(request.POST['request_type'].split("_")[1]):
+                    setattr(t, request_type, None)
+                    if getattr(t, 'sinhhoat') == int(request_type.split("_")[1]):
                         setattr(t, 'sinhhoat', None)
-                    if getattr(t, 'chaoco') == int(request.POST['request_type'].split("_")[1]):
+                    if getattr(t, 'chaoco') == int(request_type.split("_")[1]):
                         setattr(t, 'chaoco', None)
                 t.save()
             except Exception as e:
@@ -1037,35 +1040,38 @@ def timeTable(request, class_id):
                 print e
                 data = simplejson.dumps({'message': message})
                 return HttpResponse(data, mimetype='json')
-            print '222'
+
             message = u"Thời khóa biểu thay đổi thành công."
             data = simplejson.dumps({'message': message})
             return HttpResponse(data, mimetype='json')
         else:
-            for d in range(2, 8):
-                t = cl.tkb_set.get(day=d)
-                for i in range(1, 11):
-                    plist = request.POST.getlist('period_' + str(i))
-                    if plist[d-2]:
-                        if plist[d-2] == -1:
-                            setattr(t, 'period_' + str(i), None)
-                            setattr(t, 'chaoco', int(request.POST['request_type'].split("_")[1]))
-                        elif plist[d-2] == -2:
-                            setattr(t, 'period_' + str(i), None)
-                            setattr(t, 'sinhhoat', int(request.POST['request_type'].split("_")[1]))
+            try:
+                for d in range(2, 8):
+                    t = cl.tkb_set.get(day=d)
+                    for i in range(1, 11):
+                        plist = request.POST.getlist('period_' + str(i))
+                        if plist[d-2]:
+                            if plist[d-2] == -1:
+                                setattr(t, 'period_' + str(i), None)
+                                setattr(t, 'chaoco', i)
+                            elif plist[d-2] == -2:
+                                setattr(t, 'period_' + str(i), None)
+                                setattr(t, 'sinhhoat', i)
+                            else:
+                                if getattr(t, 'chaoco') == i:
+                                    setattr(t, 'chaoco', None)
+                                if getattr(t, 'sinhhoat') == i:
+                                    setattr(t, 'sinhhoat', None)
+                                setattr(t, 'period_' + str(i), Subject.objects.get(id=int(plist[d - 2])))
                         else:
+                            setattr(t, 'period_' + str(i), None)
                             if getattr(t, 'chaoco') == i:
                                 setattr(t, 'chaoco', None)
                             if getattr(t, 'sinhhoat') == i:
                                 setattr(t, 'sinhhoat', None)
-                            setattr(t, 'period_' + str(i), Subject.objects.get(id=int(plist[d - 2])))
-                    else:
-                        setattr(t, 'period_' + str(i), None)
-                        if getattr(t, 'chaoco') == i:
-                            setattr(t, 'chaoco', None)
-                        if getattr(t, 'sinhhoat') == i:
-                            setattr(t, 'sinhhoat', None)
-                    t.save()
+                        t.save()
+            except Exception as e:
+                print e
 
     timeTables = TKB.objects.filter(class_id=class_id).order_by('day')
     subject = cl.subject_set.all()

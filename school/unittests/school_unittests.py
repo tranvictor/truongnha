@@ -479,3 +479,37 @@ class TimetableTest(SchoolSetupTest):
         print 'Going to check response content'
         cont = simplejson.loads(response.content)
         self.assertEqual(cont['message'], u'Có lỗi xảy ra.')
+
+    def phase12_change_an_invalid_subject(self):
+        response = self.client.post(
+            reverse('timetable',args=[self.cl.id]),
+                {
+                'day': u'2',
+                'sub' : u'-5',
+                'request_type' : 'period_1',
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['message'], u'Có lỗi xảy ra.')
+
+    def phase13_change_an_invalid_period(self):
+        response = self.client.post(
+            reverse('timetable',args=[self.cl.id]),
+                {
+                'day': u'2',
+                'sub' : u'-2',
+                'request_type' : 'period_100',
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['message'], u'Có lỗi xảy ra.')
