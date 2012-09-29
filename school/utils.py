@@ -890,6 +890,33 @@ def get_current_term(request):
     except Exception( 'TermDoesNotExist'):
         return None
 
+def get_current_class(request):
+    if request.user.userprofile.position == u'GIAO_VIEN':
+        teacher = request.user.teacher
+        cl = teacher.current_homeroom_class
+        if cl is None:
+            cll = teacher.current_teaching_class()
+            if cll:
+               cl = cll[0]
+        if cl is not None:
+            return cl
+    elif request.user.userprofile.position == u'HOC_SINH':
+        student = request.user.pupil
+        cl = student.current_class()
+        return cl
+    year = get_current_year(request)
+    cl = year.class_set.latest('id')
+    return cl
+
+def get_current_student(request):
+    if request.user.userprofile.position == u'HOC_SINH':
+        student = request.user.pupil
+        return student
+    else:
+        cl = get_current_class(request)
+        std = cl.students().latest('id')
+        return std
+
 def in_school(request,school_id):
     if request.user.userprofile.organization.level == 'T':
         try:
