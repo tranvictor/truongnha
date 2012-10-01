@@ -285,17 +285,6 @@ $(document).ready(function() {
     }
     var setPosition = false;
     $(".add_student_button").click(function() {
-//        var addStudentWindow = $("#add-student-div");
-//        if (!setPosition){
-//            var addStudentWindowWidth = addStudentWindow.width();
-//            var windowWidth = $(window).width();
-//            addStudentWindow.css('position', 'fixed');
-//            addStudentWindow.css('bottom', 0);
-//            addStudentWindow.css('left', windowWidth - addStudentWindowWidth);
-//            setPosition = true;
-//        }
-//        addStudentWindow.slideDown(400);
-
         $("#student-table-div")
             .removeClass('span12')
             .addClass('span8');

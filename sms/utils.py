@@ -130,10 +130,10 @@ def send_SMS_then_email(phone, content, user, save_to_db=True,
             return True, False
 
 MOBI_HEAD = ['90', '93', '122', '126', '121', '128', '120']
-VINA_HEAD = ['91', '94', '123', '125', '127']
-VIETTEL_HEAD = ['97', '98', '165', '166', '167', '168', '169']
+VINA_HEAD = ['91', '94', '123', '125', '127', '129']
+VIETTEL_HEAD = ['97', '98', '162', '163', '164', '165', '166', '167', '168', '169']
 EVN_HEAD = ['96', '95']
-VIETNAMMOBILE_HEAD = ['92']
+VIETNAMMOBILE_HEAD = ['92', '188']
 BEELINE_HEAD = ['199']
 re_phone = re.compile('(84|\+84|0)(90|93|122|126|121|128|120|91|94|123|125|127|97|98|165|166|167|168|169|96|95|92|199)(\d{7})')
 #this function check if phone number is valid or not
