@@ -10,16 +10,6 @@
 
 {% block js %}
     <script type="text/javascript" src="/static/js/template_js/teachers.js?{{ VERSION }}"></script>
-{#    <script type="text/javascript" src="/static/js/jquery.dataTables.js"></script>#}
-{##}
-{#    <script type="text/javascript" charset="utf-8">#}
-{#        /* Table initialisation */#}
-{#        $(document).ready(function() {#}
-{#            $('#teacher_table').dataTable( {#}
-{#                "sDom": "<'row'<'span8'l><'span8'f>r>t<'row'<'span8'i><'span8'p>>"#}
-{#            } );#}
-{#        } );#}
-{#    </script>#}
 {% endblock %}
 
 {% block css %}
@@ -447,6 +437,7 @@
                                 <span>Chọn files...</span>
                                 <input type="file" name="files[]" multiple>
                             </span>
+                            <!--
                             <button type="submit" class="btn btn-primary start">
                                 <i class="icon-upload icon-white"></i>
                                 <span>Tải tất cả</span>
@@ -460,6 +451,7 @@
                                 <span>Xóa</span>
                             </button>
                             <input type="checkbox" class="toggle">
+                            -->
                         </div>
                         <div class="span3">
                             <!-- The global progress bar -->

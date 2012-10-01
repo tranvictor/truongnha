@@ -4,7 +4,6 @@ import settings
 import os
 import re
 from django.core import mail
-from suds.client import Client
 
 def to_ascii(string):
     result = ''
@@ -37,8 +36,6 @@ def _send_email(subject, message, from_addr=None, to_addr=[]):
 
 def _send_sms(phone, content, user, save_to_db=True):
     phone = checkValidPhoneNumber(phone)
-    tsp = get_tsp(phone)
-    if not tsp in settings.ALLOWED_TSP: raise Exception('NotAllowTSP')
     school = None
     try:
         school = user.userprofile.organization
@@ -46,46 +43,16 @@ def _send_sms(phone, content, user, save_to_db=True):
     except Exception:
         pass
     if phone:
-        url = settings.SMS_WSDL_URL
-        username = settings.WSDL_USERNAME
-        password = settings.WSDL_PASSWORD
-        mt_username = settings.MT_USERNAME
-        mt_password = settings.MT_PASSWORD
         if school:
-            content = to_ascii(u'Truong ' + unicode(school) + u' thong bao:' + '\n' + content)
+            content = to_ascii(u'Truong %s thong bao:\n %s' % (
+                unicode(school), content))
         else:
-            content = to_ascii(u'truongnha.com thong bao:' + '\n' + content)
+            content = to_ascii(u'truongnha.com thong bao:\n %s' % content)
         s = None
-        if save_to_db:
-            s = sms(phone=phone, content=content,
-                    sender=user, recent=True, success=True)
-            s.save()
-        client = Client(url, username = username, password = password)
-        message = \
-    '''<?xml version="1.0" encoding="UTF-8"?>
-<soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">
-<soap12:Body>
-<InsertMT xmlns="http://tempuri.org/">
-  <User>%s</User>
-  <Pass>%s</Pass>
-  <CPCode>160</CPCode>
-  <RequestID>4</RequestID>
-  <UserID>%s</UserID>
-  <ReceiveID>%s</ReceiveID>
-  <ServiceID>8062</ServiceID>
-  <CommandCode>CNHN1</CommandCode>
-  <ContentType>0</ContentType>
-<Info>%s</Info>
-</InsertMT>
-</soap12:Body>
-</soap12:Envelope>''' % (mt_username, mt_password, phone, phone, content)
-        result = client.service.InsertMT(__inject= {'msg': str(message)})
-        if result != '1' and save_to_db:
-            s.success = False
-            s.save()
-        return result
-    else:
-        raise Exception("InvalidPhoneNumber")
+        s = sms(phone=phone, content=content,
+                sender=user, recent=True, success=False)
+        s.save()
+        s.send_sms(phone)
 
 def send_email(subject, message, from_addr=None, to_addr=[]):
     #msg = MIMEText(message.encode('utf-8'), _charset='utf-8')
@@ -122,10 +89,8 @@ def task_send_email(subject, message, from_addr=None, to_addr=[]):
                 settings.EMAIL_HOST_USER,
                 to_addr)
 
-@task()
 def task_send_sms(phone, content, user, save_to_db=True):
     return _send_sms(phone, content, user, save_to_db) 
-
 
 @task()
 def task_send_SMS_then_email(phone, content, user, save_to_db=True,

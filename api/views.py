@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from django.middleware.csrf import get_token
 from django.core.exceptions import ObjectDoesNotExist
 from app.views import login
+from sms.models import sms
 from school.class_functions import dd
 from school.models import Class, Pupil, Term, Subject, DiemDanh
 from school.utils import get_position, get_school, is_teacher
@@ -232,6 +233,7 @@ class Attendance(View):
                 raise e
         else:
             return Response(status.HTTP_403_FORBIDDEN)
+
 class Subject(View):
     @need_login
     @school_function
@@ -343,3 +345,14 @@ class SchoolSetting(View):
         data = { 'success': success, 'setting': setting}
         return Response(status.HTTP_200_OK, content=data)
 
+class SmsStatus(View):
+    @need_login
+    def get(self, request, ids):
+        user = request.user
+        ids = ids.split('-')
+        _smses = sms.objects.filter(id__in=ids, sender=user)
+        result = {}
+        for s in _smses:
+            result[s.id] = '%s-%s' % (s.recent, s.success)
+        return Response(status.HTTP_200_OK, content=result)
+            

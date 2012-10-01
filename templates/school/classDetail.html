@@ -226,9 +226,6 @@
                 <th></th>
                 <th title="Nơi ở hiện tại">Địa chỉ</th>
                 <th >Họ tên bố, mẹ</th>
-{#                <th class="visible-desktop">Họ tên mẹ</th>#}
-{#                <th class="visible-desktop">Nơi sinh</th>#}
-{#                <th class="hidden-phone">Dân tộc</th>#}
             </tr>
             </thead>
 
@@ -283,9 +280,7 @@
     <div class="span4 dataform"
         id="add-student-div"
         style="display: none;">
-            {#            <div class="modal-header">#}
             <h3>Thêm học sinh</h3>
-            {#            </div>#}
             <div>
                 <form action="{% url class_detail class.id %}"
                       id="submitform" method="post">{% csrf_token %}
@@ -358,71 +353,6 @@
                         </tr>
                         </tbody>
                     </table>
-
-                    {#                        <table class="table">#}
-                    {#                            <tr>#}
-                    {#                                <th> Họ:</th>#}
-                    {#                                <td>#}
-                    {#                                    {{ form.last_name }}#}
-                    {#                                </td>#}
-                    {#                            </tr>#}
-                    {#                            <tr>#}
-                    {#                                <th> Tên:</th>#}
-                    {#                                <td>#}
-                    {#                                    {{ form.first_name.errors }}#}
-                    {#                                    {{ form.first_name }}#}
-                    {#                                </td>#}
-                    {#                            </tr>#}
-                    {#                            <tr>#}
-                    {#                                <th> Ngày sinh:</th>#}
-                    {#                                <td>#}
-                    {#                                    <input id="id_birthday" class="datepicker" type="text" name="birthday"#}
-                    {#                                           value="{{ default_date }}">#}
-                    {#                                </td>#}
-                    {#                            </tr>#}
-                    {#                            <tr>#}
-                    {#                                <th> Điện thoại:</th>#}
-                    {#                                <td>#}
-                    {#                                    {{ form.sms_phone }}#}
-                    {#                                </td>#}
-                    {#                            </tr>#}
-                    {#                            <tr>#}
-                    {#                                <th> Giới tính:</th>#}
-                    {#                                <td>#}
-                    {#                                    {{ form.sex }}#}
-                    {#                                </td>#}
-                    {#                            </tr>#}
-                    {#                            <tr>#}
-                    {#                                <th> Dân tộc:</th>#}
-                    {#                                <td>#}
-                    {#                                    {{ form.dan_toc }}#}
-                    {#                                </td>#}
-                    {#                            </tr>#}
-                    {#                            <tr>#}
-                    {#                                <th> Địa chỉ:</th>#}
-                    {#                                <td>#}
-                    {#                                    {{ form.current_address }}#}
-                    {#                                </td>#}
-                    {#                            </tr>#}
-                    {#                            <tr>#}
-                    {#                                <th> Họ tên bố:</th>#}
-                    {#                                <td>#}
-                    {#                                    {{ form.father_name }}#}
-                    {#                                </td>#}
-                    {#                            </tr>#}
-                    {#                            <tr>#}
-                    {#                                <th> Họ tên mẹ:</th>#}
-                    {#                                <td>#}
-                    {#                                    {{ form.mother_name }}#}
-                    {#                                </td>#}
-                    {#                            </tr>#}
-                    {#                            <tr>#}
-                    {#                                <th> Nơi sinh:</th>#}
-                    {#                                <td>#}
-                    {#                                    {{ form.birth_place }}#}
-                    {#                                </td>#}
-                    {#                            </tr>#}
-                    {#                        </table>#}
                 </form>
             </div>
             <div class="modal-footer">
@@ -472,11 +402,12 @@
                 <div class="row fileupload-buttonbar">
                     <div class="span5">
                         <!-- The fileinput-button span is used to style the file input field as button -->
-                                <span class="btn btn-success fileinput-button">
-                                    <i class="icon-plus icon-white"></i>
-                                    <span>Chọn files...</span>
-                                    <input type="file" name="files[]" multiple>
-                                </span>
+                        <span class="btn btn-success fileinput-button">
+                            <i class="icon-plus icon-white"></i>
+                            <span>Chọn files...</span>
+                            <input type="file" name="files[]" multiple>
+                        </span>
+                        <!--
                         <button type="submit" class="btn btn-primary start">
                             <i class="icon-upload icon-white"></i>
                             <span>Tải tất cả</span>
@@ -490,6 +421,7 @@
                             <span>Xóa</span>
                         </button>
                         <input type="checkbox" class="toggle">
+                        -->
                     </div>
                     <div class="span3">
                         <!-- The global progress bar -->

@@ -204,6 +204,7 @@ def viewClassDetail(request, class_id):
                                 if emailed:
                                     number_of_email_sent += 1
                             except Exception as e:
+                                print e
                                 number_of_failed += 1
                         else:
                             number_of_blank += 1
