@@ -101,15 +101,15 @@
                 <ul class="dropdown-menu">
                     <li>
                         <a title="In phiếu báo điểm kỳ I"
-                           href="/school/printMarkForClass/1">
+                           href="{%url print_mark_for_class 1 %}">
                             Phiếu báo điểm kì I </a></li>
                     <li>
                         <a title="In phiếu báo điểm kỳ II"
-                           href="/school/printMarkForClass/2">
+                           href="{%url print_mark_for_class 2 %}">
                             Phiếu báo điểm kì II </a></li>
                     <li>
                         <a title="In phiếu báo điểm kỳ II"
-                           href="/school/printMarkBook/{{class.id}}">
+                           href="{%url print_mark_book class.id %}">
                             Sổ ghi điểm và gọi tên </a></li>
                 </ul>
             </div>
