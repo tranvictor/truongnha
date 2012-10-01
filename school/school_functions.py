@@ -210,6 +210,7 @@ def teachers(request):
                         raise e
             if pos > 3:
                 if request.POST['request_type'] == u'add':
+                    print request.POST
                     if request.POST['first_name'].strip():
                         name = request.POST['first_name'].split()
                         last_name = ' '.join(name[:len(name) - 1])
@@ -257,7 +258,7 @@ def teachers(request):
                                                     team_id=team,
                                                     group_id=group,
                                                     major=data['major'])
-                            message = u'Bạn vừa thêm một giáo viên mới'
+                            message = u'Bạn vừa thêm một giáo viên mới.'
                             count = school.teacher_set.count()
                             new_teacher = render_to_string(
                                             os.path.join('school',
@@ -273,7 +274,7 @@ def teachers(request):
                     else:
                         response = {
                             'success': False,
-                            'message': u'Có lỗi ở dữ liệu nhập vào'
+                            'message': u'Có lỗi ở dữ liệu nhập vào.'
                         }
                         for field in form:
                             if field.errors:

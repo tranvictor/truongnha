@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from base_tests import SchoolSetupTest, AddStudentTest
 from school.models import DiemDanh
 import simplejson
+from school.models import Teacher
 from datetime import date
 # Loi test nho chu y: test ca get, post. Khi post thi nen test add subject ca
 # nhung mon quan trong nhu: Toan, Van, kiem tra he so, kiem tra diem kem theo
@@ -513,3 +514,156 @@ class TimetableTest(SchoolSetupTest):
         print 'Going to check response content'
         cont = simplejson.loads(response.content)
         self.assertEqual(cont['message'], u'Có lỗi xảy ra.')
+
+class AddTeacherTest(SchoolSetupTest):
+    def phase8_add_a_teacher(self):
+        response = self.client.post(
+            reverse('teachers'),
+                {
+                'request_type':u'add',
+                'first_name': u'Nguyễn Văn A',
+                'birthday': u'20/3/1975',
+                'sex': u'Nam',
+                'sms_phone': u'0987438383',
+                'major' : u'GDCD',
+                'team_id' : u'',
+                'group_id' : u'',
+
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        print cont
+        self.assertEqual(cont['success'], True)
+        self.assertEqual(cont['message'],u'Bạn vừa thêm một giáo viên mới.')
+        teacher = Teacher.objects.get(last_name=u'Nguyễn Văn',
+            first_name=u'A',
+            birthday=u'1975-03-20')
+        print 'Check if teacher was created successfully'
+        self.assertIsNotNone(teacher)
+    def phase9_add_a_teacher_invalid_sex(self):
+        response = self.client.post(
+            reverse('teachers'),
+                {
+                'request_type':u'add',
+                'first_name': u'Nguyễn Văn B',
+                'birthday': u'20/3/1975',
+                'sex': u'Invalid',
+                'sms_phone': u'0987438383',
+                'major' : u'GDCD',
+                'team_id' : u'',
+                'group_id' : u'',
+
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['success'], False)
+        self.assertEqual(cont['message'],u'Có lỗi ở dữ liệu nhập vào.')
+
+    def phase10_add_duplicate_teacher(self):
+        response = self.client.post(
+            reverse('teachers'),
+                {
+                'request_type':u'add',
+                'first_name': u'Nguyễn Văn A',
+                'birthday': u'20/3/1975',
+                'sex': u'Nam',
+                'sms_phone': u'0987438383',
+                'major' : u'GDCD',
+                'team_id' : u'',
+                'group_id' : u'',
+
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['success'], False)
+        self.assertEqual(cont['message'],u'Giáo viên này đã tồn tại trong hệ thống')
+        return True
+
+    def phase11_add_teacher_invalid_team(self):
+        response = self.client.post(
+            reverse('teachers'),
+                {
+                'request_type':u'add',
+                'first_name': u'Nguyễn Văn D',
+                'birthday': u'2/3/1975',
+                'sex': u'Nam',
+                'sms_phone': u'0986438383',
+                'major' : u'GDCD',
+                'team_id' : u'111',
+                'group_id' : u'',
+
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['success'], False)
+        self.assertEqual(cont['message'], u'Có lỗi ở dữ liệu nhập vào.')
+        return True
+
+    def phase11_add_teacher_invalid_team(self):
+        response = self.client.post(
+            reverse('teachers'),
+                {
+                'request_type':u'add',
+                'first_name': u'Nguyễn Văn D',
+                'birthday': u'2/3/1975',
+                'sex': u'Nam',
+                'sms_phone': u'0986438383',
+                'major' : u'GDCD',
+                'team_id' : u'111',
+                'group_id' : u'',
+
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['success'], False)
+        self.assertEqual(cont['message'], u'Có lỗi ở dữ liệu nhập vào.')
+        return True
+
+    def phase12_delete_teacher(self):
+        teacher = Teacher.objects.get(last_name=u'Nguyễn Văn',
+            first_name=u'A',
+            birthday=u'1975-03-20')
+        response = self.client.post(
+            reverse('teachers'),
+                {
+                'request_type':u'del',
+                'data' : str(teacher.id) + u'-',
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['success'], True)
+        teacher = Teacher.objects.get(last_name=u'Nguyễn Văn',
+            first_name=u'A',
+            birthday=u'1975-03-20')
+        self.assertIsNone(teacher)
+        return True

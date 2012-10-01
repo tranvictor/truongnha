@@ -206,6 +206,7 @@ class AddStudentTest(SchoolSetupTest):
         self.assertEqual(response['Content-Type'], 'json')
         print 'Going to check response content'
         cont = simplejson.loads(response.content)
+        print cont
         self.assertEqual(cont['success'], True)
         self.assertEqual(cont['message'],u'Bạn vừa thêm 1 học sinh')
         pupil = Pupil.objects.get(first_name=u'Nguyễn',
