@@ -43,15 +43,17 @@
                         <ol>
                             <li>Đây là trang chủ của giáo viên sau khi đăng nhập. Bạn có thể chọn các chức năng quản
                                 lý lớp hoặc xem thông tin khác của trường.
+                                <img src="/static/images/help/giaovien-home.png"/>
                             </li>
-                            <img src="/static/images/help/giaovien-home.png"/>
+
                         </ol>
                     {% elif user.userprofile.position == 'HIEU_TRUONG' or user.userprofile.position == 'HIEU_PHO' or user.userprofile.position == 'GIAO_VU' %}
                         <ol>
                             <li>Đây là trang chủ của quản trị trường sau khi đăng nhập. Bạn có thể chọn các chức
                                 năng quản lý lớp hoặc các chức năng quản lý cấp trường từ màn hình này.
+                                <img src="/static/images/help/home.png"/>
                             </li>
-                            <img src="/static/images/help/home.png"/>
+
 
                             <li>Khi muốn quay về màn hình chính này bạn chỉ cần chọn biểu tượng
                                 <a href="/"><i class="icon-home icon-large"></i> Trường</a> ở góc trái, phía trên màn
@@ -63,8 +65,9 @@
                     <ol>
                         <li>Từ màn hình giới thiệu này bạn có thể đăng nhập, đăng ký, hoặc tìm hiểu về dịch vụ phần
                             mềm.
+                            <img src="/static/images/help/welcome.png"/>
                         </li>
-                        <img src="/static/images/help/welcome.png"/>
+
                     </ol>
                 {% endif %}
             {% endblock %}

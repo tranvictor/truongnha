@@ -19,7 +19,7 @@ $(document).ready(function(){
     $('#setup').click(function(){
         if ($(this).hasClass('disabled')) return false;
         var cur_year = parseInt($(this).attr('data-toggle')); 
-        var year_time = parseInt($(this).attr('year-time')); 
+        var year_time = parseInt($(this).attr('data-year-time'));
         if (year_time - cur_year < 1) {
             $('#notify').showNotification("Bạn đang ở năm học hiện tại rồi.");
             return false;

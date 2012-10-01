@@ -2,14 +2,14 @@
 {% block breadcrumb %}
     {{ block.super }}
     {% load breadcrumb_tags %}
-    {% add_crumb 'Đơn vị trực thuộc' %}
+    {% add_crumb 'Xem thông tin của từng trường' %}
 {% endblock %}
 
 {% block content %}
-    <h2> Đơn vị trực thuộc </h2>
+    <h2> Các trường trực thuộc </h2>
     {% for a in list %}
 		{% if a.status == 0 %}
-			<p>{{ a.name }} ( chưa khởi tạo ) </p>
+{#			<p>{{ a.name }} ( chưa khởi tạo ) </p>#}
 		{% else %}			
 			<p><a href="{% url view_school a.id %}">
 				{{ a.name }}
