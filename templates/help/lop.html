@@ -4,14 +4,15 @@
     {% if user.userprofile.position == 'HIEU_TRUONG' or user.userprofile.position == 'HIEU_PHO' or  user.userprofile.position == 'GIAO_VU' or not user.is_authenticated %}
         <div class="help-content">
             <ol>
-                <li>Từ trang chủ chọn lớp trong danh sách để thực hiện các chức năng quản lý lớp đó.</li>
-                <image src='/static/images/help/lophoc.png'/>
+                <li>Từ trang chủ chọn lớp trong danh sách để thực hiện các chức năng quản lý lớp đó.
+                <img src='/static/images/help/lophoc.png' alt="Các lớp học"/>
+                </li>
             </ol>
         </div>
     {% else %}
         {% if user.userprofile.position == 'GIAO_VIEN' %}
             <div class="help-content">
-                <image src='/static/images/help/.png'/>
+                <img src='/static/images/help/.png'/>
             </div>
         {% endif %}
     {% endif %}
