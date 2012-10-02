@@ -532,8 +532,18 @@ class Class(models.Model):
     def students(self):
         return self.student_set.filter(attend__is_member=True)\
                 .order_by('index').distinct()
-
-
+    #this method return dict of pair {id: [student, mark]}
+    def _mark_for_students(self, subject, term):
+        sts = self.students()
+        marks = Mark.objects.filter(subject_id=subject, term_id=term,
+                student_id__in=sts)
+        result = {}
+        for st in sts:
+            result[st.id] = [st]
+        for m in marks:
+            result[m.student_id_id].append(m)
+        return result
+        
     def number_of_pupils(self):
         try:
             return self.student_set.filter(attend__is_member=True)\

@@ -123,6 +123,12 @@ def viewClassDetail(request, class_id):
     pos = get_position(request)
     try:
         cl = Class.objects.get(id=class_id)
+        ##Just test
+        #term = Term.objects.get(id=82)
+        #subject = Subject.objects.get(id=8986)
+        #marks = cl._mark_for_students(subject, term)
+        #print len(marks)
+        ##---------
         this_y = get_current_year(request)
         move_to_cls = cl.block_id.class_set.filter(year_id = this_y)\
                                            .exclude(id=class_id)\
