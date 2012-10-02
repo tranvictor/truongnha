@@ -72,18 +72,6 @@
                 $(this).parents("tr").next().remove();
                 $(sw).clone().insertAfter($(this).parents("tr"));
             });
-            {% if pos > 3 %}
-                $.ajax({
-                    url:"{% url teacher_account id %}",
-                    global:false,
-                    dataType:'html',
-                    type:'GET',
-                    success:function (response) {
-                        $("#taikhoan").html(response);
-                        applyListener();
-                    }
-                });
-            {% endif %}
         });
     </script>
 {% endblock %}
