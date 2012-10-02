@@ -20,6 +20,20 @@ TEST_TABLE = os.path.join('helptool','test_table.html')
 REALTIME = os.path.join('helptool','realtime_test.html')
 CONVERT_MARK= os.path.join('helptool','convert_mark.html')
 
+def _sync_pupil_disable():
+    #all student on system
+    students = Pupil.objects.all()
+    #those students have current class
+    attends = Attend.objects.filter(leave_time=None)
+    ids = []
+    for attend in attends: ids.append(attend.pupil.id)
+    #students that do not have current class
+    disabled_ids = []
+    for st in students:
+        if not st.id in ids: disabled_ids.append(st.id)
+    students = Pupil.objects.filter(id__in=disabled_ids)
+    students.update(disable=True)
+
 def _sync_current():
     def finish_class(cl, st):
         at = Attend.objects.filter(pupil=st, _class=cl)

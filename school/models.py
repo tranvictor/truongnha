@@ -3,101 +3,130 @@ from datetime import date
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
-from app.models import Organization, KHOI_CHOICES, SUBJECT_CHOICES, GRADES_CHOICES, TERMS
-from school.templateExcel import MAX_COL, normalize, convertMarkToCharacter1
+from app.models import Organization, KHOI_CHOICES,\
+        SUBJECT_CHOICES, GRADES_CHOICES, TERMS
+from school.templateExcel import MAX_COL, normalize,\
+        convertMarkToCharacter1
 from sms.utils import sendSMS, send_email
-
 import random, string
 import itertools
 import urllib2
 from django.contrib.auth.hashers import make_password
-LOAI_CHOICES = ((0,u'Tính cả 2 kỳ'),(1,u'Chỉ tính kì 1'),(2,u'Chỉ tính kì 2'),(3,u'Cộng vào điểm TB(NN2)'),(4,u'Không tính điểm'))
+
+LOAI_CHOICES = ((0,u'Tính cả 2 kỳ'), (1,u'Chỉ tính kì 1'),
+        (2,u'Chỉ tính kì 2'), (3,u'Cộng vào điểm TB(NN2)'),
+        (4,u'Không tính điểm'))
 SUBJECT_TYPES = ((u'Toán',u'Toán'),
-                 (u'Vật lí', u'Vật lí'), (u'Hóa học', u'Hóa học'),
-                 (u'Sinh học', u'Sinh học'),(u'Ngữ văn', u'Ngữ văn'),
-                 (u'Lịch sử', u'Lịch sử'), (u'Địa lí', u'Địa lí'),
-                 (u'Ngoại ngữ', u'Ngoại ngữ'), (u'GDCD',u'GDCD'),
-                 (u'Công nghệ', u'Công nghệ'), (u'Thể dục', u'Thể dục'),
-                 (u'Âm nhạc', u'Âm nhạc'),(u'Mĩ thuật', u'Mĩ thuật'),
-                 (u'NN2', u'NN2'),(u'Tin học', u'Tin học'),
-                 (u'GDQP-AN', u'GDQP-AN'))
-SUBJECT_LIST = [u'Toán',u'Vật lí', u'Hóa học',u'Sinh học',u'Ngữ văn',
-                u'Lịch sử', u'Địa lí', u'Ngoại ngữ', u'GDCD',u'Công nghệ',
-                u'Thể dục', u'Âm nhạc',u'Mĩ thuật',u'NN2',u'Tin học', u'GDQP-AN']
-SUBJECT_LIST_ASCII = [u'toan',u'vat li', u'hoa hoc',u'sinh hoc',u'ngu van',
-                u'lich su', u'dia li', u'ngoai ngu', u'gdcd',u'cong nghe',
-                u'the duc', u'am nhac',u'mi thuat',u'nn2',u'tin hoc', u'gdqp-an']
-GENDER_CHOICES = ((u'Nam', u'Nam'),(u'Nữ', u'Nữ'),)
-TERM_CHOICES = ((1, u'1'), (2, u'2'),(3, u'3'),)
-HK_CHOICES = ((u'', u'Chưa xét'),(u'T', u'Tốt'), (u'K', u'Khá'),(u'TB',u'TB'),(u'Y', u'Yếu'),)
-HL_CHOICES = ((u'G', u'Giỏi'), (u'K', u'Khá'),(u'TB',u'Trung Bình'),(u'Y', u'Yếu'),(u'Kem', u'Kém'))
-DH_CHOICES = ((u'XS', u'Học sinh xuất sắc'),(u'G', u'Hoc sinh giỏi'), (u'TT', u'Học sinh tiên tiến'),(u'K',u'Không được gì'))
-KT_CHOICES = ((u'Khen trước lớp',u'Khen trước lớp'), (u'Khen trước toàn trường',u'Khen trước toàn trường'),
-              (u'Được tặng danh hiệu học sinh khá',u'Được tặng danh hiệu học sinh khá'), 
-              (u'Được tặng danh hiệu học sinh giỏi',u'Được tặng danh hiệu học sinh giỏi'), (u'Được ghi tên vào bảng danh dự của trường',u'Được ghi tên vào bảng danh dự của trường'), 
-              (u'Được tặng danh hiệu học sinh xuất sắc',u'Được tặng danh hiệu học sinh xuất sắc'), (u'Được khen thưởng đặc biệt',u'Được khen thưởng đặc biệt'))
-KL_CHOICES = ((u'Khiển trách trước lớp',u'Khiển trách trước lớp'), (u'Khiển trách trước hội đồng kỷ luật',u'Khiển trách trước hội đồng kỷ luật'), 
-              (u'Cảnh cáo trước toàn trường',u'Cảnh cáo trước toàn trường'), (u'Đình chỉ học',u'Đình chỉ học'))
+        (u'Vật lí', u'Vật lí'), (u'Hóa học', u'Hóa học'),
+        (u'Sinh học', u'Sinh học'),(u'Ngữ văn', u'Ngữ văn'),
+        (u'Lịch sử', u'Lịch sử'), (u'Địa lí', u'Địa lí'),
+        (u'Ngoại ngữ', u'Ngoại ngữ'), (u'GDCD',u'GDCD'),
+        (u'Công nghệ', u'Công nghệ'), (u'Thể dục', u'Thể dục'),
+        (u'Âm nhạc', u'Âm nhạc'),(u'Mĩ thuật', u'Mĩ thuật'),
+        (u'NN2', u'NN2'),(u'Tin học', u'Tin học'),
+        (u'GDQP-AN', u'GDQP-AN'))
+SUBJECT_LIST = [u'Toán', u'Vật lí', u'Hóa học', u'Sinh học', u'Ngữ văn',
+        u'Lịch sử', u'Địa lí', u'Ngoại ngữ', u'GDCD', u'Công nghệ',
+        u'Thể dục', u'Âm nhạc', u'Mĩ thuật', u'NN2', u'Tin học',
+        u'GDQP-AN']
+SUBJECT_LIST_ASCII = [u'toan', u'vat li', u'hoa hoc', u'sinh hoc', u'ngu van',
+        u'lich su', u'dia li', u'ngoai ngu', u'gdcd', u'cong nghe',
+        u'the duc', u'am nhac', u'mi thuat', u'nn2', u'tin hoc',
+        u'gdqp-an']
+GENDER_CHOICES = ((u'Nam', u'Nam'), (u'Nữ', u'Nữ'),)
+TERM_CHOICES = ((1, u'1'), (2, u'2'), (3, u'3'),)
+HK_CHOICES = ((u'', u'Chưa xét'), (u'T', u'Tốt'), (u'K', u'Khá'),
+        (u'TB',u'TB'), (u'Y', u'Yếu'),)
+HL_CHOICES = ((u'G', u'Giỏi'), (u'K', u'Khá'), (u'TB',u'Trung Bình'),
+        (u'Y', u'Yếu'), (u'Kem', u'Kém'))
+DH_CHOICES = ((u'XS', u'Học sinh xuất sắc'), (u'G', u'Hoc sinh giỏi'),
+        (u'TT', u'Học sinh tiên tiến'), (u'K',u'Không được gì'))
+KT_CHOICES = ((u'Khen trước lớp',u'Khen trước lớp'),
+        (u'Khen trước toàn trường',u'Khen trước toàn trường'),
+        (u'Được tặng danh hiệu học sinh khá',u'Được tặng danh hiệu học sinh khá'), 
+        (u'Được tặng danh hiệu học sinh giỏi',u'Được tặng danh hiệu học sinh giỏi'),
+        (u'Được ghi tên vào bảng danh dự của trường',
+            u'Được ghi tên vào bảng danh dự của trường'),
+        (u'Được tặng danh hiệu học sinh xuất sắc',
+            u'Được tặng danh hiệu học sinh xuất sắc'),
+        (u'Được khen thưởng đặc biệt',u'Được khen thưởng đặc biệt'))
+KL_CHOICES = ((u'Khiển trách trước lớp',u'Khiển trách trước lớp'),
+        (u'Khiển trách trước hội đồng kỷ luật',u'Khiển trách trước hội đồng kỷ luật'),
+        (u'Cảnh cáo trước toàn trường',u'Cảnh cáo trước toàn trường'),
+        (u'Đình chỉ học',u'Đình chỉ học'))
 SCHOOL_LEVEL_CHOICE = ((1, u'1'), (2, u'2'), (3, u'3'))
-DIEM_DANH_TYPE = ((u'',u'Đi học'),(u'P', u'nghỉ học có phép'),(u'K', u'nghỉ học không phép'),(u'M',u'đi học muộn'),)
-BAN_CHOICE = ((u'KHTN',u'Ban KHTN'),(u'KHXH',u'Ban KHXH-NV'),(u'CBA',u'Ban Cơ bản A'),
-              (u'CBB',u'Ban Cơ bản B'),(u'CBB',u'Ban Cơ bản C'),
-              (u'CBD',u'Ban Cơ bản D'),(u'CB',u'Ban Cơ bản'))
-KHOI_CHOICE=((1,u'Khối 1'),(2,u'Khối 2'),(3,u'Khối 3'),(4,u'Khối 4'),(5,u'Khối 5'),(6,u'Khối 6'),(7,u'Khối 7'),             
-            (8,u'Khối 8'),(9,u'Khối 9'),(10,u'Khối 10'),(11,u'Khối 11'),(12,u'Khối 12'))            
-KV_CHOICE =((u'1',u'KV1'),(u'2A','KV2'),(u'2B','KV2-NT'),(u'3',u'KV3'))
-DT_CHOICE = ((1,u'Kinh (Việt)'),(2,u'Tày'),(3,u'Nùng'),(4,u'Hmông (Mèo)'),(5,u'Mường'),(6,u'Dao'),(7,u'Khmer'),
-            (8,u'Êđê'),(9,u'CaoLan'),(10,u'Thái'),(11,u'Gia rai'),(12,u'La chư'),(13,u'Hà nhì'),(14,u'Giáy'),
-            (15,u"M'nông"),(16,u'Cơ tu'),(17,u'Xê đăng'),(18,u"X'tiêng"),(19,u"Ba na"),(20,"H'rê"),(21,u'Giê-Triêng'),
-            (22,u'Chăm'),(23,u'Cơ ho'),(24,u'Mạ'),(25,u'Sán Dìu'),(26,u'Thổ'),(27,u'Khơ mú'),(28,u'Bru - Vân Kiều'),
-            (29,u'Tà ôi'),(30,u'Co'),(31,u'Lào'),(32,u'Xinh mun'),(33,u'Chu ru'),(35,u'Phù lá'),(36,u'La hú'),(37,u'Kháng'),
-            (38,u'Lự'),(39,u'Pà Thén'),(40,u'Lô lô'),(41,u'Chứt'),(42,u'Mảng'),(43,u'Cơ lao'),(44,u'Bố y'),(45,u'La ha'),
-            (46,u'Cống'),(47,u'Ngái'),(48,u'Si la'),(49,u'Pu Péo'),(50,u'Brâu'),(51,u'Rơ măm'),(52,u'Ơ đu'),(53,u'Hoa'),
-            (54,u'Raglay'),(55,u'HMông'),(56,u'Pacô'),(57,u'Pahy'),(60,u'Jơ lơng'),(61,u'Rơ ngao'),(62,u'Ra dong'),
-            (63,u'Sơ rá'),(64,u'Jẻ'),(65,u'Mơ nâm'),(66,u'Hơ lăng'),(67,u'Hoa (Hán)'),(68,u'Sán chay'),
-            (69,u'CaDong'),(70,u'Chơ ro'))
-LENLOP_CHOICES=((True,u'Được lên lớp'),(False,u'Không được lên lớp'))
-SCHOOL_ACTION_STATUS=((0, u'Trường mới'),(1, u'Đang học kỳ 1'), (2, u'Đang học kỳ 2'), (3, u'Đang nghỉ hè'))
-CLASS_ACTION_STATUS=((1, u'Đang học kỳ 1'), (2, u'Đang học kỳ 2'), (3, u'Đang nghỉ hè'))
-ACTIVE_CHOICES=((True,u'Đang diễn ra'),(False,u'Đã kết thúc'))
-LEARNING_STATUS_CHOICES = ((u'TN', u'Tốt nghiệp'),(u'LB', u'Lưu ban'),
+DIEM_DANH_TYPE = ((u'',u'Đi học'), (u'P', u'nghỉ học có phép'),
+        (u'K', u'nghỉ học không phép'), (u'M',u'đi học muộn'),)
+BAN_CHOICE = ((u'KHTN',u'Ban KHTN'), (u'KHXH',u'Ban KHXH-NV'),
+        (u'CBA',u'Ban Cơ bản A'), (u'CBB',u'Ban Cơ bản B'),
+        (u'CBB',u'Ban Cơ bản C'), (u'CBD',u'Ban Cơ bản D'),
+        (u'CB',u'Ban Cơ bản'))
+KHOI_CHOICE = ((1,u'Khối 1'), (2,u'Khối 2'), (3,u'Khối 3'),
+        (4,u'Khối 4'), (5,u'Khối 5'), (6,u'Khối 6'), (7,u'Khối 7'),
+        (8,u'Khối 8'), (9,u'Khối 9'), (10,u'Khối 10'), (11,u'Khối 11'),
+        (12,u'Khối 12'))            
+KV_CHOICE =((u'1',u'KV1'), (u'2A','KV2'), (u'2B','KV2-NT'), (u'3',u'KV3'))
+DT_CHOICE = ((1,u'Kinh (Việt)'), (2,u'Tày'), (3,u'Nùng'), (4,u'Hmông (Mèo)'),
+        (5,u'Mường'), (6,u'Dao'), (7,u'Khmer'), (8,u'Êđê'), (9,u'CaoLan'),
+        (10,u'Thái'), (11,u'Gia rai'), (12,u'La chư'), (13,u'Hà nhì'), (14,u'Giáy'),
+        (15,u"M'nông"), (16,u'Cơ tu'), (17,u'Xê đăng'), (18,u"X'tiêng"),
+        (19,u"Ba na"), (20,"H'rê"), (21,u'Giê-Triêng'), (22,u'Chăm'),
+        (23,u'Cơ ho'), (24,u'Mạ'), (25,u'Sán Dìu'), (26,u'Thổ'),
+        (27,u'Khơ mú'), (28,u'Bru - Vân Kiều'), (29,u'Tà ôi'),
+        (30,u'Co'), (31,u'Lào'), (32,u'Xinh mun'), (33,u'Chu ru'),
+        (35,u'Phù lá'), (36,u'La hú'), (37,u'Kháng'), (38,u'Lự'),
+        (39,u'Pà Thén'), (40,u'Lô lô'), (41,u'Chứt'), (42,u'Mảng'),
+        (43,u'Cơ lao'), (44,u'Bố y'), (45,u'La ha'), (46,u'Cống'),
+        (47,u'Ngái'), (48,u'Si la'), (49,u'Pu Péo'), (50,u'Brâu'),
+        (51,u'Rơ măm'), (52,u'Ơ đu'), (53,u'Hoa'), (54,u'Raglay'),
+        (55,u'HMông'), (56,u'Pacô'), (57,u'Pahy'), (60,u'Jơ lơng'),
+        (61,u'Rơ ngao'), (62,u'Ra dong'), (63,u'Sơ rá'), (64,u'Jẻ'),
+        (65,u'Mơ nâm'), (66,u'Hơ lăng'), (67,u'Hoa (Hán)'), (68,u'Sán chay'),
+        (69,u'CaDong'), (70,u'Chơ ro'))
+LENLOP_CHOICES = ((True,u'Được lên lớp'), (False,u'Không được lên lớp'))
+SCHOOL_ACTION_STATUS = ((0, u'Trường mới'), (1, u'Đang học kỳ 1'),
+        (2, u'Đang học kỳ 2'), (3, u'Đang nghỉ hè'))
+CLASS_ACTION_STATUS = ((1, u'Đang học kỳ 1'), (2, u'Đang học kỳ 2'),
+        (3, u'Đang nghỉ hè'))
+ACTIVE_CHOICES = ((True,u'Đang diễn ra'), (False,u'Đã kết thúc'))
+LEARNING_STATUS_CHOICES = ((u'TN', u'Tốt nghiệp'), (u'LB', u'Lưu ban'),
                            (u'LL', u'Lên lớp'))
 
-DAY_CHOICE =((2, u'Thu 2'), (3, u'Thu 3'), (4, u'Thu 4'), (5, u'Thu 5'), (6, u'Thu 6'), (7, u'Thu 7'))
+DAY_CHOICE = ((2, u'Thu 2'), (3, u'Thu 3'), (4, u'Thu 4'),
+        (5, u'Thu 5'), (6, u'Thu 6'), (7, u'Thu 7'))
 
-GRADES_CHOICES2 = ((6, u'Lớp 6'),
-                  (7, u'Lớp 7'),
-                  (8, u'Lớp 8'),
+GRADES_CHOICES2 = ((6, u'Lớp 6'), (7, u'Lớp 7'), (8, u'Lớp 8'),
                   (9, u'Lớp 9'))
 
-GRADES_CHOICES3 = ((10, u'Lớp 10'),
-                  (11, u'Lớp 11'),
-                  (12, u'Lớp 12'))
+GRADES_CHOICES3 = ((10, u'Lớp 10'), (11, u'Lớp 11'), (12, u'Lớp 12'))
 
-INITIAL_CONSONANTS = (set(string.ascii_lowercase) - set('aeiou') - set('qxcsjfw') | set('@#$%')
-                      # add some crunchy clusters
-                      | {'bl', 'br', 'cl', 'cr', 'dr', 'ch', 'gi', 'kh', 'ph', 'pr', 'sk', 'ng', 'th','tr'})
+INITIAL_CONSONANTS = (set(string.ascii_lowercase)
+        - set('aeiou')
+        - set('qxcsjfw')
+        | set('@#$%')
+        | {'bl', 'br', 'cl', 'cr', 'dr', 'ch', 'gi', 'kh', 'ph',
+            'pr', 'sk', 'ng', 'th','tr'})
 
-FINAL_CONSONANTS = (set(string.ascii_lowercase) - set('aeiouxfjw') | set('@#$%')
-                    # confusable
-                    - set('qx')
-                    # crunchy clusters
-                    | {'ct', 'ft', 'mp', 'nd', 'ng', 'nk', 'nt', 'pt'})
+FINAL_CONSONANTS = (set(string.ascii_lowercase)
+        - set('aeiouxfjw')
+        | set('@#$%')
+        - set('qx')
+        | {'ct', 'ft', 'mp', 'nd', 'ng', 'nk', 'nt', 'pt'})
 
 VOWELS = 'aeiou' # we'll keep this simple
 
 # each syllable is consonant-vowel-consonant "pronounceable"
-syllables = map(''.join, itertools.product(INITIAL_CONSONANTS, VOWELS, FINAL_CONSONANTS))
-
+syllables = map(''.join,
+        itertools.product(INITIAL_CONSONANTS,
+            VOWELS,
+            FINAL_CONSONANTS))
 
 def this_year():
     return int(date.today().year)
 
-#validate mark of pupil
-#mark must be between 0 and 10
-
 def validate_class_label(value):
-    if not value.strip(): raise ValidationError(u'Bạn chưa nhập danh sách tên lớp.')
+    if not value.strip():
+        raise ValidationError(u'Bạn chưa nhập danh sách tên lớp.')
 
 def validate_mark(value):
     if value < 0 or value > 10:
@@ -177,8 +206,10 @@ def log_action(request, object, change_message):
         user_id         = request.user.id,
         content_type_id = ContentType.objects.get_for_model(object).pk,
         object_id       = object.pk,
-        object_repr     = change_message, # Message you want to show in admin action list
-        change_message  = "app-log", # I used same
+        # Message you want to show in admin action list
+        object_repr     = change_message, 
+        # I used same
+        change_message  = "app-log", 
         action_flag     = 4
     )
 
@@ -196,9 +227,9 @@ class DanhSachLoaiLop(models.Model):
 
     #cac khoi trong 1 truong    
 class Block(models.Model):
-    number = models.SmallIntegerField("Khối(*)", max_length = 2,
-                                        choices=KHOI_CHOICES)
-    school_id = models.ForeignKey(Organization, verbose_name = "Trường(*)")
+    number = models.SmallIntegerField("Khối(*)",
+            max_length = 2, choices=KHOI_CHOICES)
+    school_id = models.ForeignKey(Organization, verbose_name="Trường(*)")
     
     class Meta:
         verbose_name = "Khối"
@@ -208,7 +239,8 @@ class Block(models.Model):
         return str(self.number)
 
 class Team(models.Model):
-    name = models.CharField("Tổ", max_length= 30)
+    name = models.CharField("Tổ",
+            max_length=30)
     school_id = models.ForeignKey(Organization, verbose_name="Trường(*)")
 
     class Meta:
@@ -221,7 +253,7 @@ class Team(models.Model):
         return unicode(self.name)
 
 class Group(models.Model):
-    name = models.CharField("Nhóm", max_length= 30)
+    name = models.CharField("Nhóm", max_length=30)
     team_id = models.ForeignKey(Team, verbose_name="Tổ(*)")
 
     class Meta:
@@ -232,27 +264,40 @@ class Group(models.Model):
         return unicode(self.name)
 
 class BasicPersonInfo(models.Model):
-    last_name = models.CharField("Họ", max_length=35, blank=True) # tach ra first_name and last_name de sort va import from excel file
-    first_name = models.CharField("Tên(*)", max_length=55)#vi phan nhap bang tay, ho ten se dc luu vao first_name nen max_length phai dc tang len gap doi
-    birthday = models.DateField("Ngày sinh(*)", null=True,
-            validators=[validate_birthday])
-    birth_place = models.CharField("Nơi sinh", max_length=200, blank=True)
-    dan_toc = models.CharField("Dân tộc", max_length=15, blank=True,
-            default='Kinh')
-    ton_giao = models.CharField("Tôn giáo", max_length=20, blank=True)
-    quoc_tich = models.CharField("Quốc tịch", max_length=20, blank=True,
-            default='Việt Nam')
-    home_town = models.CharField("Quê quán", max_length=100, blank=True) #nguyen quan
-    sex = models.CharField("Giới tính(*)", max_length=3, choices=GENDER_CHOICES,
-            default='Nam')
-    phone = models.CharField("Điện thoại", max_length=15, blank=True,
-            validators=[validate_phone])
-    sms_phone = models.CharField("Điện thoại nhận tin nhắn", max_length=15,
-            blank=True, validators=[validate_phone])
-    current_address = models.CharField("Địa chỉ", max_length=200, blank=True)
-    email = models.EmailField("Email", null=True, blank=True)
-    index = models.IntegerField("Số thứ tự(*)", default=0)
-    note = models.TextField("Ghi chú", blank=True)
+    # tach ra first_name and last_name de sort va import from excel file
+    last_name = models.CharField("Họ",
+            max_length=35, blank=True)
+    #vi phan nhap bang tay, ho ten se dc luu vao first_name
+    #nen max_length phai dc tang len gap doi
+    first_name = models.CharField("Tên(*)",
+            max_length=55)
+    birthday = models.DateField("Ngày sinh(*)",
+            null=True, validators=[validate_birthday])
+    birth_place = models.CharField("Nơi sinh",
+            max_length=200, blank=True)
+    dan_toc = models.CharField("Dân tộc",
+            max_length=15, blank=True, default='Kinh')
+    ton_giao = models.CharField("Tôn giáo",
+            max_length=20, blank=True)
+    quoc_tich = models.CharField("Quốc tịch",
+            max_length=20, blank=True, default='Việt Nam')
+    home_town = models.CharField("Quê quán",
+            max_length=100, blank=True) 
+    sex = models.CharField("Giới tính(*)",
+            max_length=3, choices=GENDER_CHOICES, default='Nam')
+    phone = models.CharField("Điện thoại",
+            max_length=15, blank=True, validators=[validate_phone])
+    sms_phone = models.CharField("Điện thoại nhận tin nhắn",
+            max_length=15, blank=True, validators=[validate_phone])
+    current_address = models.CharField("Địa chỉ",
+            max_length=200, blank=True)
+    email = models.EmailField("Email",
+            null=True, blank=True)
+    index = models.IntegerField("Số thứ tự(*)",
+            default=0)
+    note = models.TextField("Ghi chú",
+            blank=True)
+
     class Meta:
         abstract = True
     
@@ -262,7 +307,8 @@ class BasicPersonInfo(models.Model):
     #This method return a short name to present a person's name
     #eg: Tran Huy Vu -> TH Vu
     def short_name(self):
-        l = [''.join([w[0] for w in self.last_name.split(' ')]), self.first_name]
+        l = [''.join([w[0] for w in self.last_name.split(' ')]),
+                self.first_name]
         return ' '.join(l)
 
     def __unicode__(self):
@@ -271,29 +317,39 @@ class BasicPersonInfo(models.Model):
     #class Admin: pass
 
 class Teacher(BasicPersonInfo):
-    major = models.CharField("Dạy môn(*)", max_length=45, default='',
-            blank=True, choices=SUBJECT_TYPES)
+    major = models.CharField("Dạy môn(*)",
+            max_length=45, default='', blank=True,
+            choices=SUBJECT_TYPES)
+    cmt = models.CharField("Chứng minh thư",
+            null=True, blank=True, max_length=10,
+            validators=[validate_num])
+    ngay_cap = models.DateField("Ngày cấp",
+            null=True, blank=True,
+            validators=[validate_dd_date])
+    noi_cap = models.CharField("Nơi cấp",
+            null=True, blank=True, max_length=30)
+    ngay_vao_doan = models.DateField("Ngày vào đoàn",
+            null=True, blank=True,
+            validators=[validate_dd_date])
+    ngay_vao_dang = models.DateField("Ngày vào đảng",
+            null=True, blank=True,
+            validators=[validate_dd_date])
+    muc_luong = models.IntegerField("Mức lương",
+            null=True, blank=True,
+            validators=[validate_muc_luong])
+    hs_luong = models.FloatField("Hệ số lương",
+            null=True, blank=True,
+            validators=[validate_hs_luong])
+    bhxh = models.CharField("Số bảo hiểm xã hội",
+            null=True, blank=True,
+            max_length=10, validators=[validate_num])
+
     user_id = models.OneToOneField(User, verbose_name="Tài khoản")
     school_id = models.ForeignKey(Organization, verbose_name="Trường")
-    group_id = models.ForeignKey(Group, null=True, blank=True, verbose_name="Nhóm",
-            on_delete=models.SET_NULL)
-    team_id = models.ForeignKey(Team, null=True, blank=True, verbose_name="Tổ",
-            on_delete=models.SET_NULL)
-    cmt = models.CharField("Chứng minh thư", null=True, blank=True, max_length=10,
-            validators=[validate_num])
-    ngay_cap = models.DateField("Ngày cấp", null=True, blank=True,
-            validators=[validate_dd_date])
-    noi_cap = models.CharField("Nơi cấp", null=True, blank=True, max_length=30)
-    ngay_vao_doan = models.DateField("Ngày vào đoàn", null=True, blank=True,
-            validators=[validate_dd_date])
-    ngay_vao_dang = models.DateField("Ngày vào đảng", null=True, blank=True,
-            validators=[validate_dd_date])
-    muc_luong = models.IntegerField("Mức lương", null=True, blank=True,
-            validators=[validate_muc_luong])
-    hs_luong = models.FloatField("Hệ số lương", null=True, blank=True,
-            validators=[validate_hs_luong])
-    bhxh = models.CharField("Số bảo hiểm xã hội", null=True, blank=True,
-            max_length=10, validators=[validate_num])
+    group_id = models.ForeignKey(Group, verbose_name="Nhóm",
+            null=True, blank=True, on_delete=models.SET_NULL)
+    team_id = models.ForeignKey(Team, verbose_name="Tổ",
+            null=True, blank=True, on_delete=models.SET_NULL)
 
     def homeroom_class(self):
         _class = Class.objects.filter(teacher_id=self).order_by('-year_id__time')
@@ -311,8 +367,7 @@ class Teacher(BasicPersonInfo):
         current_year = self.school_id.get_current_year()
         classes = Class.objects.filter(
                 teacher_id=self,
-                year_id=current_year
-                ).order_by('-year_id__time')
+                year_id=current_year).order_by('-year_id__time')
         if classes:
             return classes[0]
         else:
@@ -388,8 +443,10 @@ class Teacher(BasicPersonInfo):
         unique_together = ("school_id", "first_name", "last_name", "birthday",)
 
 class Year(models.Model):
-    time = models.IntegerField("Năm", max_length = 4, validators = [validate_year]) # date field but just use Year
-    school_id = models.ForeignKey(Organization, verbose_name = "Trường")
+    # date field but just use Year
+    time = models.IntegerField("Năm",
+            max_length=4, validators=[validate_year]) 
+    school_id = models.ForeignKey(Organization, verbose_name="Trường")
     
     class Meta:
         verbose_name = "Năm học"
@@ -399,9 +456,10 @@ class Year(models.Model):
         return str(self.time) + "-" + str(self.time+1)
         
 class StartYear(models.Model):
-    time = models.IntegerField("Năm", max_length = 4, validators = [validate_year]) # date field but just use Year
+    # date field but just use Year
+    time = models.IntegerField("Năm",
+            max_length=4, validators=[validate_year])
     school_id = models.ForeignKey(Organization)
-    
     
     class Meta:
         verbose_name = "Khóa"
@@ -411,9 +469,10 @@ class StartYear(models.Model):
         return str(self.time)
     
 class Term(models.Model):
-    number = models.IntegerField("Kì", max_length=1, choices = TERM_CHOICES)
+    number = models.IntegerField("Kì",
+            max_length=1, choices=TERM_CHOICES)
     # neu active =false thi khong cho phep sua diem nua
-    year_id = models.ForeignKey(Year, verbose_name = "Năm học")
+    year_id = models.ForeignKey(Year, verbose_name="Năm học")
     
     class Meta:
         verbose_name = "Kì"
@@ -425,10 +484,10 @@ class Term(models.Model):
 
 #Lop chua cac hoc sinh chua dc phan lop.
 class UncategorizedClass(models.Model):
-    name = models.CharField("Tên lớp(*)", max_length = 50)
-    year_id = models.ForeignKey(Year, verbose_name = "Năm học(*)")
+    name = models.CharField("Tên lớp(*)", max_length=50)
+    year_id = models.ForeignKey(Year, verbose_name="Năm học(*)")
     #lop nay thuoc khoi nao
-    block_id = models.ForeignKey(Block, verbose_name = "Khối(*)")
+    block_id = models.ForeignKey(Block, verbose_name="Khối(*)")
 
     def number_of_students(self):
         return self.pupil_set.count()
@@ -446,8 +505,8 @@ class Class(models.Model):
     status = models.SmallIntegerField("Tình trạng",
             max_length=3, null=True, blank=True, choices=CLASS_ACTION_STATUS)
 
-    year_id = models.ForeignKey(Year, verbose_name = "Năm học(*)")
-    block_id = models.ForeignKey(Block, verbose_name = "Khối(*)")
+    year_id = models.ForeignKey(Year, verbose_name="Năm học(*)")
+    block_id = models.ForeignKey(Block, verbose_name="Khối(*)")
     teacher_id = models.ForeignKey(Teacher, verbose_name="Giáo viên chủ nhiệm",
             null=True, blank=True) 
     
@@ -557,12 +616,14 @@ class Pupil(BasicPersonInfo):
     
     user_id = models.OneToOneField(User, verbose_name="tài khoản",
             null=True, blank=True) # nullable is temporary 
+
     start_year_id = models.ForeignKey(StartYear, verbose_name="khóa")
-    class_id = models.ForeignKey(Class, verbose_name="lớp", null=True, blank=True)
+    class_id = models.ForeignKey(Class, verbose_name="lớp",
+            null=True, blank=True)
     school_id = models.ForeignKey(Organization, verbose_name="trường",
             null=True, blank=True)
-    classes = models.ManyToManyField(Class, through="Attend",
-            related_name='student_set')
+    classes = models.ManyToManyField(Class,
+            through="Attend", related_name='student_set')
     unc_class_id = models.ForeignKey(UncategorizedClass,
             verbose_name=u'Chưa phân lớp', null=True, blank=True)
 
@@ -601,6 +662,8 @@ class Pupil(BasicPersonInfo):
             self.save()
             attends[0].leave_time = date.today()
             attends[0].save()
+            self.disable = True
+            self.save()
 
     def join_class(self, _class, time = None):
         if not time:
@@ -784,7 +847,7 @@ class Mark(models.Model):
     mieng_2 = models.FloatField("Điểm miệng 2", null=True, blank=True,
             validators=[validate_mark])
     mieng_3 = models.FloatField("Điểm miệng 3", null=True, blank=True,
-            validators = [validate_mark])
+            validators=[validate_mark])
     mieng_4 = models.FloatField("Điểm miệng 4", null=True, blank=True,
             validators=[validate_mark])
     mieng_5 = models.FloatField("Điểm miệng 5", null=True, blank=True,
@@ -847,7 +910,10 @@ class Mark(models.Model):
             MarkTime.objects.create(mark_id=self)
 
     def __unicode__(self):
-        return self.subject_id.name + " " + str(self.term_id.number) + self.student_id.first_name
+        return u"%s %s%s" % (self.subject_id.name,
+                unicode(self.term_id.number),
+                unicode(self.student_id.first_name))
+
     def convertToList(self):
         list=[]
         strss=self.diem.split('|')
@@ -881,7 +947,7 @@ class Mark(models.Model):
                     arrTime[3*MAX_COL+i-2]=a
         return  arrTime
 
-    def saveMark(self,arrMark):
+    def saveMark(self, arrMark):
         diem=''
         for i in range(3):
             tempDiem=''
@@ -897,7 +963,7 @@ class Mark(models.Model):
                 diem+=tempDiem
         self.diem=diem
         
-    def saveTime(self,arrTime):
+    def saveTime(self, arrTime):
         time=''
         for i in range(3):
             tempTime=''
@@ -909,7 +975,8 @@ class Mark(models.Model):
             time+=tempTime+'|'
         time+=arrTime[3*MAX_COL+1]+'|'+arrTime[3*MAX_COL+2]
         self.time=time
-    def toString(self,x,isNormalize=True,isComment=False,space=" "):
+
+    def toString(self, x, isNormalize=True, isComment=False, space=" "):
         scores = self.diem.split('|')[x].split('*')
         if not isComment:
             if isNormalize:
@@ -931,6 +998,7 @@ class Mark(models.Model):
     
     def length(self,x=3):
         return x
+
 class MarkTime(models.Model):
     
     mieng_1 = models.DateTimeField("Thời gian cập nhật điểm miệng 1",
@@ -977,20 +1045,27 @@ class MarkTime(models.Model):
         verbose_name_plural = "Bảng thời gian cập nhật điểm"
 
     def __unicode__(self):
-        return self.mark_id.__unicode__()
-class TKMon(models.Model):
-    mg = models.BooleanField("Miễn giảm",default = False)
-    tb_nam = models.FloatField("Trung bình năm", null = True, blank = True, validators = [validate_mark])
-    time = models.IntegerField("Thời gian cập nhật điểm tổng kết", null = True, blank = True)
-    sent = models.BooleanField("Đã gửi",default = False)
-    #danh dau xem mon nay co dc phep thi lai hay ko
-    thi_lai = models.BooleanField("Có thi lại", blank = True, default = False)
-    diem_thi_lai=models.FloatField("Điểm thi lại", null = True, blank = True, validators = [validate_mark])
-    # all fields can be null
-    current=models.BooleanField("Thuộc lớp hiện tại", default=True )
+        return unicode(self.mark_id)
 
-    subject_id = models.ForeignKey(Subject, verbose_name = "Môn")
-    student_id = models.ForeignKey(Pupil, verbose_name = "Học sinh")
+class TKMon(models.Model):
+    mg = models.BooleanField("Miễn giảm",
+            default=False)
+    tb_nam = models.FloatField("Trung bình năm",
+            null=True, blank=True, validators=[validate_mark])
+    time = models.IntegerField("Thời gian cập nhật điểm tổng kết",
+            null=True, blank=True)
+    sent = models.BooleanField("Đã gửi", default=False)
+    #danh dau xem mon nay co dc phep thi lai hay ko
+    thi_lai = models.BooleanField("Có thi lại", blank=True,
+            default=False)
+    diem_thi_lai=models.FloatField("Điểm thi lại", null=True,
+            blank=True, validators=[validate_mark])
+    # all fields can be null
+    current=models.BooleanField("Thuộc lớp hiện tại",
+            default=True)
+
+    subject_id = models.ForeignKey(Subject, verbose_name="Môn")
+    student_id = models.ForeignKey(Pupil, verbose_name="Học sinh")
     
     class Meta:
         verbose_name = "Trung bình môn"
@@ -998,15 +1073,22 @@ class TKMon(models.Model):
     #class Admin: pass
     def __unicode__(self):
         return self.subject_id.name + " " + self.student_id.first_name
+
 class KhenThuong(models.Model):
-    student_id = models.ForeignKey(Pupil, verbose_name = "Học sinh", null = True)
-    term_id = models.ForeignKey(Term, verbose_name = "Kì", null = True)
-    
-    time = models.DateField("Thời gian(*)", blank = True, default=date.today())
-    hinh_thuc = models.CharField("Hình thức(*)", max_length = 100, choices = KT_CHOICES)
-    dia_diem= models.CharField("Địa điểm", max_length = 100, blank = True, null = True)
-    noi_dung = models.CharField("Nội dung", max_length = 400, blank = True, null = True) # description
-    luu_hoc_ba = models.BooleanField("Lưu học bạ", blank = True, default = False)
+    student_id = models.ForeignKey(Pupil, verbose_name="Học sinh",
+            null=True)
+    term_id = models.ForeignKey(Term, verbose_name="Kì",
+            null=True)
+    time = models.DateField("Thời gian(*)",
+            blank=True, default=date.today())
+    hinh_thuc = models.CharField("Hình thức(*)",
+            max_length=100, choices=KT_CHOICES)
+    dia_diem= models.CharField("Địa điểm",
+            max_length=100, blank=True, null=True)
+    noi_dung = models.CharField("Nội dung",
+            max_length=400, blank=True, null=True) # description
+    luu_hoc_ba = models.BooleanField("Lưu học bạ",
+            blank=True, default=False)
     
     class Meta:
         verbose_name = "Khen thưởng"
@@ -1016,14 +1098,19 @@ class KhenThuong(models.Model):
         return self.hinh_thuc
     
 class KiLuat(models.Model):
-    student_id = models.ForeignKey(Pupil, verbose_name = "Học sinh")
-    term_id = models.ForeignKey(Term, verbose_name = "Kì")
+    student_id = models.ForeignKey(Pupil, verbose_name="Học sinh")
+    term_id = models.ForeignKey(Term, verbose_name="Kì")
     
-    time = models.DateField("Thời gian(*)", blank = True, default=date.today())
-    hinh_thuc = models.CharField("Hình thức(*)", max_length = 35, choices = KL_CHOICES)
-    dia_diem= models.CharField("Địa điểm", max_length = 100, blank = True, null = True)
-    noi_dung = models.CharField("Nội dung", max_length = 400, blank = True, null = True) # description
-    luu_hoc_ba = models.BooleanField("Lưu học bạ", blank = True, default = False)
+    time = models.DateField("Thời gian(*)",
+            blank=True, default=date.today())
+    hinh_thuc = models.CharField("Hình thức(*)",
+            max_length=35, choices=KL_CHOICES)
+    dia_diem= models.CharField("Địa điểm",
+            max_length=100, blank=True, null=True)
+    noi_dung = models.CharField("Nội dung",
+            max_length=400, blank=True, null=True) # description
+    luu_hoc_ba = models.BooleanField("Lưu học bạ",
+            blank=True, default=False)
     
     class Meta:
         verbose_name = "Kỉ luật"
@@ -1034,144 +1121,135 @@ class KiLuat(models.Model):
 
         
 class TBHocKy(models.Model):
-    student_id = models.ForeignKey(Pupil, verbose_name = "Học sinh")
-    term_id = models.ForeignKey(Term, verbose_name = "Kì")
+    student_id = models.ForeignKey(Pupil, verbose_name="Học sinh")
+    term_id = models.ForeignKey(Term, verbose_name="Kì")
 
-    number_subject=models.SmallIntegerField("số lượng môn",
-                                            null=True,
-                                            blank=True,
-                                            default=0)
-    number_finish =models.SmallIntegerField("số lượng môn đã tổng kết xong",
-                                            default=0)
-    sent = models.BooleanField("Sent", default=False)
+    number_subject = models.SmallIntegerField("số lượng môn",
+            null=True, blank=True, default=0)
+    number_finish = models.SmallIntegerField("số lượng môn đã tổng kết xong",
+            default=0)
+    sent = models.BooleanField("Sent",
+            default=False)
 
     tb_hk = models.FloatField("Trung bình học kỳ",
-                                validators=[validate_mark],
-                                null=True,
-                                blank=True)
+            validators=[validate_mark], null=True, blank=True)
     hl_hk = models.CharField("Học lực",
-                                max_length=3,
-                                choices=HL_CHOICES,
-                                null=True,
-                                blank=True)
+            max_length=3, choices=HL_CHOICES, null=True, blank=True)
     danh_hieu_hk = models.CharField("Danh hiệu",
-                                    max_length=2,
-                                    choices=DH_CHOICES,
-                                    null=True,
-                                    blank = True)
+            max_length=2, choices=DH_CHOICES, null=True, blank=True)
     
     class Meta:
         verbose_name = "Trung bình học kỳ"
         verbose_name_plural = "Trung bình học kỳ"
     
     def __unicode__(self):
-        return  str(self.tb_hk) + " " + self.term_id.__unicode__() + self.student_id.__unicode__()
+        return u"%s %s%s" % (str(self.tb_hk),
+                unicode(self.term_id), unicode(self.student_id))
         
 class TBNam(models.Model):
-    student_id = models.ForeignKey(Pupil, verbose_name = "Học sinh")
-    year_id = models.ForeignKey(Year, verbose_name = "Năm học")
+    student_id = models.ForeignKey(Pupil, verbose_name="Học sinh")
+    year_id = models.ForeignKey(Year, verbose_name="Năm học")
     
-    number_subject=models.SmallIntegerField("số lượng môn",
-                                            null=True,
-                                            blank=True,
-                                            default=0)
-    number_finish =models.SmallIntegerField("số lượng môn chưa tổng kết xong",
-                                            default=0)
+    number_subject = models.SmallIntegerField("số lượng môn",
+            null=True, blank=True, default=0)
+    number_finish = models.SmallIntegerField("số lượng môn chưa tổng kết xong",
+            default=0)
     
     tb_nam = models.FloatField("Trung bình năm",
-                                validators=[validate_mark],
-                                null=True,
-                                blank=True)
+            validators=[validate_mark], null=True, blank=True)
     hl_nam=models.CharField("Học lực",
-                            max_length=3,
-                            choices=HL_CHOICES,
-                            null=True,
-                            blank = True)
+            max_length=3, choices=HL_CHOICES, null=True, blank=True)
     #hanh kiem nam
-    term1 = models.CharField("Kì 1", max_length=2,
-                            choices=HK_CHOICES,
-                            null=True,
-                            blank=True)
+    term1 = models.CharField("Kì 1",
+            max_length=2, choices=HK_CHOICES, null=True, blank=True)
     term2 = models.CharField("Kì 2",max_length=2,
-                            choices=HK_CHOICES,
-                            null=True,
-                            blank=True)
-    year = models.CharField("Cả năm", max_length=2,
-                            choices=HK_CHOICES,
-                            null=True,
-                            blank=True)
+            choices=HK_CHOICES, null=True, blank=True)
+    year = models.CharField("Cả năm",
+            max_length=2, choices=HK_CHOICES, null=True, blank=True)
     #danh dau ren luyen lai trong giai doan he
-    ren_luyen_lai=models.NullBooleanField("Rèn luyện lại", blank = True, null = True)
-    hk_ren_luyen_lai=models.CharField("Hạnh kiểm rèn luyện lại", null=True, blank=True, max_length = 2, choices = HK_CHOICES)
+    ren_luyen_lai=models.NullBooleanField("Rèn luyện lại",
+            blank=True, null=True)
+    hk_ren_luyen_lai=models.CharField("Hạnh kiểm rèn luyện lại",
+            null=True, blank=True, max_length = 2, choices=HK_CHOICES)
     
-    #hk_nam=models.CharField("Hạnh kiểm",max_length = 2, choices = HK_CHOICES, null = True, blank = True)
-    tong_so_ngay_nghi=models.SmallIntegerField("Số ngày nghỉ", null = True, blank = True)
+    tong_so_ngay_nghi=models.SmallIntegerField("Số ngày nghỉ",
+            null=True, blank=True)
     #ghi danh hieu ma hoc sinh dat dc trong hoc ky    
-    danh_hieu_nam=models.CharField("Danh hiệu", max_length = 2, choices = DH_CHOICES,null=True,blank=True)
-    len_lop=models.NullBooleanField("Lên lớp", choices = LENLOP_CHOICES, null = True, blank = True)
+    danh_hieu_nam=models.CharField("Danh hiệu",
+            max_length=2, choices=DH_CHOICES, null=True, blank=True)
+    len_lop=models.NullBooleanField("Lên lớp",
+            choices=LENLOP_CHOICES, null=True, blank=True)
     #danh dau thi lai
     
-    thi_lai = models.NullBooleanField("Thi lại", null=True,blank=True)
-    tb_thi_lai=models.FloatField("Trung bình thi lại", null = True, blank = True, validators = [validate_mark])
-    hl_thi_lai=models.CharField("Học lực thi lại", null = True, blank=True, max_length = 3, choices = HL_CHOICES)
+    thi_lai = models.NullBooleanField("Thi lại",
+            null=True, blank=True)
+    tb_thi_lai=models.FloatField("Trung bình thi lại",
+            null=True, blank=True, validators=[validate_mark])
+    hl_thi_lai=models.CharField("Học lực thi lại",
+            null=True, blank=True, max_length=3, choices=HL_CHOICES)
     sent = models.BooleanField("Sent", default=False)
-    #len_lop_sau_he=models.NullBooleanField(null=True,blank = True,choices =LENLOP_CHOICES)
 
     #hanh kiem cho cac thang
-    hk_thang_9 = models.CharField("Tháng 9",max_length = 2, choices = HK_CHOICES, blank=True)
-    hk_thang_10 = models.CharField("Tháng 10",max_length = 2, choices = HK_CHOICES, blank=True)
-    hk_thang_11 = models.CharField("Tháng 11",max_length = 2, choices = HK_CHOICES, blank=True)
-    hk_thang_12 = models.CharField("Tháng 12",max_length = 2, choices = HK_CHOICES, blank=True)
-    hk_thang_1 = models.CharField("Tháng 1",max_length = 2, choices = HK_CHOICES, blank=True)
-    hk_thang_2 = models.CharField("Tháng 2",max_length = 2, choices = HK_CHOICES, blank=True)
-    hk_thang_3 = models.CharField("Tháng 3",max_length = 2, choices = HK_CHOICES, blank=True)
-    hk_thang_4 = models.CharField("Tháng 4",max_length = 2, choices = HK_CHOICES, blank=True)
-    hk_thang_5 = models.CharField("Tháng 5",max_length = 2, choices = HK_CHOICES, blank=True)
+    hk_thang_9 = models.CharField("Tháng 9",
+            max_length=2, choices=HK_CHOICES, blank=True)
+    hk_thang_10 = models.CharField("Tháng 10",
+            max_length=2, choices=HK_CHOICES, blank=True)
+    hk_thang_11 = models.CharField("Tháng 11",
+            max_length=2, choices=HK_CHOICES, blank=True)
+    hk_thang_12 = models.CharField("Tháng 12",
+            max_length=2, choices=HK_CHOICES, blank=True)
+    hk_thang_1 = models.CharField("Tháng 1",
+            max_length=2, choices=HK_CHOICES, blank=True)
+    hk_thang_2 = models.CharField("Tháng 2",
+            max_length=2, choices=HK_CHOICES, blank=True)
+    hk_thang_3 = models.CharField("Tháng 3",
+            max_length=2, choices=HK_CHOICES, blank=True)
+    hk_thang_4 = models.CharField("Tháng 4",
+            max_length=2, choices=HK_CHOICES, blank=True)
+    hk_thang_5 = models.CharField("Tháng 5",
+            max_length=2, choices=HK_CHOICES, blank=True)
 
     class Meta:
         verbose_name = "Trung bình năm"
         verbose_name_plural = "Trung bình năm"
+
     def __unicode__(self):
-        return self.student_id.__unicode__() + " " + str(self.year_id.__unicode__()) + " " + str(self.tb_nam)
+        return u"%s %s%s" % (unicode(self.student_id),
+                unicode(self.year_id), unicode(self.tb_nam))
 
     def convertHk(self, x):
-        if x=='T':
-            return u'Tốt'
-        elif x=='K':
-            return u'Khá'
-        elif x=='TB':
-            return u'TB'
-        elif x=='Y':
-            return u'Yếu'
+        if x=='T': return u'Tốt'
+        elif x=='K': return u'Khá'
+        elif x=='TB': return u'TB'
+        elif x=='Y': return u'Yếu'
 
     def get_hk_term1(self):
-        if self.term1:
-            return self.convertHk(self.term1)
-        else:
-            return "Chưa xét"
+        if self.term1: return self.convertHk(self.term1)
+        else: return u"Chưa xét"
     
     def get_hk_term2(self):
-        if self.term2:
-            return self.convertHk(self.term2)
-        else:
-            return "Chưa xét"
+        if self.term2: return self.convertHk(self.term2)
+        else: return u"Chưa xét"
 
     def get_list_month(self):
-        return [self.hk_thang_9, self.hk_thang_10, self.hk_thang_11, self.hk_thang_12, self.hk_thang_1, self.hk_thang_2, self.hk_thang_3, self.hk_thang_4, self.hk_thang_5]
+        return [self.hk_thang_9, self.hk_thang_10,
+                self.hk_thang_11, self.hk_thang_12,
+                self.hk_thang_1, self.hk_thang_2,
+                self.hk_thang_3, self.hk_thang_4,
+                self.hk_thang_5]
 
     def get_hk_year(self):
-        if self.year:
-            return self.convertHk(self.year)
-        else:
-            return "Chưa xét"
+        if self.year: return self.convertHk(self.year)
+        else: return u"Chưa xét"
 
 
 class DiemDanh(models.Model):
-    student_id = models.ForeignKey(Pupil, verbose_name = "Học sinh")
-    term_id = models.ForeignKey(Term, verbose_name = "Kì")
+    student_id = models.ForeignKey(Pupil, verbose_name="Học sinh")
+    term_id = models.ForeignKey(Term, verbose_name="Kì")
     
     time = models.DateField("Ngày")
-    loai = models.CharField("Tình trạng", max_length = 10, choices = DIEM_DANH_TYPE)
+    loai = models.CharField("Tình trạng",
+            max_length=10, choices=DIEM_DANH_TYPE)
     
     class Meta:
         verbose_name = "Điểm danh"
@@ -1179,11 +1257,11 @@ class DiemDanh(models.Model):
         unique_together = ("student_id", "time", "term_id")
         
     def __unicode__(self):
-        return self.student_id.__unicode__() + " " + str(self.time)
+        return u"%s %s" % (unicode(self.student_id), unicode(self.time))
         
 class TKDiemDanh(models.Model):
-    student_id = models.ForeignKey(Pupil, verbose_name = "Học sinh")
-    term_id = models.ForeignKey(Term, verbose_name = "Kì")
+    student_id = models.ForeignKey(Pupil, verbose_name="Học sinh")
+    term_id = models.ForeignKey(Term, verbose_name="Kì")
     
     tong_so = models.IntegerField(u"Số buổi nghỉ",
             blank=True, null=True, default=0)
@@ -1192,7 +1270,7 @@ class TKDiemDanh(models.Model):
     khong_phep = models.IntegerField(u"Số buổi không phép",
             blank=True, null=True, default=0)
     muon = models.IntegerField(u"Số buổi muộn",
-        blank=True, null=True, default=0)
+            blank=True, null=True, default=0)
     
     class Meta:
         verbose_name = "Tổng kết điểm danh"
@@ -1202,46 +1280,71 @@ class TKDiemDanh(models.Model):
         return self.student_id.__unicode__()
 
 class TKB(models.Model):
-    class_id = models.ForeignKey(Class, verbose_name= "Lớp")
+    class_id = models.ForeignKey(Class, verbose_name="Lớp")
     day = models.SmallIntegerField("Thứ", choices=DAY_CHOICE)
-    period_1 = models.ForeignKey(Subject, related_name="Tiet_1",  null=True)
-    period_2 = models.ForeignKey(Subject, related_name="Tiet_2",  null=True)
-    period_3 = models.ForeignKey(Subject, related_name="Tiet_3",  null=True)
-    period_4 = models.ForeignKey(Subject, related_name="Tiet_4",  null=True)
-    period_5 = models.ForeignKey(Subject, related_name="Tiet_5",  null=True)
-    period_6 = models.ForeignKey(Subject, related_name="Tiet_6",  null=True)
-    period_7 = models.ForeignKey(Subject, related_name="Tiet_7",  null=True)
-    period_8 = models.ForeignKey(Subject, related_name="Tiet_8",  null=True)
-    period_9 = models.ForeignKey(Subject, related_name="Tiet_9",  null=True)
-    period_10 = models.ForeignKey(Subject, related_name="Tiet_10",  null=True)
-    chaoco = models.IntegerField("Tiết chào cơ", null= True)
-    sinhhoat= models.IntegerField("Tiết sinh hoạt", null= True)
+    period_1 = models.ForeignKey(Subject, related_name="Tiet_1",
+            null=True)
+    period_2 = models.ForeignKey(Subject, related_name="Tiet_2",
+            null=True)
+    period_3 = models.ForeignKey(Subject, related_name="Tiet_3",
+            null=True)
+    period_4 = models.ForeignKey(Subject, related_name="Tiet_4",
+            null=True)
+    period_5 = models.ForeignKey(Subject, related_name="Tiet_5",
+            null=True)
+    period_6 = models.ForeignKey(Subject, related_name="Tiet_6",
+            null=True)
+    period_7 = models.ForeignKey(Subject, related_name="Tiet_7",
+            null=True)
+    period_8 = models.ForeignKey(Subject, related_name="Tiet_8",
+            null=True)
+    period_9 = models.ForeignKey(Subject, related_name="Tiet_9",
+            null=True)
+    period_10 = models.ForeignKey(Subject, related_name="Tiet_10",
+            null=True)
+    chaoco = models.IntegerField("Tiết chào cơ",
+            null=True)
+    sinhhoat= models.IntegerField("Tiết sinh hoạt",
+            null=True)
 
     def get_numbers(self, subject):
         numbers = []
         for i in range(1, 11):
-            if getattr(self, 'period_'+str(i)) == subject:
+            if getattr(self, 'period_' + str(i)) == subject:
                 numbers.append(i)
         return numbers
 
 
 class Lesson(models.Model):
     subject_id = models.ForeignKey(Subject, verbose_name="Môn")
-    index = models.IntegerField("Thứ tự", default = 0)
-    title = models.TextField("Tên bài học", blank = True, null = True)
-    note = models.TextField("Ghi chú", blank = True, null = True)
-    ngay_day = models.DateField("Ngày dạy", blank = True, null = True)
+    index = models.IntegerField("Thứ tự",
+            default=0)
+    title = models.TextField("Tên bài học",
+            blank=True, null=True)
+    note = models.TextField("Ghi chú",
+            blank=True, null=True)
+    ngay_day = models.DateField("Ngày dạy",
+            blank=True, null=True)
     def __unicode__(self):
-        return self.subject_id.__unicode__() + u' Tiết ' + str(self.index)
+        return u"%s Tiết %s" % (unicode(self.subject_id),
+                unicode(self.index))
 
 class SchoolLesson(models.Model):
-    school = models.ForeignKey(Organization,verbose_name = "Trường")
-    subject = models.IntegerField("Môn học", choices=SUBJECT_CHOICES, default=1)
-    grade = models.IntegerField("Khối", choices=GRADES_CHOICES, default=6)
-    term = models.IntegerField("Kì", choices=TERMS, default=1)
-    index = models.IntegerField("Thứ tự", default = 0)
-    title = models.TextField("Tên bài học", blank = True, null = True)
-    note = models.TextField("Ghi chú", blank = True, null = True)
-    ngay_day = models.DateField("Ngày dạy", blank = True, null = True)
+    school = models.ForeignKey(Organization, verbose_name = "Trường")
+    subject = models.IntegerField("Môn học",
+            choices=SUBJECT_CHOICES, default=1)
+    grade = models.IntegerField("Khối",
+            choices=GRADES_CHOICES, default=6)
+    term = models.IntegerField("Kì",
+            choices=TERMS, default=1)
+    index = models.IntegerField("Thứ tự",
+            default=0)
+    title = models.TextField("Tên bài học",
+            blank=True, null=True)
+    note = models.TextField("Ghi chú",
+            blank=True, null=True)
+    ngay_day = models.DateField("Ngày dạy",
+            blank=True, null=True)
+
     def __unicode__(self):
         return unicode(self.school) + u' Môn ' + unicode(SUBJECT_CHOICES[int(self.subject)-1][1]) + u' khối ' + unicode(self.grade) + u' kì ' + unicode(self.term) + u' tiết ' + unicode(self.term)

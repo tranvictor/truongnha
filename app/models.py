@@ -58,7 +58,7 @@ SUBJECT_CHOICES = ((1,u'Toán'),
                  (6, u'Lịch sử'),
                  (7, u'Địa lí'),
                  (8, u'Ngoại ngữ'),
-                 (9,u'GDCD'),
+                 (9, u'GDCD'),
                  (10, u'Công nghệ'),
                  (11, u'Thể dục'),
                  (12, u'Âm nhạc'),
@@ -119,6 +119,7 @@ class Organization(models.Model):
 
     def get_current_year(self):
         return self.year_set.latest('time')
+
     def get_status(self):
         if self.level == 'T':
             try:
@@ -129,6 +130,10 @@ class Organization(models.Model):
                 return Organization.SEMESTER_STATUS[0]
         else:
             return ''
+
+    def get_active_students(self):
+        return self.pupil_set.filter(unc_class_id=None,
+                disable=False).distinct()
 
     def save_settings(self, attribute, value):
         if type(attribute) != str or (type(value) != str
