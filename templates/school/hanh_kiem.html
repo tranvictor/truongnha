@@ -345,7 +345,7 @@
                 <thead>
                 <tr>
                     <th rowspan="2">TT</th>
-                    <th rowspan="2" class="align-left">Họ tên</th>
+                    <th rowspan="2" colspan="2" class="align-left">Họ tên</th>
                     <th rowspan="2">Ngày sinh</th>
                     <th class="hk1"><input title="Chọn nhắn tin hạnh kiểm kì 1" type="checkbox" id="checkbox_6"/></th>
                     {% if term.number == 1 %}
@@ -397,7 +397,7 @@
                 <thead>
                 <tr>
                     <th>TT</th>
-                    <th class="align-left">Họ tên</th>
+                    <th class="align-left" colspan="2">Họ tên</th>
                     <th>Ngày sinh</th>
 
                     <th>Kì 1</th>
@@ -423,7 +423,8 @@
                 <tr class="{{p.id}}">
                     <td>{{ forloop.counter }}</td>
 
-                    <td class="align-left" style="font-size: 1.15em;">{{ p.last_name }} {{ p.first_name }}</td>
+                    <td class="align-left" style="font-size: 1.15em;">{{ p.last_name }}</td>
+                    <td style="font-size: 1.15em;">{{ p.first_name }}</td>
 
                     <td>{{ p.birthday|date:"SHORT_DATE_FORMAT" }}</td>
 

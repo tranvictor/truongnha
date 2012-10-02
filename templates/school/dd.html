@@ -78,6 +78,11 @@
             };
 
             $("#sendSMS").click(sendSMS);
+            var add_attribute = function(){
+                var value = $(this).val();
+                $(this).attr("loai",value);
+            };
+            $("input[name=loai]").each(add_attribute);
 
             $("input[name=loai]").on('keyup', function (event) {
                 var $this;
@@ -106,6 +111,8 @@
                     $this.closest('tr').next().children().eq(cellIndex).find("input").focus();
                     return false;
                 }
+                $(this).val($(this).val().replace(/[^PKMpkm]/gi, ''));
+                $(this).attr('value', $(this).val().toUpperCase());
             });
             function send_dd(id,value){
                 var std = id.split('_')[0];
@@ -123,22 +130,13 @@
                 return false;
             }
 
-            $("input[name=loai]").change(function (event) {
-                var default_value = event.target.defaultValue;
+            $("input[name=loai]").blur(function (event) {
                 var value = $(this).val().toUpperCase();
-                $(this).val(value);
-                $(this).attr("value",value);
+                var old_value = $(this).attr("loai");
                 var id = $(this).attr('id');
-                if (value.match(/[PKMpkm]/)){
+                if (value != old_value){
                     send_dd(id,value);
-                }
-                else{
-                    $(this).val('');
-                    $(this).attr("value","");
-                    if (default_value == '') {
-                    } else {
-                        send_dd(id, "");
-                    }
+                    $(this).attr("loai",value);
                 }
             });
 
@@ -219,7 +217,7 @@
         <thead>
         <tr>
             <th rowspan="2"> TT</th>
-            <th rowspan="2"> Họ tên</th>
+            <th rowspan="2"  colspan="2" class="align-left">Họ tên</th>
             {% for d in week_list %}
                 <th class="dd col{{ forloop.counter }}">
                     <input title="Chọn để nhắn tin điểm danh của tất cả học sinh"
@@ -238,7 +236,8 @@
         {% for p,fl in list %}
             <tr>
                 <td> {{ forloop.counter }}</td>
-                <td class="align-left" style="font-size: 1.15em;"> {{ p }}</td>
+                <td class="align-left" style="font-size: 1.15em;">{{ p.last_name }}</td>
+                <td style="font-size: 1.15em;">{{ p.first_name }}</td>
                 {% for f in fl %}
                     <td class="dd col{{ forloop.counter }}"> {{ f.loai }} </td>
                 {% endfor %}
