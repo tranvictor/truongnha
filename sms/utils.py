@@ -53,7 +53,7 @@ def _send_sms(phone, content, user, save_to_db=True):
                 sender=user, recent=True, success=False)
         s.save()
         if not settings.DEBUG:
-            s.send_sms(phone)
+            s.send_sms.delay(s, phone)
         else:
             s._send_sms(phone)
 
