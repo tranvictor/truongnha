@@ -77,7 +77,7 @@ def send_email(subject, message, from_addr=None, to_addr=[]):
 
 def sendSMS(phone, content, user, save_to_db=True):
     if not settings.DEBUG:
-        task = task_send_sms.delay(phone, content, user, save_to_db)
+        task = task_send_sms(phone, content, user, save_to_db)
         if task: return '1'
         else: return None
     else:

@@ -689,8 +689,8 @@ def sendSMSForAPupil(s,user):
 
             return  str(idMark)
         except Exception as e:
+            print e
             pass
-            #print e
     return ''
 
 @need_login
@@ -705,7 +705,7 @@ def sendSMSMark(request):
                 message+=sendSMSForAPupil(s,request.user)+"-"
 
         data = simplejson.dumps({'message': message})
-        return HttpResponse( data, mimetype = 'json')
+        return HttpResponse(data, mimetype='json')
 
 @need_login
 def capNhapMienGiam(request,class_id, student_id):
