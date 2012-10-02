@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django import forms
 from django.conf import settings
 from suds.client import Client
-from celery import task
+from celery.contrib.methods import task
 
 
 import xlrd, os
@@ -79,6 +79,7 @@ class sms(models.Model):
             return result
         else:
             raise Exception("InvalidPhoneNumber")
+
     @task()
     def send_sms(self, phone):
         return self._send_sms(phone)

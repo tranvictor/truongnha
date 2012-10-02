@@ -52,7 +52,10 @@ def _send_sms(phone, content, user, save_to_db=True):
         s = sms(phone=phone, content=content,
                 sender=user, recent=True, success=False)
         s.save()
-        s.send_sms(phone)
+        if not settings.DEBUG:
+            s.send_sms(phone)
+        else:
+            s._send_sms(phone)
 
 def send_email(subject, message, from_addr=None, to_addr=[]):
     #msg = MIMEText(message.encode('utf-8'), _charset='utf-8')
@@ -104,21 +107,22 @@ def task_send_SMS_then_email(phone, content, user, save_to_db=True,
         try:
             _send_email(subject, message, from_addr, to_addr)                
             emailed = True
-        except Exception:
+        except Exception as e:
+            print e
             pass
     return smsed, emailed
 
 def send_SMS_then_email(phone, content, user, save_to_db=True,
         subject=None, message=None, from_addr=None, to_addr=[]):
     if not settings.DEBUG:
-        temp =  task_send_SMS_then_email.delay(
-                    phone, content, user, save_to_db,
-                    subject, message, from_addr, to_addr)
+        temp = task_send_SMS_then_email.delay(
+                phone, content, user, save_to_db,
+                subject, message, from_addr, to_addr)
         return temp.get()
     else:
         try:
             smsed = sendSMS(phone, content, user, save_to_db)
-        except Exception:
+        except Exception as e:
             smsed = None
         if smsed != '1':
             if to_addr and to_addr[0]:
