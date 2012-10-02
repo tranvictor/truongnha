@@ -295,7 +295,7 @@ def teachers(request):
                             'school_id': school.id}
                     try:
                         school.team_set.get(name=request.POST['name'].strip())
-                        message = u'Tổ này đã tồn tại'
+                        message = u'Tổ này đã tồn tại.'
                     except ObjectDoesNotExist:
                         message = 'OK'
                         t = TeamForm(data)
@@ -307,9 +307,14 @@ def teachers(request):
                     data = {'name': request.POST['name'].strip(),
                             'team_id': request.POST['id'].strip()}
                     try:
-                        team = school.team_set.get(name=request.POST['id'].strip())
+                        try:
+                            team = school.team_set.get(name=request.POST['id'].strip())
+                        except Exception:
+                            message = u'Tổ này không tồn tại.'
+                            data = simplejson.dumps({'message': message})
+                            return HttpResponse(data, mimetype='json')
                         team.group_set.get(name=request.POST['name'].strip())
-                        message = u'Tổ này đã tồn tại'
+                        message = u'Nhóm này đã tồn tại.'
                     except ObjectDoesNotExist:
                         message = 'OK'
                         t = GroupForm(data, school = school)
@@ -318,13 +323,17 @@ def teachers(request):
                     data = simplejson.dumps({'message': message})
                     return HttpResponse(data, mimetype='json')
                 if request.POST['request_type'] == u'delete_team':
-                    t = school.team_set.get(id=request.POST['id'])
-                    teacherList = t.teacher_set.all()
-                    for teacher in teacherList:
-                        teacher.group_id = None
-                        teacher.team_id = None
-                    t.delete()
-                    return HttpResponse()
+                    try:
+                        t = school.team_set.get(id=request.POST['id'])
+                        teacherList = t.teacher_set.all()
+                        for teacher in teacherList:
+                            teacher.group_id = None
+                            teacher.team_id = None
+                        t.delete()
+                        return HttpResponse()
+                    except Exception as e:
+                        raise Exception('BadRequest')
+
                 if request.POST['request_type'] == u'delete_group':
                     g = Group.objects.get(id=request.POST['id'])
                     if g.team_id.school_id == school:
@@ -339,12 +348,12 @@ def teachers(request):
                     t = school.team_set.get(id=request.POST['id'])
                     try:
                         school.team_set.get(name=request.POST['name'].strip())
-                        message = u'Tên tổ này đã tồn tại'
+                        message = u'Tên tổ này đã tồn tại.'
                         success = False
                     except ObjectDoesNotExist:
                         t.name = request.POST['name'].strip()
                         t.save()
-                        message = u'Đổi tên thành công'
+                        message = u'Đổi tên thành công.'
                         success = True
                     data = simplejson.dumps({'message': message, 'success': success})
                     return HttpResponse(data, mimetype='json')
@@ -352,7 +361,7 @@ def teachers(request):
                     school_groups = Group.objects.filter(team_id__school_id = school)
                     try:
                         school_groups.get(name=request.POST['name'].strip())
-                        message = u'Tên nhóm này đã tồn tại'
+                        message = u'Tên nhóm này đã tồn tại.'
                         success = False
                     except ObjectDoesNotExist:
                         group = school_groups.get(id=request.POST['id'])
@@ -362,7 +371,7 @@ def teachers(request):
                             success = False
                         else:
                             group.save()
-                            message = u'Đổi tên thành công'
+                            message = u'Đổi tên thành công.'
                             success = True
                     data = simplejson.dumps({'message': message, 'success': success})
                     return HttpResponse(data, mimetype='json')

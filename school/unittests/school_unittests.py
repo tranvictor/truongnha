@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from base_tests import SchoolSetupTest, AddStudentTest
 from school.models import DiemDanh
 import simplejson
-from school.models import Teacher
+from school.models import Teacher, Team, Group
 from datetime import date
 # Loi test nho chu y: test ca get, post. Khi post thi nen test add subject ca
 # nhung mon quan trong nhu: Toan, Van, kiem tra he so, kiem tra diem kem theo
@@ -667,3 +667,270 @@ class AddTeacherTest(SchoolSetupTest):
             birthday=u'1975-03-20')
         self.assertIsNone(teacher)
         return True
+    def phase13_add_a_team(self):
+        response = self.client.post(
+            reverse('teachers'),
+                {
+                'request_type':u'add-team',
+                'name': u'Tổ Toán',
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['message'], 'OK')
+        team = Team.objects.get(name__exact= u'Tổ Toán')
+        self.assertIsNotNone(team)
+
+    def phase14_add_a_duplicate_team(self):
+        response = self.client.post(
+            reverse('teachers'),
+                {
+                'request_type':u'add-team',
+                'name': u'Tổ Toán',
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['message'], u'Tổ này đã tồn tại.')
+
+    def phase15_add_a_group(self):
+        team = Team.objects.all()[0]
+        response = self.client.post(
+            reverse('teachers'),
+                {
+                'request_type':u'add-group',
+                'name': u'Nhóm Đại số',
+                'team_id': str(team.id),
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['message'], 'OK')
+        group = Group.objects.get(name__exact= u'Nhóm Đại số', team_id = team.id)
+        self.assertIsNotNone(group)
+
+    def phase16_add_a_duplicate_group(self):
+        team = Team.objects.all()[0]
+        response = self.client.post(
+            reverse('teachers'),
+                {
+                'request_type':u'add-group',
+                'name': u'Nhóm Đại số',
+                'team_id': str(team.id),
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['message'], u'Nhóm này đã tồn tại.')
+
+    def phase17_add_a_group_with_invalid_team(self):
+        response = self.client.post(
+            reverse('teachers'),
+                {
+                'request_type':u'add-group',
+                'name': u'Nhóm Đại số',
+                'team_id': '10000',
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['message'], u'Tổ này không tồn tại.')
+
+    def phase18_rename_a_group_successfully(self):
+        group = Group.objects.all()[0]
+        name = group.name
+        response = self.client.post(
+            reverse('teachers'),
+                {
+                'request_type':u'rename-group',
+                'name': u'Nhóm Đại số 2',
+                'id': str(group.id),
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['success'], True)
+        self.assertEqual(cont['message'], u'Đổi tên thành công.')
+
+        old_group = Group.objects.get(id=group.id, name__exact = name)
+        self.assertIsNone(old_group)
+
+        new_group = Group.objects.get(id=group.id, name__exact = u'Nhóm Đại số 2')
+        self.assertIsNotNone(new_group)
+
+    def phase19_rename_a_group_with_too_long_name(self):
+        group = Group.objects.all()[0]
+        name = group.name
+        response = self.client.post(
+            reverse('teachers'),
+                {
+                'request_type':u'rename-group',
+                'name': u'Nhóm Hình học của lớp chất lượng cao trường THPT',
+                'id': str(group.id),
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['success'], False)
+        self.assertEqual(cont['message'], u'Tên quá dài')
+
+        new_group = Group.objects.get(id=group.id, name__exact = u'Nhóm Hình học của lớp chất lượng cao trường THPT')
+        self.assertIsNone(new_group)
+
+        old_group = Group.objects.get(id=group.id, name__exact = name)
+        self.assertIsNotNone(old_group)
+
+    def phase20_rename_a_group_with_an_exist_name(self):
+        group = Group.objects.all()[0]
+        name = group.name
+        response = self.client.post(
+            reverse('teachers'),
+                {
+                'request_type':u'add-group',
+                'name': u'Nhóm Hình học',
+                'team_id': str(group.team_id),
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(
+            reverse('teachers'),
+                {
+                'request_type':u'rename-group',
+                'name': u'Nhóm Hình học',
+                'id': str(group.id),
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['success'], False)
+        self.assertEqual(cont['message'], u'Tên nhóm này đã tồn tại.')
+
+        old_group = Group.objects.get(id=group.id, name__exact = name)
+        self.assertIsNotNone(old_group)
+
+    def phase21_rename_a_team_successfully(self):
+        team = Team.objects.all()[0]
+        name = Team.name
+        response = self.client.post(
+            reverse('teachers'),
+                {
+                'request_type':u'rename-team',
+                'name': u'Tổ Toán Mới',
+                'id': str(team.id),
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['success'], True)
+        self.assertEqual(cont['message'], u'Đổi tên thành công.')
+
+        old_team = Team.objects.get(id=team.id, name__exact = name)
+        self.assertIsNone(old_team)
+
+        new_team = Team.objects.get(id=team.id, name__exact = u'Tổ Toán Mới')
+        self.assertIsNotNone(new_team)
+
+
+    def phase22_rename_a_team_with_an_exist_name(self):
+        team = Team.objects.all()[0]
+        name = team.name
+        response = self.client.post(
+            reverse('teachers'),
+                {
+                'request_type':u'add-team',
+                'name': u'Tổ văn',
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(
+            reverse('teachers'),
+                {
+                'request_type':u'rename-team',
+                'name': u'Tổ văn',
+                'id' : str(team.id),
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['success'], False)
+        self.assertEqual(cont['message'], u'Tên tổ này đã tồn tại.')
+
+        old_team = Team.objects.get(id=team.id, name__exact = name)
+        self.assertIsNotNone(old_team)
+
+
+    def phase23_delete_a_group(self):
+        group = Group.objects.all()[0]
+        group_id = group.id
+        response = self.client.post(
+            reverse('teachers'),
+                {
+                'request_type':u'delete_group',
+                'id': str(group_id),
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        tmp = Teacher.objects.get(group_id = group_id)
+        self.assertIsNone(tmp)
+
+    def phase24_delete_a_team(self):
+        team = Team.objects.all()[0]
+        team_id = team.id
+        response = self.client.post(
+            reverse('teachers'),
+                {
+                'request_type':u'delete_team',
+                'id': str(team_id),
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        tmp = Teacher.objects.get(team_id = team_id)
+        self.assertIsNone(tmp)
