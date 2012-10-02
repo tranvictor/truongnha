@@ -12,7 +12,7 @@ from school.templateExcel import normalize, CHECKED_DATE
 from school.utils import to_en1, add_subject, get_lower_bound
 from school.utils import normalize as norm
 from django.db import transaction
-from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 import thread
 SYNC_RESULT = os.path.join('helptool','recover_marktime.html')
 SYNC_SUBJECT = os.path.join('helptool','sync_subject.html')
@@ -21,18 +21,12 @@ REALTIME = os.path.join('helptool','realtime_test.html')
 CONVERT_MARK= os.path.join('helptool','convert_mark.html')
 
 def _sync_pupil_disable():
-    #all student on system
-    students = Pupil.objects.all()
     #those students have current class
-    attends = Attend.objects.filter(leave_time=None)
-    ids = []
-    for attend in attends: ids.append(attend.pupil.id)
+    attends = Attend.objects.filter(leave_time=None).values('pupil_id')
     #students that do not have current class
-    disabled_ids = []
-    for st in students:
-        if not st.id in ids: disabled_ids.append(st.id)
-    students = Pupil.objects.filter(id__in=disabled_ids)
+    students = Pupil.objects.filter(~Q(id__in=attends))
     students.update(disable=True)
+
 
 def _sync_current():
     def finish_class(cl, st):
