@@ -53,9 +53,9 @@ def _send_sms(phone, content, user, save_to_db=True):
                 sender=user, recent=True, success=False)
         s.save()
         if not settings.DEBUG:
-            s.send_sms.delay(s, phone)
+            return s.send_sms.delay(s, phone)
         else:
-            s._send_sms(phone)
+            return s._send_sms(phone)
 
 def send_email(subject, message, from_addr=None, to_addr=[]):
     #msg = MIMEText(message.encode('utf-8'), _charset='utf-8')
@@ -102,7 +102,7 @@ def task_send_SMS_then_email(phone, content, user, save_to_db=True,
     emailed = False
     try:
         smsed = _send_sms(phone, content, user, save_to_db) 
-        if smsed == '1': smsed = True
+        if smsed: smsed = True
     except Exception:
         try:
             _send_email(subject, message, from_addr, to_addr)                
