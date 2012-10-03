@@ -986,40 +986,6 @@ class Mark(models.Model):
         return x
 
 class MarkTime(models.Model):
-    
-    mieng_1 = models.DateTimeField("Thời gian cập nhật điểm miệng 1",
-            null=True, blank=True)
-    mieng_2 = models.DateTimeField("Thời gian cập nhật điểm miệng 2",
-            null=True, blank=True)
-    mieng_3 = models.DateTimeField("Thời gian cập nhật điểm miệng 3",
-            null=True, blank=True)
-
-    mieng_4 = models.DateTimeField("Thời gian cập nhật điểm miệng 4",
-            null=True, blank=True)
-    mieng_5 = models.DateTimeField("Thời gian cập nhật điểm miệng 5",
-            null=True, blank=True)
-    mlam_1 = models.DateTimeField("Thời gian cập nhật điểm 15' 1",
-            null=True, blank=True)
-    mlam_2 = models.DateTimeField("Thời gian cập nhật điểm 15' 2",
-            null=True, blank=True)
-    mlam_3 = models.DateTimeField("Thời gian cập nhật điểm 15' 3",
-            null=True, blank=True)
-    mlam_4 = models.DateTimeField("Thời gian cập nhật điểm 15' 4",
-            null=True, blank=True)
-    mlam_5 = models.DateTimeField("Thời gian cập nhật điểm 15' 5",
-            null=True, blank=True)
-    
-    mot_tiet_1 = models.DateTimeField("Thời gian cập nhật điểm 1 tiết 1",
-            null=True, blank=True)
-    mot_tiet_2 = models.DateTimeField("Thời gian cập nhật điểm 1 tiết 2",
-            null=True, blank=True)
-    mot_tiet_3 = models.DateTimeField("Thời gian cập nhật điểm 1 tiết 3",
-            null=True, blank=True)
-    mot_tiet_4 = models.DateTimeField("Thời gian cập nhật điểm 1 tiết 4",
-            null=True, blank=True)
-    mot_tiet_5 = models.DateTimeField("Thời gian cập nhật điểm 1 tiết 5",
-            null=True, blank=True)
-    
     ck = models.DateTimeField("Thời gian cập nhật điểm thi cuối kì",
             null=True, blank=True)
     tb = models.DateTimeField("Thời gian cập nhật điểm trung bình",
