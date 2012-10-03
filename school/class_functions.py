@@ -123,12 +123,6 @@ def viewClassDetail(request, class_id):
     pos = get_position(request)
     try:
         cl = Class.objects.get(id=class_id)
-        ##Just test
-        #term = Term.objects.get(id=82)
-        #subject = Subject.objects.get(id=8986)
-        #marks = cl._mark_for_students(subject, term)
-        #print len(marks)
-        ##---------
         this_y = get_current_year(request)
         move_to_cls = cl.block_id.class_set.filter(year_id = this_y)\
                                            .exclude(id=class_id)\
@@ -322,7 +316,6 @@ def viewClassDetail(request, class_id):
                     return HttpResponse(data, mimetype='json')
 
     student_list = cl.students().order_by('index', 'first_name', 'last_name', 'birthday')
-
     tmp = get_student(request)
     inCl = inClass(request, class_id)
     id = 0

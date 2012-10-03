@@ -52,7 +52,7 @@ class PupilAdmin(admin.ModelAdmin):
 admin.site.register(Pupil, PupilAdmin)
 
 class MarkAdmin(admin.ModelAdmin):
-    list_display = ['student_id', 'subject_id', 'term_id', 'mieng_1', 'mieng_2', 'mlam_1', 'mlam_2', 'mot_tiet_1', 'mot_tiet_2']
+    list_display = ['student_id', 'subject_id', 'term_id' ]
     ordering = ['term_id', 'subject_id', 'student_id']
 admin.site.register(Mark, MarkAdmin)
 
@@ -94,7 +94,6 @@ admin.site.register(DiemDanh, DiemDanhAdmin)
 #admin.site.register(TKDiemDanh)
 #admin.site.register(TKMon)
 #admin.site.register(DanhSachLoaiLop)
-#admin.site.register(MarkTime)
 #admin.site.register(Attend)
 
 
