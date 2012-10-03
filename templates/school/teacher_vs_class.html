@@ -4,12 +4,6 @@
     {{ block.super }}
     {% load breadcrumb_tags %}
     {% if pos > 1 %}
-{#        {% if user.userprofile.position == 'HIEU_TRUONG' or user.userprofile.position == 'HIEU_PHO' or user.userprofile.position == 'GIAO_VU' %}#}
-            {#            {% add_crumb 'Thiết lập' 'info' %}#}
-{#            {% add_crumb 'Quản lý lớp và chủ nhiệm' 'classes' %}#}
-{#        {% elif user.userprofile.position == 'GIAO_VIEN' %}#}
-{#            {% add_crumb 'Các lớp học' %}#}
-{#        {% endif %}#}
         {% add_crumb 'Các lớp và chủ nhiệm' 'classes' %}
     {% endif %}
 {% endblock %}
@@ -18,8 +12,6 @@
     {% if user.userprofile.position == 'HIEU_TRUONG' or user.userprofile.position == 'HIEU_PHO' or user.userprofile.position == 'GIAO_VU' %}
         <script type="text/javascript" src="/static/js/template_js/classes.js?{{ VERSION }}"></script>
     {% endif %}
-
-    {#    <script type="text/javascript" src="/static/js/template_js/school.js?{{ VERSION }}"></script>#}
 
     {% if message != None %}
         {{ message }}
