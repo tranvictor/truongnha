@@ -873,8 +873,6 @@ class Mark(models.Model):
             validators=[validate_mark])
     note = models.TextField("Ghi chú", blank=True)
     
-    sent_mark = models.CharField("Đánh dấu đã gửi tin nhắn", max_length=19,
-            default="0000000000000000000")
     current = models.BooleanField("Thuộc lớp hiện tại", default=True)
     
     subject_id = models.ForeignKey(Subject, verbose_name="Môn")
@@ -892,8 +890,6 @@ class Mark(models.Model):
         super(Mark, self).save(force_insert=force_insert,
                                force_update=force_update,
                                using=using)
-        if new:
-            MarkTime.objects.create(mark_id=self)
 
     def __unicode__(self):
         return u"%s %s%s" % (self.subject_id.name,
@@ -984,20 +980,6 @@ class Mark(models.Model):
     
     def length(self,x=3):
         return x
-
-class MarkTime(models.Model):
-    ck = models.DateTimeField("Thời gian cập nhật điểm thi cuối kì",
-            null=True, blank=True)
-    tb = models.DateTimeField("Thời gian cập nhật điểm trung bình",
-            null=True, blank=True)
-    mark_id = models.OneToOneField(Mark, verbose_name = "Điểm")
-    
-    class Meta:
-        verbose_name = "Bảng thời gian cập nhật điểm"
-        verbose_name_plural = "Bảng thời gian cập nhật điểm"
-
-    def __unicode__(self):
-        return unicode(self.mark_id)
 
 class TKMon(models.Model):
     mg = models.BooleanField("Miễn giảm",
