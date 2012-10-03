@@ -35,9 +35,37 @@ def getDecodeMark(markList):
             maxColMotTiet=d[2][0]
 
     return decodeMarkList,maxColMieng,maxCol15Phut,maxColMotTiet
+def zipzip(list1,list2,list3=None,list4=None,list5=None):
+    length1 = len(list1)
+    length2 = len(list2)
+    if length1 != length2:
+        print length1
+        print length2
+        raise Exception("the lengths are not equal")
+
+    # check mark correspond with each student
+    for (p,m) in zip(list1,list2):
+        if p.id != m.student_id.id:
+            raise Exception("don't correspond")
+
+    if list3 != None:
+        length3 = len(list3)
+        if length1 != length3:
+            raise Exception("the lengths are not equal")
+        if list4 != None:
+            length4 = len(list4)
+            if length1 != length4:
+                raise Exception("the lengths are not equal")
+            if list5 != None:
+                length5 = len(list5)
+                if length1 != length5:
+                    raise Exception("the lengths are not equal")
+                return zip(list1,list2,list3,list4,list5)
+            return zip(list1,list2,list3,list4)
+        return zip(list1,list2,list3)
+    return zip(list1,list2)
 
 def getMark(subjectChoice,selectedTerm):
-    
     selectedSubject = Subject.objects.get(id= subjectChoice)
     class_id = selectedSubject.class_id.id
     pupilList = Pupil.objects.filter(classes=class_id,attend__is_member=True).order_by('index','first_name','last_name','birthday').distinct()
@@ -46,7 +74,7 @@ def getMark(subjectChoice,selectedTerm):
     if selectedTerm.number==1:            
         markList = Mark.objects.filter(term_id=selectedTerm.id,subject_id=subjectChoice,current=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
         decodeMarkList,maxColMieng,maxCol15Phut,maxColMotTiet = getDecodeMark(markList)
-        list=zip(pupilList,markList,decodeMarkList)
+        list=zipzip(pupilList,markList,decodeMarkList)
     else:
         beforeTerm = Term.objects.get(year_id=selectedTerm.year_id,number=1).id
         markList = Mark.objects.filter(term_id=selectedTerm.id,subject_id=subjectChoice,current=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
@@ -54,7 +82,7 @@ def getMark(subjectChoice,selectedTerm):
         tbnamList = TKMon.objects.filter(subject_id=subjectChoice,current=True).order_by('student_id__index','student_id__first_name','student_id__last_name','student_id__birthday')
                     
         decodeMarkList,maxColMieng,maxCol15Phut,maxColMotTiet = getDecodeMark(markList)
-        list=zip(pupilList,markList,decodeMarkList,tbhk1List,tbnamList)
+        list=zipzip(pupilList,markList,decodeMarkList,tbhk1List,tbnamList)
 
     return   list,maxColMieng,maxCol15Phut,maxColMotTiet
 
@@ -123,7 +151,7 @@ def markTable(request,term_id=-1,class_id=-1,subject_id=-1,move=None):
     max_col_15phut = 0
     max_col_mot_tiet = 0
     if subjectChoice!=-1:
-        selectedSubject=Subject.objects.get(id=subjectChoice)    
+        selectedSubject = Subject.objects.get(id=subjectChoice)
         list,maxColMieng,maxCol15Phut,maxColMotTiet = getMark(subjectChoice,selectedTerm)
         max_col_mieng,max_col_15phut,max_col_mot_tiet = min_col(selectedSubject)
     lengthList=0            
@@ -181,10 +209,8 @@ def markTable(request,term_id=-1,class_id=-1,subject_id=-1,move=None):
                                 'isSchool':isSchool,
                                 }
                        )
-    
     tt2=time.time()
-    print (tt2-tt1)
-
+    print "time.......................",(tt2-tt1)
     return HttpResponse(t.render(c))
 
 @need_login
