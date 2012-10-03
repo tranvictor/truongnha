@@ -140,11 +140,15 @@ STATICFILES_FINDERS = (
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '$@fga3_%m!y@v+0_0h8kqo4n#4@(7fl7b++xz31nf0v)6861=3'
+# Viettel sms gate parameters
 SMS_WSDL_URL = 'http://viettelvas.vn:7777/sentmt/fromcp.asmx?WSDL'
 WSDL_USERNAME = 'ws8x62'
 WSDL_PASSWORD = 'password'
 MT_USERNAME = 'username'
 MT_PASSWORD = 'password'
+# iNET sms gate parameters
+INET_BRAND = '70077'
+INET_AUTH = 'secret_key'
 # Google Captcha Key, the private key must be secret and secured
 CAPTCHA_PUBLIC_KEY = '6LdfIc4SAAAAACxRkXpRGhyK-mHYUsCQIHwF42fc'
 CAPTCHA_PRIVATE_KEY = '6LdfIc4SAAAAAHHguVm0LwTPDOFNYzsMSomK718P'

@@ -1053,7 +1053,6 @@ class KiLuat(models.Model):
     def __unicode__(self):
         return self.hinh_thuc
 
-        
 class TBHocKy(models.Model):
     student_id = models.ForeignKey(Pupil, verbose_name="Học sinh")
     term_id = models.ForeignKey(Term, verbose_name="Kì")

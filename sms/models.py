@@ -7,7 +7,10 @@ from suds.client import Client
 from celery.contrib.methods import task
 
 
-import xlrd, os
+import xlrd
+import os
+import urllib
+import re
 
 #TEMP_FILE_LOCATION = os.path.join(os.path.dirname(__file__), 'uploaded')
 def save_file(file):
@@ -23,6 +26,39 @@ class customDateField(forms.DateField):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('input_formats', ("%d.%m.%yY"))
         super(customDateField, self).__init__(*args, **kwargs)
+
+MOBI_HEAD = ['90', '93', '122', '126', '121', '128', '120']
+VINA_HEAD = ['91', '94', '123', '125', '127', '129']
+VIETTEL_HEAD = ['97', '98', '162', '163', '164', '165', '166', '167', '168', '169']
+EVN_HEAD = ['96', '95']
+VIETNAMMOBILE_HEAD = ['92', '188']
+BEELINE_HEAD = ['199']
+re_phone = re.compile('(84|\+84|0)(90|93|122|126|121|128|120|91|94|123|125|127|129|97|98|162|163|164|165|166|167|168|169|96|95|92|199)(\d{7})')
+#this function check if phone number is valid or not
+#return: True - valid, False - invalid
+def regc(phone):
+    return re_phone.match(phone)
+
+def checkValidPhoneNumber(phone):
+    temp = regc(phone)
+    if not temp: return None
+    gr = temp.groups()
+    if gr[0] == '0':
+        return '%s%s' % ('84', ''.join(gr[1:]))
+    else:
+        return ''.join(gr)
+
+def get_tsp(phone):
+    temp = regc(phone)
+    if not temp: return None
+    head = temp.groups()[1]
+    if head in VIETTEL_HEAD: return 'VIETTEL'
+    if head in MOBI_HEAD: return 'MOBI'
+    if head in VINA_HEAD: return 'VINA'
+    if head in EVN_HEAD: return 'EVN'
+    if head in VIETNAMMOBILE_HEAD: return 'VIETNAMMOBILE'
+    if head in BEELINE_HEAD: return 'BEELINE'
+    return None
 
 class sms(models.Model):
     phone = models.CharField("Số điện thoại", max_length=20, blank=False)
@@ -41,6 +77,28 @@ class sms(models.Model):
                 + self.created.strftime('%m') + " - "\
                 + self.created.strftime('%H')+ ":"\
                 + self.created.strftime('%M')
+
+    def _send_iNET_sms(self, phone):
+        if phone:
+            data = urllib.encode({
+                'mobile': phone,
+                'brand': settings.INET_BRAND,
+                'auth': settings.INET_AUTH,
+                'message': self.content,
+                'action': 'SEND',
+                'content_type': '0'})
+            result = urllib.urlopen('http://brand.sms.vn/sendsms', data).read()
+            if result != '1':
+                self.success = False
+                self.recent = False
+                self.save()
+            else:
+                self.success = True
+                self.recent = False
+                self.save()
+            return result
+        else:
+            raise Exception('InvalidPhoneNumber')
 
     def _send_sms(self, phone):
         if phone:
@@ -76,6 +134,7 @@ class sms(models.Model):
             else:
                 self.success = True
                 self.recent = False
+                self.save()
             return result
         else:
             raise Exception("InvalidPhoneNumber")

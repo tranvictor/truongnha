@@ -6,7 +6,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from app.models import Organization
 from school.models import Pupil, TKDiemDanh, Attend, StartYear, Mark, Class,\
-        Teacher, MarkTime, Subject, TKMon, DiemDanh, Year
+        Teacher, Subject, TKMon, DiemDanh, Year
 from school.school_settings import CAP2_DS_MON, CAP1_DS_MON, CAP3_DS_MON
 from school.templateExcel import normalize, CHECKED_DATE
 from school.utils import to_en1, add_subject, get_lower_bound
@@ -228,32 +228,6 @@ def convert_data_1n_mn(request):
         else:
             student.join_class(_class, student.school_join_date)
     message = 'Done'
-    context = RequestContext(request)
-    return render_to_response( SYNC_RESULT, { 'message' : message},
-                               context_instance = context )
-
-def recover_marktime(request):
-    
-    marks = Mark.objects.all()
-    number_of_defect = 0
-    
-    if request.method == 'POST':
-        for mark in marks:
-            try:
-                temp = mark.marktime
-            except Exception as e:
-                a = MarkTime()
-                a.mark_id = mark
-                a.save()
-                number_of_defect +=1
-        message = u'Bạn vừa tạo ' + str(number_of_defect) + u' MarkTime records'
-    else:
-        for mark in marks:
-            try:
-                temp = mark.marktime
-            except Exception as e:
-                number_of_defect += 1
-        message = u'Thiếu ' + str(number_of_defect) + u'MarkTime records'
     context = RequestContext(request)
     return render_to_response( SYNC_RESULT, { 'message' : message},
                                context_instance = context )
