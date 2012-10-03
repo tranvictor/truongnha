@@ -6,7 +6,7 @@ $(document).ready(function() {
                         select = this.element.hide(),
                         selected = select.children(":selected"),
                         value = selected.val() ? selected.text() : "";
-                var input = this.input = $("<input class='id_teacher_id' placehoder='Nhập một số ký tự để chọn'>")
+                var input = this.input = $("<input class='id_teacher_id' placeholder='Nhập một số ký tự để chọn'>")
                         .insertAfter(select)
                         .val(value)
 //                        .addClass("ui-widget ui-widget-content")
