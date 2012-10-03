@@ -532,17 +532,24 @@ class Class(models.Model):
     def students(self):
         return self.student_set.filter(attend__is_member=True)\
                 .order_by('index').distinct()
+
     #this method return dict of pair {id: [student, mark]}
-    def _mark_for_students(self, subject, term):
-        sts = self.students()
+    # and list of student
+    def _mark_for_students(self, subject, term, student_query=None):
+        # if query set is fetched or defined (will be cached)
+        # use it instead of making another query that hits db one more time
+        if student_query: sts = student_query
+        else: sts = self.students()
+        # get list of make
         marks = Mark.objects.filter(subject_id=subject, term_id=term,
                 student_id__in=sts)
+        # use dictionary for attaching mark to student to get
+        # benefits of dictionary low searching average complexity O(1).
+        # Overal match complexity: O(n)
         result = {}
-        for st in sts:
-            result[st.id] = [st]
         for m in marks:
-            result[m.student_id_id].append(m)
-        return result
+            result[m.student_id_id] = m
+        return result, sts
         
     def number_of_pupils(self):
         try:
@@ -550,6 +557,7 @@ class Class(models.Model):
                     .order_by('index').distinct().count()
         except Exception :
             return 0
+
     #This function count number of students those didn't leave this class
     #because of course repetition or uncategorized.
     def number_of_staying_students(self):
@@ -851,38 +859,6 @@ class Subject(models.Model):
     #class Admin: pass
 
 class Mark(models.Model):
-    
-    mieng_1 = models.FloatField("Điểm miệng 1", null=True, blank=True,
-            validators=[validate_mark])
-    mieng_2 = models.FloatField("Điểm miệng 2", null=True, blank=True,
-            validators=[validate_mark])
-    mieng_3 = models.FloatField("Điểm miệng 3", null=True, blank=True,
-            validators=[validate_mark])
-    mieng_4 = models.FloatField("Điểm miệng 4", null=True, blank=True,
-            validators=[validate_mark])
-    mieng_5 = models.FloatField("Điểm miệng 5", null=True, blank=True,
-            validators=[validate_mark])
-    mlam_1 = models.FloatField("Điểm 15' 1", null=True, blank=True,
-            validators=[validate_mark])
-    mlam_2 = models.FloatField("Điểm 15' 2", null=True, blank=True,
-            validators=[validate_mark])
-    mlam_3 = models.FloatField("Điểm 15' 3", null=True, blank=True,
-            validators=[validate_mark])
-    mlam_4 = models.FloatField("Điểm 15' 4", null=True, blank=True,
-            validators=[validate_mark])
-    mlam_5 = models.FloatField("Điểm 15' 5", null=True, blank=True,
-            validators=[validate_mark])
-    mot_tiet_1 = models.FloatField("Điểm 1 tiết 1", null=True, blank=True,
-            validators=[validate_mark])
-    mot_tiet_2 = models.FloatField("Điểm 1 tiết 2", null=True, blank=True,
-            validators=[validate_mark])
-    mot_tiet_3 = models.FloatField("Điểm 1 tiết 3", null=True, blank=True,
-            validators=[validate_mark])
-    mot_tiet_4 = models.FloatField("Điểm 1 tiết 4", null=True, blank=True,
-            validators=[validate_mark])
-    mot_tiet_5 = models.FloatField("Điểm 1 tiết 5", null=True, blank=True,
-            validators=[validate_mark])
-    
     diem = models.CharField("điểm", null=True, blank=True,
             default='||', max_length=100)
     sent = models.CharField("Đã gửi", null=True, blank=True,
