@@ -950,7 +950,6 @@ class Mark(models.Model):
             default='||||', max_length=50)
     time = models.CharField("Thời gian tạo", null=True, blank=True,
             default='||||', max_length=200)
-
     ck = models.FloatField("Điểm thi cuối kì", null=True, blank=True,
             validators = [validate_mark])
     mg = models.BooleanField("Miễn giảm", default=False)
@@ -972,7 +971,6 @@ class Mark(models.Model):
     
     def save(self, force_insert=False, force_update=False, using=None):
         # If this variable is never used, delete it.
-        new = self.id is None
         super(Mark, self).save(force_insert=force_insert,
                                force_update=force_update,
                                using=using)
@@ -1014,6 +1012,17 @@ class Mark(models.Model):
                 else:
                     arrTime[3 * MAX_COL + i - 2] = a
         return  arrTime
+    def to_array_sent(self):
+        arr_sent = [''] * ( 3 * MAX_COL + 3)
+        sents=self.sent.split('|')
+        for (i, t) in enumerate(sents):
+            ts = t.split('*')
+            for (j, a) in enumerate(ts):
+                if i < 3:
+                    arr_sent[i * MAX_COL + j + 1] = a
+                else:
+                    arr_sent[3 * MAX_COL + i - 2] = a
+        return  arr_sent
 
     def saveMark(self, arrMark):
         diem=''
@@ -1065,7 +1074,23 @@ class Mark(models.Model):
         return result
 
     def new_summary(self):
-        return ''
+        arr_mark = self.toArrayMark()
+        arr_sent = self.to_array_sent()
+        result = ''
+        for i in range(3):
+            temp = ''
+            for j in range(MAX_COL):
+                if (arr_mark[i * MAX_COL + j + 1] != '') & (arr_sent[i * MAX_COL + j + 1]==''):
+                    temp+=arr_mark[i * MAX_COL + j + 1]+'  '
+            if temp != '':
+                if  i == 0:
+                    result+='mieng:'+temp
+                elif i == 1:
+                    result+='diem 15 phut:'+temp
+                elif i == 2:
+                    result+='diem 45 phut:'+temp
+                #so on i=3,4
+        return result
     
     def length(self,x=3):
         return x
