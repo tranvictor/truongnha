@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from models import sms, checkValidPhoneNumber, get_tsp
+from models import sms, check_phone_number, get_tsp
 import settings
 import os
 from django.core import mail
@@ -33,20 +33,21 @@ def _send_email(subject, message, from_addr=None, to_addr=[]):
             settings.EMAIL_HOST_USER,
             to_addr)
 
-def _send_sms(phone, content, user, save_to_db=True):
-    phone = checkValidPhoneNumber(phone)
-    school = None
+# school parameter here is for hitting db avoidance purpose
+def _send_sms(phone, content, user, save_to_db=True, school=None):
+    phone = check_phone_number(phone)
     try:
-        school = user.userprofile.organization
+        if not school:
+            school = user.userprofile.organization
         if school.id in [42, 44]: raise Exception('NotAllowedSMS')
     except Exception:
         pass
     if phone:
         if school:
-            content = to_ascii(u'Truong %s thong bao:\n %s' % (
+            content = to_ascii(u'Truong %s thong bao:\n%s' % (
                 unicode(school), content))
         else:
-            content = to_ascii(u'truongnha.com thong bao:\n %s' % content)
+            content = to_ascii(u'Truongnha.com thong bao:\n%s' % content)
         s = None
         s = sms(phone=phone, content=content,
                 sender=user, recent=True, success=False)
@@ -74,13 +75,13 @@ def send_email(subject, message, from_addr=None, to_addr=[]):
     else:
         _send_email(subject, message, from_addr, to_addr)
 
-def sendSMS(phone, content, user, save_to_db=True):
+def sendSMS(phone, content, user, save_to_db=True, school=None):
     if not settings.DEBUG:
-        task = _send_sms(phone, content, user, save_to_db)
+        task = _send_sms(phone, content, user, save_to_db, school)
         if task: return '1'
         else: return None
     else:
-        return _send_sms(phone, content, user, save_to_db)
+        return _send_sms(phone, content, user, save_to_db, school)
 
 from celery import task
 
@@ -92,7 +93,7 @@ def task_send_email(subject, message, from_addr=None, to_addr=[]):
                 to_addr)
 
 @task()
-def task_send_SMS_then_email(phone, content, user, save_to_db=True,
+def task_send_SMS_then_email(phone, content, user, save_to_db=True, school=None,
         subject=None, message=None, from_addr=None, to_addr=[]):
     smsed = False
     emailed = False
@@ -108,16 +109,16 @@ def task_send_SMS_then_email(phone, content, user, save_to_db=True,
             pass
     return smsed, emailed
 
-def send_SMS_then_email(phone, content, user, save_to_db=True,
+def send_SMS_then_email(phone, content, user, save_to_db=True, school=None,
         subject=None, message=None, from_addr=None, to_addr=[]):
     if not settings.DEBUG:
         temp = task_send_SMS_then_email.delay(
-                phone, content, user, save_to_db,
+                phone, content, user, save_to_db, school,
                 subject, message, from_addr, to_addr)
         return temp.get()
     else:
         try:
-            smsed = sendSMS(phone, content, user, save_to_db)
+            smsed = sendSMS(phone, content, user, save_to_db, school)
         except Exception:
             smsed = None
         if smsed != '1':

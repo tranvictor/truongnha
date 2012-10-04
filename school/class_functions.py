@@ -186,6 +186,7 @@ def viewClassDetail(request, class_id):
                                                             ' ' + content),
                                                     user,
                                                     True,
+                                                    school,
                                                     u'Trường Nhà thông báo',
                                                     content,
                                                     to_addr=[student.email]) 
@@ -195,6 +196,7 @@ def viewClassDetail(request, class_id):
                                                     to_en1(content),
                                                     user,
                                                     True,
+                                                    school,
                                                     u'Trường Nhà thông báo',
                                                     content,
                                                     to_addr=[student.email]) 

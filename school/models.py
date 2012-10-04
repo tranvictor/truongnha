@@ -3,6 +3,7 @@ from datetime import date
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models.query import QuerySet
 from app.models import Organization, KHOI_CHOICES,\
         SUBJECT_CHOICES, GRADES_CHOICES, TERMS
 from school.templateExcel import MAX_COL, normalize,\
@@ -533,24 +534,87 @@ class Class(models.Model):
         return self.student_set.filter(attend__is_member=True)\
                 .order_by('index').distinct()
 
-    #this method return dict of pair {id: [student, mark]}
-    # and list of student
+    #this method return pair dict {id:  [mark, mark, ...]}, student query set
+    #Return: {id: [mark, mark, ...]}, student query set
     def _mark_for_students(self, subject, term, student_query=None):
         # if query set is fetched or defined (will be cached)
         # use it instead of making another query that hits db one more time
         if student_query: sts = student_query
         else: sts = self.students()
-        # get list of make
-        marks = Mark.objects.filter(subject_id=subject, term_id=term,
-                student_id__in=sts)
-        # use dictionary for attaching mark to student to get
+        #if a queryset of Subject is provided
+        if isinstance(subject, QuerySet):
+        # get list of marks of all provided subjects
+            marks = Mark.objects.filter(subject_id__in=subject, term_id=term,
+                    student_id__in=sts)
+        else:
+            marks = Mark.objects.filter(subject_id=subject, term_id=term,
+                    student_id__in=sts)
+        # use dictionary for attaching marks to student to get
         # benefits of dictionary low searching average complexity O(1).
         # Overal match complexity: O(n)
         result = {}
         for m in marks:
-            result[m.student_id_id] = m
+            sid = m.student_id_id
+            result[sid].append(m) if sid in result else [m]
         return result, sts
-        
+
+    #this method return pair dict {id:  [tkmon, tkmon, ...]}, student query set
+    #Return: {id: [tkmon, tkmon, ...]}, student query set
+    def _tkmon_for_students(self, subject, student_query=None):
+        # if query set is fetched or defined (will be cached)
+        # use it instead of making another query that hits db one more time
+        if student_query: sts = student_query
+        else: sts = self.students()
+        #if a queryset of Subject is provided
+        if isinstance(subject, QuerySet):
+        # get list of tkmons of all provided subjects
+            tkmons = TKMon.objects.filter(subject_id__in=subject,
+                    student_id__in=sts)
+        else:
+            tkmons = TKMon.objects.filter(subject_id=subject,
+                    student_id__in=sts)
+        # use dictionary for attaching marks to student to get
+        # benefits of dictionary low searching average complexity O(1).
+        # Overal match complexity: O(n)
+        result = {}
+        for tk in tkmons:
+            sid = tk.student_id_id
+            result[sid] = tk if sid in result else [tk]
+        return result, sts
+
+    #this method return a pair of list of string that contain all the new
+    #information about marks of students in the class, student query set and
+    #subject query set
+    #Note: new information means that the information hasn't been sent to
+    #user
+    #Return: {student_id: str}, student query set, subjects
+    #TODO: Consider the case to promote TKMON
+    def _generate_mark_summary(self, term, student_query=None, subjects=None):
+        # if query set is fetched or defined (will be cached)
+        # use it instead of making another query that hits db one more time
+        if student_query: sts = student_query
+        else: sts = self.students()
+        if not subjects: subjects = self.subject_set.all()
+        marks, temp = self._mark_for_students(subjects, student_query=sts)
+        result = {}
+        for ele in marks.items():
+            sid = ele[0]
+            m_list = ele[1]
+            content = [u'Danh sách điểm mới:']
+            for m in m_list:
+                #get subject from subject list that already fetched
+                #instead of making new query that hit db in this way:
+                #subject = m.subject_id
+                subject = subjects.get(id=m.subject_id_id)
+                summ_m = m.new_summary()
+                if summ_m:
+                    content.append(u'%s:%s' % (subject.short_name(),
+                        m.new_summary()))
+            result[sid] = '\n'.join(content)
+        return result, student_query, subjects
+
+    #this method return number of students those are studying in this class
+    #Note: not include students those moved to other classes
     def number_of_pupils(self):
         try:
             return self.student_set.filter(attend__is_member=True)\
@@ -829,9 +893,9 @@ class Attend(models.Model):
         return unicode(self.pupil) + '_' + unicode(self._class)
 
 class Subject(models.Model):    
-    name = models.CharField("Tên môn học(*)", max_length = 45) # can't be null
-    type = models.CharField("Môn(*)", max_length=45, default='', choices= SUBJECT_TYPES)
-    hs = models.FloatField("Hệ số(*)", validators = [validate_hs], default=1)
+    name = models.CharField("Tên môn học(*)", max_length=45) # can't be null
+    type = models.CharField("Môn(*)", max_length=45, default='', choices=SUBJECT_TYPES)
+    hs = models.FloatField("Hệ số(*)", validators=[validate_hs], default=1)
     nx = models.BooleanField("Là môn nhận xét", default= False)
 
     primary = models.SmallIntegerField("Tính điểm(*)", default=0, choices=LOAI_CHOICES)
@@ -853,9 +917,30 @@ class Subject(models.Model):
 
     def strip_name(self):
         return self.name.lower().replace(' ', '')
+
     def get_primary(self):
         return LOAI_CHOICES[self.primary][1].encode("UTF-8")
     
+    def short_name(self):
+        name_dict = {
+                u'Toán': 'To',
+                u'Vật lí': 'VL',
+                u'Hóa học': 'Ho',
+                u'Sinh học': 'Si',
+                u'Ngữ văn': 'V',
+                u'Lịch sử': 'Su',
+                u'Địa lí': 'D',
+                u'Ngoại ngữ': 'NN',
+                u'GDCD': 'GDCD',
+                u'Công nghệ': 'CN',
+                u'Thể dục': 'TD',
+                u'Âm nhạc': 'AN',
+                u'Mĩ thuật': 'MT',
+                u'NN2': 'NN2',
+                u'Tin học': 'Ti',
+                u'GDQP-AN': 'QP'}
+        if self.type in name_dict: return name_dict[self.type]
+        else: return 'TC'
     #class Admin: pass
 
 class Mark(models.Model):
@@ -886,6 +971,7 @@ class Mark(models.Model):
 
     
     def save(self, force_insert=False, force_update=False, using=None):
+        # If this variable is never used, delete it.
         new = self.id is None
         super(Mark, self).save(force_insert=force_insert,
                                force_update=force_update,
@@ -918,15 +1004,15 @@ class Mark(models.Model):
         return arrMark
     
     def toArrayTime(self):
-        arrTime=['']*(3*MAX_COL+3)
+        arrTime=[''] * ( 3 * MAX_COL + 3)
         times=self.time.split('|')
-        for (i,t) in enumerate(times):
-            ts=t.split('*')
-            for (j,a) in enumerate(ts):
-                if i<3:
-                    arrTime[i*MAX_COL+j+1]=a
+        for (i, t) in enumerate(times):
+            ts = t.split('*')
+            for (j, a) in enumerate(ts):
+                if i < 3:
+                    arrTime[i * MAX_COL + j + 1] = a
                 else:
-                    arrTime[3*MAX_COL+i-2]=a
+                    arrTime[3 * MAX_COL + i - 2] = a
         return  arrTime
 
     def saveMark(self, arrMark):
@@ -977,6 +1063,9 @@ class Mark(models.Model):
                 if s!="":
                     result+=convertMarkToCharacter1(float(s))+space
         return result
+
+    def new_summary(self):
+        return ''
     
     def length(self,x=3):
         return x

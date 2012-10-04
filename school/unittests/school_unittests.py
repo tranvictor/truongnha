@@ -6,9 +6,7 @@ from school.models import DiemDanh
 import simplejson
 from school.models import Teacher, Team, Group
 from datetime import date
-# Loi test nho chu y: test ca get, post. Khi post thi nen test add subject ca
-# nhung mon quan trong nhu: Toan, Van, kiem tra he so, kiem tra diem kem theo
-# ung voi mon do cho tung hoc sinh trong lop
+
 class AddSubjectTest(SchoolSetupTest):
     def phase8_get_subjects_of_class(self):
         classes = self.year.class_set.order_by('id')
