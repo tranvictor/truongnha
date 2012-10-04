@@ -713,7 +713,7 @@ def sendSMSForAPupil(s,user):
                 if tbhk1 != None:
                     tbhk1.save()
 
-            return  str(idMark)
+                return  str(idMark)
         except Exception as e:
             print e
             pass
@@ -724,12 +724,10 @@ def sendSMSMark(request):
     message = '-'
     if request.method == 'POST':
         str = request.POST['data']
-
         strs=str.split('/')
         for s in strs:
             if s!="":
                 message+=sendSMSForAPupil(s,request.user)+"-"
-
         data = simplejson.dumps({'message': message})
         return HttpResponse(data, mimetype='json')
 
