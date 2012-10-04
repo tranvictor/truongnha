@@ -545,6 +545,7 @@ class AddTeacherTest(SchoolSetupTest):
             birthday=u'1975-03-20')
         print 'Check if teacher was created successfully'
         self.assertIsNotNone(teacher)
+
     def phase9_add_a_teacher_invalid_sex(self):
         response = self.client.post(
             reverse('teachers'),
@@ -592,7 +593,6 @@ class AddTeacherTest(SchoolSetupTest):
         cont = simplejson.loads(response.content)
         self.assertEqual(cont['success'], False)
         self.assertEqual(cont['message'],u'Giáo viên này đã tồn tại trong hệ thống')
-        return True
 
     def phase11_add_teacher_invalid_team(self):
         response = self.client.post(
@@ -616,10 +616,9 @@ class AddTeacherTest(SchoolSetupTest):
         print 'Going to check response content'
         cont = simplejson.loads(response.content)
         self.assertEqual(cont['success'], False)
-        self.assertEqual(cont['message'], u'Có lỗi ở dữ liệu nhập vào.')
-        return True
+        self.assertEqual(cont['message'], u"Tổ này không tồn tại.")
 
-    def phase11_add_teacher_invalid_team(self):
+    def phase12_add_teacher_invalid_team_n_group(self):
         response = self.client.post(
             reverse('teachers'),
                 {
@@ -630,7 +629,7 @@ class AddTeacherTest(SchoolSetupTest):
                 'sms_phone': u'0986438383',
                 'major' : u'GDCD',
                 'team_id' : u'111',
-                'group_id' : u'',
+                'group_id' : u'111',
 
                 },
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
@@ -641,10 +640,10 @@ class AddTeacherTest(SchoolSetupTest):
         print 'Going to check response content'
         cont = simplejson.loads(response.content)
         self.assertEqual(cont['success'], False)
-        self.assertEqual(cont['message'], u'Có lỗi ở dữ liệu nhập vào.')
-        return True
+        self.assertEqual(cont['message'], u"Tổ này không tồn tại.")
 
-    def phase12_delete_teacher(self):
+
+    def phase13_delete_teacher(self):
         teacher = Teacher.objects.get(last_name=u'Nguyễn Văn',
             first_name=u'A',
             birthday=u'1975-03-20')
@@ -662,12 +661,16 @@ class AddTeacherTest(SchoolSetupTest):
         print 'Going to check response content'
         cont = simplejson.loads(response.content)
         self.assertEqual(cont['success'], True)
-        teacher = Teacher.objects.get(last_name=u'Nguyễn Văn',
-            first_name=u'A',
-            birthday=u'1975-03-20')
+        teacher = None
+        try:
+            teacher = Teacher.objects.get(last_name=u'Nguyễn Văn',
+                first_name=u'A',
+                birthday=u'1975-03-20')
+        except Exception:
+            pass
         self.assertIsNone(teacher)
-        return True
-    def phase13_add_a_team(self):
+
+    def phase14_add_a_team(self):
         response = self.client.post(
             reverse('teachers'),
                 {
@@ -685,7 +688,7 @@ class AddTeacherTest(SchoolSetupTest):
         team = Team.objects.get(name__exact= u'Tổ Toán')
         self.assertIsNotNone(team)
 
-    def phase14_add_a_duplicate_team(self):
+    def phase15_add_a_duplicate_team(self):
         response = self.client.post(
             reverse('teachers'),
                 {
@@ -701,14 +704,14 @@ class AddTeacherTest(SchoolSetupTest):
         cont = simplejson.loads(response.content)
         self.assertEqual(cont['message'], u'Tổ này đã tồn tại.')
 
-    def phase15_add_a_group(self):
+    def phase16_add_a_group(self):
         team = Team.objects.all()[0]
         response = self.client.post(
             reverse('teachers'),
                 {
                 'request_type':u'add-group',
                 'name': u'Nhóm Đại số',
-                'team_id': str(team.id),
+                'id': str(team.id),
                 },
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
@@ -718,17 +721,18 @@ class AddTeacherTest(SchoolSetupTest):
         print 'Going to check response content'
         cont = simplejson.loads(response.content)
         self.assertEqual(cont['message'], 'OK')
+        print 'Going to check object'
         group = Group.objects.get(name__exact= u'Nhóm Đại số', team_id = team.id)
         self.assertIsNotNone(group)
 
-    def phase16_add_a_duplicate_group(self):
+    def phase17_add_a_duplicate_group(self):
         team = Team.objects.all()[0]
         response = self.client.post(
             reverse('teachers'),
                 {
                 'request_type':u'add-group',
                 'name': u'Nhóm Đại số',
-                'team_id': str(team.id),
+                'id': str(team.id),
                 },
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
@@ -739,13 +743,13 @@ class AddTeacherTest(SchoolSetupTest):
         cont = simplejson.loads(response.content)
         self.assertEqual(cont['message'], u'Nhóm này đã tồn tại.')
 
-    def phase17_add_a_group_with_invalid_team(self):
+    def phase18_add_a_group_with_invalid_team(self):
         response = self.client.post(
             reverse('teachers'),
                 {
                 'request_type':u'add-group',
                 'name': u'Nhóm Đại số',
-                'team_id': '10000',
+                'id': '10000',
                 },
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
@@ -756,7 +760,7 @@ class AddTeacherTest(SchoolSetupTest):
         cont = simplejson.loads(response.content)
         self.assertEqual(cont['message'], u'Tổ này không tồn tại.')
 
-    def phase18_rename_a_group_successfully(self):
+    def phase19_rename_a_group_successfully(self):
         group = Group.objects.all()[0]
         name = group.name
         response = self.client.post(
@@ -775,14 +779,17 @@ class AddTeacherTest(SchoolSetupTest):
         cont = simplejson.loads(response.content)
         self.assertEqual(cont['success'], True)
         self.assertEqual(cont['message'], u'Đổi tên thành công.')
-
-        old_group = Group.objects.get(id=group.id, name__exact = name)
+        old_group = None
+        try:
+            old_group = Group.objects.get(id=group.id, name__exact = name)
+        except Exception:
+            pass
         self.assertIsNone(old_group)
 
         new_group = Group.objects.get(id=group.id, name__exact = u'Nhóm Đại số 2')
         self.assertIsNotNone(new_group)
 
-    def phase19_rename_a_group_with_too_long_name(self):
+    def phase20_rename_a_group_with_too_long_name(self):
         group = Group.objects.all()[0]
         name = group.name
         response = self.client.post(
@@ -802,13 +809,17 @@ class AddTeacherTest(SchoolSetupTest):
         self.assertEqual(cont['success'], False)
         self.assertEqual(cont['message'], u'Tên quá dài')
 
-        new_group = Group.objects.get(id=group.id, name__exact = u'Nhóm Hình học của lớp chất lượng cao trường THPT')
+        new_group = None
+        try:
+            new_group = Group.objects.get(id=group.id, name__exact = u'Nhóm Hình học của lớp chất lượng cao trường THPT')
+        except Exception:
+            pass
         self.assertIsNone(new_group)
 
         old_group = Group.objects.get(id=group.id, name__exact = name)
         self.assertIsNotNone(old_group)
 
-    def phase20_rename_a_group_with_an_exist_name(self):
+    def phase21_rename_a_group_with_an_exist_name(self):
         group = Group.objects.all()[0]
         name = group.name
         response = self.client.post(
@@ -816,7 +827,7 @@ class AddTeacherTest(SchoolSetupTest):
                 {
                 'request_type':u'add-group',
                 'name': u'Nhóm Hình học',
-                'team_id': str(group.team_id),
+                'id': str(group.team_id.id),
                 },
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
@@ -842,9 +853,9 @@ class AddTeacherTest(SchoolSetupTest):
         old_group = Group.objects.get(id=group.id, name__exact = name)
         self.assertIsNotNone(old_group)
 
-    def phase21_rename_a_team_successfully(self):
+    def phase22_rename_a_team_successfully(self):
         team = Team.objects.all()[0]
-        name = Team.name
+        name = team.name
         response = self.client.post(
             reverse('teachers'),
                 {
@@ -862,14 +873,18 @@ class AddTeacherTest(SchoolSetupTest):
         self.assertEqual(cont['success'], True)
         self.assertEqual(cont['message'], u'Đổi tên thành công.')
 
-        old_team = Team.objects.get(id=team.id, name__exact = name)
+        old_team = None
+        try:
+            old_team = Team.objects.get(id=team.id, name__exact = name)
+        except Exception:
+            pass
         self.assertIsNone(old_team)
 
         new_team = Team.objects.get(id=team.id, name__exact = u'Tổ Toán Mới')
         self.assertIsNotNone(new_team)
 
 
-    def phase22_rename_a_team_with_an_exist_name(self):
+    def phase23_rename_a_team_with_an_exist_name(self):
         team = Team.objects.all()[0]
         name = team.name
         response = self.client.post(
@@ -903,7 +918,7 @@ class AddTeacherTest(SchoolSetupTest):
         self.assertIsNotNone(old_team)
 
 
-    def phase23_delete_a_group(self):
+    def phase24_delete_a_group(self):
         group = Group.objects.all()[0]
         group_id = group.id
         response = self.client.post(
@@ -916,10 +931,14 @@ class AddTeacherTest(SchoolSetupTest):
         )
         self.assertEqual(response.status_code, 200)
         print 'Going to check response content type'
-        tmp = Teacher.objects.get(group_id = group_id)
+        tmp = None
+        try:
+            tmp = Teacher.objects.get(group_id = group_id)
+        except Exception:
+            pass
         self.assertIsNone(tmp)
 
-    def phase24_delete_a_team(self):
+    def phase25_delete_a_team(self):
         team = Team.objects.all()[0]
         team_id = team.id
         response = self.client.post(
@@ -932,5 +951,9 @@ class AddTeacherTest(SchoolSetupTest):
         )
         self.assertEqual(response.status_code, 200)
         print 'Going to check response content type'
-        tmp = Teacher.objects.get(team_id = team_id)
+        tmp = None
+        try:
+            tmp = Teacher.objects.get(team_id = team_id)
+        except Exception:
+            pass
         self.assertIsNone(tmp)

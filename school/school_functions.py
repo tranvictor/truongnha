@@ -220,10 +220,29 @@ def teachers(request):
                         first_name = ''
                     index = school.teacher_set.count() + 1
                     if request.POST['team_id']:
-                        team = school.team_set.get(id=request.POST['team_id'])
+                        try:
+                            team = school.team_set.get(id=request.POST['team_id'])
+                        except Exception as e:
+                            message = u"Tổ này không tồn tại."
+                            response = {
+                                'success': False,
+                                'message': message
+                            }
+                            return HttpResponse(simplejson.dumps(response),
+                                mimetype='json')
+
                     else: team = None
                     if request.POST['group_id']:
-                        group = team.group_set.get(id=request.POST['group_id'])
+                        try:
+                            group = team.group_set.get(id=request.POST['group_id'])
+                        except Exception as e:
+                            message = u"Nhóm này không tồn tại."
+                            response = {
+                                'success': False,
+                                'message': message
+                            }
+                            return HttpResponse(simplejson.dumps(response),
+                                mimetype='json')
                     else: group = None
                     data = {'first_name': first_name,
                             'last_name': last_name,
@@ -308,7 +327,7 @@ def teachers(request):
                             'team_id': request.POST['id'].strip()}
                     try:
                         try:
-                            team = school.team_set.get(name=request.POST['id'].strip())
+                            team = school.team_set.get(id=request.POST['id'].strip())
                         except Exception:
                             message = u'Tổ này không tồn tại.'
                             data = simplejson.dumps({'message': message})
