@@ -1077,6 +1077,7 @@ class Mark(models.Model):
         return result
 
     def new_summary(self):
+        is_comment = self.subject_id.nx
         arr_mark = self.toArrayMark()
         arr_sent = self.to_array_sent()
         result = ''
@@ -1085,7 +1086,10 @@ class Mark(models.Model):
             for j in range(MAX_COL):
                 if ((arr_mark[i * MAX_COL + j + 1] != '')
                         & (arr_sent[i * MAX_COL + j + 1]=='')):
-                    temp += arr_mark[i * MAX_COL + j + 1] + '  '
+                    if is_comment:
+                        temp += convertMarkToCharacter1(float(arr_mark[i * MAX_COL + j + 1]),False)+ ' '
+                    else:
+                        temp += arr_mark[i * MAX_COL + j + 1] + '  '
             if temp != '':
                 if  i == 0:
                     result+='mieng:' + temp

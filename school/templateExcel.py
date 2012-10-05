@@ -194,13 +194,20 @@ def normalize(x,checkNx=0,isCut=True):
             return u'Đ'
         else:
             return  u'CĐ'
-def convertMarkToCharacter1(x):
-    if (x==None) | (x==""):
-        return ""
-    elif x>=5:
-        return u'Đ'
-    else:
-        return  u'CĐ'
+def convertMarkToCharacter1(x,is_vietnamese=True):
+        if (x==None) | (x==""):
+            return ""
+        elif is_vietnamese:
+            if x>=5:
+                return u'Đ'
+            else:
+                return  u'CĐ'
+        else:
+            if x>=5:
+                return u'D'
+            else:
+                return  u'CD'
+
 def convertMarkToCharacter(x):
     if (x==None) | (x==""):
         return ""
