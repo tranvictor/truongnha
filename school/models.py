@@ -1025,7 +1025,7 @@ class Mark(models.Model):
                     arr_sent[3 * MAX_COL + i - 2] = a
         return  arr_sent
 
-    def saveMark(self, arrMark):
+    def saveMark(self, arrMark,is_save=False):
         diem=''
         for i in range(3):
             tempDiem=''
@@ -1040,6 +1040,8 @@ class Mark(models.Model):
             else:
                 diem+=tempDiem
         self.diem=diem
+        if is_save:
+            self.save()
         
     def saveTime(self, arrTime):
         time=''
@@ -1093,7 +1095,14 @@ class Mark(models.Model):
                     result+="45':" + temp
                 #so on i=3,4
         return result
-    
+    def update(self,m,index):
+        if index <= 0 :
+            raise Exception("index out of range")
+        arr_mark = self.toArrayMark()
+        arr_mark[index] = str(m)
+        self.saveMark(arr_mark,True)
+
+
     def length(self,x=3):
         return x
 
