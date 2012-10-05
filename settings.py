@@ -4,7 +4,7 @@
 # open path for template folder
 import os
 import sys
-DEBUG = True
+DEBUG = False
 if os.environ.pop('DJANGO_SETTINGS_TESTING', None):
     IS_TESTING = True
 else:
@@ -34,9 +34,9 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'currentdb17',
-            'USER': 'root',
-            'PASSWORD':'',
+            'NAME': 'freeschool',
+            'USER': 'freeschool',
+            'PASSWORD':'freeschool',
             'OPTIONS': { 'init_command': 'SET storage_engine=INNODB',},
         },
     }
@@ -102,6 +102,7 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 #MEDIA_ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), 'static/'))
 MEDIA_ROOT = os.path.join(SITE_ROOT, 'static')
 
+FIXTURE_DIRS = ('/school/unittests/fixtures/')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -140,11 +141,15 @@ STATICFILES_FINDERS = (
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '$@fga3_%m!y@v+0_0h8kqo4n#4@(7fl7b++xz31nf0v)6861=3'
+# Viettel sms gate parameters
 SMS_WSDL_URL = 'http://viettelvas.vn:7777/sentmt/fromcp.asmx?WSDL'
 WSDL_USERNAME = 'ws8x62'
 WSDL_PASSWORD = 'password'
 MT_USERNAME = 'username'
 MT_PASSWORD = 'password'
+# iNET sms gate parameters
+INET_BRAND = '70077'
+INET_AUTH = 'secret_key'
 # Google Captcha Key, the private key must be secret and secured
 CAPTCHA_PUBLIC_KEY = '6LdfIc4SAAAAACxRkXpRGhyK-mHYUsCQIHwF42fc'
 CAPTCHA_PRIVATE_KEY = '6LdfIc4SAAAAAHHguVm0LwTPDOFNYzsMSomK718P'
@@ -273,14 +278,37 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'support@truongnha.com'
 EMAIL_HOST_PASSWORD = 'truongnhadotcom'
 EMAIL_SUBJECT_PREFIX = '[www.truongnha.com]'
+TEST_RUNNER = 'django_coverage.coverage_runner.CoverageRunner'
 
-#JENKINS_TASKS = (
-#    'django_jenkins.tasks.run_pylint',
-#    'django_jenkins.tasks.with_coverage',
-#    'django_jenkins.tasks.django_tests',
-#    )
-#
-#PROJECT_APPS = (
-#    'school',
-#    'app'
-#)
+#Nha mang dc phep nhan tin
+ALLOWED_TSP = ['VIETTEL']
+#Cac nha mang
+TSPS = ['VIETTEL', 'MOBI', 'VINA', 'EVN', 'VIETNAMMOBILE', 'BEELINE']
+# test panel
+if DEBUG:
+    INTERNAL_IPS = ('127.0.0.1',)
+    MIDDLEWARE_CLASSES += (
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+    )
+
+    INSTALLED_APPS += (
+        'debug_toolbar',
+    )
+
+    DEBUG_TOOLBAR_PANELS = (
+        'debug_toolbar.panels.version.VersionDebugPanel',
+        'debug_toolbar.panels.timer.TimerDebugPanel',
+        'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',
+        'debug_toolbar.panels.headers.HeaderDebugPanel',
+        #'debug_toolbar.panels.profiling.ProfilingDebugPanel',
+        'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',
+        'debug_toolbar.panels.sql.SQLDebugPanel',
+        'debug_toolbar.panels.template.TemplateDebugPanel',
+        'debug_toolbar.panels.cache.CacheDebugPanel',
+        'debug_toolbar.panels.signals.SignalDebugPanel',
+        'debug_toolbar.panels.logger.LoggingPanel',
+    )
+
+    DEBUG_TOOLBAR_CONFIG = {
+        'INTERCEPT_REDIRECTS': False,
+    }
