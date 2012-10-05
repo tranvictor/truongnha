@@ -4,7 +4,7 @@
 # open path for template folder
 import os
 import sys
-DEBUG = True
+DEBUG = False
 if os.environ.pop('DJANGO_SETTINGS_TESTING', None):
     IS_TESTING = True
 else:
@@ -102,6 +102,7 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 #MEDIA_ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), 'static/'))
 MEDIA_ROOT = os.path.join(SITE_ROOT, 'static')
 
+FIXTURE_DIRS = ('/school/unittests/fixtures/')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.

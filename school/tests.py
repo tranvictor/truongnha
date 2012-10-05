@@ -13,7 +13,8 @@ def generate_test_class(module):
                 groups = obj.get_step_groups()
             else:
                 groups = []
-            #this character is a special char which isn't allowed to appear in method's name
+            #this character is a special char which isn't allowed
+            #to appear in method's name
             it = '*' 
             giter = groups.__iter__()
             try:
@@ -31,9 +32,16 @@ def generate_test_class(module):
                         step_chain.append(pr[0])
                         pr = pr[1]
                         if pr == '*': break
+                    step_chain = reversed(step_chain)
+                    #Now we have stemp_chain in reversed order
+                    #Break them into two part, one belongs to the base class
+                    #another one is actually running
+                    #Step1: get base class
+                    #Step2: get fixture name
+                    #Step3: create class with fixture
                     test_classes.append(
                             type(obj.__name__ + str(number),
-                                (obj,), dict(step_chain=reversed(step_chain))))
+                                (obj,), dict(step_chain=step_chain)))
             except StopIteration:
                 pass
 

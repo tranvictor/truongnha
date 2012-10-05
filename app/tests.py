@@ -11,6 +11,7 @@ import random
 import simplejson
 import re
 import sys
+import os
 from cStringIO import StringIO
 
 # This class will test the very first steps on a workflow
@@ -201,7 +202,16 @@ class BasicWorkFlow(TestCase):
             if name:
                 yield steps.match(name).groups()[2], getattr(self, name)
 
-
+   # def tearDown(self):
+   #     #dump the db via commandline
+   #     fixt_name = [self.__class__.__name__]
+   #     fixt_name.extend([a.__name__ for a in self.step_chain])
+   #     fixt_name = ''.join(fixt_name)
+   #     print fixt_name
+   #     #TODO: make the path more flexible
+   #     os.system('python manage.py sqlitedumpdata app school sms\
+   #             > school/unittests/%s.json' % fixt_name)
+        
     def test_run(self):
         number = 0
         old_stdout = sys.stdout
@@ -255,213 +265,7 @@ class SendEmailTest(TestCase):
         self.assertEqual(response.status_code, 200) # server runs OK
         # now, check the email box if it receives the email correctly
         from time import sleep
-        sleep(5) # sleep for 5s to ensure that receiver received the email, better solution?
+        sleep(1) # sleep for 5s to ensure that receiver received the email, better solution?
         print 'Going to check sent email'
         self.assertEqual(self.subject in mail.outbox[0].subject, True)
 
-#class UserFunctionTest(TestCase):
-#    def setUp(self):
-#        self.client = Client()
-#
-#    def test_login(self):
-#        response = self.client.post('/login/', {'username': 'admin', 'password': 'admin'})
-#        self.assertEqual(response.status_code, 302)
-#
-#    def test_failed_login(self):
-#        # Wrong username and password
-#        response = self.client.post('/login/', {'username': 'wrong_username', 'password': ''})
-#        self.assertContains(response, "TODO .", status_code=200)
-#
-#    def test_logout(self):
-#        response = self.client.login(username='admin', password='admin')
-#        self.assertTrue(response)
-#        response = self.client.logout()
-#        self.assertEqual(response, None)
-#        response = self.client.post('/logout/')
-#        self.assertContains(response, "TODO .")
-#
-#    def test_user_addition(self):
-#        response = self.client.post('/login/', {'username': 'admin', 'password': 'admin'})
-#        self.assertEqual(response.status_code, 302)
-#        # before adding, database has no user with name "st01"
-#        response = self.client.post('/admin/auth/user/')
-#        self.assertContains(response, "st01", 0, status_code=200)
-#        data = {
-#            'username': 'st01',
-#            'password1': 'st01',
-#            'password2': 'st01'
-#        }
-#        response = self.client.post('/admin/auth/user/add/', data)
-#        self.assertEqual(response.status_code, 302)
-#        # after adding, database has user with name "st01"
-#        response = self.client.post('/admin/auth/user/')
-#        self.assertContains(response, "st01", status_code=200)
-#
-#    def test_duplicated_user_addition(self):
-#        response = self.client.post('/login/', {'username': 'admin', 'password': 'admin'})
-#        self.assertEqual(response.status_code, 302)
-#        data = {
-#            'username': 'st01',
-#            'password1': 'st01',
-#            'password2': 'st01'
-#        }
-#        response = self.client.post('/admin/auth/user/add/', data)
-#        self.assertEqual(response.status_code, 302)
-#        data = {
-#            'username': 'st01',
-#            'password1': 'st01',
-#            'password2': 'st01'
-#        }
-#        response = self.client.post('/admin/auth/user/add/', data)
-#        self.assertEqual(response.status_code, 200)
-#
-#    def test_user_addition_with_no_data(self):
-#        response = self.client.login(username='admin', password='admin')
-#        self.assertTrue(response)
-#        data = {
-#        }
-#        response = self.client.post('/admin/auth/user/add', data)
-#        #self.assertContains(response, "Trường này bắt buộc", 3, status_code=301)
-#        self.assertEqual(response.status_code, 301)
-#
-#    def test_user_addition_without_password(self):
-#        response = self.client.login(username='admin', password='admin')
-#        self.assertTrue(response)
-#        data = {
-#            'username': 'without-password',
-#            'password': '',
-#            'password': ''
-#        }
-#        response = self.client.post('/admin/auth/user/add', data)
-#        #self.assertContains(response, "Trường này bắt buộc", 2, status_code=301)
-#        self.assertEqual(response.status_code, 301)
-#
-#    def test_user_addition_without_username(self):
-#        response = self.client.login(username='admin', password='admin')
-#        self.assertTrue(response)
-#        data = {
-#            'username': '',
-#            'password': 'without-username',
-#            'password': ''
-#        }
-#        response = self.client.post('/admin/auth/user/add', data)
-#        #self.assertContains(response, "Trường này bắt buộc", 2, status_code=301)
-#        self.assertEqual(response.status_code, 301)
-#
-#    def test_usercreation_with_spaced_username(self):
-#        response = self.client.login(username='admin', password='admin')
-#        self.assertTrue(response)
-#        data = {
-#            'username': 'with space',
-#            'password': 'password',
-#            'password': 'password'
-#        }
-#        response = self.client.post('/admin/auth/user/add', data)
-#        #self.assertContains(response, "Giá trị này có thể chứa chữ cái, số và ký tự @/./+/-/_.", status_code=301)
-#        self.assertEqual(response.status_code, 301)
-#
-#    def test_user_addition_with_not_matched_password(self):
-#        response = self.client.login(username='admin', password='admin')
-#        self.assertTrue(response)
-#        data = {
-#            'username': 'username',
-#            'password': 'password',
-#            'password': 'pass_word'
-#        }
-#        response = self.client.post('/admin/auth/user/add', data)
-#        #self.assertContains(response, "Hai trường mật khẩu không giống nhau", status_code=301)
-#        self.assertEqual(response.status_code, 301)
-#
-#    def test_user_deletion(self):
-#        response = self.client.post('/login/', {'username': 'admin', 'password': 'admin'})
-#        self.assertEqual(response.status_code, 302)
-#        # before adding, database has no user with name "st02"
-#        response = self.client.post('/admin/auth/user/')
-#        self.assertContains(response, "st02", 0, status_code=200)
-#        data = {
-#            'username': 'st02',
-#            'password1': 'st02',
-#            'password2': 'st02'
-#        }
-#        response = self.client.post('/admin/auth/user/add/', data)
-#        self.assertEqual(response.status_code, 302)
-#        # after adding, database has a user with name "st02"
-#        response = self.client.post('/admin/auth/user/')
-#        self.assertContains(response, "st02", status_code=200)
-#        data = {
-#            'action': 'delete_selected',
-#            '_selected_action': '2',
-#            'post': 'yes'
-#        }
-#        response = self.client.post('/admin/auth/user/', data)
-#        self.assertEqual(response.status_code, 302)
-#        # after deleting, database has no user with name "st02"
-#        response = self.client.post('/admin/auth/user/')
-#        self.assertContains(response, "st02", 0, status_code=200)
-#
-#    def test_group_addition(self):
-#        response = self.client.post('/login/', {'username': 'admin', 'password': 'admin'})
-#        self.assertEqual(response.status_code, 302)
-#        response = self.client.post('/admin/auth/group/')
-#        self.assertContains(response, "teachers", 0, status_code=200)
-#        data = {
-#            'name': 'teachers'
-#        }
-#        response = self.client.post('/admin/auth/group/add/', data)
-#        self.assertEqual(response.status_code, 302)
-#        response = self.client.post('/admin/auth/group/')
-#        self.assertContains(response, "teachers", status_code=200)
-#
-#    def test_duplicated_group_addition(self):
-#        response = self.client.post('/login/', {'username': 'admin', 'password': 'admin'})
-#        self.assertEqual(response.status_code, 302)
-#        response = self.client.post('/admin/auth/group/')
-#        self.assertContains(response, "teachers", 0, status_code=200)
-#        data = {
-#            'name': 'teachers'
-#        }
-#        response = self.client.post('/admin/auth/group/add/', data)
-#        self.assertEqual(response.status_code, 302)
-#        response = self.client.post('/admin/auth/group/')
-#        self.assertContains(response, "teachers", status_code=200)
-#        response = self.client.post('/admin/auth/group/add/', data)
-#        #selft.assertContains(response, "Nhóm có Tên đã tồn tại.", status_code=200)
-#        self.assertEqual(response.status_code, 200)
-#
-#    def test_group_addition_without_name(self):
-#        response = self.client.login(username='admin', password='admin')
-#        self.assertTrue(response)
-#        data = {
-#        }
-#        response = self.client.post('/admin/auth/group/add', data)
-#        #self.assertContains(response, "Trường này bắt buộc", 2, status_code=301)
-#        self.assertEqual(response.status_code, 301)
-#
-#    def test_deletion_group(self):
-#        response = self.client.post('/login/', {'username': 'admin', 'password': 'admin'})
-#        self.assertEqual(response.status_code, 302)
-#        # before adding, database has no group with name "teachers02"
-#        response = self.client.post('/admin/auth/group/')
-#        self.assertContains(response, "teachers02", 0, status_code=200)
-#        data = {
-#            'name': 'teachers02',
-#        }
-#        response = self.client.post('/admin/auth/group/add/', data)
-#        self.assertEqual(response.status_code, 302)
-#        # after adding, database has a group with name "teachers02"
-#        response = self.client.post('/admin/auth/group/')
-#        self.assertContains(response, "teachers02", status_code=200)
-#        data = {
-#            'action': 'delete_selected',
-#            '_selected_action': '1',
-#            'post': 'yes'
-#        }
-#        response = self.client.post('/admin/auth/group/', data)
-#        self.assertEqual(response.status_code, 302)
-#        # after deleting, database has no group with name "teachers02"
-#        response = self.client.post('/admin/auth/group/')
-#        self.assertContains(response, "teachers02", 0, status_code=200)
-#
-#class OrganizationTest(TestCase):
-#    def setUp(self):
-#        self.client = Client()

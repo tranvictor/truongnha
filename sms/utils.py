@@ -39,11 +39,11 @@ def _send_sms(phone, content, user, save_to_db=True, school=None):
     try:
         if not school:
             school = user.userprofile.organization
-        if school.id in [42, 44]: raise Exception('NotAllowedSMS')
     except Exception:
         pass
     if phone:
         if school:
+            if school.id in [42, 44]: raise Exception('NotAllowedSMS')
             content = to_ascii(u'Truong %s thong bao:\n%s' % (
                 unicode(school), content))
         else:

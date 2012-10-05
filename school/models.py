@@ -1012,6 +1012,7 @@ class Mark(models.Model):
                 else:
                     arrTime[3 * MAX_COL + i - 2] = a
         return  arrTime
+
     def to_array_sent(self):
         arr_sent = [''] * ( 3 * MAX_COL + 3)
         sents=self.sent.split('|')
@@ -1080,15 +1081,16 @@ class Mark(models.Model):
         for i in range(3):
             temp = ''
             for j in range(MAX_COL):
-                if (arr_mark[i * MAX_COL + j + 1] != '') & (arr_sent[i * MAX_COL + j + 1]==''):
-                    temp+=arr_mark[i * MAX_COL + j + 1]+'  '
+                if ((arr_mark[i * MAX_COL + j + 1] != '')
+                        & (arr_sent[i * MAX_COL + j + 1]=='')):
+                    temp += arr_mark[i * MAX_COL + j + 1] + '  '
             if temp != '':
                 if  i == 0:
-                    result+='mieng:'+temp
+                    result+='mieng:' + temp
                 elif i == 1:
-                    result+='diem 15 phut:'+temp
+                    result+="15':" + temp
                 elif i == 2:
-                    result+='diem 45 phut:'+temp
+                    result+="45':" + temp
                 #so on i=3,4
         return result
     

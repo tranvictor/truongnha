@@ -81,7 +81,7 @@ class sms(models.Model):
 
     def _send_iNET_sms(self, phone):
         if phone:
-            data = urllib.encode({
+            data = urllib.urlencode({
                 'mobile': phone,
                 'brand': settings.INET_BRAND,
                 'auth': settings.INET_AUTH,
@@ -142,6 +142,10 @@ class sms(models.Model):
 
     @task()
     def send_sms(self, phone):
+        tsp = get_tsp(phone)
+        # 2 id user nay de cap phep nhan tin cho chi Van va account sensive
+        if tsp != 'VIETTEL' and int(self.sender_id) in [904, 16742]:
+            return self._send_iNET_sms(phone)
         return self._send_sms(phone)
 
     def __unicode__(self):
