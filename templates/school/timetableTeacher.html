@@ -56,20 +56,19 @@
                 <th> Thứ {{ d }}</th>
 
                 {% for t, sub in subs.items %}
-
+                    {% if not sub %}
+                        <td>
+                    {% endif %}
                     {% for v in sub %}
-                        {% if forloop.first %}
+                        {% if forloop.counter == 1 %}
                             <td subject="{{ v.name }}">
                         {% endif %}
 
                         <p>{{ v.name }} </p>
                         <p>{{ v.class_id.name }}</p>
 
-                        {% if forloop.first %}
-                            </td>
-                        {% endif %}
                     {% endfor %}
-
+                    </td>
                 {% endfor %}
             </tr>
         {% endfor %}

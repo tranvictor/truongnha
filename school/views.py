@@ -1346,9 +1346,9 @@ def timetableTeacher(request):
     subjectList = tc.subject_set.all()
     table = {}
     for day in range(2, 8):
-        table[day] = {}
-        for nless in range (1, 11):
-            table[day][nless]=[]
+            table[day] = {}
+            for nless in range (1, 11):
+                table[day][nless]=[]
 
     for sub in subjectList:
         cl = sub.class_id
@@ -1358,9 +1358,6 @@ def timetableTeacher(request):
             if not len(nums): continue
             for num in nums:
                 table[d][num].append(sub)
-
-    print table[2]
-    print table[3]
 
     tp = loader.get_template(os.path.join('school', 'timetableTeacher.html'))
     c = RequestContext(request, {'table': table,
