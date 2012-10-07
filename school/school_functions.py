@@ -176,16 +176,21 @@ def sms_summary(request, class_id=None):
         for st in students:
             if (st.sms_phone and st.id in ids
                     and info_list[st.id] != u'Không có điểm mới'):
-                number += 1
-                send_sms_summary_mark(st,
-                        info_list[st.id],
-                        marks[st.id],
-                        request.user,
-                        school=school)
-        message = '<li>%d tin nhắn sẽ được gửi trong chậm nhất 1h</li>\
-                <li>%d học sinh không có điểm mới để gửi hoặc không có số điện\
-                thoại</li>' %\
-                (number, len(ids) - number)
+                try:
+                    send_sms_summary_mark(st,
+                            info_list[st.id],
+                            marks[st.id],
+                            request.user,
+                            school=school)
+                    number += 1
+                except Exception as e:
+                    print e
+                    pass
+        message = '<li>%d tin nhắn sẽ được gửi trong chậm nhất 1h</li>'\
+                % (number)
+        if len(ids) > number:
+            message += '<li>%d học sinh không có điểm mới để gửi hoặc không có số điện\
+                thoại</li>' % (len(ids) - number)
         return HttpResponse(simplejson.dumps({
             'message': message,
             'success': True}), mimetype='json')

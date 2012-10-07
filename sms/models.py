@@ -134,21 +134,31 @@ class sms(models.Model):
     def _send_sms(self):
         phone = self.phone
         tsp = get_tsp(phone)
-        # 2 id user nay de cap phep nhan tin cho chi Van va account sensive
-        if tsp != 'VIETTEL' and int(self.sender_id) in [904, 16742]:
-            result = self._send_iNET_sms()
-        else:
-            result = self._send_Viettel_sms()
-
-        if result != '1':
+        try:
+            # 2 id user nay de cap phep nhan tin cho chi Van va account sensive
+            if tsp != 'VIETTEL' and int(self.sender_id) in [904, 16742]:
+                result = self._send_iNET_sms()
+            else:
+                result = self._send_Viettel_sms()
+            if result != '1':
+                self.success = False
+                self.recent = False
+                self.save()
+            else:
+                self.success = True
+                self.recent = False
+                self.save()
+            return result
+        except Exception:
+            self.recent= False
             self.success = False
-            self.recent = False
             self.save()
-        else:
-            self.success = True
-            self.recent = False
-            self.save()
-        return result
+        
+    def _send_mark_sms(self, marks):
+        result = self._send_sms()
+        if result == '1':
+            for m in marks:
+                m.update_sent()
 
     @task()
     def send_sms(self, phone):

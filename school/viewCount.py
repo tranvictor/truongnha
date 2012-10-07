@@ -3,15 +3,20 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader
 from django.core.urlresolvers import reverse
+from app.models import Organization
+from django.contrib.auth.models import User
+from school.models import Year, Term, TBNam, TBHocKy, Class,\
+        Pupil, Block, Subject, Mark, TKMon
+from school.utils import get_current_year, in_school, get_position,\
+        get_level, get_current_term, get_school
+from school.writeExcel import count1Excel, count2Excel,\
+        printDanhHieuExcel, printNoPassExcel
+from decorators import need_login, school_function, operating_permission
+from sms.models import sms
+
 import os.path
 import time
 from datetime import datetime
-from app.models import Organization
-from school.models import Year, Term, TBNam, TBHocKy, Class, Pupil, Block, Subject, Mark, TKMon
-from school.utils import get_current_year, in_school, get_position, get_level, get_current_term, get_school
-from school.writeExcel import count1Excel,count2Excel,printDanhHieuExcel,printNoPassExcel
-from decorators import need_login
-from sms.models import sms
 
 @need_login
 def report(request,school_id=None):
@@ -19,7 +24,6 @@ def report(request,school_id=None):
     if school_id != None:
         request.session['school_id'] = school_id
         request.session['school_name'] = Organization.objects.get(id = school_id).name
-    user = request.user
 
     message=None
     year_id=None
@@ -32,7 +36,7 @@ def report(request,school_id=None):
     try:
         if in_school(request,selected_year.school_id) == False:
             return HttpResponseRedirect('/school')
-    except Exception as e:
+    except Exception:
         return HttpResponseRedirect(reverse('index'))
 
     if (get_position(request) != 4) & (get_level(request)=='T' ):
@@ -1078,67 +1082,73 @@ def printNoPass(request,type=None,isExcel=None):
     return HttpResponse(t.render(c))
 
 @need_login
-def countSMS(request,type=None,day=None,month=None,year=None,day1=None,month1=None,year1=None):
-    tt1=time.time()
-
-    user = request.user
-    currentTerm = get_current_term(request)
-    try:
-        if in_school(request,currentTerm.year_id.school_id) == False:
-            return HttpResponseRedirect('/school')
-    except Exception as e:
-        return HttpResponseRedirect(reverse('index'))
-
-    if (get_position(request) != 4) & (get_level(request)=='T' ):
-       return HttpResponseRedirect('/school')
+@school_function
+@operating_permission([u'HIEU_TRUONG', u'HIEU_PHO'])
+def countSMS(request, type=None,
+        day=None, month=None, year=None,
+        day1=None, month1=None, year1=None):
 
     if request.method == 'POST':
-        firstDay =request.POST['firstDate'].split('/')
-        secondDay =request.POST['secondDate'].split('/')
-        day=int(firstDay[0])
-        month=int(firstDay[1])
-        year=int(firstDay[2])
+        firstDay = request.POST['firstDate'].split('/')
+        secondDay = request.POST['secondDate'].split('/')
+        day = int(firstDay[0])
+        month = int(firstDay[1])
+        year = int(firstDay[2])
 
-        day1=int(secondDay[0])
-        month1=int(secondDay[1])
-        year1=int(secondDay[2])
+        day1 = int(secondDay[0])
+        month1 = int(secondDay[1])
+        year1 = int(secondDay[2])
 
-        type =request.POST['type1']
-    if (type==None):
-        type=1
-    if day==None:
-        day1   = datetime.now().day
+        type = request.POST['type1']
+
+    if type == None: type=1
+    if day == None:
+        day1 = datetime.now().day
         month1 = datetime.now().month
-        year1  = datetime.now().year
+        year1 = datetime.now().year
 
-        day_of_before_month = datetime.fromordinal(datetime.now().toordinal()-30)
+        day_of_before_month = datetime.fromordinal(
+                datetime.now().toordinal()-30)
         day = day_of_before_month.day
         month = day_of_before_month.month
         year = day_of_before_month.year
 
-    firstDay  = datetime(year,month,day)
+    firstDay = datetime(year,month,day)
     secondDay = datetime(year1,month1,day1,23, 59, 0)
     school = get_school(request)
-    if   int(type)==1:
-        list = sms.objects.filter(created__gte=firstDay,created__lte=secondDay, sender__userprofile__organization=school).order_by("-created")
-    elif int(type)==2:
-        list = sms.objects.filter(created__gte=firstDay,created__lte=secondDay, sender__userprofile__organization=school,success=True).order_by("-created")
-    elif int(type)==3:
-        list = sms.objects.filter(created__gte=firstDay,created__lte=secondDay, sender__userprofile__organization=school,success=False).order_by("-created")
-    tt2=time.time()
-    print "time",tt2-tt1
+    if int(type) == 1:
+        list = sms.objects.filter(
+                created__gte=firstDay,
+                created__lte=secondDay,
+                sender__userprofile__organization=school).order_by("-created")
+    elif int(type) == 2:
+        list = sms.objects.filter(
+                created__gte=firstDay,
+                created__lte=secondDay,
+                sender__userprofile__organization=school,
+                success=True).order_by("-created")
+    elif int(type) == 3:
+        list = sms.objects.filter(
+                created__gte=firstDay,
+                created__lte=secondDay,
+                sender__userprofile__organization=school,
+                success=False).order_by("-created")
+    users = User.objects.filter(userprofile__organization=school)
+    teacher_users = {}
+    for u in users:
+        teacher_users[u.id] = u
     t = loader.get_template(os.path.join('school/report','countSMS.html'))
-    c = RequestContext(request, {
-                                'list':list,
-                                'type':type,
+    c = RequestContext(request,
+            { 'list':list,
+                'teacher_users': teacher_users,
+                'type':type,
 
-                                'day':day,
-                                'month':month,
-                                'year':year,
+                'day':day,
+                'month':month,
+                'year':year,
 
-                                'day1':day1,
-                                'month1':month1,
-                                'year1':year1,
-                                 })
+                'day1':day1,
+                'month1':month1,
+                'year1':year1,})
     return HttpResponse(t.render(c))
 

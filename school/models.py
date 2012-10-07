@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.query import QuerySet
-from django.forms.models import model_to_dict
 from app.models import Organization, KHOI_CHOICES,\
         SUBJECT_CHOICES, GRADES_CHOICES, TERMS
 from school.templateExcel import MAX_COL, normalize,\
