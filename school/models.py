@@ -1149,7 +1149,7 @@ class Mark(models.Model):
             for i in range(0, len(arr_diem)):
                 if arr_diem[i]: arr_sent[i]='1'
         else:
-            if arr_diem[index]: arr_sent[i]='1'
+            if arr_diem[index]: arr_sent[index]='1'
         self.saveSent(arr_sent)
 
     def length(self,x=3):
