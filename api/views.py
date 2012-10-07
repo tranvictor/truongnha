@@ -1,3 +1,4 @@
+# coding: utf8
 __author__ = 'vutran'
 from djangorestframework.views import View
 from djangorestframework.response import Response
@@ -10,7 +11,8 @@ from app.views import login
 from sms.models import sms
 from school.class_functions import dd
 from school.models import Class, Pupil, Term, Subject, DiemDanh
-from school.utils import get_position, get_school, is_teacher
+from school.utils import get_position, get_school, is_teacher,\
+        get_current_term
 from school.forms import MarkForm
 from decorators import need_login, operating_permission, school_function
 import simplejson
@@ -356,3 +358,27 @@ class SmsStatus(View):
             result[s.id] = '%s-%s' % (s.recent, s.success)
         return Response(status.HTTP_200_OK, content=result)
             
+class SmsSummary(View):
+    @need_login
+    @school_function
+    @operating_permission([u'HIEU_TRUONG', u'HIEU_PHO'])
+    def get(self, request, class_id=None):
+        school = get_school(request)
+        try:
+            if class_id:
+                cl = Class.objects.get(id=class_id)
+                if cl.year_id.school_id != school:
+                    raise Exception("BadRequest")
+        except ObjectDoesNotExist:
+            message = u'Lớp học không tồn tại'
+            success = False
+            HttpResponse(simplejson.dumps({
+                'message': message,
+                'success': success}, mimetype='json'))
+        term = get_current_term(request)
+        info_list, students, subjects = cl._generate_mark_summary(term)
+        result = {
+                'info_list': info_list,
+                'students': students}
+        return Response(status.HTTP_200_OK, content=result)
+

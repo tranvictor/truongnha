@@ -855,8 +855,8 @@ def is_teacher(request):
             else: return False
         else: return False
     except Exception: return False
-def get_current_year(request):
-    school = get_school(request)
+def get_current_year(request, school=None):
+    if not school: school = get_school(request)
     year = None
     try:
         year = school.year_set.latest('time')
