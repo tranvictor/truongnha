@@ -171,7 +171,7 @@ def sms_summary(request, class_id=None):
     info_list, students, marks = cl._generate_mark_summary(term)
     if request.method == 'POST' and request.is_ajax():
         ids = request.POST['students'].split('-')
-        ids = [int(id) for id in ids]
+        ids = [int(id) for id in ids if id]
         number = 0
         for st in students:
             if (st.sms_phone and st.id in ids

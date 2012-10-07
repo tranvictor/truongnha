@@ -17,7 +17,7 @@ $(document).ready(function () {
 
     $('#send-sms').click(function(){
         var students = '';
-        var $selecteds = $('tr.selected');
+        var $selecteds = $('tr.selected.student');
         if ($selecteds.length == 0){
             $('#notify').showNotification('Bạn chưa chọn học sinh nào');
             return false;
@@ -33,9 +33,8 @@ $(document).ready(function () {
             url: '',
             success:function(json) {
                 if (!json.success) {
-                    $("#notify").showNotification(json.message, 3000);
+                    $("#notify").showNotification(json.message, 10000);
                 } else {
-                    location.reload('true');
                 }
             }
         };
@@ -69,7 +68,7 @@ $(document).ready(function () {
     $('#student-table').delegate('tr', 'click', select);
 
     var selectAllStudent = function(){
-        var $trs = $('tr');
+        var $trs = $('tr.student');
         for (var i = $trs.length; i--;){
             var $tr = $($trs[i]);
             if (!$tr.hasClass('selected')){
@@ -80,7 +79,7 @@ $(document).ready(function () {
         }
     };
     var deselectAllStudent = function(){
-        var $trs = $('tr');
+        var $trs = $('tr.student');
         for ( var i = $trs.length; i--;){
             var $tr = $($trs[i]);
             if ($tr.hasClass('selected')){

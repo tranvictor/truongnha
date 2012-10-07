@@ -1138,11 +1138,11 @@ class Mark(models.Model):
         self.saveMark(arr_mark, True)
 
     def update_sent(self, index=None):
-        if index <= 0:
+        if index and index <= 0:
             raise Exception('IndexOutOfRange')
         arr_diem = self.toArrayMark()
         arr_sent = self.to_array_sent()
-        if (len(arr_diem) != len(arr_sent)
+        if (len(arr_diem) != len(arr_sent) - 2
                 or index >= len(arr_sent)):
             raise Exception('BadMarkStructure')
         if not index:
