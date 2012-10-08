@@ -20,7 +20,7 @@ from school.forms import UsernameChangeForm, SchoolForm,\
         SelectSchoolLessonForm2, LessonForm
 from school.models import UncategorizedClass, Term, Subject, Pupil,\
         Class, DiemDanh, StartYear, Year, Lesson, TKDiemDanh, TKB,\
-        SchoolLesson, Block, Teacher
+        SchoolLesson, Block, Teacher, Attend
 from decorators import need_login, school_function, operating_permission
 from school.school_settings import CAP2_DS_MON, CAP1_DS_MON, CAP3_DS_MON
 from school.utils import get_current_year, get_school, get_permission,\
@@ -60,6 +60,16 @@ def school_index(request):
         teachers = Teacher.objects.filter(id__in=hometc_ids)
         hometc_dict = queryset_to_dict(teachers)
         # done teacher query
+        # query aggregation to count number of students in classes
+        # instead of counting on each class that hurts the db
+        cl_ids = [cl.id for cl in classes]
+        number_dict = {}
+        numbers = Attend.objects.filter(is_member=True,_class__in=cl_ids)\
+                .values('_class')\
+                .annotate(number=Count('_class'))
+        for n in numbers: number_dict[n['_class']] = n['number']
+        # now we have dictionary number in the meaning of
+        # {classid: number_of_student}
         uncs = UncategorizedClass.objects.filter(year_id=year)
         currentTerm = year.term_set.get(number=school.status)
         if currentTerm.number == 3:
@@ -71,6 +81,7 @@ def school_index(request):
         return render_to_response(SCHOOL,
                 {'classes': classes,
                     'teachers': hometc_dict,
+                    'numbers': number_dict,
                     'grades': grades,
                     'uncs': uncs,
                     'grades': grades,

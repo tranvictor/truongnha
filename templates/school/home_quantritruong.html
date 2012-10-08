@@ -20,7 +20,7 @@
                     {{ teachers|get_value:class.teacher_id_id|default_if_none:".." }}
                   </span>
                   <span class="siso" title="Sĩ số">
-                    {{ class.number_of_pupils }}
+                    {{ numbers|get_value:class.id|default_if_none:"0" }}
                   </span>
                 </a>
 
