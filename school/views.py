@@ -7,6 +7,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect
 from django.db import transaction
+from django.db.models import Count
 from django.shortcuts import render_to_response
 from django.template import RequestContext, loader
 from django.http import HttpResponseNotAllowed
@@ -14,11 +15,18 @@ from django.core.urlresolvers import reverse
 from django.utils import simplejson
 from django.contrib.auth import logout
 from app.models import SystemLesson, SUBJECT_CHOICES
-from school.forms import UsernameChangeForm, SchoolForm, SettingForm, TKDiemDanhForm, TKBForm, SelectSchoolLessonForm3, SelectSchoolLessonForm2, LessonForm
-from school.models import UncategorizedClass, Term, Subject, Pupil, Class, DiemDanh, StartYear, Year, Lesson, TKDiemDanh, TKB, SchoolLesson, Block
+from school.forms import UsernameChangeForm, SchoolForm,\
+        SettingForm, TKDiemDanhForm, TKBForm, SelectSchoolLessonForm3,\
+        SelectSchoolLessonForm2, LessonForm
+from school.models import UncategorizedClass, Term, Subject, Pupil,\
+        Class, DiemDanh, StartYear, Year, Lesson, TKDiemDanh, TKB,\
+        SchoolLesson, Block, Teacher
 from decorators import need_login, school_function, operating_permission
 from school.school_settings import CAP2_DS_MON, CAP1_DS_MON, CAP3_DS_MON
-from school.utils import get_current_year, get_school, get_permission, get_current_term, move_student, get_position, in_school, inClass, get_teacher, to_date, get_lower_bound, get_upper_bound, to_en1, add_subject, make_default_password
+from school.utils import get_current_year, get_school, get_permission,\
+        get_current_term, move_student, get_position, in_school,\
+        inClass, get_teacher, to_date, get_lower_bound, get_upper_bound,\
+        to_en1, add_subject, make_default_password, queryset_to_dict
 from sms.utils import send_email, sendSMS
 
 START_YEAR = os.path.join('school', 'start_year.html')
@@ -47,22 +55,28 @@ def school_index(request):
     if user_type in ['HIEU_TRUONG', 'HIEU_PHO']:
         grades = school.block_set.all()
         classes = year.class_set.order_by('name')
-        uncs = UncategorizedClass.objects.filter(year_id = year)
-        cyear = get_current_year(request)
-        currentTerm = cyear.term_set.get(number=school.status)
+        # query all necessary teacher to decrease hitting db time
+        hometc_ids = [cl.teacher_id_id for cl in classes]
+        teachers = Teacher.objects.filter(id__in=hometc_ids)
+        hometc_dict = queryset_to_dict(teachers)
+        # done teacher query
+        uncs = UncategorizedClass.objects.filter(year_id=year)
+        currentTerm = year.term_set.get(number=school.status)
         if currentTerm.number == 3:
-            selected_term = Term.objects.get(year_id=currentTerm.year_id, number=2)
+            selected_term = Term.objects.get(year_id=currentTerm.year_id,
+                    number=2)
         else:
             selected_term = currentTerm
         context = RequestContext(request)
-        return render_to_response(SCHOOL, {'classes': classes,
-                                           'grades': grades,
-                                           'uncs': uncs,
-                                           'grades': grades,
-                                           'currentTerm':currentTerm,
-                                           'selected_term':selected_term,
-                                            },
-                                           context_instance=context)
+        return render_to_response(SCHOOL,
+                {'classes': classes,
+                    'teachers': hometc_dict,
+                    'grades': grades,
+                    'uncs': uncs,
+                    'grades': grades,
+                    'currentTerm':currentTerm,
+                    'selected_term':selected_term,},
+                context_instance=context)
     elif user_type == 'GIAO_VIEN':
         teaching_subjects = Subject.objects.\
                                     filter(teacher_id=user.teacher,

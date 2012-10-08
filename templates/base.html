@@ -101,10 +101,10 @@
                     <a href="/app/{{ user.username }}"
                        title="Sửa thông tin người sử dụng, đổi mật khẩu, đổi tên tài khoản.">
                         <i class="icon-user"></i>
-                        {% if user.pupil %}
+                        {% if user.pupil_id %}
                             {{ user.pupil.last_name }} {{ user.pupil.first_name }}
                         {% else %}
-                            {% if user.teacher %}
+                            {% if user.teacher_id %}
                                 {{ user.teacher.last_name }} {{ user.teacher.first_name }}
                             {% else %}
                                 {{ user.first_name }}

@@ -1072,3 +1072,8 @@ def extract_fullname(name):
         firstname = eles[-1]
         lastname = ' '.join(eles[:-1])
     return firstname, lastname
+
+def queryset_to_dict(qs):
+    result = {}
+    for q in qs: result[q.id] = q
+    return result
