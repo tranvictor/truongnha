@@ -637,7 +637,7 @@ def hanh_kiem(request, class_id=0):
     if gvcn(request, class_id) == 1:
         pos = 4
     message = None
-    pupilList = c.student_set.filter(attend__leave_time=None).order_by('index')
+    pupilList = c.students()
 
     form = []
     all = []
