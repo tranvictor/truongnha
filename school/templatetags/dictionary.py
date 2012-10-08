@@ -5,4 +5,6 @@ register = template.Library()
 
 @register.filter(name='get_value')
 def get_value(d, k):
+    if k == None: return None
+    if not k in d: return None
     return d[k] 
