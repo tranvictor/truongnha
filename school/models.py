@@ -1123,9 +1123,9 @@ class Mark(models.Model):
                 if  i == 0:
                     result+=u'miệng:' + temp
                 elif i == 1:
-                    result+="15':" + temp
+                    result+="15p:" + temp
                 elif i == 2:
-                    result+="45':" + temp
+                    result+="45p:" + temp
                 #so on i=3,4
         return result
 

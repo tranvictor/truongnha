@@ -18,6 +18,9 @@ ADMINS = (
     ('admin', 'qlnt@googlegroups.com'),
 )
 
+SYSTEM_WARNING = u'Hệ thống nhắn tin tạm ngừng làm việc. Chúng tôi sẽ hoạt\
+        động trở lại trong 2 ngày nữa.'
+
 MANAGERS = ADMINS
 if IS_TESTING:
     DATABASES = {
