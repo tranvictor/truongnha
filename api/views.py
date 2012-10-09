@@ -11,7 +11,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from app.views import login
 from sms.models import sms
 from school.class_functions import dd
-from school.models import Class, Pupil, Term, Subject, DiemDanh, TBNam
+from school.models import Class, Pupil, Term, Subject, DiemDanh, TBNam, TKB
 from school.utils import get_position, get_school, is_teacher,\
         get_current_term, get_current_year
 from school.forms import MarkForm
@@ -464,4 +464,39 @@ class hanhkiem(View):
                 return Response(status.HTTP_400_BAD_REQUEST)
             transaction.commit()
         else:
+            return Response(status.HTTP_403_FORBIDDEN)
+
+class Schedule(View):
+    @need_login
+    def get(self, request):
+        try:
+            year = get_current_year(request)
+            classList = year.class_set.all().order_by('name')
+            table = {}
+            for d in range(2, 8):
+                table[d] = []
+            for cl in classList:
+                for d in range(2, 8):
+                    tmp = None
+                    try:
+                        tmp = cl.tkb_set.get(day=d)
+                    except Exception as e:
+                        tmp = TKB()
+                        tmp.day = d
+                        tmp.class_id = cl
+                        tmp.save()
+                    for field in range(1, 11):
+                        sub = getattr(tmp, 'period_'+str(field))
+                        if not sub: continue
+                        new_dict = {'class' : cl.name, 'subject' : sub.name, 'time' : field}
+                        table[d].append(new_dict)
+                    if tmp.chaoco:
+                        new_dict = {'class' : cl.name, 'subject' : u'Chào cờ', 'time' : tmp.chaoco}
+                        table[d].append(new_dict)
+                    if tmp.sinhhoat:
+                        new_dict = {'class' : cl.name, 'subject' : u'Sinh hoạt', 'time' : tmp.sinhhoat}
+                        table[d].append(new_dict)
+            return HttpResponse(simplejson.dumps(table), mimetype='json')
+        except Exception as e:
+            print e
             return Response(status.HTTP_403_FORBIDDEN)

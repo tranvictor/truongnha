@@ -1151,7 +1151,7 @@ def timeTable_school(request):
         return HttpResponseRedirect(reverse('index'))
 
     year = get_current_year(request)
-    classList = Class.objects.filter(year_id=year).order_by('name')
+    classList = year.class_set.all().order_by('name')
     table = []
     for cl in classList:
         tcl = cl.tkb_set.all()
