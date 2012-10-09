@@ -79,29 +79,29 @@ class sms(models.Model):
                 + self.created.strftime('%H')+ ":"\
                 + self.created.strftime('%M')
 
-    def _send_iNET_sms(self, phone):
+    def get_status(self):
+        if self.recent:
+            return u'Đang gửi'
+        else:
+            if self.success: return u'Đã gửi'
+            else: return u'Thất bại'
+
+    def _send_iNET_sms(self):
+        phone = self.phone
         if phone:
-            data = urllib.encode({
+            data = urllib.urlencode({
                 'mobile': phone,
                 'brand': settings.INET_BRAND,
                 'auth': settings.INET_AUTH,
                 'message': self.content,
                 'action': 'SEND',
                 'content_type': '0'})
-            result = urllib.urlopen('http://brand.sms.vn/sendsms', data).read()
-            if result != '1':
-                self.success = False
-                self.recent = False
-                self.save()
-            else:
-                self.success = True
-                self.recent = False
-                self.save()
-            return result
+            return urllib.urlopen('http://brand.sms.vn/sendsms', data).read()
         else:
             raise Exception('InvalidPhoneNumber')
 
-    def _send_sms(self, phone):
+    def _send_Viettel_sms(self):
+        phone = self.phone
         if phone:
             url = settings.SMS_WSDL_URL
             username = settings.WSDL_USERNAME
@@ -127,7 +127,19 @@ class sms(models.Model):
 </InsertMT>
 </soap12:Body>
 </soap12:Envelope>''' % (mt_username, mt_password, phone, phone, self.content)
-            result = client.service.InsertMT(__inject= {'msg': str(message)})
+            return client.service.InsertMT(__inject= {'msg': str(message)})
+        else:
+            raise Exception("InvalidPhoneNumber")
+        
+    def _send_sms(self):
+        phone = self.phone
+        tsp = get_tsp(phone)
+        try:
+            # 2 id user nay de cap phep nhan tin cho chi Van va account sensive
+            if tsp != 'VIETTEL' and int(self.sender_id) in [904, 16742]:
+                result = self._send_iNET_sms()
+            else:
+                result = self._send_Viettel_sms()
             if result != '1':
                 self.success = False
                 self.recent = False
@@ -137,12 +149,27 @@ class sms(models.Model):
                 self.recent = False
                 self.save()
             return result
-        else:
-            raise Exception("InvalidPhoneNumber")
+        except Exception:
+            self.recent= False
+            self.success = False
+            self.save()
+        
+    def _send_mark_sms(self, marks):
+        result = self._send_sms()
+        if result == '1':
+            for m in marks:
+                m.update_sent()
 
     @task()
     def send_sms(self, phone):
-        return self._send_sms(phone)
+        return self._send_sms()
+        
+    @task()
+    def send_mark_sms(self, marks):
+        result = self._send_sms()
+        if result == '1':
+            for m in marks:
+                m.update_sent()
 
     def __unicode__(self):
         return self.phone

@@ -6,6 +6,7 @@ from django.template import loader
 from django.template.context import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotAllowed
 from django.template.loader import render_to_string
+from django.shortcuts import render_to_response
 from django.utils import simplejson
 from decorators import need_login, school_function, operating_permission
 from school.models import Teacher, Pupil, Class, Group, Subject, Year
@@ -16,8 +17,11 @@ from school.forms import MoveClassForm, TeacherForm, TeamForm, GroupForm,\
 from school.school_settings import CAP1_DS_MON, CAP2_DS_MON, CAP3_DS_MON
 from school.utils import get_position, move_student, get_school, delete_history,\
         to_en1, to_date, add_teacher, del_teacher, in_school, get_teacher,\
-        get_student, get_lower_bound, get_upper_bound, get_current_year, add_subject
-from sms.utils import sendSMS, send_email
+        get_student, get_lower_bound, get_upper_bound, get_current_year,\
+        add_subject, get_current_term
+from sms.utils import sendSMS, send_email, send_sms_summary_mark
+
+SMS_SUMMARY = os.path.join('school', 'sms_summary.html')
 
 @need_login
 @school_function
@@ -144,6 +148,60 @@ def move_students(request):
     c = RequestContext(request, {'classList': classList,
                                  'message': message})
     return HttpResponse(t.render(c))
+
+@need_login
+@school_function
+@operating_permission([u'HIEU_TRUONG', u'HIEU_PHO'])
+def sms_summary(request, class_id=None):
+    school = get_school(request)
+    year = get_current_year(request, school=school)
+    classes = year.class_set.order_by('name')
+    term = get_current_term(request)
+    try:
+        if class_id:
+            cl = classes.get(id=class_id)
+        else:
+            cl = classes[0]
+    except ObjectDoesNotExist:
+        message = u'Lớp học không tồn tại'
+        success = False
+        HttpResponse(simplejson.dumps({
+            'message': message,
+            'success': success}, mimetype='json'))
+    info_list, students, marks = cl._generate_mark_summary(term)
+    if request.method == 'POST' and request.is_ajax():
+        ids = request.POST['students'].split('-')
+        ids = [int(id) for id in ids if id]
+        number = 0
+        for st in students:
+            if (st.sms_phone and st.id in ids
+                    and info_list[st.id] != u'Không có điểm mới'):
+                try:
+                    send_sms_summary_mark(st,
+                            info_list[st.id],
+                            marks[st.id],
+                            request.user,
+                            school=school)
+                    number += 1
+                except Exception as e:
+                    print e
+                    pass
+        message = '<li>%d tin nhắn sẽ được gửi trong chậm nhất 1h</li>'\
+                % (number)
+        if len(ids) > number:
+            message += '<li>%d học sinh không có điểm mới để gửi hoặc không có số điện\
+                thoại</li>' % (len(ids) - number)
+        return HttpResponse(simplejson.dumps({
+            'message': message,
+            'success': True}), mimetype='json')
+
+    # GET reponse
+    return render_to_response(SMS_SUMMARY,
+            {'info_list': info_list,
+                'students': students,
+                'selected_class': cl,
+                'classes': classes,},
+            context_instance=RequestContext(request))
 
 @need_login
 @school_function
@@ -522,17 +580,31 @@ def viewTeacherDetail(request, teacher_id):
                     if a.name == 'sms_phone':
                         if a.errors:
                             sms_phone = str(a.errors)
-            response = simplejson.dumps({'first_name': first_name, 'last_name': last_name, 'birthday': birthday,
-                                         'phone': phone, 'email': email, 'sms_phone': sms_phone,
-                                         'cmt': cmt, 'ngay_vao_doan': ngay_vao_doan,
-                                         'ngay_vao_dang': ngay_vao_dang, 'muc_luong': muc_luong,
-                                         'hs_luong': hs_luong, 'bhxh': bhxh, 'message':message })
+            response = simplejson.dumps(
+                    {'first_name': first_name,
+                        'last_name': last_name,
+                        'birthday': birthday,
+                        'phone': phone,
+                        'email': email,
+                        'sms_phone': sms_phone,
+                        'cmt': cmt,
+                        'ngay_vao_doan': ngay_vao_doan,
+                        'ngay_vao_dang': ngay_vao_dang,
+                        'muc_luong': muc_luong,
+                        'hs_luong': hs_luong,
+                        'bhxh': bhxh,
+                        'message':message })
             return HttpResponse(response, mimetype='json')
 
     t = loader.get_template(os.path.join('school', 'teacher_detail.html'))
-    c = RequestContext(request, {'form': form, 'message': message, 'teacher': teacher,
-                                 'id': teacher_id, 'ttcnform': ttcnform, 'tng':tng, 'tgform':tgform,
-                                 'pos': pos, 'ttllform': ttllform, 'ttcbform': ttcbform, 'ttcnform2':ttcnform2})
+    c = RequestContext(request,
+            {'form': form, 'message': message,
+                'teacher': teacher, 'id': teacher_id,
+                'ttcnform': ttcnform,
+                'tng':tng, 'tgform':tgform,
+                'pos': pos, 'ttllform': ttllform,
+                'ttcbform': ttcbform,
+                'ttcnform2':ttcnform2})
     return HttpResponse(t.render(c))
 
 @need_login
@@ -555,7 +627,6 @@ def deleteTeacher(request, teacher_id, team_id=0):
     for sj in cl:
         sj.teacher_id = None
         sj.save()
-        #s.delete()
     del_teacher(s)
     if int(team_id):
         return HttpResponseRedirect("/school/teachers_in_team/" + team_id)
@@ -603,10 +674,11 @@ def viewStudentDetail(request, student_id):
         ngay_vao_doi = ''
         ngay_vao_doan = ''
         ngay_vao_dang = ''
-        find = pupil.current_class().student_set.filter( first_name__exact = data['first_name'])\
-        .filter(last_name__exact = data['last_name'])\
-        .filter(birthday__exact = to_date(data['birthday']))\
-        .exclude(id__exact = pupil.id)
+        find = pupil.current_class().student_set\
+                .filter(first_name__exact=data['first_name'])\
+                .filter(last_name__exact = data['last_name'])\
+                .filter(birthday__exact = to_date(data['birthday']))\
+                .exclude(id__exact = pupil.id)
         if find:
             dup_student = find[0]
             message = u'Thông tin học sinh vừa sửa trùng với học sinh STT {} {} {}.'.format(dup_student.index,dup_student.last_name,
@@ -663,31 +735,37 @@ def viewStudentDetail(request, student_id):
                 if a.name == 'ngay_vao_dang':
                     if a.errors:
                         ngay_vao_dang = str(a.errors)
-        response = simplejson.dumps({'message': message, 'response_type': 'tths',
-                                     'first_name': first_name, 'last_name': last_name,
-                                     'birthday': birthday, 'school_join_date': school_join_date,
-                                     'school_join_mark': school_join_mark,
-                                     'father_phone': father_phone, 'mother_phone': mother_phone,
-                                     'phone': phone, 'email': email, 'sms_phone': sms_phone,
-                                     'father_birthday': father_birthday, 'mother_birthday': mother_birthday,
-                                     'ngay_vao_doi': ngay_vao_doi, 'ngay_vao_doan': ngay_vao_doan,
-                                     'ngay_vao_dang': ngay_vao_dang})
+        response = simplejson.dumps({'message': message,
+            'response_type': 'tths',
+            'first_name': first_name,
+            'last_name': last_name,
+            'birthday': birthday,
+            'school_join_date': school_join_date,
+            'school_join_mark': school_join_mark,
+            'father_phone': father_phone,
+            'mother_phone': mother_phone,
+            'phone': phone,
+            'email': email,
+            'sms_phone': sms_phone,
+            'father_birthday': father_birthday,
+            'mother_birthday': mother_birthday,
+            'ngay_vao_doi': ngay_vao_doi,
+            'ngay_vao_doan': ngay_vao_doan,
+            'ngay_vao_dang': ngay_vao_dang})
         return HttpResponse(response, mimetype='json')
     attended = pupil.get_attended()
     t = loader.get_template(os.path.join('school', 'student_detail.html'))
     c = RequestContext(request, {'form': form,
-                                 'ttcnform': ttcnform,
-                                 'ttllform': ttllform,
-                                 'ttgdform': ttgdform,
-                                 'ttddform': ttddform,
-                                 'message': message,
-                                 'id': student_id,
-                                 'class': pupil.current_class(),
-                                 'attended': attended,
-                                 'pos': pos,
-                                 'student': pupil,
-                                 }
-    )
+        'ttcnform': ttcnform,
+        'ttllform': ttllform,
+        'ttgdform': ttgdform,
+        'ttddform': ttddform,
+        'message': message,
+        'id': student_id,
+        'class': pupil.current_class(),
+        'attended': attended,
+        'pos': pos,
+        'student': pupil,})
     return HttpResponse(t.render(c))
 
 @need_login
@@ -715,9 +793,14 @@ def addClass(request):
                 return HttpResponse(t.render(c))
 
             index = get_current_year(request).class_set.count()
-            data = {'name': request.POST['name'], 'year_id': Year.objects.filter(school_id = school.id).latest('time').id, 'block_id': block.id,
-                    'teacher_id': request.POST['teacher_id'], 'phan_ban': request.POST['phan_ban'], 'max': 0,
-                    'status': school.status, 'index': index}
+            data = {'name': request.POST['name'],
+                    'year_id': Year.objects.filter(school_id=school.id)\
+                            .latest('time').id, 'block_id': block.id,
+                    'teacher_id': request.POST['teacher_id'],
+                    'phan_ban': request.POST['phan_ban'],
+                    'max': 0,
+                    'status': school.status,
+                    'index': index}
             form = ClassForm(school.id, data)
             if form.is_valid():
                 _class = form.save()
@@ -730,9 +813,16 @@ def addClass(request):
                     for mon in ds_mon_hoc:
                         index += 1
                         if mon == u'Toán' or mon == u'Ngữ văn':
-                            add_subject(subject_name=mon, subject_type=mon, hs=2, _class=_class, index=index)
+                            add_subject(subject_name=mon,
+                                    subject_type=mon,
+                                    hs=2,
+                                    _class=_class,
+                                    index=index)
                         else:
-                            add_subject(subject_name=mon, subject_type=mon, _class=_class, index=index)
+                            add_subject(subject_name=mon,
+                                    subject_type=mon,
+                                    _class=_class,
+                                    index=index)
                     return HttpResponseRedirect(reverse('classes'))
                 except Exception as e:
                     print e
@@ -807,7 +897,8 @@ def classes(request):
 def classtab(request, block_id=0):
     pos = get_position(request)
     if pos == 1:
-        url = reverse('class_detail',args=[str(get_student(request).current_class().id)])
+        url = reverse('class_detail',
+                args=[str(get_student(request).current_class().id)])
         return HttpResponseRedirect(url)
     message = None
     school = get_school(request)
@@ -839,8 +930,12 @@ def classtab(request, block_id=0):
             else:
                 teacher_id = None
             if not teacher_id or not tc:
-                data = {'name': c.name, 'year_id': c.year_id.id, 'block_id': c.block_id.id,
-                        'teacher_id': teacher_id, 'status': c.status, 'index': c.index}
+                data = {'name': c.name,
+                        'year_id': c.year_id.id,
+                        'block_id': c.block_id.id,
+                        'teacher_id': teacher_id,
+                        'status': c.status,
+                        'index': c.index}
                 form = ClassForm(school_id, data, instance=c)
                 if form.is_valid():
                     form.save()

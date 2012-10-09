@@ -101,16 +101,16 @@
                     <a href="/app/{{ user.username }}"
                        title="Sửa thông tin người sử dụng, đổi mật khẩu, đổi tên tài khoản.">
                         <i class="icon-user"></i>
-                        {% if user.pupil %}
-                            {{ user.pupil.last_name }} {{ user.pupil.first_name }}
-                        {% else %}
-                            {% if user.teacher %}
+                        <span class="hidden-phone">
+                            {% if user.pupil_id %}
+                                {{ user.pupil.last_name }} {{ user.pupil.first_name }}
+                            {% elif user.teacher_id %}
                                 {{ user.teacher.last_name }} {{ user.teacher.first_name }}
                             {% else %}
                                 {{ user.first_name }}
                             {% endif %}
-                        {% endif %}
-                        <small>({{ user.username }})</small>
+                            <small>({{ user.username }})</small>
+                        </span>
                     </a>
                 {% else %}
                     {{ user.last_name }} {{ user.first_name }}
@@ -122,7 +122,8 @@
                 {% endif %}
             {% endif %}
 
-            <a href="{% url index %}">
+
+            <a class="hidden-phone" href="{% url index %}">
                 <img id="logo" src="/static/images/logo.png" alt="logo"
                      title="Dịch vụ phần mềm quản lý trường học"/></a>
         </div>
@@ -132,8 +133,6 @@
 <section id="main" class="container-fluid">
     <div id="breadcrumb">
         <a id="breadcrumb-home" href="{% url index %}" title="Trang bắt đầu">
-            {#            <img id="breadcrumb-home" src="/static/images/favicon.png" title="Xuất phát"/></a>#}
-            {#            <i class="icon-home icon-large "></i> #}
             <i class="icon-home" style="color: rgba(255, 69, 0, 0.75);"></i>
             <i class="icon-home" style="color: rgba(0, 136, 204, 0.75);margin-left: -.5em;"></i>
             {#            Trường#}
@@ -146,7 +145,7 @@
 
         {% if user.is_authenticated %}
             <div class="pull-right dimmed">
-                <a id="feedback" href="#feedbackWindow">Góp ý</a>
+                <a class="hidden-phone" id="feedback" href="#feedbackWindow">Góp ý</a>
                 &nbsp;
                 <a href="{% url django.contrib.auth.views.logout %}"
                    title="Thoát ra, kết thúc phiên làm việc. BẠN PHẢI ĐĂNG XUẤT NẾU ĐĂNG NHẬP TRÊN CÁC MÁY TÍNH DÙNG CHUNG ĐỂ TRÁNH NGƯỜI KHÁC THAY ĐỔI DỮ LIỆU.">

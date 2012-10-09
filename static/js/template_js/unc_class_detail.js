@@ -26,6 +26,7 @@ $(document).ready(function () {
         $("#classify-modal").modal('hide');
         return false;
     });
+
     $('#graduate').click(function(){
         var students = '';
         var $selecteds = $('tr.selected');
@@ -35,13 +36,11 @@ $(document).ready(function () {
         }
         for (var i= $selecteds.length; i--;){
             var stId = $($selecteds[i]).attr('class').split(' ')[0];    
-            console.log(stId);
             students += stId + '-';
         }
         var arg = {
             data: { 'students': students,
-                    'request_type': 'graduate'
-                    },
+                    'request_type': 'graduate'},
             type: 'POST',
             url: '',
             success:function(json) {

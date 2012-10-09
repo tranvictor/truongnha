@@ -157,11 +157,14 @@ urlpatterns = patterns('',
     url(r'import/hanh_kiem/(?P<class_id>\w+)$', excel_interaction.import_hanh_kiem, name="import_hanh_kiem"),
 
     #top menu
-    url(r'setup/$',  views.setup, name = "setup"),
+    url(r'setup/$', views.setup, name="setup"),
     #side menu
-    url(r'classlabels/$',  views.class_label, name = "class_label"),
-    url(r'info/$',  views.info, name = "info"),
-    url(r'activate/teacher/$', school_functions.activate_teacher, name= "activate_teacher"),
+    url(r'classlabels/$',  views.class_label, name="class_label"),
+    url(r'info/$',  views.info, name="info"),
+    url(r'sms-summary/(?P<class_id>\d*)$',
+            school_functions.sms_summary, name="sms_summary"),
+    url(r'activate/teacher/$', school_functions.activate_teacher,
+            name= "activate_teacher"),
     #url(r'classify/$',  views.classify, name = "classify"),
     #url(r'^school/test$', views.test), 
     

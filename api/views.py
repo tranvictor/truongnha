@@ -1,5 +1,7 @@
+# coding: utf8
 __author__ = 'vutran'
 from djangorestframework.views import View
+from django.db import transaction
 from djangorestframework.response import Response
 from djangorestframework import status
 from django.contrib.auth.views import logout
@@ -9,8 +11,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from app.views import login
 from sms.models import sms
 from school.class_functions import dd
-from school.models import Class, Pupil, Term, Subject, DiemDanh
-from school.utils import get_position, get_school, is_teacher
+from school.models import Class, Pupil, Term, Subject, DiemDanh, TBNam
+from school.utils import get_position, get_school, is_teacher,\
+        get_current_term, get_current_year
 from school.forms import MarkForm
 from decorators import need_login, operating_permission, school_function
 import simplejson
@@ -356,3 +359,109 @@ class SmsStatus(View):
             result[s.id] = '%s-%s' % (s.recent, s.success)
         return Response(status.HTTP_200_OK, content=result)
             
+class SmsSummary(View):
+    @need_login
+    @school_function
+    @operating_permission([u'HIEU_TRUONG', u'HIEU_PHO'])
+    def get(self, request, class_id=None):
+        school = get_school(request)
+        try:
+            if class_id:
+                cl = Class.objects.get(id=class_id)
+                if cl.year_id.school_id != school:
+                    raise Exception("BadRequest")
+        except ObjectDoesNotExist:
+            message = u'Lớp học không tồn tại'
+            success = False
+            HttpResponse(simplejson.dumps({
+                'message': message,
+                'success': success}, mimetype='json'))
+        term = get_current_term(request)
+        info_list, students, subjects = cl._generate_mark_summary(term)
+        result = {
+                'info_list': info_list,
+                'students': students}
+        return Response(status.HTTP_200_OK, content=result)
+
+class hanhkiem(View):
+    def get(self, request, class_id):
+        if request.user.is_anonymous():
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        year = get_current_year(request)
+        try:
+            _class = Class.objects.filter(
+                block_id__school_id=get_school(request)).get(id=class_id)
+        except ObjectDoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        student_list = _class.students()
+
+        list = []
+        for student in student_list:
+            hanhkiem = student.tbnam_set.get(year_id__exact=year.id)
+            s = {
+                'id': student.id,
+                'firstname': student.first_name,
+                'lastname': student.last_name,
+                'DOB': student.birthday,
+                'sex': student.sex,
+                'phone': student.phone,
+                'sms_phone': student.sms_phone,
+                'email': student.email,
+                }
+            FieldList = ['hk_thang_9', 'hk_thang_10', 'hk_thang_11', 'hk_thang_12', 'hk_thang_1', 'hk_thang_2', 'hk_thang_3', 'hk_thang_4', 'hk_thang_5', 'term1', 'term2', 'year', 'hk_ren_luyen_lai']
+            for i in FieldList:
+                s[i] = getattr(hanhkiem, i)
+            list.append(s)
+        return Response(status=status.HTTP_200_OK, content=list)
+    @need_login
+    @operating_permission(['HIEU_PHO', 'HIEU_TRUONG', 'GIAO_VIEN'])
+    @transaction.commit_manually
+    def post(self, request):
+        """
+        3. def for post HanhKiem to server:
+          post:
+          "classId": "xxx"
+          "list":"studentId-field-status%studentId-field-status%studentId-field-status%studentId-field-status%"
+
+        status la muc hanh kiem, (u'', u'Chưa xét'), (u'T', u'Tốt'), (u'K', u'Khá'), (u'TB',u'TB'), (u'Y', u'Yếu')
+        field in FieldList
+        """
+        class_id = request.POST['classId']
+        data = request.POST['list']
+        list = data.split("%")
+        term = get_current_term(request)
+        try:
+            _class = Class.objects.get(id = int(class_id))
+        except ObjectDoesNotExist:
+            return Response(status.HTTP_404_NOT_FOUND)
+        if (is_teacher(request)
+            and request.user.teacher in _class.associated_teacher()):
+            try:
+                for ul in list:
+                    p_id = int(ul.split('-')[0].strip())
+                    field = ul.split('-')[1].strip()
+                    type = ul.split('-')[2].strip().upper()
+
+                    p = c.pupil_set.get(id=int(p_id))
+                    hk = p.tbnam_set.get(year_id__exact=year.id)
+
+                    valid_value = ['T', 'K', 'TB', 'Y', '']
+                    FieldList = ['hk_thang_9', 'hk_thang_10', 'hk_thang_11', 'hk_thang_12', 'hk_thang_1', 'hk_thang_2', 'hk_thang_3', 'hk_thang_4', 'hk_thang_5', 'term1', 'term2', 'year', 'hk_ren_luyen_lai']
+                    if not (field in FieldList):
+                        raise Exception("Bad request")
+                    if not (type in valid_value):
+                        raise Exception("Bad request")
+
+                    if term.number == 1:
+                        if field in ['year', 'term2']:
+                            raise Exception("Bad request")
+
+                    setattr(hk, field, type)
+                    hk.save()
+            except Exception as e:
+                print e
+                raise e
+                return Response(status.HTTP_400_BAD_REQUEST)
+            transaction.commit()
+        else:
+            return Response(status.HTTP_403_FORBIDDEN)

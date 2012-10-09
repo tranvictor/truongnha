@@ -1,0 +1,366 @@
+<html>
+<head><style type='text/css'>
+body, table {
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 12;
+}
+
+table {
+    border-collapse: collapse;
+    border: 1px solid #ccc;
+}
+
+th, td {
+    padding-left: 0.3em;
+    padding-right: 0.3em;
+}
+
+a {
+    text-decoration: none;
+}
+
+.title {
+    font-style: italic;
+}
+
+.selected {
+    background-color: #ffffcc;
+}
+
+.status_done {
+    background-color: #eeffee;
+}
+
+.status_passed {
+    background-color: #ccffcc;
+}
+
+.status_failed {
+    background-color: #ffcccc;
+}
+
+.breakpoint {
+    background-color: #cccccc;
+    border: 1px solid black;
+}
+</style><title>Test suite results</title></head>
+<body>
+<h1>Test suite results </h1>
+
+<table>
+<tr>
+<td>result:</td>
+<td>passed</td>
+</tr>
+<tr>
+<td>totalTime:</td>
+<td>9</td>
+</tr>
+<tr>
+<td>numTestTotal:</td>
+<td>6</td>
+</tr>
+<tr>
+<td>numTestPasses:</td>
+<td>6</td>
+</tr>
+<tr>
+<td>numTestFailures:</td>
+<td>0</td>
+</tr>
+<tr>
+<td>numCommandPasses:</td>
+<td>4</td>
+</tr>
+<tr>
+<td>numCommandFailures:</td>
+<td>0</td>
+</tr>
+<tr>
+<td>numCommandErrors:</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Selenium Version:</td>
+<td>2.25</td>
+</tr>
+<tr>
+<td>Selenium Revision:</td>
+<td>.0</td>
+</tr>
+<tr>
+<td>
+<table id="suiteTable" class="selenium" border="1" cellpadding="1" cellspacing="1"><tbody>
+<tr class="title status_passed"><td><b>Test Suite</b></td></tr>
+<tr class="  status_passed"><td><a href="#testresult0">0.Login</a></td></tr>
+<tr class="  status_passed"><td><a href="#testresult1">1.View_List_of_Subject</a></td></tr>
+<tr class="  status_passed"><td><a href="#testresult2">2.Add_new_subject</a></td></tr>
+<tr class="  status_passed"><td><a href="#testresult3">3.Delete_subject</a></td></tr>
+<tr class="  status_passed"><td><a href="#testresult4">4.Sort</a></td></tr>
+<tr class="  status_passed"><td><a href="#testresult5">5.Logout</a></td></tr>
+</tbody></table>
+
+
+</td>
+<td>&nbsp;</td>
+</tr>
+</table><table><tr>
+<td><a name="testresult0">0.Login.html</a><br/><div>
+<table border="1" cellpadding="1" cellspacing="1">
+<thead>
+<tr class="title status_passed"><td rowspan="1" colspan="3">Login</td></tr>
+</thead><tbody>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>open</td>
+	<td>/</td>
+	<td></td>
+</tr>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>click</td>
+	<td>link=DÃ¹ng thá»­</td>
+	<td></td>
+</tr>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>clickAndWait</td>
+	<td>id=demo-login-school</td>
+	<td></td>
+</tr>
+<tr class="  status_passed" style="cursor: pointer;">
+	<td>verifyTextPresent</td>
+	<td></td>
+	<td>(truongnha_demo_account_schoo)</td>
+</tr>
+</tbody></table>
+
+
+</div></td>
+<td>&nbsp;</td>
+</tr><tr>
+<td><a name="testresult1">1.View_List_of_Subject.html</a><br/><div>
+<table border="1" cellpadding="1" cellspacing="1">
+<thead>
+<tr class="title status_passed"><td rowspan="1" colspan="3">1.View_List_of_Subject</td></tr>
+</thead><tbody>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>open</td>
+	<td>/school/</td>
+	<td></td>
+</tr>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>clickAndWait</td>
+	<td>css=i..icon-th-large</td>
+	<td></td>
+</tr>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>clickAndWait</td>
+	<td>link=10 A</td>
+	<td></td>
+</tr>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>clickAndWait</td>
+	<td>link=MÃ´n há»?c</td>
+	<td></td>
+</tr>
+<tr class="  status_passed" style="cursor: pointer;">
+	<td>verifyTextPresent</td>
+	<td></td>
+	<td>STT 	MÃ´n há»?c 	ChuyÃªn mÃ´n 	Sá»? tiáº¿t/tuáº§n 	Há»? sá»? 	GiÃ¡o viÃªn 	CÃ¡ch tÃ­nh Ä?iá»?m 	Ä?iá»?m nháº­n xÃ©t 	Ná»?i dung </td>
+</tr>
+</tbody></table>
+
+
+</div></td>
+<td>&nbsp;</td>
+</tr><tr>
+<td><a name="testresult2">2.Add_new_subject.html</a><br/><div>
+<table border="1" cellpadding="1" cellspacing="1">
+<thead>
+<tr class="title status_passed"><td rowspan="1" colspan="3">2.Add_new_subject</td></tr>
+</thead><tbody>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>open</td>
+	<td>/school/classes</td>
+	<td></td>
+</tr>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>clickAndWait</td>
+	<td>link=10 A</td>
+	<td></td>
+</tr>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>clickAndWait</td>
+	<td>link=MÃ´n há»?c</td>
+	<td></td>
+</tr>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>type</td>
+	<td>id=id_name</td>
+	<td>MÄ© thuáº­t</td>
+</tr>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>click</td>
+	<td>//input[@value='ThÃªm']</td>
+	<td></td>
+</tr>
+<tr class="  status_passed" style="cursor: pointer;">
+	<td>verifyTextPresent</td>
+	<td></td>
+	<td>MÃ´n há»?c má»?i Ä?Ã£ Ä?Æ°á»£c thÃªm. </td>
+</tr>
+</tbody></table>
+
+
+</div></td>
+<td>&nbsp;</td>
+</tr><tr>
+<td><a name="testresult3">3.Delete_subject.html</a><br/><div>
+<table border="1" cellpadding="1" cellspacing="1">
+<thead>
+<tr class="title status_passed"><td rowspan="1" colspan="3">3.Delete_subject</td></tr>
+</thead><tbody>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>open</td>
+	<td>/school/classes</td>
+	<td></td>
+</tr>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>clickAndWait</td>
+	<td>link=10 A</td>
+	<td></td>
+</tr>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>clickAndWait</td>
+	<td>link=MÃ´n há»?c</td>
+	<td></td>
+</tr>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>click</td>
+	<td>//tr[15]/td[12]/button</td>
+	<td></td>
+</tr>
+<tr class="  status_passed" style="cursor: pointer;">
+	<td>assertConfirmation</td>
+	<td>Báº¡n cÃ³ cháº¯c cháº¯n xÃ³a khÃ´ng?</td>
+	<td></td>
+</tr>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>chooseOkOnNextConfirmation</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>waitForTextPresent</td>
+	<td></td>
+	<td>Ä?Ã£ xÃ³a thÃ&nbsp;nh cÃ´ng</td>
+</tr>
+</tbody></table>
+
+
+</div></td>
+<td>&nbsp;</td>
+</tr><tr>
+<td><a name="testresult4">4.Sort.html</a><br/><div>
+<table border="1" cellpadding="1" cellspacing="1">
+<thead>
+<tr class="title status_passed"><td rowspan="1" colspan="3">4.Sort</td></tr>
+</thead><tbody>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>open</td>
+	<td>/school/classes</td>
+	<td></td>
+</tr>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>clickAndWait</td>
+	<td>link=10 A</td>
+	<td></td>
+</tr>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>clickAndWait</td>
+	<td>link=MÃ´n há»?c</td>
+	<td></td>
+</tr>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>click</td>
+	<td>id=sort</td>
+	<td></td>
+</tr>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>click</td>
+	<td>id=naviButton-down</td>
+	<td></td>
+</tr>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>click</td>
+	<td>id=sort</td>
+	<td></td>
+</tr>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>waitForTextPresent</td>
+	<td></td>
+	<td>Ä?Ã£ lÆ°u</td>
+</tr>
+</tbody></table>
+
+
+</div></td>
+<td>&nbsp;</td>
+</tr><tr>
+<td><a name="testresult5">5.Logout.html</a><br/><div>
+<table border="1" cellpadding="1" cellspacing="1">
+<thead>
+<tr class="title status_passed"><td rowspan="1" colspan="3">Logout</td></tr>
+</thead><tbody>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>open</td>
+	<td>/school/</td>
+	<td></td>
+</tr>
+<tr class="  status_done" style="cursor: pointer;">
+	<td>click</td>
+	<td>link=Ä?Ä?ng xuáº¥t</td>
+	<td></td>
+</tr>
+</tbody></table>
+
+
+</div></td>
+<td>&nbsp;</td>
+</tr></table><pre>
+info: Starting test /selenium-server/tests/0.Login.html
+info: Executing: |open | / |  |
+info: Executing: |click | link=DÃ¹ng thá»­ |  |
+info: Executing: |clickAndWait | id=demo-login-school |  |
+info: Executing: |verifyTextPresent |  | (truongnha_demo_account_schoo) |
+info: Starting test /selenium-server/tests/1.View_List_of_Subject.html
+info: Executing: |open | /school/ |  |
+info: Executing: |clickAndWait | css=i..icon-th-large |  |
+info: Executing: |clickAndWait | link=10 A |  |
+info: Executing: |clickAndWait | link=MÃ´n há»?c |  |
+info: Executing: |verifyTextPresent |  | STT MÃ´n há»?c ChuyÃªn mÃ´n Sá»? tiáº¿t/tuáº§n Há»? sá»? GiÃ¡o viÃªn CÃ¡ch tÃ­nh Ä?iá»?m Ä?iá»?m nháº­n xÃ©t Ná»?i dung |
+info: Starting test /selenium-server/tests/2.Add_new_subject.html
+info: Executing: |open | /school/classes |  |
+info: Executing: |clickAndWait | link=10 A |  |
+info: Executing: |clickAndWait | link=MÃ´n há»?c |  |
+info: Executing: |type | id=id_name | MÄ© thuáº­t |
+info: Executing: |click | //input[@value=&apos;ThÃªm&apos;] |  |
+info: Executing: |verifyTextPresent |  | MÃ´n há»?c má»?i Ä?Ã£ Ä?Æ°á»£c thÃªm. |
+info: Starting test /selenium-server/tests/3.Delete_subject.html
+info: Executing: |open | /school/classes |  |
+info: Executing: |clickAndWait | link=10 A |  |
+info: Executing: |clickAndWait | link=MÃ´n há»?c |  |
+info: Executing: |click | //tr[15]/td[12]/button |  |
+info: Executing: |assertConfirmation | Báº¡n cÃ³ cháº¯c cháº¯n xÃ³a khÃ´ng? |  |
+info: Executing: |chooseOkOnNextConfirmation |  |  |
+info: Executing: |waitForTextPresent |  | Ä?Ã£ xÃ³a thÃ nh cÃ´ng |
+info: Starting test /selenium-server/tests/4.Sort.html
+info: Executing: |open | /school/classes |  |
+info: Executing: |clickAndWait | link=10 A |  |
+info: Executing: |clickAndWait | link=MÃ´n há»?c |  |
+info: Executing: |click | id=sort |  |
+info: Executing: |click | id=naviButton-down |  |
+info: Executing: |click | id=sort |  |
+info: Executing: |waitForTextPresent |  | Ä?Ã£ lÆ°u |
+info: Starting test /selenium-server/tests/5.Logout.html
+info: Executing: |open | /school/ |  |
+info: Executing: |click | link=Ä?Ä?ng xuáº¥t |  |
+</pre></body></html>

@@ -1,5 +1,5 @@
 ﻿{% extends "base.html" %}
-
+{% load dictionary %}
 {% block js %}
     <script>
         $(document).ready(function () {
@@ -69,9 +69,6 @@
                 Người gửi
             </th>
             <th>
-                Người nhận
-            </th>
-            <th>
                 SĐT
             </th>
             <th>
@@ -90,10 +87,7 @@
                     {{ forloop.counter }}
                 </td>
                 <td>
-                    {{ l.sender }}
-                </td>
-                <td>
-                    {{ l.receiver }}
+                    {{ teacher_users|get_value:l.sender_id }}
                 </td>
                 <td>
                     {{ l.phone }}
@@ -106,10 +100,14 @@
                     {{ l.content }}
                 </td>
                 <td>
-                    {% if l.success %}
-                        Thành công
+                    {% if l.recent %}
+                        Đang gửi
                     {% else %}
-                        Thất bại
+                        {% if l.success %}
+                            Thành công
+                        {% else %}
+                            Thất bại
+                        {% endif %}
                     {% endif %}
                 </td>
             </tr>

@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load dictionary %}
+{% block js %}
+    <script type="text/javascript" src="/static/js/template_js/sms_summary.js?{{ VERSION }}"></script>
+{% endblock %}
+{% block css %}
+    <style type="text/css">
+        #new-information {
+            font-size: 1.2em;
+            /*background-color: #fff5ee;*/
+        }
+
+        #new-information li {
+            list-style: none;
+            font-size: .9em;
+            padding: 0.2em 0;
+        }
+
+        #new-information [class^="icon-"] {
+            color: #dddddd;
+        }
+
+        #new-information [class^="icon-"]:hover {
+            color: #08C;
+        }
+        div.hover-display{
+            display: none;
+        }
+        li:hover > div.hover-display{
+            display: block;
+        }
+    </style>
+{% endblock %}
+
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Nhắn tin cho phụ huynh'%}
+{% endblock %}
+
+{% block content %}
+
+<div class="row-fluid">
+    <div class="span1" id="new-information">
+      <div> 
+        <h3>Các lớp</h3>
+      </div>
+      <div>
+        <ul class="nav nav-list">
+            {% for cl in classes %}
+              {% if cl == selected_class %}
+                <li id="class-{{cl.id}}" class="active">
+                  <a href="{% url sms_summary cl.id %}">
+                    {{ cl.name }}
+                  </a>
+                </li>
+              {% else %}
+                <li id="class-{{cl.id}}">
+                  <a href="{% url sms_summary cl.id %}">
+                    {{ cl.name }}
+                  </a>
+                </li>
+              {% endif %}
+            {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="span11">
+    <div id="submenu" class="btn-toolbar">
+        <div class="btn-group">
+            <a title="Gửi tin nhắn thông báo điểm mới tới những học sinh đã chọn"
+               class="btn btn-warning" href="#"
+               id="send-sms">
+               <i class="icon-envelope icon-white"></i>
+               Gửi tin nhắn
+            </a>
+        </div>
+    </div>
+
+        <table class="table table-hover fifth-row" id="student-table">
+            <thead>
+            <tr>
+                <th title="Chọn cả lớp" style="text-align: center;">
+                    <input type="checkbox"
+                    id="checkbox_all"
+                    class="studentCheckbox"/>
+                </th>
+                <th>STT</th>
+                <th id="thLastName">Họ</th>
+                <th id="thFirstName">Tên</th>
+                <th id="thBirthday">Ngày sinh</th>
+                <th id="thPhone">Số điện thoại</th>
+                <th >Nội dung</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for ss in students %}
+                <tr class="{{ss.id}} student">
+                    <td style="text-align: center;">
+                        <input type="checkbox"
+                        id="checkbox_{{ss.id}}"
+                        class="studentCheckbox"/>
+                    </td>
+                    <td> {{ forloop.counter }} </td>
+                    <td>
+                        {{ ss.last_name }}
+                    </td>
+                    <td>
+                        {{ ss.first_name }}
+                    </td>
+                    <td> {{ ss.birthday|date:"SHORT_DATE_FORMAT" }} </td>
+                    <td> {{ ss.sms_phone }} </td>
+                    <td class="truncated" style="max-width:250px;"
+                      title="{{ info_list|get_value:ss.id }}">
+                      {{ info_list|get_value:ss.id }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <div id="student_placeholder" style="display: none;">
+        </div>
+    </div>
+</div>
+{% endblock %}

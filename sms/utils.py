@@ -39,11 +39,11 @@ def _send_sms(phone, content, user, save_to_db=True, school=None):
     try:
         if not school:
             school = user.userprofile.organization
-        if school.id in [42, 44]: raise Exception('NotAllowedSMS')
     except Exception:
         pass
     if phone:
         if school:
+            if school.id in [42, 44]: raise Exception('NotAllowedSMS')
             content = to_ascii(u'Truong %s thong bao:\n%s' % (
                 unicode(school), content))
         else:
@@ -71,7 +71,7 @@ def send_email(subject, message, from_addr=None, to_addr=[]):
     #    server.sendmail(from_addr, to_address, msg.as_string())
     #server.close()
     if not settings.DEBUG:
-        return task_send_email.delay(subject, message,  from_addr, to_addr)
+        return task_send_email.delay(subject, message, from_addr, to_addr)
     else:
         _send_email(subject, message, from_addr, to_addr)
 
@@ -82,6 +82,29 @@ def sendSMS(phone, content, user, save_to_db=True, school=None):
         else: return None
     else:
         return _send_sms(phone, content, user, save_to_db, school)
+
+def send_sms_summary_mark(student, content, marks, user, school=None):
+    phone = check_phone_number(student.sms_phone)
+    try:
+        if not school:
+            school = user.userprofile.organization
+    except Exception:
+        pass
+    if phone:
+        if school:
+            if school.id in [42, 44]: raise Exception('NotAllowedSMS')
+            sms_cont= to_ascii(u'Truong %s thong bao:\nEm %s co %s' % (
+                unicode(school), student.short_name(), content))
+        else:
+            raise Exception('SchoolIsNone')
+
+        s = sms(phone=phone, content=sms_cont,
+                sender=user, recent=True, success=False)
+        s.save()
+        if not settings.DEBUG:
+            return s.send_mark_sms.delay(s, marks)
+        else:
+            return s._send_mark_sms(marks)
 
 from celery import task
 
@@ -108,6 +131,7 @@ def task_send_SMS_then_email(phone, content, user, save_to_db=True, school=None,
             print e
             pass
     return smsed, emailed
+
 
 def send_SMS_then_email(phone, content, user, save_to_db=True, school=None,
         subject=None, message=None, from_addr=None, to_addr=[]):

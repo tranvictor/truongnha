@@ -855,8 +855,8 @@ def is_teacher(request):
             else: return False
         else: return False
     except Exception: return False
-def get_current_year(request):
-    school = get_school(request)
+def get_current_year(request, school=None):
+    if not school: school = get_school(request)
     year = None
     try:
         year = school.year_set.latest('time')
@@ -1072,3 +1072,8 @@ def extract_fullname(name):
         firstname = eles[-1]
         lastname = ' '.join(eles[:-1])
     return firstname, lastname
+
+def queryset_to_dict(qs):
+    result = {}
+    for q in qs: result[q.id] = q
+    return result

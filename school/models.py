@@ -555,7 +555,8 @@ class Class(models.Model):
         result = {}
         for m in marks:
             sid = m.student_id_id
-            result[sid].append(m) if sid in result else [m]
+            if sid in result: result[sid].append(m)
+            else: result[sid] = [m]
         return result, sts
 
     #this method return pair dict {id:  [tkmon, tkmon, ...]}, student query set
@@ -589,13 +590,19 @@ class Class(models.Model):
     #user
     #Return: {student_id: str}, student query set, subjects
     #TODO: Consider the case to promote TKMON
-    def _generate_mark_summary(self, term, student_query=None, subjects=None):
+    def _generate_mark_summary(self, term, student_query=None):
         # if query set is fetched or defined (will be cached)
         # use it instead of making another query that hits db one more time
         if student_query: sts = student_query
         else: sts = self.students()
-        if not subjects: subjects = self.subject_set.all()
-        marks, temp = self._mark_for_students(subjects, student_query=sts)
+        #fectch subjects
+        subjects = self.subject_set.all()
+        subject_dict = {}
+        for s in subjects:
+            subject_dict[s.id] = s
+        marks, temp = self._mark_for_students(subjects,
+                term,
+                student_query=sts)
         result = {}
         for ele in marks.items():
             sid = ele[0]
@@ -605,13 +612,14 @@ class Class(models.Model):
                 #get subject from subject list that already fetched
                 #instead of making new query that hit db in this way:
                 #subject = m.subject_id
-                subject = subjects.get(id=m.subject_id_id)
-                summ_m = m.new_summary()
+                subject = subject_dict[m.subject_id_id]
+                summ_m = m.new_summary(subject=subject)
                 if summ_m:
                     content.append(u'%s:%s' % (subject.short_name(),
-                        m.new_summary()))
-            result[sid] = '\n'.join(content)
-        return result, student_query, subjects
+                        summ_m))
+            if len(content) == 1: result[sid] = u'Không có điểm mới'
+            else: result[sid] = '\n'.join(content)
+        return result, sts, marks
 
     #this method return number of students those are studying in this class
     #Note: not include students those moved to other classes
@@ -950,7 +958,6 @@ class Mark(models.Model):
             default='||||', max_length=50)
     time = models.CharField("Thời gian tạo", null=True, blank=True,
             default='||||', max_length=200)
-
     ck = models.FloatField("Điểm thi cuối kì", null=True, blank=True,
             validators = [validate_mark])
     mg = models.BooleanField("Miễn giảm", default=False)
@@ -972,7 +979,6 @@ class Mark(models.Model):
     
     def save(self, force_insert=False, force_update=False, using=None):
         # If this variable is never used, delete it.
-        new = self.id is None
         super(Mark, self).save(force_insert=force_insert,
                                force_update=force_update,
                                using=using)
@@ -1015,7 +1021,33 @@ class Mark(models.Model):
                     arrTime[3 * MAX_COL + i - 2] = a
         return  arrTime
 
-    def saveMark(self, arrMark):
+    def to_array_sent(self):
+        arr_sent = [''] * ( 3 * MAX_COL + 3)
+        sents=self.sent.split('|')
+        for (i, t) in enumerate(sents):
+            ts = t.split('*')
+            for (j, a) in enumerate(ts):
+                if i < 3:
+                    arr_sent[i * MAX_COL + j + 1] = a
+                else:
+                    arr_sent[3 * MAX_COL + i - 2] = a
+        return  arr_sent
+
+    def saveSent(self, arrSent):
+        sent=''
+        for i in range(3):
+            tempSent=''
+            pre=1
+            for j in range(1,MAX_COL+1):
+                if arrSent[i*MAX_COL+j]!='':
+                    tempSent+=(j-pre)*'*'+arrSent[i*MAX_COL+j]
+                    pre=j
+            sent+=tempSent+'|'
+        sent+=arrSent[3*MAX_COL+1]+'|'+arrSent[3*MAX_COL+2]
+        self.sent=sent
+        self.save()
+
+    def saveMark(self, arrMark,is_save=False):
         diem=''
         for i in range(3):
             tempDiem=''
@@ -1030,6 +1062,8 @@ class Mark(models.Model):
             else:
                 diem+=tempDiem
         self.diem=diem
+        if is_save:
+            self.save()
         
     def saveTime(self, arrTime):
         time=''
@@ -1064,9 +1098,59 @@ class Mark(models.Model):
                     result+=convertMarkToCharacter1(float(s))+space
         return result
 
-    def new_summary(self):
-        return ''
-    
+    #this method returns a string containing all new information of
+    #the marks
+    #Paras:
+    #   subject: Subject object for query avoidance 
+    def new_summary(self, subject=None):
+        if not subject: subject = self.subject_id
+        is_comment = subject.nx
+        arr_mark = self.toArrayMark()
+        arr_sent = self.to_array_sent()
+        result = ''
+        for i in range(3):
+            temp = ''
+            for j in range(MAX_COL):
+                if ((arr_mark[i * MAX_COL + j + 1] != '')
+                        & (arr_sent[i * MAX_COL + j + 1] == '')):
+                    if is_comment:
+                        temp += convertMarkToCharacter1(
+                                float(arr_mark[i * MAX_COL + j + 1]),
+                                False) + ' '
+                    else:
+                        temp += arr_mark[i * MAX_COL + j + 1] + ' '
+            if temp != '':
+                if  i == 0:
+                    result+=u'miệng:' + temp
+                elif i == 1:
+                    result+="15':" + temp
+                elif i == 2:
+                    result+="45':" + temp
+                #so on i=3,4
+        return result
+
+    def update_mark(self, m, index):
+        if index <= 0 :
+            raise Exception('IndexOutOfRange')
+        arr_mark = self.toArrayMark()
+        arr_mark[index] = str(m)
+        self.saveMark(arr_mark, True)
+
+    def update_sent(self, index=None):
+        if index and index <= 0:
+            raise Exception('IndexOutOfRange')
+        arr_diem = self.toArrayMark()
+        arr_sent = self.to_array_sent()
+        if (len(arr_diem) != len(arr_sent) - 2
+                or index >= len(arr_sent)):
+            raise Exception('BadMarkStructure')
+        if not index:
+            for i in range(0, len(arr_diem)):
+                if arr_diem[i]: arr_sent[i]='1'
+        else:
+            if arr_diem[index]: arr_sent[index]='1'
+        self.saveSent(arr_sent)
+
     def length(self,x=3):
         return x
 
