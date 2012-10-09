@@ -16,6 +16,12 @@ $(document).ready(function(){
             }
         }
     };
+    $(".changeTerm").click(function(){
+        var con = confirm("Bạn đang chọn chức năng chuyển kỳ. Sau khi thực hiện hệ thống sẽ chuyển sang kì học mới." +
+            " Các điểm nhập vào hệ thống sau thời điểm chuyển kỳ sẽ được tính cho kì học mới. " +
+            "Bạn có chắc chắn muốn chuyển không?");
+        if (!con) return false;
+    });
     $('#setup').click(function(){
         if ($(this).hasClass('disabled')) return false;
         var cur_year = parseInt($(this).attr('data-toggle')); 

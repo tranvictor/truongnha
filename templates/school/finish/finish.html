@@ -25,7 +25,7 @@
             }						
         });
     </script>
-    <script type="text/javascript" src="/static/js/template_js/finish.js?0.9"></script>
+    <script type="text/javascript" src="/static/js/template_js/finish.js?{{ VERSION }}"></script>
 {% endblock %}
 
 {% block content %}
@@ -35,9 +35,9 @@
             <h3>Thiết lập học kỳ hiện tại</h3>
             <div class="btn-toolbar">
             <div class="btn-group" data-toggle="buttons-radio">
-                <a id="term_1" href="{% url finish 1%}" class="btn "> Học kỳ I </a>
-                <a id="term_2" href="{% url finish 2%}" class="btn "> Học kỳ II </a>
-                <a id="term_3" href="{% url finish 3%}" class="btn "> Học hè </a>
+                <a id="term_1" href="{% url finish 1%}" class="btn changeTerm"> Học kỳ I </a>
+                <a id="term_2" href="{% url finish 2%}" class="btn changeTerm"> Học kỳ II </a>
+                <a id="term_3" href="{% url finish 3%}" class="btn changeTerm"> Học hè </a>
 
                 {% if school.status  == 3 or school.status == 2 %}
                 <a class="btn btn-danger"

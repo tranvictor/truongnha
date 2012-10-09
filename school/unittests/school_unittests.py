@@ -1139,12 +1139,12 @@ class MoveStudentTest1(MarkTest):
         move_class_name = str(block.number) + ' Test 2'
         move_cl = self.school.get_current_year().class_set.get(name = move_class_name)
         num_of_std_2 = move_cl.students().count()
-#        sub_cl_count = cl.subject_set.count()
-#        sub_mcl_count = move_cl.subject_set.count()
-#        self.assertEqual(sub_cl_count,sub_mcl_count)
+        sub_cl_count = cl.subject_set.count()
+        sub_mcl_count = move_cl.subject_set.count()
+        self.assertEqual(sub_cl_count,sub_mcl_count)
         data = str(pupil.id) + '-'
         response = self.client.post(
-            reverse('save_mark'),
+            reverse('move_students'),
             {
                 'target':move_cl.id,
                 'data':data,
@@ -1159,7 +1159,7 @@ class MoveStudentTest1(MarkTest):
         self.assertEqual(num_of_std_2 + 1, num_of_std_4)
         history_count_2 = pupil.attend_set.count()
         self.assertEqual(history_count + 1, history_count_2)
-        mark = pupil.mark_set.get(subject_id__name = u'Lịch sử ',term_id = current_term.id)
+        mark = pupil.mark_set.get(subject_id__name = u'Lịch sử',term_id = current_term.id)
         subject = move_cl.subject_set.get(name = u'Lịch sử')
         self.assertEqual(mark.current,True)
         self.assertEqual(mark.diem,'1*2|3*4*5|6*7*8')
@@ -1206,7 +1206,7 @@ class MoveStudentTest1(MarkTest):
         num_of_std_2 = move_cl.students().count()
         data = str(pupil.id) + '-'
         response = self.client.post(
-            reverse('save_mark'),
+            reverse('move_students'),
             {
                 'target':move_cl.id,
                 'data':data,
@@ -1228,199 +1228,199 @@ class MoveStudentTest1(MarkTest):
         self.assertEqual(mark.ck,6)
         self.assertEqual(mark.subject_id,subject)
 
-#class MoveStudentTest2(MarkTest):
-#    def phase14_move_student_to_class_with_less_sub(self):
-#        school = self.school
-#        current_term = school.year_set.latest('time').term_set.get(number = school.status)
-#        block = self.school.block_set.latest('id')
-#        class_name = str(block.number) + ' Test 1'
-#        cl = self.school.get_current_year().class_set.get(name = class_name)
-#        pupil = cl.students().get(first_name=u'Nguyễn Thị',
-#            last_name=u'Xuân',
-#            birthday=u'1995-10-22')
-#        history_count = pupil.attend_set.count()
-#        num_of_std_1 = cl.students().count()
-#        class_name = str(block.number) + ' Test 4'
-#        move_cl = self.school.get_current_year().class_set.get(name = class_name)
-#        sub_cl_count = cl.subject_set.count()
-#        sub_mcl_count = move_cl.subject_set.count()
-#        self.assertGreater(sub_cl_count,sub_mcl_count)
-#        num_of_std_2 = move_cl.students().count()
-#        data = str(pupil.id) + '-'
-#        response = self.client.post(
-#            reverse('save_mark'),
-#            {
-#                'target':move_cl.id,
-#                'data':data,
-#                'request_type':u'move'
-#            },
-#            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
-#        )
-#        self.assertEqual(response.status_code, 200)
-#        num_of_std_3 = cl.students().count()
-#        num_of_std_4 = move_cl.students().count()
-#        self.assertEqual(num_of_std_1,num_of_std_3+1)
-#        self.assertEqual(num_of_std_2+1,num_of_std_4)
-#        history_count_2 = pupil.attend_set.count()
-#        self.assertEqual(history_count+1,history_count_2)
-#        mark = pupil.mark_set.get(subject_id__name = u'Lịch sử',term_id = current_term)
-#        subject = cl.subject_set.get(name = u'Lịch sử')
-#        self.assertEqual(mark.current,False)
-#        self.assertEqual(mark.diem,'1*2|3*4*5|6*7*8')
-#        self.assertEqual(mark.ck,9)
-#        self.assertEqual(mark.subject_id,subject)
-#
-#    def phase15_move_student_to_back(self):
-#        school = self.school
-#        current_term = school.year_set.latest('time').term_set.get(number = school.status)
-#        block = self.school.block_set.latest('id')
-#        class_name = str(block.number) + ' Test 4'
-#        cl = self.school.get_current_year().class_set.get(name = class_name)
-#        pupil = cl.students().get(first_name=u'Nguyễn Thị',
-#            last_name=u'Xuân',
-#            birthday=u'1995-10-22')
-#        history_count = pupil.attend_set.count()
-#        num_of_std_1 = cl.students().count()
-#        class_name = str(block.number) + ' Test 1'
-#        move_cl = self.school.get_current_year().class_set.get(name = class_name)
-#        num_of_std_2 = move_cl.students().count()
-#        data = str(pupil.id) + '-'
-#        response = self.client.post(
-#            reverse('save_mark'),
-#            {
-#                'target':move_cl.id,
-#                'data':data,
-#                'request_type':u'move'
-#            },
-#            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
-#        )
-#        self.assertEqual(response.status_code, 200)
-#        num_of_std_3 = cl.students().count()
-#        num_of_std_4 = move_cl.students().count()
-#        self.assertEqual(num_of_std_1,num_of_std_3+1)
-#        self.assertEqual(num_of_std_2+1,num_of_std_4)
-#        history_count_2 = pupil.attend_set.count()
-#        self.assertEqual(history_count+1,history_count_2)
-#        mark = pupil.mark_set.get(subject_id__name = u'Lịch sử',term_id = current_term)
-#        subject = move_cl.subject_set.get(name = u'Lịch sử')
-#        self.assertEqual(mark.current,True)
-#        self.assertEqual(mark.diem,'1*2|3*4*5|6*7*8')
-#        self.assertEqual(mark.ck,9)
-#        self.assertEqual(mark.subject_id,subject)
-#
-#class MoveStudentTest3(MarkTest):
-#    def phase14_move_student_to_class_with_more_sub(self):
-#        school = self.school
-#        current_term = school.year_set.latest('time').term_set.get(number = school.status)
-#        block = self.school.block_set.latest('id')
-#        class_name = str(block.number) + ' Test 1'
-#        cl = self.school.get_current_year().class_set.get(name = class_name)
-#        pupil = cl.students().get(first_name=u'Nguyễn Thị',
-#            last_name=u'Xuân',
-#            birthday=u'1995-10-22')
-#        history_count = pupil.attend_set.count()
-#        num_of_std_1 = cl.students().count()
-#        class_name = str(block.number) + ' Test 3'
-#        move_cl = self.school.get_current_year().class_set.get(name = class_name)
-#        sub_cl_count = cl.subject_set.count()
-#        sub_mcl_count = move_cl.subject_set.count()
-#        self.assertGreater(sub_mcl_count,sub_cl_count)
-#        num_of_std_2 = move_cl.students().count()
-#        data = str(pupil.id) + '-'
-#        num_of_mark = pupil.mark_set.count()
-#        response = self.client.post(
-#            reverse('save_mark'),
-#            {
-#                'target':move_cl.id,
-#                'data':data,
-#                'request_type':u'move'
-#            },
-#            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
-#        )
-#        self.assertEqual(response.status_code, 200)
-#        num_of_std_3 = cl.students().count()
-#        num_of_std_4 = move_cl.students().count()
-#        self.assertEqual(num_of_std_1,num_of_std_3+1)
-#        self.assertEqual(num_of_std_2+1,num_of_std_4)
-#        history_count_2 = pupil.attend_set.count()
-#        self.assertEqual(history_count+1,history_count_2)
-#        num_of_mark_2 = pupil.mark_set.count()
-#        self.assertGreater(num_of_mark_2,num_of_mark)
-#        mark = pupil.mark_set.get(subject_id__name = u'Lịch sử',term_id = current_term)
-#        subject = move_cl.subject_set.get(name = u'Lịch sử')
-#        self.assertEqual(mark.current,True)
-#        self.assertEqual(mark.diem,'1*2|3*4*5|6*7*8')
-#        self.assertEqual(mark.ck,9)
-#        self.assertEqual(mark.subject_id,subject)
-#        mark = pupil.mark_set.get(subject_id__name = u'Mĩ thuật test',term_id = current_term)
-#        subject = move_cl.subject_set.get(name = u'Mĩ thuật test')
-#        self.assertEqual(mark.current,True)
-#        self.assertEqual(mark.subject_id,subject)
-#
-#    def phase15_add_mark_to_new_sub(self):
-#        school = self.school
-#        current_term = school.year_set.latest('time').term_set.get(number = school.status)
-#        block = self.school.block_set.latest('id')
-#        class_name = str(block.number) + ' Test 3'
-#        cl = self.school.get_current_year().class_set.get(name = class_name)
-#        sub = cl.subject_set.get(name = u'Mĩ thuật test')
-#        pupil = cl.students().get(first_name=u'Nguyễn Thị',
-#            last_name=u'Xuân',
-#            birthday=u'1995-10-22')
-#        mark = pupil.mark_set.get(subject_id = sub, term_id = current_term)
-#        data = u'1//0/false/%s:1*2*9*10*11*17*18*19*25*26:1*2*3*9*8*6*7*8*9' % (mark.id)
-#        response = self.client.post(
-#            reverse('save_mark'),
-#            {
-#                'data':data,
-#                },
-#            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
-#        )
-#        self.assertEqual(response.status_code, 200)
-#        mark = pupil.mark_set.get(subject_id = sub, term_id = current_term)
-#        self.assertEqual(mark.diem,'1*2|3*9*8|6*7*8')
-#        self.assertEqual(mark.ck,9)
-#
-#    def phase16_move_student_back(self):
-#        school = self.school
-#        current_term = school.year_set.latest('time').term_set.get(number = school.status)
-#        block = self.school.block_set.latest('id')
-#        class_name = str(block.number) + ' Test 3'
-#        cl = self.school.get_current_year().class_set.get(name = class_name)
-#        pupil = cl.students().get(first_name=u'Nguyễn Thị',
-#            last_name=u'Xuân',
-#            birthday=u'1995-10-22')
-#        history_count = pupil.attend_set.count()
-#        num_of_std_1 = cl.students().count()
-#        class_name = str(block.number) + ' Test 1'
-#        move_cl = self.school.get_current_year().class_set.get(name = class_name)
-#        num_of_std_2 = move_cl.students().count()
-#        data = str(pupil.id) + '-'
-#        response = self.client.post(
-#            reverse('save_mark'),
-#            {
-#                'target':move_cl.id,
-#                'data':data,
-#                'request_type':u'move'
-#            },
-#            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
-#        )
-#        self.assertEqual(response.status_code, 200)
-#        num_of_std_3 = cl.students().count()
-#        num_of_std_4 = move_cl.students().count()
-#        self.assertEqual(num_of_std_1,num_of_std_3+1)
-#        self.assertEqual(num_of_std_2+1,num_of_std_4)
-#        history_count_2 = pupil.attend_set.count()
-#        self.assertEqual(history_count+1,history_count_2)
-#        mark = pupil.mark_set.get(subject_id__name = u'Lịch sử',term_id = current_term)
-#        subject = move_cl.subject_set.get(name = u'Lịch sử')
-#        self.assertEqual(mark.current,True)
-#        self.assertEqual(mark.diem,'1*2|3*4*5|6*7*8')
-#        self.assertEqual(mark.ck,9)
-#        self.assertEqual(mark.subject_id,subject)
-#        mark = pupil.mark_set.get(subject_id__name = u'Mĩ thuật test',term_id = current_term)
-#        subject = move_cl.subject_set.get(name = u'Mĩ thuật test')
-#        self.assertEqual(mark.current,False)
-#        self.assertEqual(mark.subject_id,subject)
-#        self.assertEqual(mark.diem,'1*2|3*9*8|6*7*8')
-#        self.assertEqual(mark.ck,9)
+class MoveStudentTest2(MarkTest):
+    def phase14_move_student_to_class_with_less_sub(self):
+        school = self.school
+        current_term = school.year_set.latest('time').term_set.get(number = school.status)
+        block = self.school.block_set.latest('id')
+        class_name = str(block.number) + ' Test 1'
+        cl = self.school.get_current_year().class_set.get(name = class_name)
+        pupil = cl.students().get(first_name=u'Nguyễn Thị',
+            last_name=u'Xuân',
+            birthday=u'1995-10-22')
+        history_count = pupil.attend_set.count()
+        num_of_std_1 = cl.students().count()
+        class_name = str(block.number) + ' Test 4'
+        move_cl = self.school.get_current_year().class_set.get(name = class_name)
+        sub_cl_count = cl.subject_set.count()
+        sub_mcl_count = move_cl.subject_set.count()
+        self.assertGreater(sub_cl_count,sub_mcl_count)
+        num_of_std_2 = move_cl.students().count()
+        data = str(pupil.id) + '-'
+        response = self.client.post(
+            reverse('move_students'),
+            {
+                'target':move_cl.id,
+                'data':data,
+                'request_type':u'move'
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        num_of_std_3 = cl.students().count()
+        num_of_std_4 = move_cl.students().count()
+        self.assertEqual(num_of_std_1,num_of_std_3+1)
+        self.assertEqual(num_of_std_2+1,num_of_std_4)
+        history_count_2 = pupil.attend_set.count()
+        self.assertEqual(history_count+1,history_count_2)
+        mark = pupil.mark_set.get(subject_id__name = u'Lịch sử',term_id = current_term)
+        subject = cl.subject_set.get(name = u'Lịch sử')
+        self.assertEqual(mark.current,False)
+        self.assertEqual(mark.diem,'1*2|3*4*5|6*7*8')
+        self.assertEqual(mark.ck,9)
+        self.assertEqual(mark.subject_id,subject)
+
+    def phase15_move_student_to_back(self):
+        school = self.school
+        current_term = school.year_set.latest('time').term_set.get(number = school.status)
+        block = self.school.block_set.latest('id')
+        class_name = str(block.number) + ' Test 4'
+        cl = self.school.get_current_year().class_set.get(name = class_name)
+        pupil = cl.students().get(first_name=u'Nguyễn Thị',
+            last_name=u'Xuân',
+            birthday=u'1995-10-22')
+        history_count = pupil.attend_set.count()
+        num_of_std_1 = cl.students().count()
+        class_name = str(block.number) + ' Test 1'
+        move_cl = self.school.get_current_year().class_set.get(name = class_name)
+        num_of_std_2 = move_cl.students().count()
+        data = str(pupil.id) + '-'
+        response = self.client.post(
+            reverse('move_students'),
+            {
+                'target':move_cl.id,
+                'data':data,
+                'request_type':u'move'
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        num_of_std_3 = cl.students().count()
+        num_of_std_4 = move_cl.students().count()
+        self.assertEqual(num_of_std_1,num_of_std_3+1)
+        self.assertEqual(num_of_std_2+1,num_of_std_4)
+        history_count_2 = pupil.attend_set.count()
+        self.assertEqual(history_count+1,history_count_2)
+        mark = pupil.mark_set.get(subject_id__name = u'Lịch sử',term_id = current_term)
+        subject = move_cl.subject_set.get(name = u'Lịch sử')
+        self.assertEqual(mark.current,True)
+        self.assertEqual(mark.diem,'1*2|3*4*5|6*7*8')
+        self.assertEqual(mark.ck,9)
+        self.assertEqual(mark.subject_id,subject)
+
+class MoveStudentTest3(MarkTest):
+    def phase14_move_student_to_class_with_more_sub(self):
+        school = self.school
+        current_term = school.year_set.latest('time').term_set.get(number = school.status)
+        block = self.school.block_set.latest('id')
+        class_name = str(block.number) + ' Test 1'
+        cl = self.school.get_current_year().class_set.get(name = class_name)
+        pupil = cl.students().get(first_name=u'Nguyễn Thị',
+            last_name=u'Xuân',
+            birthday=u'1995-10-22')
+        history_count = pupil.attend_set.count()
+        num_of_std_1 = cl.students().count()
+        class_name = str(block.number) + ' Test 3'
+        move_cl = self.school.get_current_year().class_set.get(name = class_name)
+        sub_cl_count = cl.subject_set.count()
+        sub_mcl_count = move_cl.subject_set.count()
+        self.assertGreater(sub_mcl_count,sub_cl_count)
+        num_of_std_2 = move_cl.students().count()
+        data = str(pupil.id) + '-'
+        num_of_mark = pupil.mark_set.count()
+        response = self.client.post(
+            reverse('move_students'),
+            {
+                'target':move_cl.id,
+                'data':data,
+                'request_type':u'move'
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        num_of_std_3 = cl.students().count()
+        num_of_std_4 = move_cl.students().count()
+        self.assertEqual(num_of_std_1,num_of_std_3+1)
+        self.assertEqual(num_of_std_2+1,num_of_std_4)
+        history_count_2 = pupil.attend_set.count()
+        self.assertEqual(history_count+1,history_count_2)
+        num_of_mark_2 = pupil.mark_set.count()
+        self.assertGreater(num_of_mark_2,num_of_mark)
+        mark = pupil.mark_set.get(subject_id__name = u'Lịch sử',term_id = current_term)
+        subject = move_cl.subject_set.get(name = u'Lịch sử')
+        self.assertEqual(mark.current,True)
+        self.assertEqual(mark.diem,'1*2|3*4*5|6*7*8')
+        self.assertEqual(mark.ck,9)
+        self.assertEqual(mark.subject_id,subject)
+        mark = pupil.mark_set.get(subject_id__name = u'Mĩ thuật test',term_id = current_term)
+        subject = move_cl.subject_set.get(name = u'Mĩ thuật test')
+        self.assertEqual(mark.current,True)
+        self.assertEqual(mark.subject_id,subject)
+
+    def phase15_add_mark_to_new_sub(self):
+        school = self.school
+        current_term = school.year_set.latest('time').term_set.get(number = school.status)
+        block = self.school.block_set.latest('id')
+        class_name = str(block.number) + ' Test 3'
+        cl = self.school.get_current_year().class_set.get(name = class_name)
+        sub = cl.subject_set.get(name = u'Mĩ thuật test')
+        pupil = cl.students().get(first_name=u'Nguyễn Thị',
+            last_name=u'Xuân',
+            birthday=u'1995-10-22')
+        mark = pupil.mark_set.get(subject_id = sub, term_id = current_term)
+        data = u'1//0/false/%s:1*2*9*10*11*17*18*19*25*26:1*2*3*9*8*6*7*8*9' % (mark.id)
+        response = self.client.post(
+            reverse('save_mark'),
+            {
+                'data':data,
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        mark = pupil.mark_set.get(subject_id = sub, term_id = current_term)
+        self.assertEqual(mark.diem,'1*2|3*9*8|6*7*8')
+        self.assertEqual(mark.ck,9)
+
+    def phase16_move_student_back(self):
+        school = self.school
+        current_term = school.year_set.latest('time').term_set.get(number = school.status)
+        block = self.school.block_set.latest('id')
+        class_name = str(block.number) + ' Test 3'
+        cl = self.school.get_current_year().class_set.get(name = class_name)
+        pupil = cl.students().get(first_name=u'Nguyễn Thị',
+            last_name=u'Xuân',
+            birthday=u'1995-10-22')
+        history_count = pupil.attend_set.count()
+        num_of_std_1 = cl.students().count()
+        class_name = str(block.number) + ' Test 1'
+        move_cl = self.school.get_current_year().class_set.get(name = class_name)
+        num_of_std_2 = move_cl.students().count()
+        data = str(pupil.id) + '-'
+        response = self.client.post(
+            reverse('move_students'),
+            {
+                'target':move_cl.id,
+                'data':data,
+                'request_type':u'move'
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        num_of_std_3 = cl.students().count()
+        num_of_std_4 = move_cl.students().count()
+        self.assertEqual(num_of_std_1,num_of_std_3+1)
+        self.assertEqual(num_of_std_2+1,num_of_std_4)
+        history_count_2 = pupil.attend_set.count()
+        self.assertEqual(history_count+1,history_count_2)
+        mark = pupil.mark_set.get(subject_id__name = u'Lịch sử',term_id = current_term)
+        subject = move_cl.subject_set.get(name = u'Lịch sử')
+        self.assertEqual(mark.current,True)
+        self.assertEqual(mark.diem,'1*2|3*4*5|6*7*8')
+        self.assertEqual(mark.ck,9)
+        self.assertEqual(mark.subject_id,subject)
+        mark = pupil.mark_set.get(subject_id__name = u'Mĩ thuật test',term_id = current_term)
+        subject = cl.subject_set.get(name = u'Mĩ thuật test')
+        self.assertEqual(mark.current,False)
+        self.assertEqual(mark.subject_id,subject)
+        self.assertEqual(mark.diem,'1*2|3*9*8|6*7*8')
+        self.assertEqual(mark.ck,9)
