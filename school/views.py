@@ -634,47 +634,47 @@ def student_account(request, student_id):
     c = RequestContext(request, {'account': student.user_id.username, 'url': url, 'message': message})
     return HttpResponse(t.render(c))
 
-@need_login
-@operating_permission(['HIEU_TRUONG', 'HIEU_PHO'])
-def teacher_account(request, teacher_id):
-    user = request.user
-    message = ''
-    teacher = user.userprofile.organization.teacher_set.get(id=teacher_id)
-    url = reverse('teacher_account', args=[teacher_id])
-    if request.method == 'POST':
-        if teacher.sms_phone or teacher.email:
-            new_password, raw_password = make_default_password()
-            teacher.user_id.password = new_password
-            teacher.user_id.is_active = True
-            content = u'Mật khẩu của bạn tại hệ thống Trường Nhà đã được thay đổi.\n' +\
-                      u'Sử dụng thông tin dưới đây để đăng nhập.\n' + u'Tên đăng nhập: ' +\
-                      teacher.user_id.username + u'\nMật khẩu: ' + raw_password
-            if teacher.sms_phone:
-                try:
-                    sendSMS(teacher.sms_phone,to_en1(content),user, save_to_db=False)
-                    message = u'Mật khẩu của giáo viên đã được tạo lại và gửi vào số điện thoại nhắn tin đã đăng ký'
-                    teacher.user_id.save()
-                except Exception as e:
-                    print e
-                    message = u'Không thể gửi tin nhắn tới số ' + teacher.sms_phone + u'.'
-                    if teacher.email:
-                        try:
-                            subject = u'Thông báo thay đổi mật khẩu'
-                            send_email(subject,content, to_addr=[teacher.email])
-                            message = u'Mật khẩu của giáo viên đã được tạo lại và gửi vào địa chỉ email đã đăng ký'
-                            teacher.user_id.save()
-                        except Exception as e:
-                            print e
-                            message += u'Không thể gửi email tới địa chỉ ' + teacher.email + u'.'
-            if not teacher.sms_phone and not teacher.email:
-                message = u'Để thay đổi mật khẩu, tài khoản phải có địa chỉ email hoặc số điện thoại nhắn tin'
-        else:
-            message = u'Giáo viên chưa đăng ký số điện thoại hoặc email nên không cấp lại được mật khẩu'
-        data = simplejson.dumps({'message': message})
-        return HttpResponse(data, mimetype='json')
-    t = loader.get_template(os.path.join('school', 'account.html'))
-    c = RequestContext(request, {'account': teacher.user_id.username, 'url': url, 'message': message})
-    return HttpResponse(t.render(c))
+#@need_login
+#@operating_permission(['HIEU_TRUONG', 'HIEU_PHO'])
+#def teacher_account(request, teacher_id):
+#    user = request.user
+#    message = ''
+#    teacher = user.userprofile.organization.teacher_set.get(id=teacher_id)
+#    url = reverse('teacher_account', args=[teacher_id])
+#    if request.method == 'POST':
+#        if teacher.sms_phone or teacher.email:
+#            new_password, raw_password = make_default_password()
+#            teacher.user_id.password = new_password
+#            teacher.user_id.is_active = True
+#            content = u'Mật khẩu của bạn tại hệ thống Trường Nhà đã được thay đổi.\n' +\
+#                      u'Sử dụng thông tin dưới đây để đăng nhập.\n' + u'Tên đăng nhập: ' +\
+#                      teacher.user_id.username + u'\nMật khẩu: ' + raw_password
+#            if teacher.sms_phone:
+#                try:
+#                    sendSMS(teacher.sms_phone,to_en1(content),user, save_to_db=False)
+#                    message = u'Mật khẩu của giáo viên đã được tạo lại và gửi vào số điện thoại nhắn tin đã đăng ký'
+#                    teacher.user_id.save()
+#                except Exception as e:
+#                    print e
+#                    message = u'Không thể gửi tin nhắn tới số ' + teacher.sms_phone + u'.'
+#                    if teacher.email:
+#                        try:
+#                            subject = u'Thông báo thay đổi mật khẩu'
+#                            send_email(subject,content, to_addr=[teacher.email])
+#                            message = u'Mật khẩu của giáo viên đã được tạo lại và gửi vào địa chỉ email đã đăng ký'
+#                            teacher.user_id.save()
+#                        except Exception as e:
+#                            print e
+#                            message += u'Không thể gửi email tới địa chỉ ' + teacher.email + u'.'
+#            if not teacher.sms_phone and not teacher.email:
+#                message = u'Để thay đổi mật khẩu, tài khoản phải có địa chỉ email hoặc số điện thoại nhắn tin'
+#        else:
+#            message = u'Giáo viên chưa đăng ký số điện thoại hoặc email nên không cấp lại được mật khẩu'
+#        data = simplejson.dumps({'message': message})
+#        return HttpResponse(data, mimetype='json')
+#    t = loader.get_template(os.path.join('school', 'account.html'))
+#    c = RequestContext(request, {'account': teacher.user_id.username, 'url': url, 'message': message})
+#    return HttpResponse(t.render(c))
 
 
 #User: loi.luuthe@gmail.com

@@ -126,7 +126,7 @@ urlpatterns = patterns('',
     url(r'username_change$',  views.username_change, name="username_change"),
     url(r'success$', views.change_success, name="change_success"),
     url(r'student/account/(?P<student_id>\w+)$', views.student_account, name="student_account"),
-    url(r'teacher/account/(?P<teacher_id>\w+)$', views.teacher_account, name="teacher_account"),
+#    url(r'teacher/account/(?P<teacher_id>\w+)$', views.teacher_account, name="teacher_account"),
     url(r'movestudent/(?P<student_id>\w+)$', school_functions.move_one_student, name="move_one_student"),
     url(r'movestudents$', school_functions.move_students, name="move_students"),
 

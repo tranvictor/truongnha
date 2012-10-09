@@ -703,6 +703,7 @@ def addClass(request):
         form = ClassForm(school.id)
 
         if request.method == 'POST':
+            print request.POST
             names = request.POST['name'].split(" ")
             block_num = names[0]
 
