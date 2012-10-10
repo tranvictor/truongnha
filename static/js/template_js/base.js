@@ -53,43 +53,6 @@ var applyListener = function () {
                 }
             });
         }
-        //$("[title]").tooltip({
-        //    placement:'bottom',
-        //    delay:{
-        //        'show':1000,
-        //        'hide':100
-        //    }
-        //});
-        //$("[top-title]").tooltip({
-        //    title:function () {
-        //        return $(this).attr('top-title');
-        //    },
-        //    delay:{
-        //        'show':1000,
-        //        'hide':100
-        //    }
-        //});
-
-        //$("[left-title]").tooltip({
-        //    placement:'left',
-        //    title:function () {
-        //        return $(this).attr('left-title');
-        //    },
-        //    delay:{
-        //        'show':1000,
-        //        'hide':100
-        //    }
-        //});
-        //$("[right-title]").tooltip({
-        //    placement:'right',
-        //    title:function () {
-        //        return $(this).attr('right-title');
-        //    },
-        //    delay:{
-        //        'show':1000,
-        //        'hide':100
-        //    }
-        //})
     })
 };
 
@@ -113,11 +76,18 @@ $(document).ready(function () {
 
     $.fn.is_harmful = function (origin) {
         origin = toAscii(origin);
-        origin = origin.replace(/\//g, ' ').replace(/-/g, ' ').replace('@', ' ').replace('Nhanh:', '').replace('nhanh:', '');
+        origin = origin.replace(/\//g, ' ')
+            .replace(/-/g, ' ')
+            .replace('@', ' ')
+            .replace('Nhanh:', '')
+            .replace('nhanh:', '');
         var check = origin.match(/\d+:\d+/g);
-        if (check && check.length == 1 && check[0].length == origin.length) return false;
-        if ($.encoder.encodeForHTML($.encoder.canonicalize(origin)) != origin) return true;
-        return $.encoder.encodeForJavascript($.encoder.canonicalize(origin)) != origin;
+        if (check && check.length == 1
+                && check[0].length == origin.length) return false;
+        if ($.encoder.encodeForHTML(
+                    $.encoder.canonicalize(origin)) != origin) return true;
+        return $.encoder.encodeForJavascript(
+                $.encoder.canonicalize(origin)) != origin;
 
     };
 
@@ -148,7 +118,7 @@ $(document).ready(function () {
         $("#notify").enabelNotification();
         $("#notify").text(msg);
         $("#notify").fadeIn('fast');
-        if (!duration || typeof duration != 'number') duration = 1000;
+        if (!duration || typeof duration != 'number') duration = 3000;
         $("#notify").data('delay', setTimeout(function () {
                 $("#notify").stop(true, true).fadeOut('fast');
             },

@@ -34,7 +34,8 @@ def _send_email(subject, message, from_addr=None, to_addr=[]):
             to_addr)
 
 # school parameter here is for hitting db avoidance purpose
-def _send_sms(phone, content, user, save_to_db=True, school=None):
+def _send_sms(phone, content, user, save_to_db=True, school=None,
+        is_task_called=False):
     phone = check_phone_number(phone)
     try:
         if not school:
@@ -52,10 +53,10 @@ def _send_sms(phone, content, user, save_to_db=True, school=None):
         s = sms(phone=phone, content=content,
                 sender=user, recent=True, success=False)
         s.save()
-        if not settings.DEBUG:
-            return s.send_sms.delay(s, phone)
+        if not settings.DEBUG and not is_task_called:
+            return s.send_sms.delay(s)
         else:
-            return s._send_sms(phone)
+            return s._send_sms()
 
 def send_email(subject, message, from_addr=None, to_addr=[]):
     #msg = MIMEText(message.encode('utf-8'), _charset='utf-8')
@@ -118,28 +119,22 @@ def task_send_email(subject, message, from_addr=None, to_addr=[]):
 @task()
 def task_send_SMS_then_email(phone, content, user, save_to_db=True, school=None,
         subject=None, message=None, from_addr=None, to_addr=[]):
-    smsed = False
-    emailed = False
     try:
-        smsed = _send_sms(phone, content, user, save_to_db) 
-        if smsed: smsed = True
+        _send_sms(phone, content, user, save_to_db,
+                is_task_called=True) 
     except Exception:
         try:
             _send_email(subject, message, from_addr, to_addr)                
-            emailed = True
         except Exception as e:
             print e
             pass
-    return smsed, emailed
-
 
 def send_SMS_then_email(phone, content, user, save_to_db=True, school=None,
         subject=None, message=None, from_addr=None, to_addr=[]):
     if not settings.DEBUG:
-        temp = task_send_SMS_then_email.delay(
+        task_send_SMS_then_email.delay(
                 phone, content, user, save_to_db, school,
                 subject, message, from_addr, to_addr)
-        return temp.get()
     else:
         try:
             smsed = sendSMS(phone, content, user, save_to_db, school)

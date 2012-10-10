@@ -161,7 +161,7 @@ class sms(models.Model):
                 m.update_sent()
 
     @task()
-    def send_sms(self, phone):
+    def send_sms(self):
         return self._send_sms()
         
     @task()
@@ -170,6 +170,7 @@ class sms(models.Model):
         if result == '1':
             for m in marks:
                 m.update_sent()
+        else: return result
 
     def __unicode__(self):
         return self.phone

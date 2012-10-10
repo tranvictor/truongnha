@@ -179,32 +179,28 @@ def viewClassDetail(request, class_id):
                         if student.sms_phone:
                             try:
                                 if include_name == 'true':
-                                    smsed, emailed = send_SMS_then_email(
-                                                    student.sms_phone,
-                                                    to_en1('Em ' + student.last_name +\
-                                                            ' ' + student.first_name +\
-                                                            ' ' + content),
-                                                    user,
-                                                    True,
-                                                    school,
-                                                    u'Trường Nhà thông báo',
-                                                    content,
-                                                    to_addr=[student.email]) 
+                                    send_SMS_then_email(
+                                            student.sms_phone,
+                                            to_en1('Em ' + student.last_name +\
+                                                    ' ' + student.first_name +\
+                                                    ' ' + content),
+                                            user,
+                                            True,
+                                            school,
+                                            u'Trường Nhà thông báo',
+                                            content,
+                                            to_addr=[student.email]) 
                                 else:
-                                    smsed, emailed = send_SMS_then_email(
-                                                    student.sms_phone,
-                                                    to_en1(content),
-                                                    user,
-                                                    True,
-                                                    school,
-                                                    u'Trường Nhà thông báo',
-                                                    content,
-                                                    to_addr=[student.email]) 
-
-                                if smsed:
-                                    number_of_sent += 1
-                                if emailed:
-                                    number_of_email_sent += 1
+                                    send_SMS_then_email(
+                                            student.sms_phone,
+                                            to_en1(content),
+                                            user,
+                                            True,
+                                            school,
+                                            u'Trường Nhà thông báo',
+                                            content,
+                                            to_addr=[student.email]) 
+                                number_of_sent += 1
                             except Exception as e:
                                 print e
                                 number_of_failed += 1
@@ -212,7 +208,7 @@ def viewClassDetail(request, class_id):
                             number_of_blank += 1
                             if student.email:
                                 try:
-                                    emailed = send_email(
+                                    send_email(
                                             u'Trường Nhà thông báo',
                                             content,
                                             to_addr=[student.email])

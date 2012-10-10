@@ -4,11 +4,11 @@ $(document).ready(function() {
     $("#notify").ajaxSuccess(function(event, request, settings, json) {
         if (json.message != null && json.message != '' && json.message != 'OK') {
             $(this).html("<ul>" + json.message + "</ul>");
-            $(this).delay(1000).fadeOut(10000);
+            $(this).delay(10000).fadeOut('fast');
         }
         else if (json.message == 'OK') {
             $(this).text('Đã lưu');
-            $(this).delay(1000).fadeOut('fast');
+            $(this).delay(2000).fadeOut('fast');
             //noinspection JSCheckFunctionSignatures
             location.reload('true');
         }
@@ -176,20 +176,33 @@ $(document).ready(function() {
 
     $('#student-table').delegate('tr', 'click', select);
     // individual listener
-    //$("tr").live("click",select);
     var selectAllStudent = function(){
-        var $trs = $('tr');
-        for ( var i = $trs.length; i--;){
+        var $trs = $('tr.student');
+        for (var i = $trs.length; i--;){
             var $tr = $($trs[i]);
-            if (!$tr.hasClass('selected')) $tr.trigger('click');
+            if (!$tr.hasClass('selected')){
+                $tr.addClass('selected');
+                var id = $tr.attr('class').split(' ')[0];
+                $('#checkbox_' + id).prop("checked", true);
+            }
         }
+        $('#checkbox_all').prop("checked", true);
+        $("#showChosenStudent").html(($trs.length).toString() + " học sinh");
+        $("#send").removeAttr('disabled');
     };
     var deselectAllStudent = function(){
-        var $trs = $('tr');
+        var $trs = $('tr.student');
         for ( var i = $trs.length; i--;){
             var $tr = $($trs[i]);
-            if ($tr.hasClass('selected')) $tr.trigger('click');
+            if ($tr.hasClass('selected')){
+                $tr.removeClass('selected');
+                var id = $tr.attr('class').split(' ')[0];
+                $('#checkbox_' + id).prop("checked", false);
+            }
         }
+        $('#checkbox_all').prop("checked", false);
+        $("#showChosenStudent").html("Chưa chọn học sinh nào");
+        $("#send").attr('disabled', 'disabled');
     };
 
     $("#checkbox_all").click(function() {
@@ -238,7 +251,7 @@ $(document).ready(function() {
                     student_list:studentList},
                 datatype:"json",
                 success: function(json) {
-                    $("#notify").showNotification("Đã gửi " + json.number_of_sent + " tin nhắn");
+                    $("#notify").showNotification("Sẽ gửi " + json.number_of_sent + " tin nhắn trong chậm nhất 1h.");
                     $("#smsProgressbar").hide();
                     if (json.number_of_blank != '0' || json.number_of_failed != '0' || json.number_of_email_sent != '0') {
                         var html = "<ul>";

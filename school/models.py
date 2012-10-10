@@ -607,7 +607,7 @@ class Class(models.Model):
         for ele in marks.items():
             sid = ele[0]
             m_list = ele[1]
-            content = [u'Danh sách điểm mới:']
+            content = [u'Điểm mới:']
             for m in m_list:
                 #get subject from subject list that already fetched
                 #instead of making new query that hit db in this way:
@@ -1121,11 +1121,11 @@ class Mark(models.Model):
                         temp += arr_mark[i * MAX_COL + j + 1] + ' '
             if temp != '':
                 if  i == 0:
-                    result+=u'miệng:' + temp
+                    result+=u'miệng:%s,' % temp.strip()
                 elif i == 1:
-                    result+="15p:" + temp
+                    result+="15p:%s," % temp.strip()
                 elif i == 2:
-                    result+="45p:" + temp
+                    result+="45p:%s," % temp.strip()
                 #so on i=3,4
         return result
 
