@@ -136,7 +136,7 @@ class sms(models.Model):
         tsp = get_tsp(phone)
         try:
             # 2 id user nay de cap phep nhan tin cho chi Van va account sensive
-            if tsp != 'VIETTEL' and int(self.sender_id) in [904, 16742]:
+            if int(self.sender_id) in [904, 16742]:
                 result = self._send_iNET_sms()
             else:
                 result = self._send_Viettel_sms()
