@@ -72,9 +72,9 @@
         {% if user.userprofile.organization.status != 0 %}
             {# Đang trong năm học #}
             <a class="win-command" href="{% url sms_summary '' %}"
-               title="Nhắn tin học tập, rèn luyện của học sinh cho phụ huynh">
+               title="Thông báo tình hình học tập, rèn luyện của học sinh cho phụ huynh">
                 <span class="win-commandimage win-commandring"><i class="icon-envelope"></i></span>
-                <span class="win-label">Nhắn tin</span>
+                <span class="win-label">Thông báo</span>
             </a>
             <a class="win-command" href="{% url report %}"
                title="Các báo cáo thống kê, tổng kết">

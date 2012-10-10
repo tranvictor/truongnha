@@ -1,49 +1,55 @@
-﻿<script type="text/javascript" >
+﻿<script type="text/javascript">
+    var needToConfirm = false;
+    window.onbeforeunload = function confirmExit(e) {
+        if (document.getElementById("buttonSave").style.display == "") {
+            if (document.getElementById("messageChanging").innerHTML != "Đã lưu")
+                needToConfirm = true;
+            else    needToConfirm = false;
+        }
+        else    needToConfirm = false;
 
-	var needToConfirm = false;
-	window.onbeforeunload = function confirmExit(e)
-	{
-		if (document.getElementById("buttonSave").style.display=="")
-		{
-			if (document.getElementById("messageChanging").innerHTML!="Đã lưu")
-				needToConfirm=true;
-			else	needToConfirm=false;
-		}		
-		else	needToConfirm=false;
-		
-		if (needToConfirm)
-			return  "Đang lưu điểm. Xin vui lòng ấn cancel(ở lại trang này) để lưu nốt." ;	
-	}
+        if (needToConfirm)
+            return  "Đang lưu điểm. Xin vui lòng ấn cancel(ở lại trang này) để lưu nốt.";
+    }
 
-	var table   = document.getElementById("markTable");	
-	if (isComment)
-		convertToComment();
-	calculateOldAr();
-	setNoEdit();
+    var table = document.getElementById("markTable");
+    if (isComment)
+        convertToComment();
+    calculateOldAr();
+    setNoEdit();
 </script>
 {% if enableChangeMark %}
+    {% if enableChangeMark %}
+        <div class="pagination-right">
+            {% if selectedSubject.nx %}
+                <p class="dimmed">Típ: Bạn chỉ cần gõ tắt: D -> Đ (Đạt), C -> CĐ (Chưa đạt)</p>
+            {% else %}
+                <p class="dimmed">Típ: Bạn không cần gõ dấu phảy. Ví dụ nhập 7.5 thì chỉ cần gõ 75.</p>
+            {% endif %}
+        </div>
+    {% endif %}
 
-	<script type="text/javascript" >
-		if (! haveError ){
-			var myTimer;
-			var myTimer1;
-			var myTimer2;
-			myTimer  = setInterval("update()", 3000);
-			if (!isComment){
-				myTimer1 = setInterval("viewAverage()", 1001);
-				myTimer2 = setInterval("viewAverageCol()",1001);
-			}	
-			else
-				myTimer1 = setInterval("viewColorForComment()", 1001);			
-		}		
-	</script>
-{%else %}
-	<script type="text/javascript">
-		if (!isComment)	{		
-			viewAverage();
-			viewAverageCol();
-		}	
-		else
-			viewColorForComment();				
-	</script>		
+    <script type="text/javascript">
+        if (!haveError) {
+            var myTimer;
+            var myTimer1;
+            var myTimer2;
+            myTimer = setInterval("update()", 3000);
+            if (!isComment) {
+                myTimer1 = setInterval("viewAverage()", 1001);
+                myTimer2 = setInterval("viewAverageCol()", 1001);
+            }
+            else
+                myTimer1 = setInterval("viewColorForComment()", 1001);
+        }
+    </script>
+{% else %}
+    <script type="text/javascript">
+        if (!isComment) {
+            viewAverage();
+            viewAverageCol();
+        }
+        else
+            viewColorForComment();
+    </script>
 {% endif %}

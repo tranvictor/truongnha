@@ -32,62 +32,49 @@
     <div class="form-inline pull-right">
         {% if enableChangeMark %}
             <div class="btn-group">
-			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-				Khác
-				<span class="caret"></span>
-			</a>
-			
-			<ul class="dropdown-menu pull-right">
-				<li>
-					<a title="Nhập danh sách học sinh từ file Excel"
-					   href="#upload_modal"
-					   data-toggle="modal" 
-					   id="import">
-						<i class="icon-upload-alt"></i>
-						Nhập từ Excel </a>
-				</li>	
-				
-				<li>
-					<a href="{% url export_mark termChoice subjectChoice %}">
-						<i class="icon-download-alt"></i>
-						Xuất ra Excel </a>
-				</li>		
-		{% else %}	
-			<a class="btn" href="{% url export_mark termChoice subjectChoice %}">
-				<i class="icon-download-alt"></i>
-				Xuất ra Excel </a>
+            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                Khác
+                <span class="caret"></span>
+            </a>
+
+            <ul class="dropdown-menu pull-right">
+            <li>
+                <a title="Nhập danh sách học sinh từ file Excel"
+                   href="#upload_modal"
+                   data-toggle="modal"
+                   id="import">
+                    <i class="icon-upload-alt"></i>
+                    Nhập từ Excel </a>
+            </li>
+
+            <li>
+                <a href="{% url export_mark termChoice subjectChoice %}">
+                    <i class="icon-download-alt"></i>
+                    Xuất ra Excel </a>
+            </li>
+        {% else %}
+            <a class="btn" href="{% url export_mark termChoice subjectChoice %}">
+                <i class="icon-download-alt"></i>
+                Xuất ra Excel </a>
 
         {% endif %}
-			
+
         {% if enableChangeMark %}
-				<li>
-					<a  id = "nextcell" 	
-					 title="Chuyển sang ô tiếp theo bằng {enter} hoặc {tab}" >
+            <li>
+                <a id="nextcell"
+                   title="Chuyển sang ô tiếp theo bằng {enter} hoặc {tab}">
                     <i class="icon-move"></i>					 
 					<span id="textNextcell">	
 					{% if move == '0' %}
-						Nhập theo cột
-					{% else %}	
-						Nhập theo hàng
-					{% endif %}	
-					</span>
-					</a>	
-				</li>					
-			</ul>
-			<label> &nbsp;&nbsp; </label> 
-            <label>
-            <span
-                    {% if  not selectedSubject.nx %}
-                        title="Bạn không cần gõ dấu phảy. Ví dụ nhập 7.5 thì chỉ cần gõ 75"
+                        Nhập theo cột
                     {% else %}
-                        title="Bạn chỉ cần gõ tắt: D -> Đ (Đạt), C -> CĐ (Chưa đạt)"
+                        Nhập theo hàng
                     {% endif %}
-                    >
-				<!--suppress HtmlPresentationalElement -->
-				<i class="icon-gift"></i> típ
-			</span>
-            </label>
-			</div>
+					</span>
+                </a>
+            </li>
+            </ul>
+            </div>
         {% endif %}
     </div>
 </div>
@@ -183,10 +170,10 @@
     <select id="colMiengExport" style="width:70px">
         {% for i in secondLoop %}
             {% if  i == MAX_VIEW %}
-                <option value="{{i}}" selected > {{ i }} </option>
+                <option value="{{ i }}" selected> {{ i }} </option>
             {% else %}
                 {% if  i > MAX_VIEW %}
-                    <option value="{{i}}" > {{ i }} </option>
+                    <option value="{{ i }}"> {{ i }} </option>
                 {% endif %}
             {% endif %}
         {% endfor %}
@@ -195,10 +182,10 @@
     <select id="col15PhutExport" style="width:70px">
         {% for i in secondLoop %}
             {% if  i == MAX_VIEW %}
-                <option value="{{i}}" selected > {{ i }} </option>
+                <option value="{{ i }}" selected> {{ i }} </option>
             {% else %}
                 {% if  i > MAX_VIEW %}
-                    <option value="{{i}}" > {{ i }} </option>
+                    <option value="{{ i }}"> {{ i }} </option>
                 {% endif %}
             {% endif %}
         {% endfor %}
@@ -207,10 +194,10 @@
     <select id="colMotTietExport" style="width:70px">
         {% for i in secondLoop %}
             {% if  i == MAX_VIEW %}
-                <option value="{{i}}" selected > {{ i }} </option>
-			{% else %}
+                <option value="{{ i }}" selected> {{ i }} </option>
+            {% else %}
                 {% if  i > MAX_VIEW %}
-                    <option value="{{i}}" > {{ i }} </option>
+                    <option value="{{ i }}"> {{ i }} </option>
                 {% endif %}
             {% endif %}
         {% endfor %}

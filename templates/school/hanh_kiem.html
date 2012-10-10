@@ -155,7 +155,7 @@
                             $(".submitbutton").attr("disabled", false);
                         }
                     };
-                    if (value != old_value){
+                    if (value != old_value) {
                         $(this).parents("td").attr("data-hanhkiem", value);
                         $.ajax(arg);
                     }
@@ -205,7 +205,7 @@
                             $(".submitbutton").attr('disabled', false);
                         }
                     };
-                    if (y != old_value){
+                    if (y != old_value) {
                         $(this).parents("td").attr("data-hanhkiem", y);
                         $.ajax(arg);
                     }
@@ -256,7 +256,7 @@
                             $(".submitbutton").attr('disabled', false);
                         }
                     };
-                    if (value != old_value){
+                    if (value != old_value) {
                         $(this).parents("td").attr("data-hanhkiem", value);
                         $.ajax(arg);
                     }
@@ -314,7 +314,7 @@
                 <i class="icon-upload-alt"></i>
                 Nhập từ Excel</a>
             <a class="btn" title="Xuất hạnh kiểm ra file Excel."
-               href="{%url export_hanh_kiem class.id %}" id="export">
+               href="{% url export_hanh_kiem class.id %}" id="export">
                 <i class="icon-download-alt"></i>
                 Xuất ra Excel </a>
         </div>
@@ -326,12 +326,6 @@
                 <span class="badge badge-warning">B</span>: Trung bình,
                 <span class="badge badge-important">Y</span>: Yếu.
             </button>
-            {% if user.userprofile.organization.level == 'T' %}
-                <button class="btn disabled span1"
-                        title="Có thể dùng phím Enter hoặc phím mũi tên xuống để xuống ô dưới">
-                    <i class="icon-gift"></i> típ
-                </button>
-            {% endif %}
         </div>
     </div>
 
@@ -420,7 +414,7 @@
 
             <tbody>
             {% for p,f, v in list %}
-                <tr class="{{p.id}}">
+                <tr class="{{ p.id }}">
                     <td>{{ forloop.counter }}</td>
 
                     <td class="align-left" style="font-size: 1.15em;">{{ p.last_name }}</td>
@@ -430,21 +424,22 @@
 
                     {% if pos > 2 %}
                         {% if term.number == 1 %}
-                            <td class="hk1" data-hanhkiem="{{ v.term1}}">{{ f.term1|default_if_none:"" }}</td>
+                            <td class="hk1" data-hanhkiem="{{ v.term1 }}">{{ f.term1|default_if_none:"" }}</td>
                             <td class="hk2"></td>
                             <td class="cn"></td>
                         {% else %}
                             {% if pos < 4 %}
-                                <td class="hk {{ v.term1}}">{{ v.term1|default_if_none:"" }}</td>
+                                <td class="hk {{ v.term1 }}">{{ v.term1|default_if_none:"" }}</td>
                             {% else %}
                                 <td class="hk1" data-hanhkiem="{{ v.term1 }}">{{ f.term1|default_if_none:"" }}</td>
                             {% endif %}
-                            <td class="hk2" data-hanhkiem="{{ v.term2 }}">{{ f.term2|default_if_none:""  }}</td>
-                            <td class="cn" data-hanhkiem="{{ v.year }}">{{ f.year|default_if_none:""  }}</td>
+                            <td class="hk2" data-hanhkiem="{{ v.term2 }}">{{ f.term2|default_if_none:"" }}</td>
+                            <td class="cn" data-hanhkiem="{{ v.year }}">{{ f.year|default_if_none:"" }}</td>
                         {% endif %}
 
                         {% for field in f.get_list_month %}
-                            <td class="col{{ forloop.counter }} hk-thang" data-hanhkiem="{{ field.value }}">{{ field }}</td>
+                            <td class="col{{ forloop.counter }} hk-thang"
+                                data-hanhkiem="{{ field.value }}">{{ field }}</td>
                         {% endfor %}
                     {% else %}
                         <td class="{{ v.term1 }}">{{ v.term1|default_if_none:"" }}</td>
@@ -459,6 +454,12 @@
             {% endfor %}
             </tbody>
         </table>
+
+        {% if user.userprofile.organization.level == 'T' %}
+            <div class="pagination-right">
+                <p class="dimmed">Típ: có thể dùng phím ENTER hoặc các phím mũi tên để di chuyển.</p>
+            </div>
+        {% endif %}
 
         {% if pos > 3 %}
             <div class="pagination-centered">

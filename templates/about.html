@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block breadcrumb %}
-    {{ block.super }}
-    {% load breadcrumb_tags %}
-    {% add_crumb 'Liên hệ' %}
-{% endblock %}
-
 {% block css %}
     <style type="text/css">
         p {
             text-align: justify;
         }
     </style>
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Liên hệ' %}
 {% endblock %}
 
 {% block content %}
@@ -25,8 +25,7 @@
                 Phần mềm phục vụ các đối tượng chính là: Hiệu trưởng, Hiệu phó, Giáo viên, Học sinh, Phụ huynh
                 và Cán bộ cấp Sở, Phòng Giáo dục.</p>
             <ul>
-                <li>Nhà trường có thể quản lý các thông tin về học tập, rèn luyện của học sinh.
-                </li>
+                <li>Nhà trường có thể quản lý các thông tin về học tập, rèn luyện của học sinh.</li>
                 <li>Giáo viên có thể nhập các kết quả học tập, rèn luyện của học sinh cho các lớp mình giảng
                     dạy.
                 </li>
@@ -39,16 +38,14 @@
 
             <p>
                 Phần mềm được xây dựng dựa trên 100% nền tảng mã nguồn mở và được cung cấp dưới dạng dịch vụ phần mềm.
-                Sản
-                phẩm được thiết kế và xây dựng ở qui mô quốc gia, có thể phục vụ các trường trên phạm vi toàn quốc. Sản
-                phẩm
-                sẵn sàng triển khai trên các nền tảng điện toán đám mây.
+                Sản phẩm được thiết kế và xây dựng ở qui mô quốc gia, có thể phục vụ các trường trên phạm vi toàn quốc. Sản
+                phẩm sẵn sàng triển khai trên các nền tảng điện toán đám mây.
             </p>
 
             <p>
                 Phần mềm được thiết kế cho cả máy tính bảng, điện thoại cao cấp và hỗ trợ màn hình cảm ứng. Ngoài ra còn
-                có các ứng dụng trên nền Android và iPhone tối ưu hơn cho giáo viên, phụ huynh có thể dễ dàng sử dụng hệ
-                thống.
+                có các ứng dụng trên nền Android và iPhone tối ưu hơn cho giáo viên, phụ huynh có thể dễ dàng truy cập
+                thông tin.
             </p>
 
         </div>
