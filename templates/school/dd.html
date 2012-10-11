@@ -198,12 +198,12 @@
         {#            <strong>Warning!</strong> Best check yo self, you're not looking too good.#}
         {#        </div>#}
         {#        <div class="xalert xpull-right">#}
-        <span class="pull-right" >
+        <span class="pull-right dimmed" >
             <label>
                 Nhập một chữ cái:
-                <span class="badge badge-success">P</span>: Có phép,
-                <span class="badge badge-important">K</span>: Không phép,
-                <span class="badge badge-info">M</span>: Muộn.
+                <span class="label label-success">P</span>: Có phép,
+                <span class="label label-important">K</span>: Không phép,
+                <span class="label label-info">M</span>: Muộn.
             </label>
         </span>
 
@@ -232,8 +232,8 @@
         {% for p,fl in list %}
             <tr>
                 <td> {{ forloop.counter }}</td>
-                <td class="align-left" style="font-size: 1.15em;">{{ p.last_name }}</td>
-                <td style="font-size: 1.15em;">{{ p.first_name }}</td>
+                <td class="align-left" >{{ p.last_name }}</td>
+                <td class="align-left" style="border-left: none;">{{ p.first_name }}</td>
                 {% for f in fl %}
                     <td class="dd col{{ forloop.counter }}"> {{ f.loai }} </td>
                 {% endfor %}

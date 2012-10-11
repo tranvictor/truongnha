@@ -319,14 +319,15 @@
                 Xuất ra Excel </a>
         </div>
 
-        <div class="btn-group pull-right">
-            <button class="btn disabled"> Nhập một chữ cái:
-                <span class="badge badge-success">T</span>: Tốt,
-                <span class="badge badge-info">K</span>: Khá,
-                <span class="badge badge-warning">B</span>: Trung bình,
-                <span class="badge badge-important">Y</span>: Yếu.
-            </button>
-        </div>
+        <span class="pull-right dimmed" >
+            <label>
+                Nhập một chữ cái:
+                <span class="label label-success">T</span> Tốt,
+                <span class="label label-info">K</span> Khá,
+                <span class="label label-warning">B</span> Trung bình,
+                <span class="label label-important">Y</span> Yếu.
+            </label>
+        </span>
     </div>
 
     <form action="{% url hanh_kiem class.id %}" method="post">{% csrf_token %}
@@ -417,8 +418,8 @@
                 <tr class="{{ p.id }}">
                     <td>{{ forloop.counter }}</td>
 
-                    <td class="align-left" style="font-size: 1.15em;">{{ p.last_name }}</td>
-                    <td style="font-size: 1.15em;">{{ p.first_name }}</td>
+                    <td class="align-left" >{{ p.last_name }}</td>
+                    <td class="align-left" style="border-left: none;">{{ p.first_name }}</td>
 
                     <td>{{ p.birthday|date:"SHORT_DATE_FORMAT" }}</td>
 

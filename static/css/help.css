@@ -1,4 +1,5 @@
 .help-content img {
+    margin-top: 1em;
     border: #ddd solid thin;
     -moz-box-shadow: 0 0 3px 3px #CCC;
     -webkit-box-shadow: 0 0 3px 3px #CCC;
