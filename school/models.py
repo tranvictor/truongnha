@@ -931,22 +931,22 @@ class Subject(models.Model):
     
     def short_name(self):
         name_dict = {
-                u'Toán': 'To',
-                u'Vật lí': 'VL',
-                u'Hóa học': 'Ho',
-                u'Sinh học': 'Si',
-                u'Ngữ văn': 'V',
+                u'Toán': 'Toan',
+                u'Vật lí': 'Ly',
+                u'Hóa học': 'Hoa',
+                u'Sinh học': 'Sinh',
+                u'Ngữ văn': 'Van',
                 u'Lịch sử': 'Su',
-                u'Địa lí': 'D',
-                u'Ngoại ngữ': 'NN',
+                u'Địa lí': 'Dia',
+                u'Ngoại ngữ': 'NNgu',
                 u'GDCD': 'GDCD',
-                u'Công nghệ': 'CN',
-                u'Thể dục': 'TD',
-                u'Âm nhạc': 'AN',
-                u'Mĩ thuật': 'MT',
-                u'NN2': 'NN2',
-                u'Tin học': 'Ti',
-                u'GDQP-AN': 'QP'}
+                u'Công nghệ': 'CNghe',
+                u'Thể dục': 'TDuc',
+                u'Âm nhạc': 'Nhac',
+                u'Mĩ thuật': 'MThuat',
+                u'NN2': 'NNgu2',
+                u'Tin học': 'Tin',
+                u'GDQP-AN': 'QPhong'}
         if self.type in name_dict: return name_dict[self.type]
         else: return 'TC'
     #class Admin: pass
