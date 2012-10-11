@@ -19,7 +19,7 @@ $(document).ready(function(){
                     select = this.element.hide(),
                     selected = select.children(":selected"),
                     value = selected.val() ? $.trim(selected.text()) : "";
-                var input = this.input = $("<input class='id_teacher_id' placeholder='Nhập một số ký tự để chọn'>")
+                var input = this.input = $("<input class='id_teacher_id' placeholder='Nhập chữ trong họ/tên để chọn'>")
                     .insertAfter(select)
                     .val(value)
                     .autocomplete({

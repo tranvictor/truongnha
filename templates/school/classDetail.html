@@ -120,11 +120,11 @@
         {% if pos > 3 or gvcn == 1 %}
             <div class="pull-right">
                 <div class="btn-group">
-                    <a class="btn"
-                       title="Nhắn tin điểm trung bình học kỳ"
-                       href="{% url send_sms_result class.id %}">
-                        Nhắn tin học tập
-                    </a>
+{#                    <a class="btn"#}
+{#                       title="Nhắn tin điểm trung bình học kỳ"#}
+{#                       href="{% url send_sms_result class.id %}">#}
+{#                        Nhắn tin học tập#}
+{#                    </a>#}
 
                     {% if pos == 3 and gvcn == 1 or pos > 3 %}
                         <button id="textSms" class="btn btn-warning"

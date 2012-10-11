@@ -7,34 +7,34 @@
 
 <div id="submenu" class="btn-toolbar">
     <div class="btn-group">
-        <button onclick="showMessageTable(1);" class="btn btn-info pull-right" id="show_SMS_buttons">
-            Nhắn tin <i class="icon-chevron-right"></i></button>
-        <span style="display:none" id="hide_SMS_buttons">
-                <button onclick="showMessageTable(0);" class="btn btn-info">
-                    <i class="icon-chevron-left"></i>
-                    {% if enableChangeMark %}
-                        Nhập điểm
-                    {% else %}
-                        Bảng điểm
-                    {% endif %}
-                </button>
-                <button onclick="selectNoSent()" class="btn btn-success sms-toolbar">
-                    <i class="icon-check"></i>
-                    Chọn điểm chưa nhắn
-                </button>
-                <button onclick="sendSMS()" class="btn btn-warning sms-toolbar">
-                    <i class="icon-envelope"></i>
-                    Gửi tin nhắn
-                </button>
-        </span>
+{#        <button onclick="showMessageTable(1);" class="btn btn-info pull-right" id="show_SMS_buttons">#}
+{#            Nhắn tin <i class="icon-chevron-right"></i></button>#}
+{#        <span style="display:none" id="hide_SMS_buttons">#}
+{#                <button onclick="showMessageTable(0);" class="btn btn-info">#}
+{#                    <i class="icon-chevron-left"></i>#}
+{#                    {% if enableChangeMark %}#}
+{#                        Nhập điểm#}
+{#                    {% else %}#}
+{#                        Bảng điểm#}
+{#                    {% endif %}#}
+{#                </button>#}
+{#                <button onclick="selectNoSent()" class="btn btn-success sms-toolbar">#}
+{#                    <i class="icon-check"></i>#}
+{#                    Chọn điểm chưa nhắn#}
+{#                </button>#}
+{#                <button onclick="sendSMS()" class="btn btn-warning sms-toolbar">#}
+{#                    <i class="icon-envelope"></i>#}
+{#                    Gửi tin nhắn#}
+{#                </button>#}
+{#        </span>#}
     </div>
 
-    <div class="form-inline pull-right">
+    <div class="form-inline btn-group pull-right">
         {% if enableChangeMark %}
             <div class="btn-group">
             <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                Khác
-                <span class="caret"></span>
+{#                Khác#}
+                <i class="icon-reorder"></i>
             </a>
 
             <ul class="dropdown-menu pull-right">
@@ -52,29 +52,25 @@
                     <i class="icon-download-alt"></i>
                     Xuất ra Excel </a>
             </li>
-        {% else %}
-            <a class="btn" href="{% url export_mark termChoice subjectChoice %}">
-                <i class="icon-download-alt"></i>
-                Xuất ra Excel </a>
-
-        {% endif %}
-
-        {% if enableChangeMark %}
-            <li>
-                <a id="nextcell"
-                   title="Chuyển sang ô tiếp theo bằng {enter} hoặc {tab}">
-                    <i class="icon-move"></i>					 
-					<span id="textNextcell">	
+                <li>
+                    <a id="nextcell"
+                       title="Chuyển sang ô tiếp theo bằng {enter} hoặc {tab}">
+                        <i class="icon-move"></i>
+					<span id="textNextcell">
 					{% if move == '0' %}
                         Nhập theo cột
                     {% else %}
                         Nhập theo hàng
                     {% endif %}
 					</span>
-                </a>
-            </li>
+                    </a>
+                </li>
             </ul>
             </div>
+        {% else %}
+            <a class="btn" href="{% url export_mark termChoice subjectChoice %}">
+                <i class="icon-download-alt"></i>
+                Xuất ra Excel </a>
         {% endif %}
     </div>
 </div>
