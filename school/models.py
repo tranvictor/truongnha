@@ -1121,11 +1121,11 @@ class Mark(models.Model):
                         temp += arr_mark[i * MAX_COL + j + 1] + ' '
             if temp != '':
                 if  i == 0:
-                    result+=u'miệng:%s,' % temp.strip()
+                    result+=u'miệng:%s;' % temp.strip()
                 elif i == 1:
-                    result+="15p:%s," % temp.strip()
+                    result+=" 15p:%s;" % temp.strip()
                 elif i == 2:
-                    result+="45p:%s," % temp.strip()
+                    result+=" 45p:%s." % temp.strip()
                 #so on i=3,4
         return result
 
