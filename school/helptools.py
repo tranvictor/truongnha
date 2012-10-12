@@ -7,6 +7,7 @@ from django.template import RequestContext
 from app.models import Organization
 from school.models import Pupil, TKDiemDanh, Attend, StartYear, Mark, Class,\
         Teacher, Subject, TKMon, DiemDanh, Year
+from sms.models import sms
 from school.school_settings import CAP2_DS_MON, CAP1_DS_MON, CAP3_DS_MON
 from school.templateExcel import normalize, CHECKED_DATE
 from school.utils import to_en1, add_subject, get_lower_bound
@@ -19,6 +20,11 @@ SYNC_SUBJECT = os.path.join('helptool','sync_subject.html')
 TEST_TABLE = os.path.join('helptool','test_table.html')
 REALTIME = os.path.join('helptool','realtime_test.html')
 CONVERT_MARK= os.path.join('helptool','convert_mark.html')
+
+
+def _sync_sms_recent():
+    smses = sms.objects.all()
+    smses.update(recent=False)
 
 def _sync_pupil_disable():
     #those students have current class

@@ -11,7 +11,6 @@ import random
 import simplejson
 import re
 import sys
-import os
 from cStringIO import StringIO
 
 # This class will test the very first steps on a workflow

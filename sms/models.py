@@ -69,6 +69,7 @@ class sms(models.Model):
     receiver = models.CharField("Người nhận", max_length=64, blank=False)
     recent = models.BooleanField(default=True)
     success = models.BooleanField(default=False)
+#    failed_reason = models.TextField("Lý do")
     
     class Meta:
         verbose_name_plural = "SMS"
