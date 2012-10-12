@@ -1,0 +1,182 @@
+{% load url from future %}
+{% load i18n %}
+<!DOCTYPE html>
+<html>
+<head>
+<title>{% block title %}{% endblock %}</title>
+<link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css">
+{% block extrastyle %}{% endblock %}
+<style>
+#changelist table tbody td:first-child, #changelist table tbody th:first-child {
+    border-left: 1px solid #ddd;
+}
+#changelist .actions {
+  margin-top: 10px;
+  border: 1px solid #DDD;
+}
+
+.object-tools {
+  float: right;
+}
+
+select + .btn {
+  margin-top: -10px;
+  margin-left: 5px;
+}
+
+.calendarbox {
+  border: 1px solid #ccc;
+}
+
+.row-fluid {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1200px;
+}
+
+.page-header {
+  padding-bottom: 4px;
+}
+
+body.popup .row-fluid {
+  max-width: 700px;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+body.popup .vLargeTextField, body.popup .vXMLLargeTextField {
+  max-width: 400px;
+}
+
+.addlink {
+  background: url(/static/admin/img/icon_addlink.gif) 0 .2em no-repeat;
+  height: 16px;
+  width: 16px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.changelink {
+  background: url(/static/admin/img/icon_changelink.gif) 0 .2em no-repeat;
+  height: 16px;
+  width: 16px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.deletelink {
+  background: url(/static/admin/img/icon_deletelink.gif) 0 .25em no-repeat;
+  height: 16px;
+  width: 16px;
+  display: inline-block;
+  vertical-align: middle;
+}
+</style>
+<script>
+window.__admin_media_prefix__ = '/static/admin/';
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-alert.js"></script>
+<script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-dropdown.js"></script>
+{% block extrahead %}{% endblock %}
+{% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+</head>
+
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}">
+
+    {% if not is_popup %}
+    <!-- Header -->
+<div class="navbar">
+  <div class="navbar-inner">
+    <div class="container-fluid">
+      <span class="brand">{% block branding %}{% endblock %}</span>
+        <ul class="nav pull-right">
+          {% block userlinks %}
+          {% if user.is_active and user.is_staff %}
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans "Welcome" %} 
+                <strong>{% filter force_escape %}{% firstof user.first_name user.username %}{% endfilter %}</strong>.
+                <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                  {% url 'django-admindocs-docroot' as docsroot %}
+                  {% if docsroot %}
+                      <li><a href="{{ docsroot }}">{% trans 'Documentation' %}</a></li>
+                  {% endif %}
+                  {% url 'admin:password_change' as password_change_url %}
+                  {% if password_change_url %}
+                      <li><a href="{{ password_change_url }}">
+                  {% else %}
+                      <li><a href="{{ root_path }}password_change/">
+                  {% endif %}
+                  {% trans 'Change password' %}</a></li>
+                  <li class="divider"></li>
+                  {% url 'admin:logout' as logout_url %}
+                  {% if logout_url %}
+                      <li><a href="{{ logout_url }}">
+                  {% else %}
+                      <li><a href="{{ root_path }}logout/">
+                  {% endif %}
+                  {% trans 'Log out' %}</a></li>
+              </ul>
+            </li>
+          {% endif %}
+          {% endblock %}
+        </ul>
+    </div>
+  </div>
+</div>
+    <!-- END Header -->
+
+ <div class="container-fluid">
+    {% block breadcrumbs %}
+      <ul class="breadcrumb">
+        <li><a href="#">{% trans 'Home' %}</a> <span class="divider">/</span></li>
+        {% if title %}  
+          <li class="active">{{ title }}</li>
+        {% endif %}
+      </ul>
+    {% endblock %}
+</div>
+
+{% endif %}
+
+<!-- Container -->
+<div class="container-fluid">
+    
+    {% if messages %}
+      {% for message in messages %}
+      <div class="alert alert-block {{ message.tags }}">
+        <a class="close" data-dismiss="alert" href="#">×</a>
+        <p>{{ message }}</p>
+      </div>
+      {% endfor %}
+    {% endif %}
+
+    {% block internal_content %}
+      <div class="row-fluid">
+
+        <div class="span12">
+          <div id="content" class="{% block coltype %}colM{% endblock %}">
+              {% block pretitle %}{% endblock %}
+              <div style="margin-bottom: 10px;">
+              {% block object-tools %}{% endblock %}
+              {% block content_title %}{% if title %}<h2 class="page-header">{{ title }}</h2>{% endif %}{% endblock %}
+              </div>
+
+              {% block content %}
+              {{ content }}
+              {% endblock %}
+              <br class="clear" />
+          </div>
+        </div>
+    </div>
+    {% endblock %}
+    <!-- END Content -->
+
+    {% block footer %}<div id="footer"></div>{% endblock %}
+</div>
+<!-- END Container -->
+
+</body>
+</html>
