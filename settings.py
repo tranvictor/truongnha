@@ -9,7 +9,6 @@ if os.environ.pop('DJANGO_SETTINGS_TESTING', None):
     IS_TESTING = True
 else:
     IS_TESTING = False
-print os.environ, 'setting'
 
 TEMPLATE_DEBUG = True
 
@@ -213,7 +212,7 @@ INSTALLED_APPS = (
     'api',
     'pagination',
     'djcelery',
-    #'south', #for database migration/upgrade
+    'south', #for database migration/upgrade
 #    'django_jenkins',
 )
 
