@@ -97,30 +97,41 @@
                 <th id="thFirstName">Tên</th>
                 <th id="thBirthday">Ngày sinh</th>
                 <th id="thPhone">Số điện thoại</th>
+                <th id="thEmail"></th>
                 <th >Nội dung</th>
+                <th >Độ dài</td>
             </tr>
             </thead>
 
             <tbody>
             {% for ss in students %}
-                <tr class="{{ss.id}} student">
+                <tr class="{{ss.id}} student"
+                    data-contact="{{ss.sms_phone}} {{ss.email|default_if_none:""}}">
                     <td style="text-align: center;">
                         <input type="checkbox"
                         id="checkbox_{{ss.id}}"
                         class="studentCheckbox"/>
                     </td>
                     <td> {{ forloop.counter }} </td>
-                    <td>
-                        {{ ss.last_name }}
-                    </td>
-                    <td>
-                        {{ ss.first_name }}
-                    </td>
+                    <td><a title="Xem toàn bộ thông tin chi tiết"
+                            href="{%url student_detail ss.id %}">{{ ss.last_name }}
+                    </a></td>
+                    <td><a title="Xem toàn bộ thông tin chi tiết"
+                            href="{%url student_detail ss.id %}">{{ ss.first_name }}
+                    </a> </td>
                     <td> {{ ss.birthday|date:"SHORT_DATE_FORMAT" }} </td>
                     <td> {{ ss.sms_phone }} </td>
+                    {% if ss.email %}
+                        <td title="{{ ss.email }}">
+                            <i class="icon-envelope"></i>
+                        </td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
                     <td class="truncated" style="max-width:250px;"
                       title="{{ info_list|get_value:ss.id }}">
                       {{ info_list|get_value:ss.id }}</td>
+                    <td>{{ info_list|get_value:ss.id|length}}</td>
                 </tr>
             {% endfor %}
             </tbody>
