@@ -1,0 +1,41 @@
+﻿{% extends "base.html" %}
+{% load dictionary %}
+{% block js %}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Báo cáo' 'report' %}
+    {% add_crumb 'Lịch sử sửa điểm' %}
+{% endblock %}
+
+{% block content %}
+	{% if not has_content %}
+		Không có sự sửa đổi điểm nào.
+	{% else %}
+		<table class="table table-bordered" width="100%">
+			<tr>
+				<th>
+				</th>
+				{% for s in list_subject %}
+					<th>
+						{{s}}
+					</th>				
+				{% endfor %}
+			</tr>
+			{% for c,dict in list %}
+			<tr>
+				<td>
+				{{c.name}}
+				</td>
+				{% for s in list_subject %}
+					<td>
+						<a >{{ dict|get_value1:s }} </a> 
+					</td>
+				{% endfor %}
+			</tr>
+			{% endfor %}
+		</table>
+	{% endif %}	
+{% endblock %}

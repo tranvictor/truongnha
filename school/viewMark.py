@@ -10,7 +10,7 @@ import os.path
 import time
 import datetime
 from decorators import need_login
-from school.models import Term, Mark, Subject, Pupil, TKMon, SUBJECT_LIST, Class, Teacher
+from school.models import Term, Mark, Subject, Pupil, TKMon, SUBJECT_LIST, Class, Teacher, HistoryMark
 from school.utils import get_current_term, get_position, in_school, get_level, to_en1, get_school, get_student
 from sms.utils import sendSMS
 from templateExcel import  MAX_COL,CHECKED_DATE
@@ -462,7 +462,7 @@ def toDigit(x):
     else:
         return float(x)
 
-def update(s,primary,isComment):
+def update(s,primary,isComment,user):
     strings=s.split(':')
     idMark=int(strings[0])    
     setOfNumber =strings[1].split('*')
@@ -486,7 +486,19 @@ def update(s,primary,isComment):
         else:
             time=str(int((timeNow-CHECKED_DATE).total_seconds()/60))
 
-        if    number <= 3*MAX_COL:
+        if number <= 3*MAX_COL:
+            if (arrMark[number] != value) & (arrMark[number] != '' ):
+                h = HistoryMark()
+                if arrMark[number]=='':
+                    h.old_mark = None
+                else:
+                    h.old_mark = float(arrMark[number])
+                h.number = number
+                h.mark_id = m
+                h.subject_id = m.subject_id
+                h.user_id = user
+                h.save()
+
             arrMark[number] = value
             arrTime[number] = time
 
@@ -590,6 +602,7 @@ def saveMark(request):
         strs=str.split('/')
                 
         position = get_position(request)
+        user = request.user
         if   position ==4 :
 #            idTeacher= int(strs[1])
 #            teacher= Teacher.objects.get(id=idTeacher)
@@ -605,10 +618,9 @@ def saveMark(request):
         primary= int(strs[2])
         isComment = strs[3]=="true"
         for i in range(4,length):
-                update(strs[i],primary,isComment)
+                update(strs[i],primary,isComment,user)
                      
         message=strs[0]
-        
         data = simplejson.dumps({'message': message})
         t2=time.time()
         print (t2-t1)

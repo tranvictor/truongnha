@@ -7,4 +7,10 @@ register = template.Library()
 def get_value(d, k):
     if k == None: return None
     if not k in d: return None
-    return d[k] 
+    return d[k]
+
+@register.filter
+def get_value1(d, k):
+    if k == None: return ''
+    if not k in d: return ''
+    return d[k]

@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from app.models import Organization
 from django.contrib.auth.models import User
 from school.models import Year, Term, TBNam, TBHocKy, Class,\
-        Pupil, Block, Subject, Mark, TKMon
+        Pupil, Block, Subject, Mark, TKMon,HistoryMark
 from school.utils import get_current_year, in_school, get_position,\
         get_level, get_current_term, get_school
 from school.writeExcel import count1Excel, count2Excel,\
@@ -1152,3 +1152,37 @@ def countSMS(request, type=None,
                 'year1':year1,})
     return HttpResponse(t.render(c))
 
+@need_login
+@school_function
+@operating_permission([u'HIEU_TRUONG', u'HIEU_PHO'])
+def history_mark(request):
+    tt1=time.time()
+    current_year = get_current_year(request)
+    class_list = Class.objects.filter(year_id=current_year).order_by("block_id__number","name")
+    list = []
+    for c in class_list:
+        subject_list = Subject.objects.filter(class_id=c).order_by("index")
+        dict = {}
+        ok = False
+        for s in subject_list:
+            number_history = HistoryMark.objects.filter(subject_id=s).count()
+            if number_history == 0:
+                dict[s.name] = ''
+            else:
+                dict[s.name] = number_history
+                ok = True
+        if ok :
+            list.append((c,dict))
+        list_subject = listSubject(current_year)
+    has_content = len(list) != 0
+    t = loader.get_template(os.path.join('school/report','history_mark.html'))
+    c = RequestContext(request,
+            {
+            'list_subject':list_subject,
+            'list':list,
+            'has_content':has_content,
+            })
+    tt2=time.time()
+    print "time.......................",(tt2-tt1)
+
+    return HttpResponse(t.render(c))

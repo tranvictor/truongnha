@@ -97,4 +97,7 @@ urlpatterns = patterns('',
     url(r'printNoPass/(?P<type>\w+)$' ,  viewCount.printNoPass, name="print_no_pass"),
     url(r'printNoPass/(?P<type>\w+)/(?P<isExcel>\w+)$' ,  viewCount.printNoPass, name="print_no_pass"),
 
+    url(r'histotyMark$', viewCount.history_mark, name="history_mark"),
+
+
 )

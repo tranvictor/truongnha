@@ -27,7 +27,8 @@ urlpatterns = patterns('',
     url(r'markForAStudent/(?P<class_id>\w+)/(?P<student_id>\w+)$', viewMark.markForAStudent, name="mark_for_a_student"),
     url(r'markForAStudent/(?P<class_id>\w+)/(?P<student_id>\w+)/(?P<term_id>\w+)$', viewMark.markForAStudent, name="mark_for_a_student"),
     #url(r'markForASubject/(?P<subject_id>\w+)', viewMark.markForASubject),
-    
+
+
     url(r'saveMark$', viewMark.saveMark, name="save_mark"),
     url(r'saveNote$', viewMark.saveNote, name="save_note"),
     url(r'sendSMSMark$', viewMark.sendSMSMark, name="send_sms_mark"),

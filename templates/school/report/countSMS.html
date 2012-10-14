@@ -21,13 +21,8 @@
 {% block breadcrumb %}
     {{ block.super }}
     {% load breadcrumb_tags %}
-    {% if not user.userprofile.isSchool %}
-        {% add_crumb 'Báo cáo' 'department_report' %}
-        {% add_crumb request.session.school_name 'report' request.session.school_id %}
-    {% else %}
-        {% add_crumb 'Báo cáo' 'report' %}
-    {% endif %}
-    {% add_crumb 'Tin nhắn' %}
+    {% add_crumb 'Thông báo' 'sms_summary' '' %}
+    {% add_crumb 'Lịch sử nhắn tin' %}
 {% endblock %}
 
 {% block content %}
