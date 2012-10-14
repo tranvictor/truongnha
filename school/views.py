@@ -1418,27 +1418,42 @@ def ssv(request,school_id):
         return HttpResponseRedirect(reverse('index'))
     request.session['school_id'] = school_id
     school = so.organization_set.get(id = school_id)
-    cyear = get_current_year(request)
-    currentTerm = cyear.term_set.get(number=school.status)
-    year = None
-    try:
-        year = get_current_year(request)
-    except Exception:
-        return render_to_response(os.path.join('school','soerror.html'))
+    year = get_current_year(request)
     grades = school.block_set.all()
     classes = year.class_set.order_by('name')
-
+    # query all necessary teacher to decrease hitting db time
+    hometc_ids = [cl.teacher_id_id for cl in classes]
+    teachers = Teacher.objects.filter(id__in=hometc_ids)
+    hometc_dict = queryset_to_dict(teachers)
+    # done teacher query
+    # query aggregation to count number of students in classes
+    # instead of counting on each class that hurts the db
+    cl_ids = [cl.id for cl in classes]
+    number_dict = {}
+    numbers = Attend.objects.filter(is_member=True,_class__in=cl_ids)\
+    .values('_class')\
+    .annotate(number=Count('_class'))
+    for n in numbers: number_dict[n['_class']] = n['number']
+    # now we have dictionary number in the meaning of
+    # {classid: number_of_student}
+    uncs = UncategorizedClass.objects.filter(year_id=year)
+    currentTerm = year.term_set.get(number=school.status)
     if currentTerm.number == 3:
-        selected_term = Term.objects.get(year_id=currentTerm.year_id, number=2)
+        selected_term = Term.objects.get(year_id=currentTerm.year_id,
+            number=2)
     else:
         selected_term = currentTerm
-
     context = RequestContext(request)
-    return render_to_response(SCHOOL, {'classes': classes,
-                                       'grades': grades,
-                                       'currentTerm':currentTerm,
-                                       'selected_term':selected_term,
-    }, context_instance=context)
+    return render_to_response(SCHOOL,
+        {'classes': classes,
+         'teachers': hometc_dict,
+         'numbers': number_dict,
+         'grades': grades,
+         'uncs': uncs,
+         'grades': grades,
+         'currentTerm':currentTerm,
+         'selected_term':selected_term,},
+        context_instance=context)
 
 @need_login
 def school_subject_agenda(request, subject = 1, grade = 6, term = 1):
