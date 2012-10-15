@@ -28,6 +28,7 @@ from school.utils import get_current_year, get_school, get_permission,\
         inClass, get_teacher, to_date, get_lower_bound, get_upper_bound,\
         to_en1, add_subject, make_default_password, queryset_to_dict
 from sms.utils import send_email, sendSMS
+import settings
 
 START_YEAR = os.path.join('school', 'start_year.html')
 SCHOOL = os.path.join('school', 'school.html')
@@ -985,6 +986,8 @@ def deleteClass(request, class_id):
         return HttpResponseRedirect(reverse('school_index'))
     if s.number_of_pupils() > 0:
         return HttpResponseNotAllowed('Not Empty Class')
+    if s.id in settings.PREVENTED_CLASSES:
+        return HttpResponseNotAllowed('PreventedClass')
     s.delete()
     return HttpResponse('OK')
 
