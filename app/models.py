@@ -477,8 +477,19 @@ class Register(models.Model):
 class RegisterForm(forms.ModelForm):
     def save(self):
         super(RegisterForm, self).save()
-        message = u'New Register:\nname:%s' % self.cleaned_data['register_name']
-        send_email('New Register', message,
+        message = u'Tên người đăng ký: %s\n\
+                Điện thoại người đăng ký: %s\n\
+                Email người đăng ký: %s\n\
+                Tên trường: %s\n\
+                Địa chỉ trường: %s\n\
+                Tỉnh: %s\n' % (
+                        self.cleaned_data['register_name'],
+                        self.cleaned_data['register_phone'],
+                        self.cleaned_data['register_email'],
+                        self.cleaned_data['school_name'],
+                        self.cleaned_data['school_address'],
+                        self.cleaned_data['school_province'])
+        send_email(u'Đăng kí tài khoản mới', message,
                 to_addr=['vu.tran54@gmail.com', 'truonganhhoang@gmail.com'])
     class Meta:
         model = Register

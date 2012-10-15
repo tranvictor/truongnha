@@ -9,7 +9,6 @@ if os.environ.pop('DJANGO_SETTINGS_TESTING', None):
     IS_TESTING = True
 else:
     IS_TESTING = False
-print os.environ, 'setting'
 
 TEMPLATE_DEBUG = True
 
@@ -19,8 +18,15 @@ ADMINS = (
     ('admin', 'qlnt@googlegroups.com'),
 )
 
-SYSTEM_WARNING = u'Hệ thống nhắn tin tạm ngừng làm việc. Chúng tôi sẽ hoạt\
-        động trở lại trong 2 ngày nữa.'
+#SYSTEM_WARNING = u'Hệ thống nhắn tin tạm ngừng làm việc. Chúng tôi sẽ hoạt\
+#        động trở lại trong 2 ngày nữa.'
+SYSTEM_WARNING = ''
+
+# All of the classes and teachers those have ids in this list will not be deleted
+# via web interface
+PREVENTED_CLASSES = [892, 927, 894, 895, 925,
+        896, 897, 898, 899, 900, 901, 902, 903]
+PREVENTED_TEACHERS = [1187]
 
 MANAGERS = ADMINS
 if IS_TESTING:
@@ -213,7 +219,7 @@ INSTALLED_APPS = (
     'api',
     'pagination',
     'djcelery',
-    #'south', #for database migration/upgrade
+    'south', #for database migration/upgrade
 #    'django_jenkins',
 )
 

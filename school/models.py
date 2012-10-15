@@ -25,15 +25,15 @@ SUBJECT_TYPES = ((u'Toán',u'Toán'),
         (u'Công nghệ', u'Công nghệ'), (u'Thể dục', u'Thể dục'),
         (u'Âm nhạc', u'Âm nhạc'),(u'Mĩ thuật', u'Mĩ thuật'),
         (u'NN2', u'NN2'),(u'Tin học', u'Tin học'),
-        (u'GDQP-AN', u'GDQP-AN'))
+        (u'GDQP-AN', u'GDQP-AN'), (u'Tự chọn', u'Tự chọn'))
 SUBJECT_LIST = [u'Toán', u'Vật lí', u'Hóa học', u'Sinh học', u'Ngữ văn',
         u'Lịch sử', u'Địa lí', u'Ngoại ngữ', u'GDCD', u'Công nghệ',
         u'Thể dục', u'Âm nhạc', u'Mĩ thuật', u'NN2', u'Tin học',
-        u'GDQP-AN']
+        u'GDQP-AN', u'Tự chọn']
 SUBJECT_LIST_ASCII = [u'toan', u'vat li', u'hoa hoc', u'sinh hoc', u'ngu van',
         u'lich su', u'dia li', u'ngoai ngu', u'gdcd', u'cong nghe',
         u'the duc', u'am nhac', u'mi thuat', u'nn2', u'tin hoc',
-        u'gdqp-an']
+        u'gdqp-an', u'tu chon']
 GENDER_CHOICES = ((u'Nam', u'Nam'), (u'Nữ', u'Nữ'),)
 TERM_CHOICES = ((1, u'1'), (2, u'2'), (3, u'3'),)
 HK_CHOICES = ((u'', u'Chưa xét'), (u'T', u'Tốt'), (u'K', u'Khá'),
@@ -946,6 +946,7 @@ class Subject(models.Model):
                 u'Mĩ thuật': 'MThuat',
                 u'NN2': 'NNgu2',
                 u'Tin học': 'Tin',
+                u'Tự chọn': 'TC',
                 u'GDQP-AN': 'QPhong'}
         if self.type in name_dict: return name_dict[self.type]
         else: return 'TC'

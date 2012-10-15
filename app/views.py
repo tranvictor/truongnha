@@ -2,7 +2,6 @@
 from datetime import date
 import os
 import urlparse
-import thread
 import urllib
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
@@ -24,7 +23,9 @@ from django.views.decorators.csrf import csrf_protect
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from decorators import need_login, operating_permission
-from app.models import SUBJECT_CHOICES as SUBJECT, UserProfile, RegisterForm, KHOI_CHOICES, TINH_CHOICES, Organization, Register, ChangePasswordForm, AuthenticationForm, IP, Feedback, SystemLesson, FeedbackForm, selectForm
+from app.models import SUBJECT_CHOICES as SUBJECT, UserProfile, RegisterForm,\
+        KHOI_CHOICES, TINH_CHOICES, Organization, Register, ChangePasswordForm,\
+        AuthenticationForm, IP, Feedback, SystemLesson, FeedbackForm, selectForm
 from school.models import log_action
 from school.utils import make_username, make_default_password, get_school, get_profile_form
 import settings
@@ -50,8 +51,10 @@ class SchoolAdminAddForm(forms.Form):
             except UserProfile.DoesNotExist:
                 users.append(u)
 
-        self.fields['full_name'].choices = [(i.id, i.last_name + ' ' + i.first_name) for i in users]
-        self.fields['school'].choices = [(o.id, o.name) for o in Organization.objects.all() if o.level == 'T']
+        self.fields['full_name'].choices = [(i.id,
+            i.last_name + ' ' + i.first_name) for i in users]
+        self.fields['school'].choices = [(o.id,
+            o.name) for o in Organization.objects.all() if o.level == 'T']
 
     full_name = forms.ChoiceField()
     school = forms.ChoiceField()
@@ -112,6 +115,7 @@ def register(request):
                  'level_list': level_list,
                  'message': message},
                 context_instance = context)
+
 @need_login
 @operating_permission(['SUPER_USER'])
 def manage_register(request, sort_by_date=0, sort_by_status=0):
@@ -169,7 +173,8 @@ def manage_register(request, sort_by_date=0, sort_by_status=0):
                                             phone= phone,
                                             email= email)
                                 user = User()
-                                user.username = make_username( full_name=org_manager_name)
+                                user.username = make_username(
+                                        full_name=org_manager_name)
                                 user.password, raw_password = make_default_password()
                                 if reg.register_name:
                                     temp = reg.register_name.split(' ')
@@ -243,7 +248,8 @@ def manage_register(request, sort_by_date=0, sort_by_status=0):
     if sort_by_status: sort_by_status = '-'
     else: sort_by_status = ''
 
-    registers = Register.objects.order_by(sort_by_date+'register_date', sort_by_status+'status')
+    registers = Register.objects.order_by(sort_by_date+'register_date',
+            sort_by_status+'status')
     if sort_by_date == '-': sort_by_date = 0
     else: sort_by_date = 1
     if sort_by_status == '-': sort_by_status = 0
@@ -252,8 +258,8 @@ def manage_register(request, sort_by_date=0, sort_by_status=0):
     return render_to_response(MANAGE_REGISTER, {
         'registers': registers,
         'short_by_date': sort_by_date,
-        'short_by_status': sort_by_status
-    }, context_instance = context)
+        'short_by_status': sort_by_status },
+        context_instance=context)
 
 
 @csrf_protect
@@ -268,21 +274,23 @@ def change_password(request,
         redirect = reverse('app.views.change_password_done')
     else: redirect = post_change_redirect
     if request.method == "POST":
-        form = password_change_form(user=request.user, data=request.POST)
+        form = password_change_form(
+                user=request.user, data=request.POST)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(redirect)
     else:
         form = password_change_form(user=request.user)
-    context = {
-        'form': form,
-        }
+    context = {'form': form, }
     context.update(extra_context or {})
-    return render_to_response(template_name, context,
-                              context_instance=django.template.RequestContext(request, current_app=current_app))
+    return render_to_response(template_name,
+            context,
+            context_instance=django.template.RequestContext(request,
+                current_app=current_app))
 
 def change_password_done(request):
-    t = django.template.loader.get_template(os.path.join('app', 'change_password_done.html'))
+    t = django.template.loader.get_template(os.path.join('app',
+        'change_password_done.html'))
     c = django.template.RequestContext(request)
     return HttpResponse(t.render(c))
 
@@ -367,62 +375,67 @@ def login(request, template_name='app/login.html',
 def feedback(request):
     if request.method == 'POST': # If the form has been submitted...
         if request.is_ajax():
-            if request.user.is_anonymous():
+            user = request.user
+            if (request.user.is_anonymous()
+                    or request.user.username in [settings.DEMO_LOGIN_SCHOOL,
+                        settings.DEMO_LOGIN_TEACHER,
+                        settings.DEMO_LOGIN_UPPER]):
                 url = 'url: ' + request.POST['feedback_url']
-                user = unicode(request.POST['username'])
-                email = unicode(request.POST['userEmail'])
-                content = unicode(request.POST['content'])
-                if 'subject' in request.POST: subject= unicode(request.POST['subject'])
+                user_name = 'name: ' + unicode(request.POST['username'])
+                email = 'email: ' + unicode(request.POST['userEmail'])
+                content = 'content: ' + unicode(request.POST['content'])
+                if 'subject' in request.POST:
+                    subject= unicode(request.POST['subject'])
                 else: subject = u'[www.truongnha.com] Users\' feedback'
-                message = '\n'.join([url, user, email, content])
+                message = '\n'.join([url, user_name, email, content])
                 Feedback.objects.create(
                     content = content,
                     title = url,
                     email = email,
                     fullname = user)
-                thread.start_new_thread(
-                    send_email,
-                    (
-                        subject,
-                        message,
-                        None,
-                        [
-                            'vu.tran54@gmail.com',
+                print message
+                send_email(subject, message, None,
+                        [ 'vu.tran54@gmail.com',
                             'truonganhhoang@gmail.com',
-                            'luulethe@gmail.com',
-                            'testEmail@truongnha.com'
-                        ]
-                    )
-                )
-                return HttpResponse(simplejson.dumps({'success': True}), mimetype='json')
+                            'luulethe@gmail.com',])
+                return HttpResponse(simplejson.dumps({'success': True}),
+                        mimetype='json')
             else:
                 url = 'url: ' + request.POST['feedback_url']
-                user = 'user: ' + unicode(request.user)
+                user_name = 'user: ' + unicode(request.user)
+                profile = user.userprofile
+                if profile.position in ['HIEU_TRUONG', 'HIEU_PHO',
+                        'GIAM_DOC_SO', 'TRUONG_PHONG']:
+                    email = profile.organization.email
+                    phone = profile.organization.phone
+                else:
+                    if profile.position == 'HOC_SINH':
+                        email = user.pupil_id.email
+                        phone = user.pupil_id.sms_phone
+                    elif profile.position == 'GIAO_VIEN':
+                        email = user.teacher_id.email
+                        phone = user.teacher_id.sms_phone
+                user_email = 'email: ' + unicode(email)
+                user_phone = 'phone: ' + unicode(phone)
                 school = 'school: ' + unicode(get_school(request))
                 content = request.POST['content']
                 subject = u'[www.truongnha.com] Users\' feedback'
-                message = '\n'.join([url, user, school, content])
+                message = '\n'.join([url, user_name, user_email,
+                    user_phone, school, content])
                 Feedback.objects.create(
                     content = content,
                     title = url,
                     email = school,
                     fullname = user
                 )
-                thread.start_new_thread(
-                    send_email,
-                    (
-                        subject,
-                        message,
-                        '',
-                        [
-                            'vu.tran54@gmail.com',
+                print message
+                send_email(subject, message, '',
+                        ['vu.tran54@gmail.com',
                             'truonganhhoang@gmail.com',
                             'luulethe@gmail.com',
-                            'testEmail@truongnha.com'
-                        ]
-                    )
-                )
-                return HttpResponse(simplejson.dumps({'success': True}), mimetype='json')
+                            'testEmail@truongnha.com'])
+                return HttpResponse(simplejson.dumps({'success': True}),
+                        mimetype='json')
         else:
             form = FeedbackForm(request.POST) # A form bound to the POST data
             if form.is_valid():
