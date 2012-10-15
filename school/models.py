@@ -532,7 +532,7 @@ class Class(models.Model):
     #this function will return list of students those are studying in this class
     def students(self):
         return self.student_set.filter(attend__is_member=True)\
-                .order_by('index').distinct()
+                .order_by('index','first_name','last_name','birthday').distinct()
 
     #this method return pair dict {id:  [mark, mark, ...]}, student query set
     #Return: {id: [mark, mark, ...]}, student query set
@@ -949,6 +949,12 @@ class Subject(models.Model):
                 u'GDQP-AN': 'QPhong'}
         if self.type in name_dict: return name_dict[self.type]
         else: return 'TC'
+    def get_mark_list(self,term_id):
+        return Mark.objects.filter(term_id=term_id,
+            subject_id=self,
+            current=True).order_by('student_id__index',
+            'student_id__first_name','student_id__last_name',
+            'student_id__birthday')
     #class Admin: pass
 
 class Mark(models.Model):
