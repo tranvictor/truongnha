@@ -1108,7 +1108,7 @@ def countSMS(request, type=None,
         year1 = datetime.now().year
 
         day_of_before_month = datetime.fromordinal(
-                datetime.now().toordinal()-30)
+                datetime.now().toordinal()- 7 )
         day = day_of_before_month.day
         month = day_of_before_month.month
         year = day_of_before_month.year
