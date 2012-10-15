@@ -130,8 +130,7 @@ $(document).ready(function(){
                     $("#notify").showNotification("Bạn không có quyền xóa lớp này.")
                 }
             },
-            error:function(json){
-                console.log(json);
+            error:function(xhr){
                 $("#notify").showNotification("Bạn không có quyền xóa lớp này.");
             }
         };

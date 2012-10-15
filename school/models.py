@@ -1114,7 +1114,7 @@ class Mark(models.Model):
         is_comment = subject.nx
         arr_mark = self.toArrayMark()
         arr_sent = self.to_array_sent()
-        result = ''
+        result = []
         for i in range(3):
             temp = ''
             for j in range(MAX_COL):
@@ -1128,13 +1128,14 @@ class Mark(models.Model):
                         temp += arr_mark[i * MAX_COL + j + 1] + ' '
             if temp != '':
                 if  i == 0:
-                    result+=u' %s;' % temp.strip()
+                    result.append(u' m %s' % temp.replace('.',',').strip())
                 elif i == 1:
-                    result+=" 15' %s;" % temp.strip()
+                    result.append(" 15p %s" % temp.replace('.',',').strip())
                 elif i == 2:
-                    result+=" 1t %s." % temp.strip()
+                    result.append(" 45p %s" % temp.replace('.',',').strip())
                 #so on i=3,4
-        return result
+        result = ';'.join(result)
+        return result + '.' if result else result
 
     def update_mark(self, m, index):
         if index <= 0 :
