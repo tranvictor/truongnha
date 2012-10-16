@@ -135,7 +135,7 @@ class sms(models.Model):
         try:
             # 2 id user nay de cap phep nhan tin cho chi Van va account sensive
             if (int(self.sender_id) in [904, 16742]
-                    or ( school and school.id in [11])): 
+                    or (school and school.id in [11])): 
                 result = self._send_iNET_sms()
             else:
                 result = self._send_Viettel_sms()
@@ -162,8 +162,8 @@ class sms(models.Model):
                 m.update_sent()
 
     @task()
-    def send_sms(self):
-        return self._send_sms()
+    def send_sms(self, school=None):
+        return self._send_sms(school=school)
         
     @task()
     def send_mark_sms(self, marks):

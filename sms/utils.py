@@ -54,7 +54,7 @@ def _send_sms(phone, content, user, save_to_db=True, school=None,
                 sender=user, recent=True, success=False)
         s.save()
         if not settings.DEBUG and not is_task_called:
-            return s.send_sms.delay(s)
+            return s.send_sms.delay(s, school=school)
         else:
             return s._send_sms()
 
