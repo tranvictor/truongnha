@@ -32,13 +32,13 @@
     <div id="submenu" class="btn-toolbar">
         <div class="btn-group">
             {% if pos > 3 or user.userprofile.organization.level == 'S' %}
-                <a title="Nhập hoặc chỉnh sửa điểm các môn học" class="btn btn-primary"
+                <a id="btn-diem" title="Nhập hoặc chỉnh sửa điểm các môn học" class="btn btn-primary"
                    href="{%url mark_table selected_term.id class.id %}">
                     <i class="icon-star-empty"></i>
                     Điểm</a>
             {% else %}
                 {% if gvcn %}
-                    <a title="Xem điểm các môn do người dùng chủ nhiệm" class="btn btn-primary"
+                    <a id="btn-diem" title="Xem điểm các môn do người dùng chủ nhiệm" class="btn btn-primary"
                        href="{% url mark_for_teacher 2 selected_term.id %}">
                         <i class="icon-star-empty"></i>
                         Điểm</a>
@@ -46,14 +46,14 @@
             {% endif %}
 
             {% if pos > 3 or gvcn == 1 %}
-                <a title="Nhập thông tin học sinh nghỉ học có phép, không phép" class="btn btn-success"
+                <a id="btn-diemdanh" title="Nhập thông tin học sinh nghỉ học có phép, không phép" class="btn btn-success"
                    href="{%url diem_danh_form class.id  %}">
                     <i class="icon-check"></i>
                     Điểm danh</a>
             {% endif %}
 
             {% if pos > 0 %}
-                <a title="Đánh giá hạnh kiểm học sinh trong lớp" class="btn"
+                <a id="btn-hanhkiem" title="Đánh giá hạnh kiểm học sinh trong lớp" class="btn"
                    href="{%url hanh_kiem class.id %}">
                     Hạnh kiểm</a>
             {% endif %}
@@ -61,12 +61,12 @@
 
         <div class="btn-group">
             {% if pos > 1 or inClass == 1 %}
-                <a title="Xem tất cả thông tin của của môn học trong lớp" class="btn "
+                <a id="btn-monhoc" title="Xem tất cả thông tin của của môn học trong lớp" class="btn "
                    href="{%url subject_per_class class.id  %}">
                     Môn học</a>
             {% endif %}
 
-            <a title="Xem thời khóa biểu lớp" class="btn "
+            <a id="btn-lichhoc" title="Xem thời khóa biểu lớp" class="btn "
                href="{% url timetable class.id %}">
                 Lịch học</a>
         </div>
@@ -74,16 +74,16 @@
         {% if pos > 3 or gvcn == 1 or user.userprofile.organization.level == 'S' %}
             <div class="btn-group ">
                 {% ifequal class.year_id.school_id.status 1 %}
-                    <a title="Tính trung bình học lực của cả lớp" class="btn"
+                    <a id="btn-tongket" title="Tính trung bình học lực của cả lớp" class="btn"
                        href="{%url xep_loai_hl_theo_lop class.id 1 %}">
                         Tổng kết </a>
                 {% else %}
-                    <a title="Tính trung bình học lực của cả lớp" class="btn"
+                    <a id="btn-tongket" title="Tính trung bình học lực của cả lớp" class="btn"
                        href="{%url xep_loai_hl_theo_lop class.id 2 %}">
                         Tổng kết </a>
                 {% endifequal %}
 
-                <a title=" Xem xếp loại, lên lớp, ở lại lớp, kiểm tra lại, rèn luyện thêm trong hè"
+                <a id="btn-xeploai" title=" Xem xếp loại, lên lớp, ở lại lớp, kiểm tra lại, rèn luyện thêm trong hè"
                    class="btn"
                    href="{%url xl_ca_nam_theo_lop class.id 1 %}">
                     Xếp loại</a>
@@ -94,21 +94,21 @@
 
         {% if pos == 3 and gvcn == 1 %}
             <div class="btn-group">
-                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                <a id="btn-sodiem" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                     Phiếu/Sổ điểm
                     <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
                     <li>
-                        <a title="In phiếu báo điểm kỳ I"
+                        <a id="btn-phieudiem1" title="In phiếu báo điểm kỳ I"
                            href="{%url print_mark_for_class 1 %}">
                             Phiếu báo điểm kì I </a></li>
                     <li>
-                        <a title="In phiếu báo điểm kỳ II"
+                        <a id="btn-phieudiem2" title="In phiếu báo điểm kỳ II"
                            href="{%url print_mark_for_class 2 %}">
                             Phiếu báo điểm kì II </a></li>
                     <li>
-                        <a title="In sổ gọi tên và ghi điểm"
+                        <a id="btn-sogoiten" title="In sổ gọi tên và ghi điểm"
                            href="{%url print_mark_book class.id %}">
                             Sổ ghi điểm và gọi tên </a></li>
                 </ul>
@@ -143,7 +143,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a id="move_students"
+                                <a id="move-students"
                                    href="#move_modal"
                                    title="Chuyển học sinh được chọn sang lớp khác"
                                    data-toggle="modal">
