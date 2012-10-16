@@ -1,5 +1,6 @@
 # coding: utf8
 __author__ = 'vutran'
+from django.core.serializers.json import DjangoJSONEncoder
 from djangorestframework.views import View
 from django.db import transaction
 from djangorestframework.response import Response
@@ -497,6 +498,45 @@ class Schedule(View):
                         new_dict = {'class' : cl.name, 'subject' : u'Sinh hoạt', 'time' : tmp.sinhhoat}
                         table[d].append(new_dict)
             return HttpResponse(simplejson.dumps(table), mimetype='json')
+        except Exception as e:
+            print e
+            return Response(status.HTTP_403_FORBIDDEN)
+
+class StudentProfile(View):
+    @need_login
+    def get(self, request, student_id):
+        try:
+            student = Pupil.objects.get(id=student_id)
+            ttcn_fields = ('last_name','first_name','birthday',
+                      'sex','start_year_id','birth_place','dan_toc',
+                      'ton_giao','uu_tien','quoc_tich','home_town',
+                      'ban_dk','school_join_date','school_join_mark')
+            ttll_fields = ('current_address','phone','father_phone',
+                           'mother_phone','sms_phone','email')
+
+            ttgd_fields = ('father_name','father_birthday','father_job',
+                           'mother_name','mother_birthday','mother_job')
+
+            ttdd_fields = {'doi','ngay_vao_doi','doan','ngay_vao_doan','dang','ngay_vao_dang'}
+            data = {'ttcn' : {}, 'ttll' : {}, 'ttgd' : {}, 'ttdd' : {} }
+            for field in ttcn_fields:
+                tmp = getattr(student, field)
+                data['ttcn'][field] = unicode(tmp)
+
+            for field in ttll_fields:
+                tmp = getattr(student, field)
+                data['ttll'][field] = unicode(tmp)
+
+            for field in ttgd_fields:
+                tmp = getattr(student, field)
+                data['ttgd'][field] = unicode(tmp)
+
+            for field in ttdd_fields:
+                tmp = getattr(student, field)
+                data['ttdd'][field] = unicode(tmp)
+
+            return HttpResponse(simplejson.dumps(data), mimetype='json')
+#            return Response(status=status.HTTP_200_OK, content=list)
         except Exception as e:
             print e
             return Response(status.HTTP_403_FORBIDDEN)
