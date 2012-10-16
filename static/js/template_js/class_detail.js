@@ -297,14 +297,14 @@ $(document).ready(function() {
         if (!trParent.hasClass('thread')) trParent.trigger('click');
     }
     var setPosition = false;
-    $(".add_student_button").click(function() {
+    $("#add-student").click(function() {
         $("#student-table-div")
             .removeClass('span12')
             .addClass('span8');
         $("#add-student-div").css('display', 'block');
 
     });
-    $(".add-student-exit").click(function(){
+    $("#add-student-cancel").click(function(){
         $("#add-student-div")
             .fadeOut(400)
             .css('display', 'none');
@@ -316,7 +316,7 @@ $(document).ready(function() {
         $("#submitform").find("input").val("");
 
     });
-    $("#submit-add-student").click(function(){
+    $("#add-student-submit").click(function(){
         $("#submitform").submit();
     });
 });

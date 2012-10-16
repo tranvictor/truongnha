@@ -130,22 +130,22 @@
                 </div>
 
                 <div class="btn-group">
-                    <a class="btn dropdown-toggle " data-toggle="dropdown" href="#">
+                    <a id="student-list-menu" class="btn dropdown-toggle " data-toggle="dropdown" href="#">
                         <span class="icon-reorder"></span>
                     </a>
                     <ul class="dropdown-menu pull-right">
                         {% if pos > 3 or gvcn == 1 %}
                             <li>
-                                <a href="{% url orgamize_student class.id '0' %}"
+                                <a id="student-sort" href="{% url orgamize_student class.id '0' %}"
                                    title="Sắp xếp thứ tự học sinh trong lớp">
                                     <i class="icon-sort"></i>
                                     Sắp xếp
                                 </a>
                             </li>
                             <li>
-                                <a href="#move_modal"
+                                <a id="move_students"
+                                   href="#move_modal"
                                    title="Chuyển học sinh được chọn sang lớp khác"
-                                   id="move_students"
                                    data-toggle="modal">
                                     <i class="icon-move"></i>
                                     Chuyển lớp
@@ -177,7 +177,7 @@
 
                         {% if pos > 3 %}
                             <li>
-                                <a class="add_student_button"
+                                <a id="add-student"
                                    title="Thêm học sinh mới"
                                    href="#">
                                     <i class="icon-plus"></i>
@@ -349,8 +349,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button id="submit-add-student" class="btn btn-primary"> Thêm</button>
-                <button class="btn btn-danger add-student-exit"> Thôi</button>
+                <button id="add-student-submit" class="btn btn-primary"> Thêm</button>
+                <button id="add-student-cancel" class="btn"> Thôi</button>
             </div>
         </div>
     {% endif %}
