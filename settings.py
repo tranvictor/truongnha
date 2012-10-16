@@ -110,20 +110,19 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
 #MEDIA_ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), 'static/'))
-MEDIA_ROOT = os.path.join(SITE_ROOT, 'static')
+MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
 
-FIXTURE_DIRS = ('/school/unittests/fixtures/')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = '/static/'
+MEDIA_URL = '/temp/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = os.path.join(SITE_ROOT, 'static')
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -210,6 +209,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'django.contrib.staticfiles',
 #    'django.contrib.messages',
     'django.contrib.admin',
     'crumbs', #requires django-crumbs
@@ -227,7 +227,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     # other finders..
-    #'compressor.finders.CompressorFinder',
+    'compressor.finders.CompressorFinder',
 )
 
 # Celery configuration
@@ -277,9 +277,9 @@ LOCALE_PATHS = (
 AUTH_PROFILE_MODULE = 'app.UserProfile'
 LOGIN_FAILURE_LIMIT = 5
 
-TEMP_FILE_LOCATION = os.path.join(SITE_ROOT, 'temp/uploaded')
+TEMP_FILE_LOCATION = os.path.join(MEDIA_URL, 'uploaded')
 SCHOOL_SETTING_FOLDER = os.path.join(SITE_ROOT, 'school/school_settings')
-EXPORTED_FILE_LOCATION = os.path.join(SITE_ROOT, 'temp/exported')
+EXPORTED_FILE_LOCATION = os.path.join(MEDIA_URL, 'exported')
 
 #Email
 EMAIL_USE_TLS = True
@@ -322,3 +322,49 @@ if DEBUG:
     DEBUG_TOOLBAR_CONFIG = {
         'INTERCEPT_REDIRECTS': False,
     }
+
+
+FIXTURE_DIRS = ('/school/unittests/fixtures/')
+
+STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+
+PIPELINE_CSS = {
+    'base': {
+        'source_filenames': (
+            '/css/smoothness/jquery-ui-1.8.21.custom.css',
+            '/bootstrap/css/bootstrap.min.css',
+            '/bootstrap/css/bootstrap-responsive.min.css',
+            '/font-awaresome/css/font-awesome.css',
+            '/metroui/metro.css',
+            '/css/datepicker.css',
+            '/css/jquery_file_upload/jquery.fileupload-ui.css',
+            '/css/truongnha.css',
+            '/css/template_css/popup.css',
+            '/joyride/joyride-1.0.3.css'
+            ),
+        'output_filename': 'css/base.css',
+        'extra_context': {
+            'media': 'screen,projection',
+        },
+    },
+}
+
+PIPELINE_JS = {
+    'base': {
+        'source_filenames': (
+            '/js/jquery-1.7.2.min.js',
+            '/js/jquery-ui-1.8.21.custom.min.js',
+            '/bootstrap/js/bootstrap.min.js',
+            '/js/bootstrap-datepicker.min.js',
+            '/js/jquery_file_upload/tmpl.min.js',
+            '/js/jquery_file_upload/jquery.fileupload.min.js',
+            '/js/jquery_file_upload/jquery.fileupload-ui.min.js',
+            '/js/jquery_file_upload/jquery.iframe-transport.min.js',
+            '/js/Class.create.min.js',
+            '/js/jquery-encoder-0.1.0.js',
+            '/js/template_js/base.js',
+            '/joyride/jquery.joyride-1.0.3.min.js',
+            ),
+        'output_filename': 'js/base.js',
+    }
+}
