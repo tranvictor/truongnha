@@ -209,7 +209,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'django.contrib.staticfiles',
+#'django.contrib.staticfiles',
 #    'django.contrib.messages',
     'django.contrib.admin',
     'crumbs', #requires django-crumbs
@@ -219,7 +219,7 @@ INSTALLED_APPS = (
     'api',
     'pagination',
     'djcelery',
-    'south', #for database migration/upgrade
+    #'south', #for database migration/upgrade
 #    'django_jenkins',
 )
 
@@ -227,7 +227,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     # other finders..
-    'compressor.finders.CompressorFinder',
+    #'compressor.finders.CompressorFinder',
 )
 
 # Celery configuration
