@@ -26,6 +26,7 @@ SUBJECT_TYPES = ((u'Toán',u'Toán'),
         (u'Âm nhạc', u'Âm nhạc'),(u'Mĩ thuật', u'Mĩ thuật'),
         (u'NN2', u'NN2'),(u'Tin học', u'Tin học'),
         (u'GDQP-AN', u'GDQP-AN'), (u'Tự chọn', u'Tự chọn'))
+COMMENT_SUBJECT_LIST = [u'Âm nhạc',u'Mĩ thuật',u'Thể dục']
 SUBJECT_LIST = [u'Toán', u'Vật lí', u'Hóa học', u'Sinh học', u'Ngữ văn',
         u'Lịch sử', u'Địa lí', u'Ngoại ngữ', u'GDCD', u'Công nghệ',
         u'Thể dục', u'Âm nhạc', u'Mĩ thuật', u'NN2', u'Tin học',

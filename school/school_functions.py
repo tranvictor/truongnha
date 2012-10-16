@@ -9,7 +9,7 @@ from django.template.loader import render_to_string
 from django.shortcuts import render_to_response
 from django.utils import simplejson
 from decorators import need_login, school_function, operating_permission
-from school.models import Teacher, Pupil, Class, Group, Subject, Year
+from school.models import Teacher, Pupil, Class, Group, Subject, Year, COMMENT_SUBJECT_LIST
 from school.forms import MoveClassForm, TeacherForm, TeamForm, GroupForm,\
         TeacherGroupForm, TeacherTTCNForm, TeacherTTLLForm, TeacherTTCBForm,\
         ThongTinCaNhanForm, ThongTinLienLacForm, PupilForm, ThongTinGiaDinhForm,\
@@ -813,10 +813,10 @@ def addClass(request):
                 try:
                     for mon in ds_mon_hoc:
                         index += 1
-                        if mon == u'Toán' or mon == u'Ngữ văn':
+                        if mon in COMMENT_SUBJECT_LIST:
                             add_subject(subject_name=mon,
                                     subject_type=mon,
-                                    hs=2,
+                                    nx=True,
                                     _class=_class,
                                     index=index)
                         else:
