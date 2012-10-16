@@ -84,7 +84,8 @@ def sendSMS(phone, content, user, save_to_db=True, school=None):
     else:
         return _send_sms(phone, content, user, save_to_db, school)
 
-def send_sms_summary_mark(student, content, marks, user, school=None):
+def send_sms_summary_mark(student, content, marks, user,
+        cl=None, school=None):
     phone = check_phone_number(student.sms_phone)
     try:
         if not school:
@@ -94,8 +95,12 @@ def send_sms_summary_mark(student, content, marks, user, school=None):
     if phone:
         if school:
             if school.id in [42, 44]: raise Exception('NotAllowedSMS')
-            sms_cont= to_ascii(u'Truong %s thong bao:\nEm %s co %s' % (
-                unicode(school), student.short_name(), content))
+            if cl:
+                sms_cont= to_ascii(u'Truong %s thong bao:\nEm %s lop %s co %s' % (
+                    unicode(school), student.short_name(), cl, content))
+            else:
+                sms_cont= to_ascii(u'Truong %s thong bao:\nEm %s co %s' % (
+                    unicode(school), student.short_name(), content))
         else:
             raise Exception('SchoolIsNone')
 

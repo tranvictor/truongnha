@@ -181,6 +181,7 @@ def sms_summary(request, class_id=None):
                             info_list[st.id],
                             marks[st.id],
                             request.user,
+                            cl=cl,
                             school=school)
                     number += 1
                 except Exception as e:
