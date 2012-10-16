@@ -180,6 +180,8 @@ urlpatterns = patterns('',
     url(r'report/', include(report_urls)),
     url(r'export_gvcn/$', excel_interaction.export_gvcn_list, name="export_gvcn_list"),
 #help
+    url(r'sync_subject_comment/$',  helptools.sync_subject_comment, name='sync_subject_comment'),
+    #url(r'recover/$',  helptools.recover_marktime, name = "recover_marktime"),
     #url(r'recover/$',  helptools.recover_marktime, name = "recover_marktime"),
     #url(r'sync_index/$',  helptools.sync_index, name = "sync_index"),
     #url(r'sync_subject/$',  helptools.sync_subject, name='sync_subject),

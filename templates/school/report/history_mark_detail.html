@@ -1,0 +1,66 @@
+﻿{% extends "base.html" %}
+{% block js %}
+{% endblock %}
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Báo cáo' 'report' %}
+    {% add_crumb 'Lịch sử sửa điểm' 'history_mark' %}
+    {% add_crumb 'môn '%}	
+{% endblock %}
+
+{% block content %}
+	<table class="table table-bordered  table-striped grid fifth-row">
+	<thead>
+		<tr>
+			<th rowspan="2">
+				STT
+			</th>
+			<th colspan="2" rowspan="2">
+				Họ và tên
+			</th>
+			<th colspan="{{number_col_mieng}}" >
+				Hệ số 1 - Miệng
+			</th>
+			<th colspan="{{number_col_15phut}}" >
+				Hệ số 1 - Viết
+			</th>
+			<th colspan="{{ number_col_mot_tiet}}" >
+				Hệ số 2
+			</th>					
+		</tr>	
+		<tr>
+		 {% for arow in empty_col %}
+			{% for x in arow %}
+				{% if x %}
+					<th>
+						{{forloop.counter}}
+					</th>
+				{% endif %}
+			{% endfor %}
+		 {% endfor %}
+		</tr>	
+	</thead>
+	<tbody>
+		
+		{% for p,arr in list %}		
+		<tr>
+			<td>
+				{{forloop.counter}}
+			</td>
+			<td style="border-right:none;">
+				{{p.last_name}}
+			</td>
+			<td style="border-left:none;">
+				{{p.first_name}}
+			</td>
+			{% for m,detail in arr %}
+				<td title="{{detail}}">
+					{{m}}
+				</td>
+			{% endfor %}				
+		</tr>	
+		{% endfor %}		
+	</tbody>
+	</table>
+{% endblock %}

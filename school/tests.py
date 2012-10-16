@@ -6,19 +6,17 @@ import itertools
 import os
 
 test_classes = []
-print os.environ
 cl_name = os.environ.pop('DJANGO_CLASS_TESTING', None)
 if cl_name:
     individual = True
 else: individual = False
-print cl_name, 'cl_name'
 
 def generate_test_class(module):
     for name, obj in inspect.getmembers(module):
         if inspect.isclass(obj) and issubclass(obj, TestCase):
-            print name, obj
             if individual:
                 if name != cl_name: break
+            print name, obj
             if issubclass(obj, BasicWorkFlow):
                 groups = obj.get_step_groups()
             else:

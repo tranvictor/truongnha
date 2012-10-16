@@ -9,8 +9,3 @@ def get_value(d, k):
     if not k in d: return None
     return d[k]
 
-@register.filter
-def get_value1(d, k):
-    if k == None: return ''
-    if not k in d: return ''
-    return d[k]

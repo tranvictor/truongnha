@@ -71,73 +71,73 @@
         {# Người sử dụng cấp trường       #}
         {% if user.userprofile.organization.status != 0 %}
             {# Đang trong năm học #}
-            <a class="win-command" href="{% url sms_summary '' %}"
+            <a id="sms" class="win-command" href="{% url sms_summary '' %}"
                title="Thông báo tình hình học tập, rèn luyện của học sinh cho phụ huynh">
                 <span class="win-commandimage win-commandring"><i class="icon-envelope"></i></span>
                 <span class="win-label">Thông báo</span>
             </a>
-            <a class="win-command" href="{% url report %}"
+            <a id="report" class="win-command" href="{% url report %}"
                title="Các báo cáo thống kê, tổng kết">
                 <span class="win-commandimage win-commandring"><i class="icon-bar-chart"></i></span>
                 <span id="command-report" class="win-label">Báo cáo</span>
             </a>
             <hr class="win-command"/>
 
-            <a class="win-command" href="{% url classes %}"
+            <a id="classes" class="win-command" href="{% url classes %}"
                title="Thêm/xoá lớp và gán giáo viên chủ nhiệm lớp">
                 <span class="win-commandimage win-commandring"><i class="icon-th-large"></i></span>
                 <span class="win-label">Lớp học</span>
             </a>
-            <a class="win-command" href="{% url teachers %}"
+            <a id="teachers" class="win-command" href="{% url teachers %}"
                title="Quản lý danh sách giáo viên, cán bộ trong trường">
                 <span class="win-commandimage win-commandring"><i class="icon-group"></i></span>
                 <span class="win-label">Giáo viên</span>
             </a>
 
             <hr class="win-command"/>
-            <a class="win-command" href="{% url info %}" title="Thông tin trường, khóa điểm, tham số.">
+            <a id="settings" class="win-command" href="{% url info %}" title="Thông tin trường, khóa điểm, tham số.">
                 <span class="win-commandimage win-commandring"><i class="icon-cogs"></i></span>
                 <span class="win-label">Thiết lập</span>
             </a>
-            <a class="win-command" href="{% url finish %}" title="Chuyển học kỳ, năm học, xem tổng kết">
+            <a id="finish" class="win-command" href="{% url finish %}" title="Chuyển học kỳ, năm học, xem tổng kết">
                 <span class="win-commandimage win-commandring"><i class="icon-columns"></i></span>
                 <span class="win-label">Chuyển kỳ</span>
             </a>
 
             <hr class="win-command"/>
-            <a class="win-command" href="{% url timetable_school %}" title="Thời khóa biểu toàn trường">
+            <a id="timetable" class="win-command" href="{% url timetable_school %}" title="Thời khóa biểu toàn trường">
                 <span class="win-commandimage win-commandring"><i class="icon-calendar"></i></span>
                 <span class="win-label">Lịch học</span>
             </a>
-            <a class="win-command" href="{% url school_subject_agenda %}"
+            <a id="agenda" class="win-command" href="{% url school_subject_agenda %}"
                title="Quảng lý phân phối chương trình các môn">
                 <span class="win-commandimage win-commandring"><i class="icon-book"></i></span>
                 <span class="win-label">Chương trình</span>
             </a>
-            <a class="win-command" href="{% url create_list_exam %}" title="Tạo danh sách phòng thi">
+            <a id="exams" class="win-command" href="{% url create_list_exam %}" title="Tạo danh sách phòng thi">
                 <span class="win-commandimage win-commandring"><i class="icon-pencil"></i></span>
                 <span class="win-label">Kỳ thi</span>
             </a>
 
             <hr class="win-command"/>
-            <a class="win-command" href="/help/sitemap" title="Sơ đồ chức năng.">
+            <a id="sitemap" class="win-command" href="/help/sitemap" title="Sơ đồ chức năng.">
                 <span class="win-commandimage win-commandring"><i class="icon-sitemap"></i></span>
                 <span class="win-label">Sơ đồ</span>
             </a>
-            <a class="win-command" href="{% url views.about %}"
+            <a id="contact" class="win-command" href="{% url views.about %}"
                title="Giới thiệu, liên lạc, góp ý">
                 <span class="win-commandimage win-commandring"><i class="icon-info-sign"></i></span>
                 <span class="win-label">Liên hệ</span>
             </a>
 
-            <a class="win-command" href="{% url help.views.help %}"
+            <a id="help" class="win-command" href="{% url help.views.help %}"
                title="Hướng dẫn sử dụng">
                 <span class="win-commandimage win-commandring"><i class="icon-question-sign"></i></span>
                 <span class="win-label">Trợ giúp</span>
             </a>
         {% else %}
             {# Khi chưa khởi  tạo năm học #}
-            <a class="win-command" href="{% url setup %}"
+            <a id="setup" class="win-command" href="{% url setup %}"
                title="Khai báo thông tin trường học và tạo nhanh các lớp học">
                 <span class="win-commandimage win-commandring"><i class="icon-cog"></i></span>
                 <span class="win-label">Khởi tạo</span>

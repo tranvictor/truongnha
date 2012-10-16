@@ -20,7 +20,7 @@ from school.forms import UsernameChangeForm, SchoolForm,\
         SelectSchoolLessonForm2, LessonForm
 from school.models import UncategorizedClass, Term, Subject, Pupil,\
         Class, DiemDanh, StartYear, Year, Lesson, TKDiemDanh, TKB,\
-        SchoolLesson, Block, Teacher, Attend
+        SchoolLesson, Block, Teacher, Attend, COMMENT_SUBJECT_LIST
 from decorators import need_login, school_function, operating_permission
 from school.school_settings import CAP2_DS_MON, CAP1_DS_MON, CAP3_DS_MON
 from school.utils import get_current_year, get_school, get_permission,\
@@ -28,6 +28,7 @@ from school.utils import get_current_year, get_school, get_permission,\
         inClass, get_teacher, to_date, get_lower_bound, get_upper_bound,\
         to_en1, add_subject, make_default_password, queryset_to_dict
 from sms.utils import send_email, sendSMS
+import settings
 
 START_YEAR = os.path.join('school', 'start_year.html')
 SCHOOL = os.path.join('school', 'school.html')
@@ -472,9 +473,12 @@ def b1(request):
             i = 0
             for mon in ds_mon_hoc:
                 i += 1
-                if mon == u'Toán' or mon == u'Ngữ văn':
-                    add_subject(subject_name=mon, subject_type=mon,
-                                hs=2, _class=_class, index=i)
+                if mon in COMMENT_SUBJECT_LIST:
+                    add_subject(subject_name=mon,
+                        subject_type=mon,
+                        nx=True,
+                        _class=_class,
+                        index=i)
                 else:
                     add_subject(subject_name=mon, subject_type=mon,
                                 _class=_class, index=i)
@@ -989,6 +993,8 @@ def deleteClass(request, class_id):
         return HttpResponseRedirect(reverse('school_index'))
     if s.number_of_pupils() > 0:
         return HttpResponseNotAllowed('Not Empty Class')
+    if s.id in settings.PREVENTED_CLASSES:
+        return HttpResponseNotAllowed('PreventedClass')
     s.delete()
     return HttpResponse('OK')
 

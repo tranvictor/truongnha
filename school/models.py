@@ -25,15 +25,16 @@ SUBJECT_TYPES = ((u'Toán',u'Toán'),
         (u'Công nghệ', u'Công nghệ'), (u'Thể dục', u'Thể dục'),
         (u'Âm nhạc', u'Âm nhạc'),(u'Mĩ thuật', u'Mĩ thuật'),
         (u'NN2', u'NN2'),(u'Tin học', u'Tin học'),
-        (u'GDQP-AN', u'GDQP-AN'))
+        (u'GDQP-AN', u'GDQP-AN'), (u'Tự chọn', u'Tự chọn'))
+COMMENT_SUBJECT_LIST = [u'Âm nhạc',u'Mĩ thuật',u'Thể dục']
 SUBJECT_LIST = [u'Toán', u'Vật lí', u'Hóa học', u'Sinh học', u'Ngữ văn',
         u'Lịch sử', u'Địa lí', u'Ngoại ngữ', u'GDCD', u'Công nghệ',
         u'Thể dục', u'Âm nhạc', u'Mĩ thuật', u'NN2', u'Tin học',
-        u'GDQP-AN']
+        u'GDQP-AN', u'Tự chọn']
 SUBJECT_LIST_ASCII = [u'toan', u'vat li', u'hoa hoc', u'sinh hoc', u'ngu van',
         u'lich su', u'dia li', u'ngoai ngu', u'gdcd', u'cong nghe',
         u'the duc', u'am nhac', u'mi thuat', u'nn2', u'tin hoc',
-        u'gdqp-an']
+        u'gdqp-an', u'tu chon']
 GENDER_CHOICES = ((u'Nam', u'Nam'), (u'Nữ', u'Nữ'),)
 TERM_CHOICES = ((1, u'1'), (2, u'2'), (3, u'3'),)
 HK_CHOICES = ((u'', u'Chưa xét'), (u'T', u'Tốt'), (u'K', u'Khá'),
@@ -532,7 +533,7 @@ class Class(models.Model):
     #this function will return list of students those are studying in this class
     def students(self):
         return self.student_set.filter(attend__is_member=True)\
-                .order_by('index').distinct()
+                .order_by('index','first_name','last_name','birthday').distinct()
 
     #this method return pair dict {id:  [mark, mark, ...]}, student query set
     #Return: {id: [mark, mark, ...]}, student query set
@@ -946,9 +947,16 @@ class Subject(models.Model):
                 u'Mĩ thuật': 'MThuat',
                 u'NN2': 'NNgu2',
                 u'Tin học': 'Tin',
+                u'Tự chọn': 'TC',
                 u'GDQP-AN': 'QPhong'}
         if self.type in name_dict: return name_dict[self.type]
         else: return 'TC'
+    def get_mark_list(self,term_id):
+        return Mark.objects.filter(term_id=term_id,
+            subject_id=self,
+            current=True).order_by('student_id__index',
+            'student_id__first_name','student_id__last_name',
+            'student_id__birthday')
     #class Admin: pass
 
 class Mark(models.Model):
@@ -1107,7 +1115,7 @@ class Mark(models.Model):
         is_comment = subject.nx
         arr_mark = self.toArrayMark()
         arr_sent = self.to_array_sent()
-        result = ''
+        result = []
         for i in range(3):
             temp = ''
             for j in range(MAX_COL):
@@ -1121,13 +1129,14 @@ class Mark(models.Model):
                         temp += arr_mark[i * MAX_COL + j + 1] + ' '
             if temp != '':
                 if  i == 0:
-                    result+=u' %s;' % temp.strip()
+                    result.append(u' m %s' % temp.replace('.',',').strip())
                 elif i == 1:
-                    result+=" 15' %s;" % temp.strip()
+                    result.append(" 15p %s" % temp.replace('.',',').strip())
                 elif i == 2:
-                    result+=" 1t %s." % temp.strip()
+                    result.append(" 45p %s" % temp.replace('.',',').strip())
                 #so on i=3,4
-        return result
+        result = ';'.join(result)
+        return result + '.' if result else result
 
     def update_mark(self, m, index):
         if index <= 0 :

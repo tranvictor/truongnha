@@ -48,19 +48,23 @@ $(document).ready(function () {
         if ($this.hasClass('student')) {
             var id = $this.attr('class').split(' ')[0];
             var $checkBoxId = $('#checkbox_' + id);
-            var $checkBoxAll = $('#checkbox_all');
-            var n = 0;
-            if ($this.hasClass('selected')) {
-                $this.removeClass('selected');
+            if ($this.attr('data-contact') == " "){
                 $checkBoxId.prop("checked", false);
-                n = $("input.studentCheckbox:checked").length;
-                if (n == 1 || n == 0) {
-                    $checkBoxAll.prop("checked", false);
-                }
             } else {
-                $this.addClass('selected');
-                $checkBoxId.prop("checked", true);
-                $checkBoxAll.prop("checked", true);
+                var $checkBoxAll = $('#checkbox_all');
+                var n = 0;
+                if ($this.hasClass('selected')) {
+                    $this.removeClass('selected');
+                    $checkBoxId.prop("checked", false);
+                    n = $("input.studentCheckbox:checked").length;
+                    if (n == 1 || n == 0) {
+                        $checkBoxAll.prop("checked", false);
+                    }
+                } else {
+                    $this.addClass('selected');
+                    $checkBoxId.prop("checked", true);
+                    $checkBoxAll.prop("checked", true);
+                }
             }
         }
     };
@@ -71,7 +75,7 @@ $(document).ready(function () {
         var $trs = $('tr.student');
         for (var i = $trs.length; i--;){
             var $tr = $($trs[i]);
-            if (!$tr.hasClass('selected')){
+            if (!$tr.hasClass('selected') && $tr.attr('data-contact')!=" "){
                 $tr.addClass('selected');
                 var id = $tr.attr('class').split(' ')[0];
                 $('#checkbox_' + id).prop("checked", true);

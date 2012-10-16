@@ -126,10 +126,12 @@ $(document).ready(function(){
                     $("#"+classID).remove();
                 } else if (json == "Not Empty Class"){
                     $("#notify").showNotification("Không thể xóa lớp còn học sinh.")
+                } else if (json == "PreventedClass"){
+                    $("#notify").showNotification("Bạn không có quyền xóa lớp này.")
                 }
             },
-            error:function(){
-                $("#notify").showNotification("Có lỗi xảy ra khi gửi dữ liệu.");
+            error:function(xhr){
+                $("#notify").showNotification("Bạn không có quyền xóa lớp này.");
             }
         };
         $.ajax(arg);

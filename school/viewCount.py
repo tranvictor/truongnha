@@ -8,12 +8,12 @@ from django.contrib.auth.models import User
 from school.models import Year, Term, TBNam, TBHocKy, Class,\
         Pupil, Block, Subject, Mark, TKMon,HistoryMark
 from school.utils import get_current_year, in_school, get_position,\
-        get_level, get_current_term, get_school
+        get_level, get_current_term, get_school,to_en1
 from school.writeExcel import count1Excel, count2Excel,\
         printDanhHieuExcel, printNoPassExcel
 from decorators import need_login, school_function, operating_permission
 from sms.models import sms
-
+from templateExcel import normalize,MAX_COL
 import os.path
 import time
 from datetime import datetime
@@ -1108,7 +1108,7 @@ def countSMS(request, type=None,
         year1 = datetime.now().year
 
         day_of_before_month = datetime.fromordinal(
-                datetime.now().toordinal()-30)
+                datetime.now().toordinal()- 7 )
         day = day_of_before_month.day
         month = day_of_before_month.month
         year = day_of_before_month.year
@@ -1152,37 +1152,132 @@ def countSMS(request, type=None,
                 'year1':year1,})
     return HttpResponse(t.render(c))
 
+
 @need_login
 @school_function
 @operating_permission([u'HIEU_TRUONG', u'HIEU_PHO'])
 def history_mark(request):
-    tt1=time.time()
+    tt1 = time.time()
     current_year = get_current_year(request)
-    class_list = Class.objects.filter(year_id=current_year).order_by("block_id__number","name")
+    class_list = Class.objects.filter(year_id=current_year).order_by("block_id__number", "name")
+    all_sub_of_school = listSubject(current_year)
+    number_subject = len(all_sub_of_school)
     list = []
     for c in class_list:
         subject_list = Subject.objects.filter(class_id=c).order_by("index")
-        dict = {}
+        a_list = [('', '')] * number_subject
         ok = False
         for s in subject_list:
             number_history = HistoryMark.objects.filter(subject_id=s).count()
+            for i in range(number_subject):
+                if s.type == all_sub_of_school[i]:
+                    break
+
             if number_history == 0:
-                dict[s.name] = ''
+                a_list[i] = (s, '')
             else:
-                dict[s.name] = number_history
+                a_list[i] = (s, number_history)
                 ok = True
-        if ok :
-            list.append((c,dict))
-        list_subject = listSubject(current_year)
+        if ok:
+            list.append((c, a_list))
+
     has_content = len(list) != 0
-    t = loader.get_template(os.path.join('school/report','history_mark.html'))
+    t = loader.get_template(os.path.join('school/report', 'history_mark.html'))
     c = RequestContext(request,
             {
-            'list_subject':list_subject,
-            'list':list,
-            'has_content':has_content,
+            'all_sub_of_school': all_sub_of_school,
+            'list': list,
+            'has_content': has_content,
             })
-    tt2=time.time()
-    print "time.......................",(tt2-tt1)
+    tt2 = time.time()
+    print "time.......................", (tt2 - tt1)
 
+    return HttpResponse(t.render(c))
+
+
+def check_empty_col(arr_mark_list, detail, length):
+    result = [0, 0, 0]
+    for i in range(3):
+        result[i] = [True] * MAX_COL
+
+    for i in range(3):
+        j = MAX_COL - 1
+        while j > 0:
+            ok = True
+            for t in range(length):
+                if arr_mark_list[t][i * MAX_COL + j + 1] != '':
+                    ok = False
+                    break
+                if detail[t][i * MAX_COL + j + 1] != '':
+                    ok = False
+                    break
+            if ok:
+                result[i][j] = False
+            else: break
+            j -= 1
+        if i == 0:
+            number_col_mieng = j + 1
+        elif i == 1:
+            number_col_15phut = j + 1
+        else:
+            number_col_mot_tiet = j + 1
+
+    return result, number_col_mieng, number_col_15phut, number_col_mot_tiet
+
+
+@need_login
+@school_function
+@operating_permission([u'HIEU_TRUONG', u'HIEU_PHO'])
+def history_mark_detail(request, subject_id, term_id=None):
+    tt1 = time.time()
+    if term_id == None:
+        term = get_current_term(request)
+    selected_subject = Subject.objects.get(id=subject_id)
+    pupil_list = selected_subject.class_id.students()
+    mark_list = selected_subject.get_mark_list(term)
+    #check = zipzip(pupil_list,mark_list)
+    number_pupils = len(pupil_list)
+    arr_mark_list = [0] * number_pupils
+    detail = [0] * number_pupils
+    index = {}
+    for (i, m) in enumerate(mark_list):
+        index[m.id] = i
+        arr_mark_list[i] = m.toArrayMark()
+        detail[i] = [''] * (3 * MAX_COL + 1)
+
+    set_of_id = []
+    for m in mark_list:
+        set_of_id.append(m.id)
+    history_mark_set = HistoryMark.objects.filter(mark_id__in=set_of_id).order_by("-date")
+
+    for h in history_mark_set:
+        i = index[h.mark_id_id]
+        arr_mark_list[i][h.number] = normalize(h.old_mark) + "-" + str(arr_mark_list[i][h.number])
+        temp = h.date.strftime("%d/%m/%Y %H:%M")\
+               + " " + h.user_id.first_name + " " + h.user_id.last_name\
+               + u" sửa điểm từ " + normalize(h.old_mark)\
+               + u" -> " + arr_mark_list[i][h.number].split('-')[1]
+        detail[i][h.number] += temp + '<br>'
+    data = [0] * number_pupils
+    empty_col, number_col_mieng, number_col_15phut, num_col_mot_tiet = check_empty_col(arr_mark_list, detail,
+        number_pupils)
+    for i in range(number_pupils):
+        aRow = []
+        for j in range(3):
+            for t in range(MAX_COL):
+                if empty_col[j][t]:
+                    aRow.append((arr_mark_list[i][j * MAX_COL + t + 1], detail[i][j * MAX_COL + t + 1]))
+        data[i] = aRow
+    list = zip(pupil_list, data)
+    t = loader.get_template(os.path.join('school/report', 'history_mark_detail.html'))
+    c = RequestContext(request,
+            {
+            'list': list,
+            'empty_col': empty_col,
+            'number_col_mieng': number_col_mieng,
+            'number_col_15phut': number_col_15phut,
+            'number_col_mot_tiet': num_col_mot_tiet,
+            })
+    tt2 = time.time()
+    print "time.......................", (tt2 - tt1)
     return HttpResponse(t.render(c))
