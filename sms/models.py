@@ -66,7 +66,6 @@ class sms(models.Model):
     content = models.TextField("Nội dung")
     created = models.DateTimeField("Thời gian tạo", auto_now_add=True)
     sender = models.ForeignKey(User)
-    receiver = models.CharField("Người nhận", max_length=64, blank=False)
     recent = models.BooleanField(default=True)
     success = models.BooleanField(default=False)
     failed_reason = models.TextField("Lý do")
@@ -142,6 +141,7 @@ class sms(models.Model):
                 result = self._send_Viettel_sms()
             if result != '1':
                 self.success = False
+                self.failed_reason = u'Tài khoản trường không đủ để thực hiện tin nhắn'
                 self.recent = False
                 self.save()
             else:
