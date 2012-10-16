@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from models import sms, check_phone_number, get_tsp
+from models import sms, check_phone_number 
 import settings
 import os
 from django.core import mail

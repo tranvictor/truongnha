@@ -94,6 +94,7 @@ def countTotalPractisingInTerm(term_id):
             ptslList[i]=slList[i]/sum *100
 
     return slList,ptslList
+
 def countTotalLearningInTerm(term_id):
     slList  =[0,0,0,0,0,0]
     ptslList=[0,0,0,0,0,0]
@@ -162,6 +163,7 @@ def countDanhHieuInYear(year_id):
             ptslList[i]=slList[i]/sum *100
 
     return slList,ptslList
+
 def countPassInYear(year_id):
     slList  =[0,0,0,0,0]
     ptslList=[0,0,0,0,0]
@@ -184,11 +186,6 @@ def countPassInYear(year_id):
 
 @need_login
 def countInSchool(request,year_id=None):
-
-    user = request.user
-
-
-
     message=None
 
     if year_id==None:

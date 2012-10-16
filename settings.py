@@ -106,7 +106,6 @@ SITE_ID = 1
 
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
-
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
 #MEDIA_ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), 'static/'))
@@ -219,7 +218,7 @@ INSTALLED_APPS = (
     'api',
     'pagination',
     'djcelery',
-    #'south', #for database migration/upgrade
+    'south', #for database migration/upgrade
 #    'django_jenkins',
 )
 

@@ -132,12 +132,11 @@ class sms(models.Model):
         else:
             raise Exception("InvalidPhoneNumber")
         
-    def _send_sms(self):
-        phone = self.phone
-        tsp = get_tsp(phone)
+    def _send_sms(self, school=None):
         try:
             # 2 id user nay de cap phep nhan tin cho chi Van va account sensive
-            if int(self.sender_id) in [904, 16742]:
+            if (int(self.sender_id) in [904, 16742]
+                    or ( school and school.id in [11])): 
                 result = self._send_iNET_sms()
             else:
                 result = self._send_Viettel_sms()
@@ -153,6 +152,7 @@ class sms(models.Model):
         except Exception:
             self.recent= False
             self.success = False
+            self.failed_reason = u'Tài khoản trường không đủ để thực hiện tin nhắn'
             self.save()
         
     def _send_mark_sms(self, marks):

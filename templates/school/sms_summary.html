@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% load dictionary %}
 {% block js %}
-    <script type="text/javascript" src="/static/js/template_js/sms_summary.js?{{ VERSION }}"></script>
+<script type="text/javascript"
+    src="/static/js/template_js/sms_summary.js?{{ VERSION }}"></script>
 {% endblock %}
 {% block css %}
     <style type="text/css">
@@ -106,6 +107,7 @@
             <tbody>
             {% for ss in students %}
                 <tr class="{{ss.id}} student"
+                    style='-webkit-user-select: none; cursor: pointer;'
                     data-contact="{{ss.sms_phone}} {{ss.email|default_if_none:""}}">
                     <td style="text-align: center;">
                         <input type="checkbox"
