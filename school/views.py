@@ -229,6 +229,9 @@ def info(request):
                     if a.name == 'lock_time':
                         if a.errors:
                             lock_time = str(a.errors)
+                    if a.name == 'semester_finish_time':
+                        if a.errors:
+                            semester_finish_time = str(a.errors)
                     elif a.name == 'class_labels':
                         if a.errors:
                             class_labels = str(a.errors)
@@ -240,6 +243,7 @@ def info(request):
                                          'name': name,
                                          'address': address,
                                          'lock_time': lock_time,
+                                         'semester_finish_time': semester_finish_time,
                                          'class_labels': class_labels})
             return HttpResponse(response, mimetype='json')
 
