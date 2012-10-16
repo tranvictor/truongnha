@@ -9,7 +9,7 @@
     <form enctype="multipart/form-data" action="" method="post">{% csrf_token %}
       <p class="errorlist">{{ error }}</p>
 
-      <p>Chọn file Excel (theo <a href="{{ MEDIA_URL }}template_files/sms_template.xls">mẫu</a>):
+      <p>Chọn file Excel (theo <a href="{{ STATIC_URL }}template_files/sms_template.xls">mẫu</a>):
         <input name="file" type="file"/></p>
       <input type="submit" name="upload" value="Xem trước"/>
       <br/>

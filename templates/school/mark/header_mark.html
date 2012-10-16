@@ -32,7 +32,7 @@
     <div class="form-inline btn-group pull-right">
         {% if enableChangeMark %}
             <div class="btn-group">
-            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+            <a id="mark-menu" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
 {#                Khác#}
                 <i class="icon-reorder"></i>
             </a>
@@ -48,7 +48,7 @@
             </li>
 
             <li>
-                <a href="{% url export_mark termChoice subjectChoice %}">
+                <a id="export" href="{% url export_mark termChoice subjectChoice %}">
                     <i class="icon-download-alt"></i>
                     Xuất ra Excel </a>
             </li>
