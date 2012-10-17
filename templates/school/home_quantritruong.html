@@ -74,7 +74,7 @@
             <a id="sms" class="win-command" href="{% url sms_summary '' %}"
                title="Thông báo tình hình học tập, rèn luyện của học sinh cho phụ huynh">
                 <span class="win-commandimage win-commandring"><i class="icon-envelope"></i></span>
-                <span class="win-label">Thông báo</span>
+                <span class="win-label">Liên lạc</span>
             </a>
             <a id="report" class="win-command" href="{% url report %}"
                title="Các báo cáo thống kê, tổng kết">
@@ -83,7 +83,7 @@
             </a>
             <hr class="win-command"/>
 
-            <a id="classes" class="win-command" href="{% url classes %}"
+            <a id="classes-teachers" class="win-command" href="{% url classes %}"
                title="Thêm/xoá lớp và gán giáo viên chủ nhiệm lớp">
                 <span class="win-commandimage win-commandring"><i class="icon-th-large"></i></span>
                 <span class="win-label">Lớp học</span>
@@ -146,3 +146,22 @@
     </div>
 {% endif %}
 
+
+<ol id="guide1" style="display: none">
+    <li>Quản lý lớp</li>
+    <li data-id="classes">Các lớp học trong trường</li>
+
+    <li>Quản lý trường</li>
+    <li data-class="lophoc" data-options="tipLocation:top;tipAnimation:fade" data-button="Second Button">Quản lý lớp,
+        hoặc nhập điểm, điểm danh
+    </li>
+    <li data-id="sms" class="custom-class">Gửi thông báo cho phụ huynh</li>
+</ol>
+
+<script>
+    $('#tour').click(function () {
+        $("#guide1").joyride({
+            /* Options will go here */
+        });
+    });
+</script>

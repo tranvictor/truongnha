@@ -96,10 +96,10 @@
                 <th id="thLastName">Họ</th>
                 <th id="thFirstName">Tên</th>
                 <th id="thBirthday">Ngày sinh</th>
-                <th id="thPhone">Số điện thoại</th>
+                <th id="thPhone">Điện thoại</th>
                 <th id="thEmail"></th>
                 <th >Nội dung</th>
-                <th >Độ dài</td>
+                <th class="align-right">Độ dài</th>
             </tr>
             </thead>
 
@@ -129,7 +129,7 @@
                     <td class="truncated" style="max-width:250px;"
                       title="{{ info_list|get_value:ss.id }}">
                       {{ info_list|get_value:ss.id }}</td>
-                    <td>{{ info_list|get_value:ss.id|length}}</td>
+                    <td class="align-right">{{ info_list|get_value:ss.id|length}}</td>
                 </tr>
             {% endfor %}
             </tbody>

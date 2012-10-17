@@ -26,7 +26,7 @@
         <link href="/static/css/truongnha.css?{{ VERSION }}" rel="stylesheet" type="text/css"/>
         <link href="/static/css/template_css/popup.css?{{ VERSION }}" rel="stylesheet" type="text/css"/>
 
-        <link href="/static/joyride/joyride-1.0.3.css" rel="stylesheet">
+        <link href="/static/joyride/joyride.css" rel="stylesheet">
 {#    {% endcompress %}#}
 
 
@@ -58,10 +58,10 @@
         <script type="text/javascript"
                 src="/static/js/template_js/base.js?{{ VERSION }}"></script>
         <script type="text/javascript"
-                src="/static/joyride/jquery.joyride-1.0.3.min.js"></script>
+                src="/static/joyride/joyride.js"></script>
 {#    {% endcompress %}#}
 
-
+    {% if not debug %}
     <script type="text/javascript">
         var _gaq = _gaq || [];
         _gaq.push(['_setAccount', 'UA-5180820-2']);
@@ -76,6 +76,7 @@
             s.parentNode.insertBefore(ga, s);
         })();
     </script>
+    {% endif %}
 
     {% block js %}
         <!-- For extra js -->
@@ -126,6 +127,11 @@
                             <small>({{ user.username }})</small>
                         </span>
                     </a>
+
+                    <a id="logout" href="{% url django.contrib.auth.views.logout %}"
+                       title="Thoát ra, kết thúc phiên làm việc. BẠN PHẢI ĐĂNG XUẤT NẾU ĐĂNG NHẬP TRÊN CÁC MÁY TÍNH DÙNG CHUNG ĐỂ TRÁNH NGƯỜI KHÁC THAY ĐỔI DỮ LIỆU.">
+                        <i class="icon-signout"></i>&nbsp;Đăng xuất
+                    </a>
                 {% else %}
                     {{ user.last_name }} {{ user.first_name }}
                     <small>({{ user.username }})</small>
@@ -134,43 +140,53 @@
                         Đăng xuất <i class="icon-signout"></i>
                     </a>
                 {% endif %}
+            {% else %}
+                <a class="hidden-phone" href="{% url index %}">
+                    <img id="logo" src="/static/images/logo.png" alt="logo"
+                         title="Dịch vụ phần mềm quản lý trường học"/>
+                </a>
             {% endif %}
-
-
-            <a class="hidden-phone" href="{% url index %}">
-                <img id="logo" src="/static/images/logo.png" alt="logo"
-                     title="Dịch vụ phần mềm quản lý trường học"/></a>
         </div>
     </div>
+
+
 </header>
 
-<section id="main" class="container-fluid">
-    <div id="breadcrumb">
-        <a id="breadcrumb-home" href="{% url index %}" title="Trang bắt đầu">
-            <i class="icon-home" style="color: rgba(255, 69, 0, 0.75);"></i>
-            <i class="icon-home" style="color: rgba(0, 136, 204, 0.75);margin-left: -.5em;"></i>
-            {#            Trường#}
-        </a>
-        {% block breadcrumb %}
-            {% load breadcrumb_tags %}
-            {% add_crumb '' 'index' %}
-        {% endblock %}
-        {% render_breadcrumbs %}
+<nav >
+    <div class="container-fluid">
+        <div id="breadcrumb" class="pull-left">
+            <a id="breadcrumb-home" href="{% url index %}" title="Trang bắt đầu">
+                <i class="icon-home" style="color: rgba(255, 69, 0, 0.75);"></i>
+                <i class="icon-home" style="color: rgba(0, 136, 204, 0.75);margin-left: -.5em;"></i>
+                {#            Trường#}
+            </a>
 
-        {% if user.is_authenticated %}
-            <div class="pull-right dimmed">
-                <a class="hidden-phone" id="feedback" href="#feedbackWindow">Góp ý</a>
-                &nbsp;
-                <a href="{% url django.contrib.auth.views.logout %}"
-                   title="Thoát ra, kết thúc phiên làm việc. BẠN PHẢI ĐĂNG XUẤT NẾU ĐĂNG NHẬP TRÊN CÁC MÁY TÍNH DÙNG CHUNG ĐỂ TRÁNH NGƯỜI KHÁC THAY ĐỔI DỮ LIỆU.">
-                    Đăng xuất <i class="icon-signout"></i>
+            {% block breadcrumb %}
+                {% load breadcrumb_tags %}
+                {% add_crumb '' 'index' %}
+            {% endblock %}
+            {% render_breadcrumbs %}
+        </div>
+        <div class="pull-right dimmed">
+            {% if user.is_authenticated %}
+                <a class="hidden-phone" id="feedback" href="#feedbackWindow">Góp ý</a>&nbsp; &nbsp;
+
+                <a class="hidden-phone" href="{% url index %}" style="font-size: 20px;"
+                   title="Dịch vụ phần mềm quản lý trường học">
+{#                                        <img id="logo" src="/static/images/logo.png" alt="logo" style="vertical-align: top"#}
+{#                                             title="Dịch vụ phần mềm quản lý trường học"/>#}
+                    <strong style="color: rgba(255, 69, 0, 0.75);">Trường</strong><strong style="color: rgba(0, 136, 204, 0.75);">Nhà</strong>
                 </a>
-
-            </div>
-
-        {% endif %}
+{#                <a class="hidden-phone" href="{% url index %}">#}
+{#                    <img id="logo" src="/static/images/logo.png" alt="logo"#}
+{#                         title="Dịch vụ phần mềm quản lý trường học"/>#}
+{#                </a>#}
+            {% endif %}
+        </div>
     </div>
+</nav>
 
+<section id="main" class="container-fluid">
     <div id="content">
         {% block content %}
         {% endblock %}

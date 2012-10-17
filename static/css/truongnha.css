@@ -17,14 +17,22 @@ body {
     }
 }
 
-#breadcrumb {
-    padding-top: 2em;
-    padding-bottom: 1em;
+/*#breadcrumb {*/
+    /*padding-top: 2em;*/
+    /*padding-bottom: 1em;*/
+    /*color: #aaaaaa;*/
+/*}*/
+
+nav {
+    padding-top: 1.5em;
+    /*padding-bottom: 1em;*/
     color: #aaaaaa;
+    height: 3em;
 }
 
 #breadcrumb-home i {
-    font-size: 3em;
+    font-size: 2.5em;
+    overflow: visible;
 }
 
 #breadcrumb .leaf {
@@ -33,7 +41,8 @@ body {
 }
 
 #breadcrumb a, #breadcrumb span {
-    padding: .25em .1em .25em 0.3em;
+    padding-left: 0.3em;
+    padding-right: 0.1em;
 }
 
 h1, h2, h3, h4, h5 {
