@@ -10,7 +10,13 @@
     {% load breadcrumb_tags %}
     {% add_crumb class 'class_detail' class.id %}
 {% endblock %}
-
+{% block css %}
+    <style type="text/css">
+        .table [class^="icon-"] {
+            color: #888;
+        }
+    </style>
+{% endblock %}
 {% block content %}
     <script type="text/javascript">
         function submitClass() {
@@ -120,6 +126,17 @@
         {% if pos > 3 or gvcn == 1 %}
             <div class="pull-right">
                 <div class="btn-group">
+                    {% if pos > 3 %}
+                        <button id="activateAccount" class="btn"
+                                title="Mở cho tài khoản học sinh được sử dụng. Các học sinh không sử dụng cần khóa lại để đảm bảo an toàn thông tin hơn.">
+                            <i class="icon-key"></i>
+                            Mở tài khoản
+                        </button>
+                        <button id="deactivateAccount" class="btn">
+                            <i class="icon-lock"></i>
+                            Khóa tài khoản
+                        </button>
+                    {% endif %}
                     {% if pos == 3 and gvcn == 1 or pos > 3 %}
                         <button id="textSms" class="btn btn-warning"
                                 title="Nhắn tin đến những học sinh đã chọn">
@@ -202,9 +219,15 @@
 
     <div class="row-fluid">
     <div id="student-table-div">
+        <div id="after-post-alert"></div>
         <table class="table table-hover fifth-row" id="student-table">
             <thead>
             <tr>
+                {% if pos > 3 %}
+                    <th class="align-left" title="Tài khoản">
+                        <i class="icon-user"></i>
+                    </th>
+                {% endif %}
                 {% if pos > 3 or gvcn == 1 %}
                     <th title="Chọn cả lớp" style="text-align: center;">
                         <input type="checkbox" id="checkbox_all" class="studentCheckbox"/>
@@ -226,6 +249,15 @@
             {% for ss in studentList %}
                 <tr class="{{ss.id}} student"
                     style='-webkit-user-select: none; cursor:pointer'>
+                    {% if pos > 3 %}
+                        <td>
+                            {% if ss.user_id.is_active %}
+                                <i class='icon-key' id='lock-{{ss.id}}'></i>
+                            {% else %}
+                                <i class='icon-lock' id='lock-{{ss.id}}'></i>
+                            {% endif %}
+                        </td>
+                    {% endif %}
                     {% if pos > 3 or gvcn == 1 %}
                         <td style="text-align: center;">
                             <input type="checkbox" id="checkbox_{{ss.id}}" class="studentCheckbox"/>

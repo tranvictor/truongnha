@@ -63,6 +63,72 @@ def activate_teacher(request):
     else:
         raise Exception("BadRequest")
 
+def activate_student(request):
+    if request.method == 'POST' and request.is_ajax():
+        id_list = request.POST['id_list'].split('-')
+        number = 0
+        number_activated = 0
+        number_cant_contact = 0
+        activated_student = ''
+        cant_contact = ''
+        for id in id_list:
+            if id:
+                student = Pupil.objects.get(id=int(id))
+                try:
+                    student.activate_account()
+                    number += 1
+                    activated_student += str(student.id) + '-'
+                except Exception as e:
+                    if e.message == 'NoWayToContact':
+                        number_cant_contact += 1
+                        cant_contact += str(student.id) + '-'
+                        #TODO: notice that system can't contact to users
+                    elif e.message == 'AccountActivated':
+                        number_activated += 1
+                    else: raise e
+        message = u'Đã kích hoạt ' + unicode(number) + u' tài khoản'
+        data = {
+            'message': message,
+            'number_activated': number_activated,
+            'number_cant_contact': number_cant_contact,
+            'activated_student': activated_student,
+            'cant_contact': cant_contact,
+            'number': number,
+            'success': True
+        }
+        return HttpResponse(simplejson.dumps(data), mimetype='json')
+    else:
+        raise Exception("BadRequest")
+
+def deactivate_student(request):
+    if request.method == 'POST' and request.is_ajax():
+        id_list = request.POST['id_list'].split('-')
+        number = 0
+        number_deactivated = 0
+        deactivated_student = ''
+        cant_contact = ''
+        for id in id_list:
+            if id:
+                student = Pupil.objects.get(id=int(id))
+                try:
+                    student.deactive_account()
+                    number += 1
+                    deactivated_student += str(student.id) + '-'
+                except Exception as e:
+                    pass
+        message = u'Đã khóa ' + unicode(number) + u' tài khoản'
+        data = {
+            'message': message,
+            'number_deactivated': number_deactivated,
+            'deactivated_student': deactivated_student,
+            'cant_contact': cant_contact,
+            'number': number,
+            'success': True
+        }
+        return HttpResponse(simplejson.dumps(data), mimetype='json')
+    else:
+        raise Exception("BadRequest")
+
 @need_login
 @school_function
 def move_one_student(request, student_id):

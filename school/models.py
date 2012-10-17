@@ -318,6 +318,50 @@ class BasicPersonInfo(models.Model):
     class Meta:
         abstract = True
 
+    def activate_account(self, words=3, digits=2):
+        self.user_id.is_active = True
+        max_number = 10 ** digits
+        raw_password = ''.join(random.sample(syllables, words))
+        if digits > 0:
+            raw_password += str(int(random.random() * max_number))
+        self.user_id.password = make_password(raw_password)
+        if self.email or self.sms_phone:
+            #Send Email
+            email_sent = False
+            sms_sent = False
+            try:
+                subject = u'Kích hoạt tài khoản Trường Nhà'
+                message = u'Tài khoản trường ' +\
+                          unicode(
+                              self.school_id) + u' tại địa chỉ: http://www.truongnha.com của bạn là:\n' + u'Tên đăng nhập: ' + unicode(
+                    self.user_id.username) +\
+                          u'\n' + u'Mật khẩu: ' + unicode(raw_password) + u'\n' + u'Xin cảm ơn.'
+                send_email(subject, message, to_addr=[self.email])
+                email_sent = True
+            except Exception as e:
+                print e
+            try:
+                content = 'Tai khoan Truongnha.com:\n' + 'ten: ' + self.user_id.username + '\nmat khau: ' + str(
+                    raw_password)
+                sendSMS(self.sms_phone, content, self.user_id, save_to_db=False)
+                sms_sent = True
+            except Exception as e:
+                print e
+            if not email_sent and not sms_sent:
+                raise Exception("NoWayToContact")
+                #Send an SMS
+        else:
+            raise Exception("NoWayToContact")
+        self.user_id.save()
+        return raw_password
+
+    def deactive_account(self):
+        if self.user_id.is_active:
+            self.user_id.is_active = False
+            self.user_id.save()
+        else:
+            raise Exception("Already deactive")
+
     def full_name(self):
         return ' '.join([self.last_name, self.first_name])
 
@@ -420,43 +464,6 @@ class Teacher(BasicPersonInfo):
         except Exception as e:
             print e
             #Send an SMS
-
-    def activate_account(self, words=3, digits=2):
-        self.user_id.is_active = True
-        max_number = 10 ** digits
-        raw_password = ''.join(random.sample(syllables, words))
-        if digits > 0:
-            raw_password += str(int(random.random() * max_number))
-        self.user_id.password = make_password(raw_password)
-        if self.email or self.sms_phone:
-            #Send Email
-            email_sent = False
-            sms_sent = False
-            try:
-                subject = u'Kích hoạt tài khoản Trường Nhà'
-                message = u'Tài khoản trường ' +\
-                          unicode(
-                              self.school_id) + u' tại địa chỉ: http://www.truongnha.com của bạn là:\n' + u'Tên đăng nhập: ' + unicode(
-                    self.user_id.username) +\
-                          u'\n' + u'Mật khẩu: ' + unicode(raw_password) + u'\n' + u'Xin cảm ơn.'
-                send_email(subject, message, to_addr=[self.email])
-                email_sent = True
-            except Exception as e:
-                print e
-            try:
-                content = 'Tai khoan Truongnha.com:\n' + 'ten: ' + self.user_id.username + '\nmat khau: ' + str(
-                    raw_password)
-                sendSMS(self.sms_phone, content, self.user_id, save_to_db=False)
-                sms_sent = True
-            except Exception as e:
-                print e
-            if not email_sent and not sms_sent:
-                raise Exception("NoWayToContact")
-                #Send an SMS
-        else:
-            raise Exception("NoWayToContact")
-        self.user_id.save()
-        return raw_password
 
     class Meta:
         verbose_name = "Giáo viên"
@@ -889,17 +896,6 @@ class Pupil(BasicPersonInfo):
     def disable_account(self):
         self.user_id.is_active = False
         self.user_id.save()
-
-    def activate_account(self, words=3, digits=2):
-        if self.user_id.is_active: raise Exception("AccountActivated")
-        self.user_id.is_active = True
-        max_number = 10 ** digits
-        raw_password = ''.join(random.sample(syllables, words))
-        if digits > 0:
-            raw_password += str(int(random.random() * max_number))
-        self.user_id.password = make_password(raw_password)
-        self.user_id.save()
-        return raw_password
 
     class Meta:
         verbose_name = "Học sinh"
