@@ -583,6 +583,8 @@ def add_many_students( student_list = None,
 
 # student: Pupil object
 def del_student( student):
+    if student.user_id.username == settings.DEMO_LOGIN_STUDENT:
+        return None
     student.disable = True
     student.save()
 
