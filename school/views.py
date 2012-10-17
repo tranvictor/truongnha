@@ -20,7 +20,7 @@ from school.forms import UsernameChangeForm, SchoolForm,\
         SelectSchoolLessonForm2, LessonForm
 from school.models import UncategorizedClass, Term, Subject, Pupil,\
         Class, DiemDanh, StartYear, Year, Lesson, TKDiemDanh, TKB,\
-        SchoolLesson, Block, Teacher, Attend
+        SchoolLesson, Block, Teacher, Attend, COMMENT_SUBJECT_LIST
 from decorators import need_login, school_function, operating_permission
 from school.school_settings import CAP2_DS_MON, CAP1_DS_MON, CAP3_DS_MON
 from school.utils import get_current_year, get_school, get_permission,\
@@ -229,6 +229,9 @@ def info(request):
                     if a.name == 'lock_time':
                         if a.errors:
                             lock_time = str(a.errors)
+                    if a.name == 'semester_finish_time':
+                        if a.errors:
+                            semester_finish_time = str(a.errors)
                     elif a.name == 'class_labels':
                         if a.errors:
                             class_labels = str(a.errors)
@@ -240,6 +243,7 @@ def info(request):
                                          'name': name,
                                          'address': address,
                                          'lock_time': lock_time,
+                                         'semester_finish_time': semester_finish_time,
                                          'class_labels': class_labels})
             return HttpResponse(response, mimetype='json')
 
@@ -469,9 +473,12 @@ def b1(request):
             i = 0
             for mon in ds_mon_hoc:
                 i += 1
-                if mon == u'Toán' or mon == u'Ngữ văn':
-                    add_subject(subject_name=mon, subject_type=mon,
-                                hs=2, _class=_class, index=i)
+                if mon in COMMENT_SUBJECT_LIST:
+                    add_subject(subject_name=mon,
+                        subject_type=mon,
+                        nx=True,
+                        _class=_class,
+                        index=i)
                 else:
                     add_subject(subject_name=mon, subject_type=mon,
                                 _class=_class, index=i)

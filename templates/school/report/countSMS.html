@@ -1,11 +1,13 @@
 ﻿{% extends "base.html" %}
 {% load dictionary %}
 {% block js %}
-    <script>
-        $(document).ready(function () {
+    <script type="text/javascript">
+        $(document).ready(function(){
             $("#loaitin{{type}}").attr("checked", "true");
         });
     </script>
+    <script type="text/javascript"
+        src="/static/js/template_js/count_sms.js?{{ VERSION }}"></script>
 {% endblock %}
 
 {% block css %}
@@ -31,22 +33,25 @@
               method="post"> {% csrf_token %}
             <fieldset>
                 <label>Từ ngày</label>
-                <input id="id_date1" name="firstDate" class="datepicker" value="{{day}}/{{month}}/{{year}}">
+                <input id="id_date1" name="firstDate"
+                class="datepicker input-small"
+                value="{{day}}/{{month}}/{{year}}">
                 <label>đến ngày</label>
-                <input id="id_date2" name="secondDate" class="datepicker" value="{{day1}}/{{month1}}/{{year1}}">
-
+                <input id="id_date2" name="secondDate"
+                class="datepicker input-small"
+                value="{{day1}}/{{month1}}/{{year1}}">
 
                 <label>
-                <input TYPE="radio" NAME="type1" id='loaitin1' value="1">Tất cả
+                <input type="radio" name="type1" id='loaitin1' value="1">Tất cả
                 </label>
 
                 <label>
-                    <input TYPE="radio" NAME="type1" id='loaitin2' value="2">
+                    <input type="radio" name="type1" id='loaitin2' value="2">
                     Đã gửi được
                 </label>
 
                 <label>
-                    <input TYPE="radio" NAME="type1" id='loaitin3' value="3">
+                    <input type="radio" name="type1" id='loaitin3' value="3">
                     Không gửi được
                 </label>
 
@@ -55,7 +60,7 @@
         </form>
     </div>
 
-    <table class="table" width="100%">
+    <table id="sms-table" class="table" width="100%">
         <tr>
             <th>
                 STT
@@ -90,8 +95,8 @@
                 <td>
                     {{ l.created|date:"SHORT_DATETIME_FORMAT" }}
                 </td>
-
-                <td>
+                <td class="truncated" style="max-width:350px;"
+                    title="{{ l.content }}">
                     {{ l.content }}
                 </td>
                 <td>
@@ -101,7 +106,9 @@
                         {% if l.success %}
                             Thành công
                         {% else %}
-                            Thất bại
+                        <a class="click-tooltip"
+                            href="#"
+                            title="{{l.failed_reason}}">Thất bại</a>
                         {% endif %}
                     {% endif %}
                 </td>

@@ -66,7 +66,6 @@ class sms(models.Model):
     content = models.TextField("Nội dung")
     created = models.DateTimeField("Thời gian tạo", auto_now_add=True)
     sender = models.ForeignKey(User)
-    receiver = models.CharField("Người nhận", max_length=64, blank=False)
     recent = models.BooleanField(default=True)
     success = models.BooleanField(default=False)
     failed_reason = models.TextField("Lý do")
@@ -132,17 +131,17 @@ class sms(models.Model):
         else:
             raise Exception("InvalidPhoneNumber")
         
-    def _send_sms(self):
-        phone = self.phone
-        tsp = get_tsp(phone)
+    def _send_sms(self, school=None):
         try:
             # 2 id user nay de cap phep nhan tin cho chi Van va account sensive
-            if int(self.sender_id) in [904, 16742]:
+            if (int(self.sender_id) in [904, 16742]
+                    or (school and school.id in [11])): 
                 result = self._send_iNET_sms()
             else:
                 result = self._send_Viettel_sms()
             if result != '1':
                 self.success = False
+                self.failed_reason = u'Tài khoản trường không đủ để thực hiện tin nhắn'
                 self.recent = False
                 self.save()
             else:
@@ -153,6 +152,7 @@ class sms(models.Model):
         except Exception:
             self.recent= False
             self.success = False
+            self.failed_reason = u'Tài khoản trường không đủ để thực hiện tin nhắn'
             self.save()
         
     def _send_mark_sms(self, marks):
@@ -162,8 +162,8 @@ class sms(models.Model):
                 m.update_sent()
 
     @task()
-    def send_sms(self):
-        return self._send_sms()
+    def send_sms(self, school=None):
+        return self._send_sms(school=school)
         
     @task()
     def send_mark_sms(self, marks):

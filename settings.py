@@ -4,7 +4,7 @@
 # open path for template folder
 import os
 import sys
-DEBUG = True
+DEBUG = False
 if os.environ.pop('DJANGO_SETTINGS_TESTING', None):
     IS_TESTING = True
 else:
@@ -105,7 +105,6 @@ DATE_INPUT_FORMATS = ('%d/%m/%Y', '%d-%m-%Y')
 SITE_ID = 1
 
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
-
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
@@ -209,7 +208,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'django.contrib.staticfiles',
+#'django.contrib.staticfiles',
 #    'django.contrib.messages',
     'django.contrib.admin',
     'crumbs', #requires django-crumbs
@@ -227,7 +226,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     # other finders..
-    'compressor.finders.CompressorFinder',
+    #'compressor.finders.CompressorFinder',
 )
 
 # Celery configuration

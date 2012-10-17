@@ -292,6 +292,16 @@ class SettingForm(forms.Form):
                 validators=[validate_class_label],
                 widget=forms.Textarea,
                 required = False)
+    def clean(self):
+        cleaned_data = super(SettingForm, self).clean()
+        semester_start_time = cleaned_data.get("semester_start_time")
+        semester_finish_time = cleaned_data.get("semester_finish_time")
+        if semester_start_time and semester_finish_time:
+            if semester_finish_time < semester_start_time:
+                msg = u"Ngày kết thúc học kì phải sau ngày bắt đầu học kì."
+                self._errors["semester_finish_time"] = self.error_class([msg])
+                raise forms.ValidationError(msg)
+        return cleaned_data
     def save_to_model(self):
         try:
             school = get_school(self.request)
