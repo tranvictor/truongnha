@@ -140,4 +140,11 @@
             </div>
         {% endif %}
     {% endif %}
+    <div style = "display: none;">
+        <select id="teacher-source">
+            {% for teacher in teacherList%}
+                <option value="{{ teacher.id }}">{{ teacher }}</option>
+            {% endfor %}
+        </select>
+    </div>
 {% endblock %}

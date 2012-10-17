@@ -125,7 +125,7 @@
         </thead>
 
         {% for ss,f, iteacher, rteacher in list %}
-            <tr class="sortable" id="{{ ss.id }}">
+            <tr class="sortable" id="{{ ss.id }}" teacher="{{ss.teacher_id.id|default:''}}">
                 <td class="naviButton" style="display: none;">
                     <button id="naviButton-up" class="btn btn-small">Lên</button>
                 </td>
@@ -146,7 +146,7 @@
                     <td> {{ ss.type }} </td>
                     <td>{{ f.number_lesson }}</td>
                     <td> {{ f.hs }} </td>
-                    <td>
+                    <td >
                         {{ f.teacher_id }}
                         <div>
                             <select class="combobox" style="display: none;">
@@ -258,6 +258,13 @@
             </form>
         {% endif %}
     </table>
+    <div style = "display: none;">
+        <select id="teacher-source">
+            {% for teacher in teacherList%}
+                <option value="{{ teacher.id }}">{{ teacher }}</option>
+            {% endfor %}
+        </select>
+    </div>
 
     <p id="ajax_to" style="display: none;">{% url change_index 'subject' class.id %}</p>
     <p id="redirect_link" style="display: none;">{% url subject_per_class class.id %}</p>
