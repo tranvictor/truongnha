@@ -1242,8 +1242,11 @@ def history_mark_detail(request, subject_id, term_id=None):
     index = {}
     for (i, m) in enumerate(mark_list):
         index[m.id] = i
-        arr_mark_list[i] = m.toArrayMark()
-        detail[i] = [''] * (3 * MAX_COL + 1)
+        arr_mark_list[i] = m.toArrayMark(True)
+        if selected_subject.nx:
+            for j in range(3*MAX_COL+3):
+                arr_mark_list[i][j] = normalize(arr_mark_list[i][j],True)
+        detail[i] = [''] * (3 * MAX_COL + 3)
 
     set_of_id = []
     for m in mark_list:
@@ -1252,10 +1255,10 @@ def history_mark_detail(request, subject_id, term_id=None):
 
     for h in history_mark_set:
         i = index[h.mark_id_id]
-        arr_mark_list[i][h.number] = normalize(h.old_mark) + "-" + str(arr_mark_list[i][h.number])
+        arr_mark_list[i][h.number] = normalize(h.old_mark,selected_subject.nx) + "-" + arr_mark_list[i][h.number]
         temp = h.date.strftime("%d/%m/%Y %H:%M")\
                + " " + h.user_id.first_name + " " + h.user_id.last_name\
-               + u" sửa điểm từ " + normalize(h.old_mark)\
+               + u" sửa điểm từ " + normalize(h.old_mark,selected_subject.nx)\
                + u" -> " + arr_mark_list[i][h.number].split('-')[1]
         detail[i][h.number] += temp + '<br>'
     data = [0] * number_pupils
@@ -1267,6 +1270,8 @@ def history_mark_detail(request, subject_id, term_id=None):
             for t in range(MAX_COL):
                 if empty_col[j][t]:
                     aRow.append((arr_mark_list[i][j * MAX_COL + t + 1], detail[i][j * MAX_COL + t + 1]))
+        aRow.append((arr_mark_list[i][3 * MAX_COL + 1], detail[i][3 * MAX_COL + 1]))
+        aRow.append((arr_mark_list[i][3 * MAX_COL + 2], detail[i][3 * MAX_COL + 2]))
         data[i] = aRow
     list = zip(pupil_list, data)
     t = loader.get_template(os.path.join('school/report', 'history_mark_detail.html'))

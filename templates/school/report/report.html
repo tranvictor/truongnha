@@ -61,10 +61,12 @@
             <a class="report" href="{% url print_no_pass 3 %}"> Rèn luyện thêm ({{number_practising_again}}) </a>
         </div>
 		{% if DEBUG %}
-			<div class="span2">
-				<h2>Lịch sử điểm</h2>
-				<a class="report" href="{% url history_mark %}"> Lịch sử sửa điểm </a>
-			</div>
+			{% if user.userprofile.isSchool %}
+				<div class="span2">
+					<h2>Lịch sử điểm</h2>
+					<a class="report" href="{% url history_mark %}"> Lịch sử sửa điểm </a>
+				</div>
+			{% endif %}	
 		{% endif %}	
     </div>
 {% endblock %}
