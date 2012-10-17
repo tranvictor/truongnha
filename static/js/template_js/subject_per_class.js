@@ -1,5 +1,12 @@
 $(document).ready(function() {
     (function($) {
+        var get_text_from_id = function(teacher_id){
+            var text_value = "--------";
+            $('#teacher-source').find('option').each(function(){
+                if (parseInt($(this).val(), 10) == parseInt(teacher_id, 10)) text_value = $(this).text();
+            });
+            return text_value;
+        }
         $.widget("ui.combobox", {
             _create: function() {
                 var self = this,
@@ -47,6 +54,10 @@ $(document).ready(function() {
                                         url:"",
                                         data: data,
                                         datatype:"json",
+                                        success:function(json){
+                                            $("#notify").showNotification(json.message);
+                                            $("#" + id).attr('teacher', teacher);
+                                        },
                                         error: function() {
                                             $(".submitbutton").attr('disabled', false);
                                             $(".submitbutton").val('Lưu');
@@ -69,7 +80,8 @@ $(document).ready(function() {
                                     });
                                     if (!valid) {
                                         // remove invalid value, as it didn't match anything
-                                        $(this).val("");
+                                        var current_teacher = $(this).parents("tr").attr('teacher');
+                                        $(this).val(get_text_from_id(current_teacher));
                                         select.val("");
                                         input.data("autocomplete").term = "";
                                         return false;

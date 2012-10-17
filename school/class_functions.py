@@ -586,18 +586,19 @@ def subjectPerClass(request, class_id):
     sfl = []
     teachers = []
     rteachers = []
+    teacher_list = school.teacher_set.all()
     classList = year.class_set.all().order_by('name')
     for s in subjectList:
         sfl.append(SubjectForm(school.id, instance=s))
         teachers.append(school.teacher_set.filter(major__contains=s.name))
-        q = school.teacher_set.all()
-        rteachers.append(q.exclude(major__contains=s.name))
+        rteachers.append(teacher_list.exclude(major__contains=s.name))
     list = zip(subjectList, sfl, teachers, rteachers)
     t = loader.get_template(os.path.join('school', 'subject_per_class.html'))
     c = RequestContext(request, {'list': list,
                                  'form': form,
                                  'message': message,
                                  'subjectList': subjectList,
+                                 'teacherList' : teacher_list,
                                  'class': cl,
                                  'term': term,
                                  'classList': classList,
