@@ -12,7 +12,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from app.views import login
 from sms.models import sms
 from school.class_functions import dd
-from school.models import Class, Pupil, Term, Subject, DiemDanh, TBNam, TKB
+from school.models import Class, Pupil, Term, Subject, DiemDanh, TBNam, TKB,\
+        KhenThuong, KiLuat
 from school.utils import get_position, get_school, is_teacher,\
         get_current_term, get_current_year
 from school.forms import MarkForm
@@ -518,7 +519,7 @@ class StudentProfile(View):
                            'mother_name','mother_birthday','mother_job')
 
             ttdd_fields = {'doi','ngay_vao_doi','doan','ngay_vao_doan','dang','ngay_vao_dang'}
-            data = {'ttcn' : {}, 'ttll' : {}, 'ttgd' : {}, 'ttdd' : {} }
+            data = {'ttcn' : {}, 'ttll' : {}, 'ttgd' : {}, 'ttdd' : {}, 'khenthuong' : [], 'kiluat' : [] }
             for field in ttcn_fields:
                 tmp = getattr(student, field)
                 data['ttcn'][field] = unicode(tmp)
@@ -534,6 +535,23 @@ class StudentProfile(View):
             for field in ttdd_fields:
                 tmp = getattr(student, field)
                 data['ttdd'][field] = unicode(tmp)
+
+            ktl = student.khenthuong_set.order_by('time')
+            kll = student.kiluat_set.order_by('time')
+            for kt in ktl:
+                new_dict = {}
+                for field in KhenThuong._meta.get_all_field_names():
+                    tmp = getattr(kt, field)
+                    new_dict[field] = unicode(tmp)
+                data['khenthuong'].append(new_dict)
+
+            for kl in kll:
+                new_dict = {}
+                for field in KiLuat._meta.get_all_field_names():
+                    tmp = getattr(kl, field)
+                    new_dict[field] = unicode(tmp)
+                data['kiluat'].append(new_dict)
+
 
             return HttpResponse(simplejson.dumps(data), mimetype='json')
 #            return Response(status=status.HTTP_200_OK, content=list)
