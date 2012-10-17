@@ -925,10 +925,12 @@ def convert_diem_danh(request):
         return HttpResponse("Convert Done")
     else:
         return HttpResponseNotAllowed(302)
+
 @transaction.commit_on_success
-def sync_subject_comment(request):
+def _sync_subject_comment():
     set_subject = [u'Âm nhạc',u'Mĩ thuật',u'Thể dục']
-    subject_list = Subject.objects.filter(class_id__year_id__time=2012, type__in=set_subject)
+    subject_list = Subject.objects.filter(class_id__year_id__time=2012,
+            type__in=set_subject)
     print len(subject_list)
     number = 0
     for s in subject_list:
@@ -938,7 +940,7 @@ def sync_subject_comment(request):
         s.nx = True
         s.save()
 
-    subject_list = Subject.objects.filter(class_id__year_id__time=2012, hs =2)
+    subject_list = Subject.objects.filter(class_id__year_id__time=2012, hs=2)
     print len(subject_list)
     number = 0
     for s in subject_list:
@@ -948,7 +950,3 @@ def sync_subject_comment(request):
         s.hs = 1
         s.save()
 
-    message = 'Done'
-    context = RequestContext(request)
-    return render_to_response( SYNC_RESULT, { 'message' : message},
-        context_instance = context )

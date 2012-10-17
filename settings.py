@@ -4,7 +4,7 @@
 # open path for template folder
 import os
 import sys
-DEBUG = True
+DEBUG = False
 if os.environ.pop('DJANGO_SETTINGS_TESTING', None):
     IS_TESTING = True
 else:
@@ -105,7 +105,6 @@ DATE_INPUT_FORMATS = ('%d/%m/%Y', '%d-%m-%Y')
 SITE_ID = 1
 
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
-
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
@@ -219,7 +218,7 @@ INSTALLED_APPS = (
     'api',
     'pagination',
     'djcelery',
-    #'south', #for database migration/upgrade
+    'south', #for database migration/upgrade
 #    'django_jenkins',
 )
 

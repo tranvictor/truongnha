@@ -109,7 +109,7 @@ $(document).ready(function () {
         }
     }
 
-    // recover state when browser uses it's cache
+   // recover state when browser uses it's cache
     var checkedInput = $('table').find('input:checked');
     for (var i = checkedInput.length; i--;){
         var trParent = $(checkedInput[i]).parents('tr');
