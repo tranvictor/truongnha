@@ -1,8 +1,8 @@
 body {
     font-family: "OpenSansRegular",Tahoma,Arial,Helvetica,Sans-Serif;
-    font-size: 12.5px;
+    font-size: 13px;
     font-weight: normal;
-    padding: 1em;
+    padding: 0 1em 1em 1em;
 }
 
 @media (max-width: 767px) {
@@ -17,6 +17,13 @@ body {
     }
 }
 
+.logo-truong {
+    color: rgba(0, 136, 204, 0.75);
+}
+.logo-nha{
+    color: rgba(255, 69, 0, 0.75);
+}
+
 /*#breadcrumb {*/
     /*padding-top: 2em;*/
     /*padding-bottom: 1em;*/
@@ -28,8 +35,8 @@ body {
 }
 
 header{
-    /*padding-top: .5em;*/
-    padding-bottom: 1em;
+    padding-top: .5em;
+    padding-bottom: .5em;
 }
 
 nav {

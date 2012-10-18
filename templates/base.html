@@ -88,7 +88,7 @@
 </head>
 
 <body>
-<header id="top-header" class="dimmed">
+<header id="top-header">
     {% if SYSTEM_WARNING %}
         <div class="alert alert-block" style="padding-top:5px; padding-bottom:5px; margin-bottom:0px;">
             <button type="button" class="close" data-dismiss="alert">×</button>
@@ -142,7 +142,7 @@
                 {% endif %}
             {% else %}
                 <a id="logo" href="{% url index %}" title="Dịch vụ phần mềm quản lý trường học">
-                    <strong style="color: rgba(255, 69, 0, 0.75);">Trường</strong><strong style="color: rgba(0, 136, 204, 0.75);">Nhà</strong>
+                    <span class="logo-truong">Trường</span><span class="logo-nha">Nhà</span>
                 </a>
             {% endif %}
         </div>
@@ -169,7 +169,7 @@
                 <a class="hidden-phone dimmed" id="feedback" href="#feedbackWindow" title="Gửi góp ý, bình luận, thông báo lỗi.."><i class="icon-comment-alt"></i></a> &nbsp;
 
                 <a id="logo" href="{% url index %}" title="Dịch vụ phần mềm quản lý trường học">
-                    <strong style="color: rgba(255, 69, 0, 0.75);">Trường</strong><strong style="color: rgba(0, 136, 204, 0.75);">Nhà</strong>
+                    <span class="logo-truong">Trường</span><span class="logo-nha">Nhà</span>
                 </a>
             {% endif %}
         </div>

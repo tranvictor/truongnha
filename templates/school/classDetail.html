@@ -39,7 +39,7 @@
         <div class="btn-group">
             {% if pos > 3 or user.userprofile.organization.level == 'S' %}
                 <a id="btn-diem" title="Nhập hoặc chỉnh sửa điểm các môn học" class="btn btn-primary"
-                   href="{%url mark_table selected_term.id class.id %}">
+                   href="{% url mark_table selected_term.id class.id %}">
                     <i class="icon-star-empty"></i>
                     Điểm</a>
             {% else %}
@@ -52,15 +52,16 @@
             {% endif %}
 
             {% if pos > 3 or gvcn == 1 %}
-                <a id="btn-diemdanh" title="Nhập thông tin học sinh nghỉ học có phép, không phép" class="btn btn-success"
-                   href="{%url diem_danh_form class.id  %}">
+                <a id="btn-diemdanh" title="Nhập thông tin học sinh nghỉ học có phép, không phép"
+                   class="btn btn-success"
+                   href="{% url diem_danh_form class.id %}">
                     <i class="icon-check"></i>
                     Điểm danh</a>
             {% endif %}
 
             {% if pos > 0 %}
                 <a id="btn-hanhkiem" title="Đánh giá hạnh kiểm học sinh trong lớp" class="btn"
-                   href="{%url hanh_kiem class.id %}">
+                   href="{% url hanh_kiem class.id %}">
                     Hạnh kiểm</a>
             {% endif %}
         </div>
@@ -68,7 +69,7 @@
         <div class="btn-group">
             {% if pos > 1 or inClass == 1 %}
                 <a id="btn-monhoc" title="Xem tất cả thông tin của của môn học trong lớp" class="btn "
-                   href="{%url subject_per_class class.id  %}">
+                   href="{% url subject_per_class class.id %}">
                     Môn học</a>
             {% endif %}
 
@@ -77,66 +78,9 @@
                 Lịch học</a>
         </div>
 
-        {% if pos > 3 or gvcn == 1 or user.userprofile.organization.level == 'S' %}
-            <div class="btn-group ">
-                {% ifequal class.year_id.school_id.status 1 %}
-                    <a id="btn-tongket" title="Tính trung bình học lực của cả lớp" class="btn"
-                       href="{%url xep_loai_hl_theo_lop class.id 1 %}">
-                        Tổng kết </a>
-                {% else %}
-                    <a id="btn-tongket" title="Tính trung bình học lực của cả lớp" class="btn"
-                       href="{%url xep_loai_hl_theo_lop class.id 2 %}">
-                        Tổng kết </a>
-                {% endifequal %}
-
-                <a id="btn-xeploai" title=" Xem xếp loại, lên lớp, ở lại lớp, kiểm tra lại, rèn luyện thêm trong hè"
-                   class="btn"
-                   href="{%url xl_ca_nam_theo_lop class.id 1 %}">
-                    Xếp loại</a>
-            </div>
-        {% endif %}
-
-
-
-        {% if pos == 3 and gvcn == 1 %}
-            <div class="btn-group">
-                <a id="btn-sodiem" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                    Phiếu/Sổ điểm
-                    <span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a id="btn-phieudiem1" title="In phiếu báo điểm kỳ I"
-                           href="{%url print_mark_for_class 1 %}">
-                            Phiếu báo điểm kì I </a></li>
-                    <li>
-                        <a id="btn-phieudiem2" title="In phiếu báo điểm kỳ II"
-                           href="{%url print_mark_for_class 2 %}">
-                            Phiếu báo điểm kì II </a></li>
-                    <li>
-                        <a id="btn-sogoiten" title="In sổ gọi tên và ghi điểm"
-                           href="{%url print_mark_book class.id %}">
-                            Sổ ghi điểm và gọi tên </a></li>
-                </ul>
-            </div>
-
-        {% endif %}
-        {#    </div>#}
-
         {% if pos > 3 or gvcn == 1 %}
             <div class="pull-right">
                 <div class="btn-group">
-                    {% if pos > 3 %}
-                        <button id="activateAccount" class="btn"
-                                title="Mở cho tài khoản học sinh được sử dụng. Các học sinh không sử dụng cần khóa lại để đảm bảo an toàn thông tin hơn.">
-                            <i class="icon-key"></i>
-                            Mở tài khoản
-                        </button>
-                        <button id="deactivateAccount" class="btn">
-                            <i class="icon-lock"></i>
-                            Khóa tài khoản
-                        </button>
-                    {% endif %}
                     {% if pos == 3 and gvcn == 1 or pos > 3 %}
                         <button id="textSms" class="btn btn-warning"
                                 title="Nhắn tin đến những học sinh đã chọn">
@@ -147,7 +91,8 @@
                 </div>
 
                 <div class="btn-group">
-                    <a id="student-list-menu" class="btn dropdown-toggle " data-toggle="dropdown" href="#" title="Quản lý danh sách lớp">
+                    <a id="student-list-menu" class="btn dropdown-toggle " data-toggle="dropdown" href="#"
+                       title="Quản lý danh sách lớp">
                         <span class="icon-reorder"></span>
                     </a>
                     <ul class="dropdown-menu pull-right">
@@ -241,34 +186,34 @@
                 <th title="Điện thoại nhắn tin">Điện thoại</th>
                 <th></th>
                 <th title="Nơi ở hiện tại">Địa chỉ</th>
-                <th >Họ tên bố, mẹ</th>
+                <th>Họ tên bố, mẹ</th>
             </tr>
             </thead>
 
             <tbody>
             {% for ss in studentList %}
-                <tr class="{{ss.id}} student"
+                <tr class="{{ ss.id }} student"
                     style='-webkit-user-select: none; cursor:pointer'>
                     {% if pos > 3 %}
                         <td>
                             {% if ss.user_id.is_active %}
-                                <i class='icon-key' id='lock-{{ss.id}}'></i>
+                                <i class='icon-key' id='lock-{{ ss.id }}'></i>
                             {% else %}
-                                <i class='icon-lock' id='lock-{{ss.id}}'></i>
+                                <i class='icon-lock' id='lock-{{ ss.id }}'></i>
                             {% endif %}
                         </td>
                     {% endif %}
                     {% if pos > 3 or gvcn == 1 %}
                         <td style="text-align: center;">
-                            <input type="checkbox" id="checkbox_{{ss.id}}" class="studentCheckbox"/>
+                            <input type="checkbox" id="checkbox_{{ ss.id }}" class="studentCheckbox"/>
                         </td>
                     {% endif %}
                     <td style="text-align: center;"> {{ forloop.counter }} </td>
                     {% if pos > 1 or student_id == ss.id %}
                         <td><a title="Xem toàn bộ thông tin chi tiết"
-                               href="{%url student_detail ss.id %}">{{ ss.last_name }}</a></td>
+                               href="{% url student_detail ss.id %}">{{ ss.last_name }}</a></td>
                         <td><a title="Xem toàn bộ thông tin chi tiết"
-                               href="{%url student_detail ss.id %}">{{ ss.first_name }}</a>
+                               href="{% url student_detail ss.id %}">{{ ss.first_name }}</a>
                         </td>
                     {% else %}
                         <td> {{ ss.last_name }} </td>
@@ -286,11 +231,11 @@
                     {% endif %}
                     <td class="truncated" title="{{ ss.current_address }}">
                         {{ ss.current_address }} </td>
-                    <td >
+                    <td>
                         {% if ss.father_name %}
                             {{ ss.father_name }}
                             {% if ss.mother_name %}
-                            ,
+                                ,
                             {% endif %}
                         {% endif %}
                         {{ ss.mother_name }}
@@ -301,11 +246,70 @@
         </table>
     </div>
 
+    <div class="btn-toolbar">
+        {% if pos > 3 or gvcn == 1 or user.userprofile.organization.level == 'S' %}
+            <div class="btn-group ">
+                {% ifequal class.year_id.school_id.status 1 %}
+                    <a id="btn-tongket" title="Tính trung bình học lực của cả lớp" class="btn"
+                       href="{% url xep_loai_hl_theo_lop class.id 1 %}">
+                        Tổng kết </a>
+                {% else %}
+                    <a id="btn-tongket" title="Tính trung bình học lực của cả lớp" class="btn"
+                       href="{% url xep_loai_hl_theo_lop class.id 2 %}">
+                        Tổng kết </a>
+                {% endifequal %}
+
+                <a id="btn-xeploai" title=" Xem xếp loại, lên lớp, ở lại lớp, kiểm tra lại, rèn luyện thêm trong hè"
+                   class="btn"
+                   href="{% url xl_ca_nam_theo_lop class.id 1 %}">
+                    Xếp loại</a>
+            </div>
+        {% endif %}
+
+        {% if pos == 3 and gvcn == 1 %}
+            <div class="btn-group">
+                <a id="btn-sodiem" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                    Phiếu/Sổ điểm
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a id="btn-phieudiem1" title="In phiếu báo điểm kỳ I"
+                           href="{% url print_mark_for_class 1 %}">
+                            Phiếu báo điểm kì I </a></li>
+                    <li>
+                        <a id="btn-phieudiem2" title="In phiếu báo điểm kỳ II"
+                           href="{% url print_mark_for_class 2 %}">
+                            Phiếu báo điểm kì II </a></li>
+                    <li>
+                        <a id="btn-sogoiten" title="In sổ gọi tên và ghi điểm"
+                           href="{% url print_mark_book class.id %}">
+                            Sổ ghi điểm và gọi tên </a></li>
+                </ul>
+            </div>
+        {% endif %}
+
+        {% if pos > 3 %}
+            <div class="btn-group pull-right">
+                <button id="activateAccount" class="btn"
+                        title="Mở cho tài khoản học sinh được sử dụng. Các học sinh không sử dụng cần khóa lại để đảm bảo an toàn thông tin hơn.">
+                    <i class="icon-key"></i>
+                    Mở tài khoản
+                </button>
+                <button id="deactivateAccount" class="btn">
+                    <i class="icon-lock" title="Không cho học sinh/phụ huynh sử dụng hệ thống nữa."></i>
+                    Khóa tài khoản
+                </button>
+            </div>
+        {% endif %}
+    </div>
+
     {% if pos > 3 %}
-    <div class="span4 dataform"
-        id="add-student-div"
-        style="display: none;">
+        <div class="span4 dataform"
+             id="add-student-div"
+             style="display: none;">
             <h3>Thêm học sinh</h3>
+
             <div>
                 <form action="{% url class_detail class.id %}"
                       id="submitform" method="post">{% csrf_token %}
@@ -393,16 +397,17 @@
     <div class="modal fade" id="move_modal" style="display: none;">
         <div class="modal-header">
             <a class="close" data-dismiss="modal">×</a>
+
             <h3>Chuyển lớp</h3>
         </div>
         <div class="modal-body">
             <label for="move_to_class_id">Lớp chuyển đến</label>
             <select name="move_to_class_id" id="move_to_class_id">
                 {% for cl in move_to_cls %}
-                    <option value="{{cl.id}}">{{ cl }}</option>
+                    <option value="{{ cl.id }}">{{ cl }}</option>
                 {% endfor %}
                 {% for cl in move_to_cls1 %}
-                    <option value="{{cl.id}}">{{ cl }}</option>
+                    <option value="{{ cl.id }}">{{ cl }}</option>
                 {% endfor %}
             </select>
 
@@ -530,7 +535,7 @@
                              style="display: none; height: 15px; margin-left: 10px; padding-left: 0;">
                         </div>
                         <div class="alert alert-error" id="smsErrorDetail"
-                            style="display: none;">
+                             style="display: none;">
                         </div>
                     </td>
                 </tr>

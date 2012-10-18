@@ -8,7 +8,7 @@
 
 {% endblock %}
 
-{% block content %}
+{% block js %}
     <script>
     $(document).ready(function () {
         $("#tabs a").click(function (e) {
@@ -271,15 +271,15 @@
 
     });
     </script>
+{% endblock %}
 
+{% block content %}
     {% if pos > 0 %}
-
     {% endif %}
 
     {% if message != None %}
         {{ message }} <br>
     {% endif %}
-
 
     <div id="tabs">
         <ul class="nav nav-pills">
@@ -338,7 +338,7 @@
             <div id="tabs-4" class="tab-pane"></div>
             <div id="tabs-5" class="tab-pane">
                 <div class="row-fluid">
-                    <div id="miengiam" class="span4"></div>
+                    <div id="miengiam" class="span4"><h4>Không</h4></div>
                 </div>
             </div>
         </div>

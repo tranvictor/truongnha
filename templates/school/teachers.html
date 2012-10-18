@@ -22,6 +22,7 @@
             padding: 0;
             margin-right: 0;
         }
+
         #teachers-nav li {
             list-style: none;
             font-size: .9em;
@@ -29,16 +30,20 @@
             /*margin-left: -.2em;*/
             width: 100%;
         }
+
         #teachers-nav [class^="icon-"] {
             opacity: 0.25;
             font-size: 14px;
         }
+
         #teachers-nav [class^="icon-"]:hover {
             opacity: 1;
         }
+
         .table [class^="icon-"] {
             color: #888;
         }
+
         li:hover i[class^="icon-"] {
             opacity: 1;
         }
@@ -98,7 +103,7 @@
                                 {% for group in group_list %}
                                     {% if group.team_id == t %}
                                         <li class="form-inline group"
-                                            data-toggle="{{group.name}}">
+                                            data-toggle="{{ group.name }}">
                                             <a href="#">
                                            <span class="group-display-name"
                                                  id="group-display-name-{{ group.id }}">{{ group.name }}</span>
@@ -134,96 +139,98 @@
 
     <div class="span9" id="teacher-list-div">
     <div class="btn-toolbar">
-        <div class="btn-group">
-            {% if pos >= 3 %}
-                <button id="textSms" class="btn btn-warning"
-                        title="Nhắn tin đến những giáo viên đã chọn">
-                    <i class="icon-envelope icon-white"></i>
-                    Nhắn tin
-                </button>
-            {% endif %}
-            {% if pos > 3 %}
-                <button id="activateAccount" class="btn"
-                        title="Mở cho tài khoản giáo viên được sử dụng. Các giáo viên không sử dụng cần khóa lại để đảm bảo an toàn thông tin hơn.">
-                    <i class="icon-key"></i>
-                    Mở tài khoản
-                </button>
-                <button id="deactivateAccount" class="btn disabled">
-                    <i class="icon-lock"></i>
-                    Khóa tài khoản
-                </button>
-            {% endif %}
-        </div>
+        {% if pos >= 3 %}
+            <button id="textSms" class="btn btn-warning"
+                    title="Nhắn tin đến những giáo viên đã chọn">
+                <i class="icon-envelope icon-white"></i>
+                Nhắn tin
+            </button>
+        {% endif %}
+
         {% if pos > 3 %}
             <div class="btn-group pull-right">
-                <a id="teacher-list-menu" class="btn dropdown-toggle" data-toggle="dropdown" href="#" title="Quản lý danh sách giáo viên">
-{#                    Chỉnh#}
-                    <span class="icon-reorder"></span>
-                </a>
-                <ul class="dropdown-menu pull-right" style="text-align: left;">
-                    <li>
-                        <a title="Nhập danh sách giáo viên từ file Excel"
-                           href="#upload_modal"
-                           data-toggle="modal"
-                           id="import">
-                            <i class="icon-upload-alt"></i>
-                            Nhập từ Excel </a>
-                    </li>
-                    <li>
-                        <a title="Xuất danh sách giáo viên ra file Excel"
-                           href="{% url teacher_generate 'all' %}"
-                           id="export">
-                            <i class="icon-download-alt"></i>
-                            Xuất ra Excel </a>
-                    </li>
-                    <li>
-                        <a title="Thêm giáo viên"
-                           href="#add-teacher-div"
-                           class="add_teacher_button"
-                           id="add-teacher">
-                            <span class="icon-plus"></span>
-                            Thêm giáo viên </a>
-                    </li>
-                    <li>
-                        <a id="delete"
-                           href="#"
-                           title="Xóa những giáo viên đang được chọn">
-                            <span class="icon-remove"></span>
-                            Xóa giáo viên
-                        </a>
-                    </li>
-                </ul>
+                <div class="btn-group">
+                    <button id="activateAccount" class="btn"
+                            title="Mở cho tài khoản giáo viên được sử dụng. Các giáo viên không sử dụng cần khóa lại để đảm bảo an toàn thông tin hơn.">
+                        <i class="icon-key"></i>
+                        Mở tài khoản
+                    </button>
+                    <button id="deactivateAccount" class="btn">
+                        <i class="icon-lock"></i>
+                        Khóa tài khoản
+                    </button>
+                </div>
+                <div class="btn-group">
+                    <a id="teacher-list-menu" class="btn dropdown-toggle" data-toggle="dropdown" href="#"
+                       title="Quản lý danh sách giáo viên">
+                        {#                    Chỉnh#}
+                        <span class="icon-reorder"></span>
+                    </a>
+                    <ul class="dropdown-menu pull-right" style="text-align: left;">
+                        <li>
+                            <a title="Nhập danh sách giáo viên từ file Excel"
+                               href="#upload_modal"
+                               data-toggle="modal"
+                               id="import">
+                                <i class="icon-upload-alt"></i>
+                                Nhập từ Excel </a>
+                        </li>
+                        <li>
+                            <a title="Xuất danh sách giáo viên ra file Excel"
+                               href="{% url teacher_generate 'all' %}"
+                               id="export">
+                                <i class="icon-download-alt"></i>
+                                Xuất ra Excel </a>
+                        </li>
+                        <li>
+                            <a title="Thêm giáo viên"
+                               href="#add-teacher-div"
+                               class="add_teacher_button"
+                               id="add-teacher">
+                                <span class="icon-plus"></span>
+                                Thêm giáo viên </a>
+                        </li>
+                        <li>
+                            <a id="delete"
+                               href="#"
+                               title="Xóa những giáo viên đang được chọn">
+                                <span class="icon-remove"></span>
+                                Xóa giáo viên
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         {% endif %}
     </div>
-        <div id="teacher-pills" class="row-fluid">
-            <div class="span12" id="teacher-table-div">
-                <div id="after-post-alert"></div>
-                <table class="table" id="teacher_table">
-                    {% if pos >= 3 %}
-                        {% if pos > 3 %}
-                            <colgroup style="width: 2%;"></colgroup>
-                        {% endif %}
-                        <colgroup style="width: 5%;"></colgroup>
+    <div id="teacher-pills" class="row-fluid">
+        <div class="span12" id="teacher-table-div">
+            <div id="after-post-alert"></div>
+            <table class="table" id="teacher_table">
+                {% if pos >= 3 %}
+                    {% if pos > 3 %}
+                        <colgroup style="width: 2%;"></colgroup>
                     {% endif %}
-                    <colgroup></colgroup>
-                    <colgroup></colgroup>
-                    <colgroup></colgroup>
-                    <colgroup></colgroup>
-                    <colgroup></colgroup>
-                    <colgroup></colgroup>
-                    <colgroup></colgroup>
-                    <colgroup></colgroup>
-                    <colgroup></colgroup>
-                    <colgroup></colgroup>
+                    <colgroup style="width: 5%;"></colgroup>
+                {% endif %}
+                <colgroup></colgroup>
+                <colgroup></colgroup>
+                <colgroup></colgroup>
+                <colgroup></colgroup>
+                <colgroup></colgroup>
+                <colgroup></colgroup>
+                <colgroup></colgroup>
+                <colgroup></colgroup>
+                <colgroup></colgroup>
+                <colgroup></colgroup>
 
-                    <thead>
-                    <tr>
+                <thead>
+                <tr>
                     {% if pos >= 3 %}
                         {% if pos > 3 %}
-                        <th class="align-left" title="Tài khoản">
-                            <i class="icon-user"></i>
-                        </th>
+                            <th class="align-left" title="Tài khoản">
+                                <i class="icon-user"></i>
+                            </th>
                         {% endif %}
                         <th class="" style="text-align: center;">
                             <input type="checkbox" id="checkbox_all"/>
@@ -239,128 +246,129 @@
                     <th class="align-left">Dạy môn</th>
                     <th class="align-left">Tổ</th>
                     <th class="align-left">Nhóm</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                {% for teacher in teacher_list %}
+                    <tr id="teacher-{{ teacher.id }}"
+                        data-toggle="{{ teacher.team_id }}-{{ teacher.group_id }}"
+                        class="{{ teacher.id }} teacher">
+                        {% if pos > 3 %}
+                            <td>
+                                {% if teacher.user_id.is_active %}
+                                    <i class='icon-key' id='lock-{{ teacher.id }}'></i>
+                                {% else %}
+                                    <i class='icon-lock' id='lock-{{ teacher.id }}'></i>
+                                {% endif %}
+                            </td>
+                        {% endif %}
+
+                        {% if pos >= 3 %}
+                            <td style="text-align: center;">
+                                <input type="checkbox" id="checkbox_{{ teacher.id }}"
+                                       class="teacherCheckbox"/>
+                            </td>
+                        {% endif %}
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            {% if pos > 3 or user.id == teacher.user_id.id %}
+                                <a href="{% url teacher_detail teacher.id %}">
+                            {% endif %}
+                            {{ teacher.last_name }} </a>
+                        </td>
+                        <td>
+                            {% if pos > 3 or user.id == teacher.user_id.id %}
+                                <a href="{% url teacher_detail teacher.id %}">
+                            {% endif %}
+                            {{ teacher.first_name }} </a>
+                        </td>
+                        <td> {{ teacher.birthday|date:"SHORT_DATE_FORMAT" }}</td>
+                        <td> {{ teacher.sms_phone }}</td>
+                        {% if teacher.email %}
+                            <td title="{{ teacher.email }}">
+                                <i class="icon-envelope"></i>
+                            </td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        <td data-gender="{{ teacher.sex }}"> {{ teacher.sex }} </td>
+
+                        <td>
+                            {{ teacher.major }}
+                        </td>
+                        <td class="teacher-team truncated"
+                            data-toggle="{{ teacher.team_id }}">
+                            {% if teacher.team_id %}
+                                {{ teacher.team_id }}
+                            {% endif %}
+                        </td>
+                        <td class="teacher-group truncated"
+                            data-toggle="{{ teacher.group_id }}">
+                            {% if teacher.group_id %}
+                                {{ teacher.group_id }}
+                            {% endif %}
+                        </td>
                     </tr>
-                    </thead>
+                {% endfor %}
+                </tbody>
+            </table>
 
-                    <tbody>
-                    {% for teacher in teacher_list %}
-                        <tr id="teacher-{{teacher.id}}"
-                            data-toggle="{{ teacher.team_id }}-{{ teacher.group_id }}"
-                            class="{{ teacher.id }} teacher">
-                            {% if pos > 3 %}
-                                <td>
-                                    {% if teacher.user_id.is_active %}
-                                        <i class='icon-key' id='lock-{{teacher.id}}'></i>
-                                    {% else %}
-                                        <i class='icon-lock' id='lock-{{teacher.id}}'></i>
-                                    {% endif %}
-                                </td>
-                            {% endif %}
+            <select id="group_source" style="display: none;">
+                {% for group in group_list %}
+                    <option value="{{ group.id }}" class="dyn {{ group.team_id.id }}">
+                        {{ group }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
 
-                            {% if pos >= 3 %}
-                                <td style="text-align: center;">
-                                    <input type="checkbox" id="checkbox_{{teacher.id}}"
-                                           class="teacherCheckbox"/>
-                                </td>
-                            {% endif %}
-                            <td>{{ forloop.counter }}</td>
-                            <td>
-                                {% if pos > 3 or user.id == teacher.user_id.id %}
-                                    <a href="{%url teacher_detail teacher.id  %}">
-                                {% endif %}
-                                {{ teacher.last_name }} </a>
-                            </td>
-                            <td>
-                                {% if pos > 3 or user.id == teacher.user_id.id %}
-                                    <a href="{%url teacher_detail teacher.id  %}">
-                                {% endif %}
-                                {{ teacher.first_name }} </a>
-                            </td>
-                            <td> {{ teacher.birthday|date:"SHORT_DATE_FORMAT" }}</td>
-                            <td> {{ teacher.sms_phone }}</td>
-                            {% if teacher.email %}
-                                <td title="{{teacher.email}}">
-                                    <i class="icon-envelope"></i>
-                                </td>
-                            {% else %}
-                                <td></td>
-                            {% endif %}
-                            <td data-gender="{{ teacher.sex }}"> {{ teacher.sex }} </td>
+        <div class="span4 dataform" style="display: none;" id="add-teacher-div">
+            <h3>Thêm giáo viên</h3>
 
-                            <td>
-                                {{ teacher.major }}
-                            </td>
-                            <td class="teacher-team truncated"
-                                data-toggle="{{ teacher.team_id }}">
-                                {% if teacher.team_id %}
-                                    {{ teacher.team_id }}
-                                {% endif %}
-                            </td>
-                            <td class="teacher-group truncated"
-                                data-toggle="{{ teacher.group_id }}">
-                                {% if teacher.group_id %}
-                                    {{ teacher.group_id }}
-                                {% endif %}
-                            </td>
+            <div id="addteacherform">
+                <form action="{% url teachers %}"
+                      id="submitform" method="post">{% csrf_token %}
+                    <table class="dataform">
+                        <tr>
+                            <th> Họ tên:</th>
+                            <td> {{ teacher_form.first_name }} </td>
                         </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-
-                <select id="group_source" style="display: none;">
-                    {% for group in group_list %}
-                        <option value="{{ group.id }}" class="dyn {{ group.team_id.id }}">
-                            {{ group }}
-                        </option>
-                    {% endfor %}
-                </select>
+                        <tr>
+                            <th> Ngày sinh:</th>
+                            <td> {{ teacher_form.birthday }}</td>
+                        </tr>
+                        <tr>
+                            <th> Điện thoại:</th>
+                            <td> {{ teacher_form.sms_phone }} </td>
+                        </tr>
+                        <tr>
+                            <th> Giới tính:</th>
+                            <td> {{ teacher_form.sex }} </td>
+                        </tr>
+                        <tr>
+                            <th> Chuyên môn:</th>
+                            <td> {{ teacher_form.major }} </td>
+                        </tr>
+                        <tr>
+                            <th> Tổ:</th>
+                            <td> {{ teacher_form.team_id }} </td>
+                        </tr>
+                        <tr>
+                            <th> Nhóm:</th>
+                            <td><select name="group_id" id="id_group_id">
+                                <option value="" selected="selected">---------</option>
+                            </select></td>
+                        </tr>
+                    </table>
+                </form>
             </div>
-
-            <div class="span4 dataform" style="display: none;" id="add-teacher-div">
-                    <h3>Thêm giáo viên</h3>
-                <div id="addteacherform">
-                    <form action="{% url teachers %}"
-                          id="submitform" method="post">{% csrf_token %}
-                        <table class="dataform">
-                            <tr>
-                                <th> Họ tên:</th>
-                                <td> {{ teacher_form.first_name }} </td>
-                            </tr>
-                            <tr>
-                                <th> Ngày sinh:</th>
-                                <td> {{ teacher_form.birthday }}</td>
-                            </tr>
-                            <tr>
-                                <th> Điện thoại:</th>
-                                <td> {{ teacher_form.sms_phone }} </td>
-                            </tr>
-                            <tr>
-                                <th> Giới tính:</th>
-                                <td> {{ teacher_form.sex }} </td>
-                            </tr>
-                            <tr>
-                                <th> Chuyên môn:</th>
-                                <td> {{ teacher_form.major }} </td>
-                            </tr>
-                            <tr>
-                                <th> Tổ:</th>
-                                <td> {{ teacher_form.team_id }} </td>
-                            </tr>
-                            <tr>
-                                <th> Nhóm:</th>
-                                <td><select name="group_id" id="id_group_id" >
-                                    <option value="" selected="selected">---------</option>
-                                </select></td>
-                            </tr>
-                        </table>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button id="submitaddTeacher" class="btn btn-primary">Thêm</button>
-                    <button class="btn add-teacher-exit">Thôi</button>
-                </div>
+            <div class="modal-footer">
+                <button id="submitaddTeacher" class="btn btn-primary">Thêm</button>
+                <button class="btn add-teacher-exit">Thôi</button>
             </div>
         </div>
+    </div>
     </div>
     </div>
 
@@ -410,8 +418,8 @@
                                  style="display: none; height: 15px; margin-left: 10px; padding-left: 0;">
                             </div>
                             <div class="alert alert-error"
-                                id="smsErrorDetail"
-                                style="display: none;">
+                                 id="smsErrorDetail"
+                                 style="display: none;">
                             </div>
                         </td>
                     </tr>
