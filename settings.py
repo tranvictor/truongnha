@@ -4,7 +4,7 @@
 # open path for template folder
 import os
 import sys
-DEBUG = False
+DEBUG = True
 if os.environ.pop('DJANGO_SETTINGS_TESTING', None):
     IS_TESTING = True
 else:
@@ -268,6 +268,7 @@ LOGIN_REDIRECT_URL = '/'
 DEMO_LOGIN_SCHOOL = 'truongnha_demo_account_school'
 DEMO_LOGIN_TEACHER = 'truongnha_demo_account_teacher'
 DEMO_LOGIN_UPPER = 'truongnha_demo_account_upper'
+DEMO_LOGIN_STUDENT = 'hoc_sinh'
 
 LOCALE_PATHS = (
     os.path.join(os.path.dirname(__file__), 'locale')

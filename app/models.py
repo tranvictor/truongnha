@@ -77,6 +77,7 @@ GRADES_CHOICES = ((6, u'Lớp 6'),
 TERMS=((1, u'Kì 1'),
         (2, u'Kì 2'))
 
+LOGIN_TYPE = ['DEMO_LOGIN_SCHOOL', 'DEMO_LOGIN_TEACHER', 'DEMO_LOGIN_UPPER', 'DEMO_LOGIN_STUDENT']
 
 class MyConfigParser(SafeConfigParser):
     def write(self, fp):
@@ -397,7 +398,7 @@ class AuthenticationForm(forms.Form):
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
         login_type = self.cleaned_data.get('login_type')
-        if login_type in ['DEMO_LOGIN_SCHOOL', 'DEMO_LOGIN_TEACHER', 'DEMO_LOGIN_UPPER']:
+        if login_type in LOGIN_TYPE:
             try:
                 exec('self.user_cache = User.objects.get(username=settings.'+
                         login_type + ')')
@@ -419,7 +420,8 @@ class AuthenticationForm(forms.Form):
     def check_for_test_cookie(self):
         if self.user_cache and not self.user_cache.username in [settings.DEMO_LOGIN_SCHOOL,
                                                                 settings.DEMO_LOGIN_TEACHER,
-                                                                settings.DEMO_LOGIN_UPPER]:
+                                                                settings.DEMO_LOGIN_UPPER,
+                                                                settings.DEMO_LOGIN_STUDENT]:
             if self.request  and not self.request.session.test_cookie_worked():
                 raise forms.ValidationError(
                     "Cookies của trình duyệt chưa được bật. Bạn cần phải bật cookies thì mới sử dụng được.")

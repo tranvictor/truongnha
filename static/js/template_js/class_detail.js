@@ -57,7 +57,7 @@ $(document).ready(function() {
             data: {
                 data: d,
                 request_type: 'move',
-                target: moveToClId,
+                target: moveToClId
             },
             type: 'POST',
             url: '/school/movestudents',
@@ -318,6 +318,85 @@ $(document).ready(function() {
     });
     $("#add-student-submit").click(function(){
         $("#submitform").submit();
+    });
+    $("#activateAccount").click(function(){
+        if (!$("#checkbox_all").is(':checked')) {
+            alert("Hãy chọn ít nhất một học sinh để kích hoạt tài khoản.");
+            return false;
+        }
+        var answer = confirm('Thông tin tài khoản sẽ được gửi qua Email và SMS. Hệ thống sẽ tạo lại mật khẩu' +
+            ' cho những học sinh đã mở tài khoản.' + ' Bạn có muốn kích hoạt tài khoản những học sinh' +
+            ' đã chọn không?');
+        if (!answer) return false;
+        var data = '';
+        $(".selected").each(function() {
+            data = data + $(this).attr('class').split(' ')[0] + '-';
+        });
+        $("#notify").text("Đang gửi thông tin tài khoản...");
+        $("#notify").show();
+        var arg = { type:"POST",
+            url:"/school/activate/student/",
+            global: false,
+            data: {id_list:data},
+            datatype:"json",
+            success: function(data) {
+                $("#notify").showNotification(data.message);
+                var activated = data.activated_student.split('-');
+                for (var i=0; i< activated.length; i++){
+                    if (activated[i] != ''){
+                        $('#lock-'+ activated[i]).removeClass('icon-lock').addClass('icon-key');
+                    }
+                }
+                $('div#after-post-alert').html(
+                    '<div id="alert" class="alert alert-block alert-error fade in" style="display: none;">' +
+                        '<a class="close" data-dismiss="alert" href="#">×</a>' +
+                        '</div>'
+                );
+                var alertMessage = '<ul>' + '<li>Số lượng học sinh đã kích hoạt tài khoản: ' + data.number + '</li>';
+                if (data.number_cant_contact){
+                    alertMessage += '<li>Số lượng học sinh thiếu Email hoặc số điện thoại nhắn tin: ' + data.number_cant_contact+ '</li>'
+                }
+                $('#alert').append( alertMessage)
+                    .show()
+                    .bind('close', function(){
+                        deselectAllStudent();
+                    });
+            }
+        };
+        $.ajax(arg);
+        return false;
+    });
+    $("#deactivateAccount").click(function(){
+        if (!$("#checkbox_all").is(':checked')) {
+            alert("Hãy chọn ít nhất một học sinh để khóa tài khoản.");
+            return false;
+        }
+        var answer = confirm('Những tài khoản bị khóa sẽ không thể tiếp tục sử dụng hệ thống.' +
+            ' Bạn có muốn khóa tài khoản những học sinh đã chọn không?');
+        if (!answer) return false;
+        var data = '';
+        $(".selected").each(function() {
+            data = data + $(this).attr('class').split(' ')[0] + '-';
+        });
+        $("#notify").text("Đang gửi thông tin tài khoản...");
+        $("#notify").show();
+        var arg = { type:"POST",
+            url:"/school/deactivate/student/",
+            global: false,
+            data: {id_list:data},
+            datatype:"json",
+            success: function(data) {
+                $("#notify").showNotification(data.message);
+                var activated = data.deactivated_student.split('-');
+                for (var i=0; i< activated.length; i++){
+                    if (activated[i] != ''){
+                        $('#lock-'+ activated[i]).removeClass('icon-key').addClass('icon-lock');
+                    }
+                }
+            }
+        };
+        $.ajax(arg);
+        return false;
     });
 });
 

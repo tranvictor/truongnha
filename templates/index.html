@@ -32,6 +32,12 @@
                 $password.val('temp');
                 $form.submit();
             })
+            $('#demo-login-student').click(function () {
+                $loginType.val('DEMO_LOGIN_STUDENT');
+                $username.val('temp');
+                $password.val('temp');
+                $form.submit();
+            })
         });
     </script>
 {% endblock %}
@@ -144,6 +150,14 @@
                                    id="demo-login-upper">
                                     <span class="icon-user-md"></span>
                                     Tài khoản sở giáo dục</a>
+                            </li>
+                            <li>
+                                <a title="Dùng thử với tài khoản học sinh"
+                                   href="#"
+                                   class=""
+                                   id="demo-login-student">
+                                    <span class="icon-user"></span>
+                                    Tài khoản học sinh</a>
                             </li>
                         </ul>
                     </div>
