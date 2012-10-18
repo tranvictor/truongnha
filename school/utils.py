@@ -582,13 +582,15 @@ def add_many_students( student_list = None,
     return existing_student
 
 # student: Pupil object
-def del_student( student):
+def del_student(student):
     if student.user_id.username == settings.DEMO_LOGIN_STUDENT:
         return None
     student.disable = True
     student.save()
 
-def completely_del_student( student):
+def completely_del_student(student):
+    if student.user_id.username == settings.DEMO_LOGIN_STUDENT:
+        return None
     student.user_id.delete()
 
 
