@@ -26,7 +26,7 @@
         <link href="/static/css/truongnha.css?{{ VERSION }}" rel="stylesheet" type="text/css"/>
         <link href="/static/css/template_css/popup.css?{{ VERSION }}" rel="stylesheet" type="text/css"/>
 
-        <link href="/static/joyride/joyride.css" rel="stylesheet">
+        <link href="/static/joyride/joyride.min.css" rel="stylesheet">
 {#    {% endcompress %}#}
 
 
@@ -58,7 +58,7 @@
         <script type="text/javascript"
                 src="/static/js/template_js/base.js?{{ VERSION }}"></script>
         <script type="text/javascript"
-                src="/static/joyride/joyride.js"></script>
+                src="/static/joyride/joyride.min.js"></script>
 {#    {% endcompress %}#}
 
     {% if not debug %}
@@ -100,7 +100,7 @@
             <span class="lead">
                 {% if user.is_authenticated %}
                     {% if user.is_superuser %}
-                        Quản trị hệ thống Trường Nhà
+                        Quản trị hệ thống
                     {% else %}
                         <span id="school-name">{{ user.userprofile.organization.name }}</span>
                         <small> {{ user.userprofile.organization.get_status }}</small>
@@ -141,15 +141,12 @@
                     </a>
                 {% endif %}
             {% else %}
-                <a class="hidden-phone" href="{% url index %}">
-                    <img id="logo" src="/static/images/logo.png" alt="logo"
-                         title="Dịch vụ phần mềm quản lý trường học"/>
+                <a id="logo" href="{% url index %}" title="Dịch vụ phần mềm quản lý trường học">
+                    <strong style="color: rgba(255, 69, 0, 0.75);">Trường</strong><strong style="color: rgba(0, 136, 204, 0.75);">Nhà</strong>
                 </a>
             {% endif %}
         </div>
     </div>
-
-
 </header>
 
 <nav >
@@ -167,20 +164,13 @@
             {% endblock %}
             {% render_breadcrumbs %}
         </div>
-        <div class="pull-right dimmed">
+        <div class="pull-right">
             {% if user.is_authenticated %}
-                <a class="hidden-phone" id="feedback" href="#feedbackWindow">Góp ý</a>&nbsp; &nbsp;
+                <a class="hidden-phone dimmed" id="feedback" href="#feedbackWindow" title="Gửi góp ý, bình luận, thông báo lỗi.."><i class="icon-comment-alt"></i></a> &nbsp;
 
-                <a class="hidden-phone" href="{% url index %}" style="font-size: 20px;"
-                   title="Dịch vụ phần mềm quản lý trường học">
-{#                                        <img id="logo" src="/static/images/logo.png" alt="logo" style="vertical-align: top"#}
-{#                                             title="Dịch vụ phần mềm quản lý trường học"/>#}
+                <a id="logo" href="{% url index %}" title="Dịch vụ phần mềm quản lý trường học">
                     <strong style="color: rgba(255, 69, 0, 0.75);">Trường</strong><strong style="color: rgba(0, 136, 204, 0.75);">Nhà</strong>
                 </a>
-{#                <a class="hidden-phone" href="{% url index %}">#}
-{#                    <img id="logo" src="/static/images/logo.png" alt="logo"#}
-{#                         title="Dịch vụ phần mềm quản lý trường học"/>#}
-{#                </a>#}
             {% endif %}
         </div>
     </div>

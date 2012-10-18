@@ -23,11 +23,24 @@ body {
     /*color: #aaaaaa;*/
 /*}*/
 
+#logo {
+    font-size: 1.7em;
+}
+
+header{
+    /*padding-top: .5em;*/
+    padding-bottom: 1em;
+}
+
 nav {
-    padding-top: 1.5em;
-    /*padding-bottom: 1em;*/
+    padding-top: 1em;
+    padding-bottom: 1em;
     color: #aaaaaa;
-    height: 3em;
+    /*line-height: 3em;*/
+}
+
+nav i, header i {
+    font-size: 1.4em;
 }
 
 #breadcrumb-home i {
@@ -687,7 +700,6 @@ div.dataform {
     background-color: whiteSmoke;
     padding: 1em;
 }
-
 
 .table tfoot {
     color: #888;
