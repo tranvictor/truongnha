@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from school.models import Year, Term, TBNam, TBHocKy, Class,\
         Pupil, Block, Subject, Mark, TKMon,HistoryMark
 from school.utils import get_current_year, in_school, get_position,\
-        get_level, get_current_term, get_school,to_en1
+        get_level, get_current_term, get_school, queryset_to_dict
 from school.writeExcel import count1Excel, count2Excel,\
         printDanhHieuExcel, printNoPassExcel
 from decorators import need_login, school_function, operating_permission
@@ -1105,7 +1105,7 @@ def countSMS(request, type=None,
         year1 = datetime.now().year
 
         day_of_before_month = datetime.fromordinal(
-                datetime.now().toordinal()- 7 )
+                datetime.now().toordinal()-7) 
         day = day_of_before_month.day
         month = day_of_before_month.month
         year = day_of_before_month.year
@@ -1131,13 +1131,17 @@ def countSMS(request, type=None,
                 sender__userprofile__organization=school,
                 success=False).order_by("-created")
     users = User.objects.filter(userprofile__organization=school)
-    teacher_users = {}
-    for u in users:
-        teacher_users[u.id] = u
+    teacher_users = queryset_to_dict(users)
+    students = school.get_active_students()
+    teachers = school.get_teachers()
+    user_to_people = {}
+    for st in students: user_to_people[st.user_id_id] = st
+    for te in teachers: user_to_people[te.user_id_id] = te
     t = loader.get_template(os.path.join('school/report','countSMS.html'))
     c = RequestContext(request,
             { 'list':list,
                 'teacher_users': teacher_users,
+                'user_to_people': user_to_people,
                 'type':type,
 
                 'day':day,

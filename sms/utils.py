@@ -34,8 +34,8 @@ def _send_email(subject, message, from_addr=None, to_addr=[]):
             to_addr)
 
 # school parameter here is for hitting db avoidance purpose
-def _send_sms(phone, content, user, save_to_db=True, school=None,
-        is_task_called=False):
+def _send_sms(phone, content, user, receiver=None, save_to_db=True,
+        school=None, is_task_called=False):
     phone = check_phone_number(phone)
     try:
         if not school:
@@ -50,9 +50,8 @@ def _send_sms(phone, content, user, save_to_db=True, school=None,
         else:
             content = to_ascii(u'Truongnha.com thong bao:\n%s' % content)
         s = None
-        s = sms(phone=phone, content=content,
-                sender=user, recent=True, success=False)
-        s.save()
+        s = sms.objects.create(phone=phone, content=content, sender=user,
+                receiver=receiver, recent=True, success=False)
         if not settings.DEBUG and not is_task_called:
             return s.send_sms.delay(s, school=school)
         else:
@@ -125,7 +124,7 @@ def task_send_email(subject, message, from_addr=None, to_addr=[]):
 def task_send_SMS_then_email(phone, content, user, save_to_db=True, school=None,
         subject=None, message=None, from_addr=None, to_addr=[]):
     try:
-        _send_sms(phone, content, user, save_to_db,
+        _send_sms(phone, content, user, save_to_db, school=school,
                 is_task_called=True) 
     except Exception:
         try:
