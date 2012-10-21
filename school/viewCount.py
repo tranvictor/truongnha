@@ -1214,6 +1214,8 @@ def history_mark(request, term_id=None):
     tt1 = time.time()
     if term_id == None:
         selected_term = get_current_term(request)
+        if selected_term.number == 3:
+            selected_term = Term.objects.get(year_id=selected_term.year_id, number=2)
     else:
         selected_term = Term.objects.get(id=term_id)
 
@@ -1294,10 +1296,15 @@ def check_empty_col(arr_mark_list, detail, length):
 def history_mark_detail(request, subject_id, term_id=None):
     tt1 = time.time()
     if term_id == None:
-        term = get_current_term(request)
+        selected_term = get_current_term(request)
+        if selected_term.number == 3:
+            selected_term = Term.objects.get(year_id=selected_term.year_id, number=2)
+    else:
+        selected_term = Term.objects.get(id=term_id)
+
     selected_subject = Subject.objects.get(id=subject_id)
     pupil_list = selected_subject.class_id.students()
-    mark_list = selected_subject.get_mark_list(term)
+    mark_list = selected_subject.get_mark_list(selected_term)
     #check = zipzip(pupil_list,mark_list)
     number_pupils = len(pupil_list)
     arr_mark_list = [0] * number_pupils
@@ -1319,6 +1326,10 @@ def history_mark_detail(request, subject_id, term_id=None):
 
     for h in history_mark_set:
         i = index[h.mark_id_id]
+        if h.number == 3 * MAX_COL + 3:
+            h.number = 3 * MAX_COL + 2
+        print h.number
+        print i
         arr_mark_list[i][h.number] = normalize(h.old_mark, selected_subject.nx) + "-" + arr_mark_list[i][h.number]
         temp = h.date.strftime("%d/%m/%Y %H:%M")\
                + " " + h.user_id.first_name + " " + h.user_id.last_name\
@@ -1338,11 +1349,18 @@ def history_mark_detail(request, subject_id, term_id=None):
         aRow.append((arr_mark_list[i][3 * MAX_COL + 2], detail[i][3 * MAX_COL + 2]))
         data[i] = aRow
     list = zip(pupil_list, data)
+    if selected_term.number == 1:
+        backward = u'Kỳ I - '
+    else:
+        backward = u'Kỳ II - '
+    backward += selected_subject.class_id.name + ' - ' + selected_subject.name
     t = loader.get_template(os.path.join('school/report', 'history_mark_detail.html'))
     c = RequestContext(request,
             {
             'list': list,
             'empty_col': empty_col,
+            'backward': backward,
+            'selected_term': selected_term,
             'number_col_mieng': number_col_mieng,
             'number_col_15phut': number_col_15phut,
             'number_col_mot_tiet': num_col_mot_tiet,

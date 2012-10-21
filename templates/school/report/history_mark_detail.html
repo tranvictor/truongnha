@@ -5,8 +5,8 @@
     {{ block.super }}
     {% load breadcrumb_tags %}
     {% add_crumb 'Báo cáo' 'report' %}
-    {% add_crumb 'Lịch sử sửa điểm' 'history_mark' %}
-    {% add_crumb 'môn ' %}
+    {% add_crumb 'Lịch sử sửa điểm' 'history_mark' selected_term.id %}
+    {% add_crumb backward   %}
 {% endblock %}
 
 {% block content %}

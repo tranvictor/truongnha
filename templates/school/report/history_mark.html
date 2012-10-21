@@ -47,7 +47,7 @@
                     {% for s,number in a_list %}
                         <td>
                             {% if number != '' %}
-                                <a href="{% url history_mark_detail s.id %}">{{ number }} </a>
+                                <a href="{% url history_mark_detail s.id selected_term.id %}">{{ number }} </a>
                             {% endif %}
                         </td>
                     {% endfor %}
