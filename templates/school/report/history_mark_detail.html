@@ -6,67 +6,67 @@
     {% load breadcrumb_tags %}
     {% add_crumb 'Báo cáo' 'report' %}
     {% add_crumb 'Lịch sử sửa điểm' 'history_mark' %}
-    {% add_crumb 'môn '%}	
+    {% add_crumb 'môn ' %}
 {% endblock %}
 
 {% block content %}
-	<table class="table table-bordered  table-striped grid fifth-row">
-	<thead>
-		<tr>
-			<th rowspan="2" width="1%">
-				STT
-			</th>
-			<th colspan="2" rowspan="2" width="15%" class="align-left">
-				Họ và tên
-			</th>
-			<th colspan="{{number_col_mieng}}" >
-				Hệ số 1 - Miệng
-			</th>
-			<th colspan="{{number_col_15phut}}" >
-				Hệ số 1 - Viết
-			</th>
-			<th colspan="{{ number_col_mot_tiet}}" >
-				Hệ số 2
-			</th>					
-			<th rowspan ="2" width="3%" >
-				Thi cuối kì
-			</th>					
-			<th rowspan ="2" width="3%" >
-				TBHK
-			</th>					
-		</tr>	
-		<tr>
-		 {% for arow in empty_col %}
-			{% for x in arow %}
-				{% if x %}
-					<th width="3%">
-						{{forloop.counter}}
-					</th>
-				{% endif %}
-			{% endfor %}
-		 {% endfor %}
-		</tr>	
-	</thead>
-	<tbody>
-		
-		{% for p,arr in list %}		
-		<tr>
-			<td>
-				{{forloop.counter}}
-			</td>
-			<td style="border-right:none;" class="align-left">
-				{{p.last_name}}
-			</td>
-			<td style="border-left:none;" class="align-left">
-				{{p.first_name}}
-			</td>
-			{% for m,detail in arr %}
-				<td title="{{detail}}">
-					{{m}}
-				</td>
-			{% endfor %}				
-		</tr>	
-		{% endfor %}		
-	</tbody>
-	</table>
+    <table class="table table-bordered  table-striped grid fifth-row">
+        <thead>
+        <tr>
+            <th rowspan="2" width="1%">
+                STT
+            </th>
+            <th colspan="2" rowspan="2" width="15%" class="align-left">
+                Họ và tên
+            </th>
+            <th colspan="{{number_col_mieng}}">
+                Hệ số 1 - Miệng
+            </th>
+            <th colspan="{{number_col_15phut}}">
+                Hệ số 1 - Viết
+            </th>
+            <th colspan="{{ number_col_mot_tiet}}">
+                Hệ số 2
+            </th>
+            <th rowspan="2" width="3%">
+                Thi cuối kì
+            </th>
+            <th rowspan="2" width="3%">
+                TBHK
+            </th>
+        </tr>
+        <tr>
+            {% for arow in empty_col %}
+                {% for x in arow %}
+                    {% if x %}
+                        <th width="3%">
+                            {{ forloop.counter }}
+                        </th>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for p,arr in list %}
+            <tr>
+                <td>
+                    {{ forloop.counter }}
+                </td>
+                <td style="border-right:none;" class="align-left">
+                    {{ p.last_name }}
+                </td>
+                <td style="border-left:none;" class="align-left">
+                    {{ p.first_name }}
+                </td>
+                {% for m,detail in arr %}
+                    <td title="{{detail}}">
+                        {{ m }}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

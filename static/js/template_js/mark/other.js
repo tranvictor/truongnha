@@ -41,7 +41,8 @@
 	$("#buttonExport").click(function() {
 		//alert("chao");
 		$("#dialogExport").dialog('open');
-	});				
+	});	
+	/*	
 	$("#dialogExport").dialog({
 		modal : true,
 		zIndex: 3999,
@@ -57,7 +58,7 @@
 		maxHeight: 400,
 		title: "Lấy mẫu excel với số cột tùy ý"
 	});
-	
+	*/
 	$("#finishExport").click(function(){
 		var colMieng   = document.getElementById("colMiengExport").value;
 		var col15Phut  = document.getElementById("col15PhutExport").value;
