@@ -1130,8 +1130,8 @@ def countSMS(request, type=None,
             ids = ids.split('-')
             smses = sms.objects.filter(id__in=ids)
             number = 0 
-            for sms in smses:
-                if not sms.success:
+            for s in smses:
+                if not s.success:
                     pass
             data = {'message': u'Sẽ gửi chậm nhất trong 1h',
                     'success': True}
