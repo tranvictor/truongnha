@@ -92,7 +92,7 @@ def _sync_sms_receiver():
                             break
                     print 'Confusing to detect phone owner for %s' % phone
                     #print 'Decided: ', decided
-                    print 'Content: ', s.content 
+                    #print 'Content: ', s.content 
             else:
                 print 'Cant find owner for the phone number %s' % phone
     print 'Number: ', number
