@@ -1354,6 +1354,8 @@ def history_mark_detail(request, subject_id, term_id=None):
     else:
         backward = u'Kỳ II - '
     backward += selected_subject.class_id.name + ' - ' + selected_subject.name
+    sum_col1 = number_col_mieng + number_col_15phut
+    sum_col2 = number_col_mieng + number_col_15phut + num_col_mot_tiet
     t = loader.get_template(os.path.join('school/report', 'history_mark_detail.html'))
     c = RequestContext(request,
             {
@@ -1364,6 +1366,8 @@ def history_mark_detail(request, subject_id, term_id=None):
             'number_col_mieng': number_col_mieng,
             'number_col_15phut': number_col_15phut,
             'number_col_mot_tiet': num_col_mot_tiet,
+            'sum_col1':sum_col1,
+            'sum_col2':sum_col2,
             })
     tt2 = time.time()
     print "time.......................", (tt2 - tt1)

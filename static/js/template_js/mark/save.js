@@ -457,9 +457,9 @@ function viewAverage()
 							className = className.replace('yeu','');
 						else
 						if (value =="CĐ")
-							if (value.search("yeu") == -1)
-								value +=" yeu";							
-						table.rows[i+2].cells[j+4].className = value;
+							if (className.search("yeu") == -1)
+								className +=" yeu";							
+						table.rows[i+2].cells[j+4].className = className;
 					}				
 		}
 		
