@@ -1123,6 +1123,7 @@ def countSMS(request, type=None,
              day=None, month=None, year=None,
              day1=None, month1=None, year1=None):
     if request.method == 'POST':
+        print request.POST
         firstDay = request.POST['firstDate'].split('/')
         secondDay = request.POST['secondDate'].split('/')
         day = int(firstDay[0])

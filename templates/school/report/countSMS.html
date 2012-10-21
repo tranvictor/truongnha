@@ -1,23 +1,8 @@
 ﻿{% extends "base.html" %}
 {% load dictionary %}
 {% block js %}
-    <script type="text/javascript">
-        $(document).ready(function(){
-            $("#loaitin{{type}}").attr("checked", "true");
-        });
-    </script>
     <script type="text/javascript"
         src="/static/js/template_js/count_sms.js?{{ VERSION }}"></script>
-{% endblock %}
-
-{% block css %}
-    <style type="text/css">
-    label, input {
-        padding-right: 1em;
-        padding-left: 1em;
-        vertical-align: middle;
-    }
-    </style>
 {% endblock %}
 
 {% block breadcrumb %}
@@ -28,35 +13,59 @@
 {% endblock %}
 
 {% block content %}
-    <div class="btn-toolbar pagination-centered">
+    <div class="btn-toolbar">
         <form class="form-inline" action="{% url count_sms %}" name="info"
               method="post"> {% csrf_token %}
-            <fieldset>
-                <label>Từ ngày</label>
-                <input id="id_date1" name="firstDate"
-                class="datepicker input-small"
-                value="{{day}}/{{month}}/{{year}}">
-                <label>đến ngày</label>
-                <input id="id_date2" name="secondDate"
-                class="datepicker input-small"
-                value="{{day1}}/{{month1}}/{{year1}}">
+                <div class="input-prepend" style="margin-right: 5px;">
+                    <span class="add-on">Từ ngày</span>
+                    <input id="id_date1" name="firstDate"
+                        class="datepicker input-small"
+                        type="text"
+                        value="{{day}}/{{month}}/{{year}}">
+                </div>
+                <div class="input-prepend" style="margin-right: 5px;">
+                    <span class="add-on">đến ngày</span>
+                    <input id="id_date2" name="secondDate"
+                        class="datepicker input-small"
+                        type="text"
+                        value="{{day1}}/{{month1}}/{{year1}}">
+                </div>
 
-                <label>
-                <input type="radio" name="type1" id='loaitin1' value="1">Tất cả
-                </label>
-
-                <label>
-                    <input type="radio" name="type1" id='loaitin2' value="2">
-                    Đã gửi được
-                </label>
-
-                <label>
-                    <input type="radio" name="type1" id='loaitin3' value="3">
-                    Không gửi được
-                </label>
-
-                <input type="submit" value="Xem" class="btn btn-info">
-            </fieldset>
+                <div class="btn-group" data-toggle="buttons-radio">
+                    {% if type == '1' %}
+                        <button type="submit" class="btn btn-primary active"
+                            name="type1" value="1">
+                            Tất cả
+                        </button>
+                    {% else %}
+                        <button type="submit" class="btn btn-primary"
+                            name="type1" value="1">
+                            Tất cả
+                        </button>
+                    {% endif %}
+                    {% if type == '2' %}
+                        <button type="submit" class="btn btn-primary active"
+                            name="type1" value="2">
+                            Đã gửi
+                        </button>
+                    {% else %}
+                        <button type="submit" class="btn btn-primary"
+                            name="type1" value="2">
+                            Đã gửi
+                        </button>
+                    {% endif %}
+                    {% if type == '3' %}
+                        <button type="submit" class="btn btn-primary active"
+                            name="type1" value="3">
+                            Thất bại
+                        </button>
+                    {% else %}
+                        <button type="submit" class="btn btn-primary"
+                            name="type1" value="3">
+                            Thất bại
+                        </button>
+                    {% endif %}
+                </div>
         </form>
     </div>
 
