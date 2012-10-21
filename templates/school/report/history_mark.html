@@ -1,6 +1,4 @@
 ﻿{% extends "base.html" %}
-{% block js %}
-{% endblock %}
 
 {% block breadcrumb %}
     {{ block.super }}
@@ -8,37 +6,54 @@
     {% add_crumb 'Báo cáo' 'report' %}
     {% add_crumb 'Lịch sử sửa điểm' %}
 {% endblock %}
+{% block js %}
+    <script>
+        $(document).ready(function () {
+			$("#term{{ selected_term.number }}").addClass('active');		
+		});	
+    </script>	
+{% endblock %}
 
 {% block content %}
-	{% if not has_content %}
-		Không có sự sửa đổi điểm nào.
-	{% else %}
-		<table class="table table-bordered" width="100%">
-			<tr>
-				<th>
-				</th>
-				{% for s in all_sub_of_school %}
-					<th>
-						{{s}}
-					</th>				
-				{% endfor %}
-			</tr>
-			{% for c,a_list in list %}
-			<tr>
-				<td>
-				{{c.name}}
-				</td>
-				{% for s,number in a_list %}
-				
-					<td>
-						{% if number != '' %}
-							<a href="{% url history_mark_detail s.id %}" >{{ number }} </a> 
-						{% endif %}
-							
-					</td>
-				{% endfor %}
-			</tr>
-			{% endfor %}
-		</table>
-	{% endif %}	
+    <div class="btn-toolbar form-inline pagination-centered">
+        <div class="btn-group" data-toggle="buttons-radio">
+            <a id="term1" href="{% url history_mark term1.id %}" class="btn"> Học kỳ I </a>
+            <a id="term2" href="{% url history_mark term2.id %}" class="btn"> Học kỳ II </a>
+        </div>
+    </div>
+
+    {% if not has_content %}
+        Không có sự sửa đổi điểm nào.
+    {% else %}
+
+        <table class="table table-bordered" width="100%">
+            <thead>
+            <tr>
+                <th>
+                </th>
+                {% for s in all_sub_of_school %}
+                    <th>
+                        {{ s }}
+                    </th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for c,a_list in list %}
+                <tr>
+                    <td>
+                        {{ c.name }}
+                    </td>
+                    {% for s,number in a_list %}
+                        <td>
+                            {% if number != '' %}
+                                <a href="{% url history_mark_detail s.id %}">{{ number }} </a>
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 {% endblock %}

@@ -263,7 +263,7 @@ def markForTeacher(request, type=1, term_id=-1, subject_id=-1, move=None):
     else:  selectedTerm = Term.objects.get(id=termChoice)
 
     if (selectedTerm.year_id.time < currentTerm.year_id.time) | (
-    (selectedTerm.year_id.time == currentTerm.year_id.time) & (selectedTerm.number < currentTerm.number)):
+        (selectedTerm.year_id.time == currentTerm.year_id.time) & (selectedTerm.number < currentTerm.number)):
         enableChangeMark = False
     termChoice = selectedTerm.id
     yearChoice = selectedTerm.year_id.id
@@ -488,7 +488,6 @@ def update(s, primary, isComment, user):
     m = Mark.objects.get(id=idMark)
     arrMark = m.toArrayMark()
     arrTime = m.toArrayTime()
-
     for i in range(length - 1):
         number = int(setOfNumber[i])
         value = setOfValue[i]
@@ -506,17 +505,19 @@ def update(s, primary, isComment, user):
                 old_value = str(m.ck)
             elif (isComment):
                 old_value = str(m.tb)
+            else:
+                old_value = ''
+
             if (old_value != value) & (old_value != '' ) & (old_value != 'None'):
                 h = HistoryMark()
                 h.old_mark = float(old_value)
                 h.number = number
                 h.mark_id = m
                 h.subject_id = m.subject_id
+                h.term_id = m.term_id
                 h.user_id = user
                 h.save()
-
         if number <= 3 * MAX_COL:
-
             arrMark[number] = value
             arrTime[number] = time
 
@@ -620,7 +621,7 @@ def saveMark(request):
     if request.method == 'POST':
         str = request.POST['data']
         strs = str.split('/')
-
+        print str
         position = get_position(request)
         user = request.user
         if   position == 4:

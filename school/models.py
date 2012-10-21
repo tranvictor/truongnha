@@ -1214,6 +1214,7 @@ class HistoryMark(models.Model):
     old_mark = models.FloatField("điểm cũ trước khi sửa", null=True, blank=True)
     number = models.SmallIntegerField("thứ tự của điểm bị sửa")
 
+    term_id = models.ForeignKey(Term, verbose_name="Kì")
     mark_id = models.ForeignKey(Mark, verbose_name="Điểm")
     user_id = models.ForeignKey(User, verbose_name="Tài khoản")
     subject_id = models.ForeignKey(Subject, verbose_name="Môn")
