@@ -135,6 +135,9 @@ class Organization(models.Model):
     def get_active_students(self):
         return self.pupil_set.filter(unc_class_id=None,
                 disable=False).distinct()
+    
+    def get_teachers(self):
+        return self.teacher_set.all()
 
     def save_settings(self, attribute, value):
         if type(attribute) != str or (type(value) != str

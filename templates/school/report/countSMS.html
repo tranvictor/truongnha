@@ -69,6 +69,13 @@
                 Người gửi
             </th>
             <th>
+                Người nhận
+            </th>
+            <th>
+                Lớp
+            </th>
+            <th>
+            <th>
                 SĐT
             </th>
             <th>
@@ -89,6 +96,13 @@
                 <td>
                     {{ teacher_users|get_value:l.sender_id }}
                 </td>
+                <td>
+                    {{ user_to_people|get_value:l.receiver_id|default_if_none:'' }}
+                </td>
+                <td>
+                    {{ user_to_class|get_value:l.receiver_id|default_if_none:'' }}
+                </td>
+                <td>
                 <td>
                     {{ l.phone }}
                 </td>
@@ -115,5 +129,4 @@
             </tr>
         {% endfor %}
     </table>
-
 {% endblock %}

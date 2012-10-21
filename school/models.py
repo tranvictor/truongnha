@@ -566,7 +566,7 @@ class Class(models.Model):
     #this function will return list of students those are studying in this class
     def students(self):
         return self.student_set.filter(attend__is_member=True)\
-        .order_by('index', 'first_name', 'last_name', 'birthday').distinct()
+                .order_by('index').distinct()
 
     #this method return pair dict {id:  [mark, mark, ...]}, student query set
     #Return: {id: [mark, mark, ...]}, student query set
