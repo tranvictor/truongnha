@@ -72,6 +72,9 @@
                 Người nhận
             </th>
             <th>
+                Lớp
+            </th>
+            <th>
             <th>
                 SĐT
             </th>
@@ -95,6 +98,9 @@
                 </td>
                 <td>
                     {{ user_to_people|get_value:l.receiver_id|default_if_none:'' }}
+                </td>
+                <td>
+                    {{ user_to_class|get_value:l.receiver_id|default_if_none:'' }}
                 </td>
                 <td>
                 <td>

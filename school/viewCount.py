@@ -6,7 +6,8 @@ from django.core.urlresolvers import reverse
 from app.models import Organization
 from django.contrib.auth.models import User
 from school.models import Year, Term, TBNam, TBHocKy, Class,\
-        Pupil, Block, Subject, Mark, TKMon,HistoryMark
+        Pupil, Block, Subject, Mark, TKMon, HistoryMark,\
+        Attend
 from school.utils import get_current_year, in_school, get_position,\
         get_level, get_current_term, get_school, queryset_to_dict
 from school.writeExcel import count1Excel, count2Excel,\
@@ -1132,7 +1133,22 @@ def countSMS(request, type=None,
                 success=False).order_by("-created")
     users = User.objects.filter(userprofile__organization=school)
     teacher_users = queryset_to_dict(users)
+    #create dict that match student with their class
+    #{ student_id: class }
+    #Then build dict { user_id: class }
     students = school.get_active_students()
+    st_id_list = [st.id for st in students]
+    class_list = Class.objects.filter(year_id__school_id=school)
+    class_dict = queryset_to_dict(class_list)
+    attends = Attend.objects.filter(pupil__in=st_id_list,
+            leave_time=None, is_member=True)
+    st_to_class = {}
+    for att in attends:
+        st_to_class[att.pupil_id] = class_dict[att._class_id]
+    user_to_class = {}
+    for st in students:
+        user_to_class[st.user_id_id] = st_to_class[st.id]
+    #done student to class
     teachers = school.get_teachers()
     user_to_people = {}
     for st in students: user_to_people[st.user_id_id] = st
@@ -1142,6 +1158,7 @@ def countSMS(request, type=None,
             { 'list':list,
                 'teacher_users': teacher_users,
                 'user_to_people': user_to_people,
+                'user_to_class': user_to_class,
                 'type':type,
 
                 'day':day,

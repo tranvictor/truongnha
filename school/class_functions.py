@@ -181,8 +181,7 @@ def viewClassDetail(request, class_id):
                                 if include_name == 'true':
                                     send_SMS_then_email(
                                             student.sms_phone,
-                                            to_en1('Em ' + student.last_name +\
-                                                    ' ' + student.first_name +\
+                                            to_en1('Em ' + student.short_name() +\
                                                     ' ' + content),
                                             user,
                                             True,
