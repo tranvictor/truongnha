@@ -1,12 +1,13 @@
 ﻿{% extends "base.html" %}
 {% block js %}
 {% endblock %}
+{% load mark %}
 {% block breadcrumb %}
     {{ block.super }}
     {% load breadcrumb_tags %}
     {% add_crumb 'Báo cáo' 'report' %}
     {% add_crumb 'Lịch sử sửa điểm' 'history_mark' selected_term.id %}
-    {% add_crumb backward   %}
+    {% add_crumb backward %}
 {% endblock %}
 
 {% block content %}
@@ -61,9 +62,15 @@
                     {{ p.first_name }}
                 </td>
                 {% for m,detail in arr %}
-                    <td title="{{detail}}">
-                        {{ m }}
-                    </td>
+                    {% if forloop.counter0 == number_col_mieng or forloop.counter0 == sum_col1 or forloop.counter0 == sum_col2 %}
+                        <td class="highlight-left" title="{{detail}}">
+                            {{ m }}
+                        </td>
+                    {% else %}
+                        <td title="{{detail}}">
+                            {{ m }}
+                        </td>
+                    {% endif %}
                 {% endfor %}
             </tr>
         {% endfor %}
