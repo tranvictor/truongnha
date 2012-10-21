@@ -14,6 +14,7 @@ from school.templateExcel import normalize, CHECKED_DATE
 from school.utils import to_en1, add_subject, get_lower_bound,\
         queryset_to_dict
 from school.utils import normalize as norm
+from sms.utils import to_ascii
 from django.db import transaction
 from django.db.models import Q
 import thread
@@ -32,9 +33,6 @@ def _sync_sms_receiver():
     students = Pupil.objects.exclude(sms_phone='')\
             .defer('sms_phone', 'id', 'user_id')
     st_acc_id_list = [st.user_id_id for st in students]
-    for st in students:
-        if st.sms_phone == '0983784131':
-            print '--------------------------------'
     teachers = Teacher.objects.exclude(sms_phone='')\
             .defer('sms_phone', 'id', 'user_id')
     te_acc_id_list = [te.user_id_id for te in teachers]
@@ -66,21 +64,37 @@ def _sync_sms_receiver():
                 phone_map[te.sms_phone] = [te]
     number = 0
     for s in smses:
-        phone = '0' + s.phone[2:]
-        if phone in phone_map:
-            person = phone_map[phone]
-            if len(person) == 1:
-                person = person[0]
-                if isinstance(person, Pupil):
-                    s.receiver = st_acc_dict[person.id]
+        if not s.receiver:
+            phone = '0' + s.phone[2:]
+            if phone in phone_map:
+                person = phone_map[phone]
+                if len(person) == 1:
+                    person = person[0]
+                    if isinstance(person, Pupil):
+                        s.receiver = st_acc_dict[person.id]
+                    else:
+                        s.receiver = te_acc_dict[person.id]
+                    s.save()
+                    number += 1
                 else:
-                    s.receiver = te_acc_dict[person.id]
-                s.save()
-                number += 1
+                    decided = None
+                    for p in person:
+                        short_name = to_ascii(p.short_name())
+                        full_name = to_ascii(p.full_name())
+                        if short_name in s.content or full_name in s.content:
+                            decided = p
+                            if isinstance(decided, Pupil):
+                                s.receiver = st_acc_dict[decided.id]
+                            else:
+                                s.receiver = te_acc_dict[decided.id]
+                            s.save()
+                            number += 1
+                            break
+                    print 'Confusing to detect phone owner for %s' % phone
+                    print 'Decided: ', decided
+                    print 'Content: ', s.content 
             else:
-                print 'Confusing to detect phone owner for %s' % phone
-        else:
-            print 'Cant find owner for the phone number %s' % phone
+                print 'Cant find owner for the phone number %s' % phone
     print 'Number: ', number
 
 def _sync_sms_recent():
