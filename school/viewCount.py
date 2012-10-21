@@ -18,6 +18,7 @@ from templateExcel import normalize, MAX_COL
 import os.path
 import time
 from datetime import datetime
+import simplejson
 
 @need_login
 def report(request, school_id=None):
@@ -1123,7 +1124,18 @@ def countSMS(request, type=None,
              day=None, month=None, year=None,
              day1=None, month1=None, year1=None):
     if request.method == 'POST':
-        print request.POST
+        # if resend request was posted
+        if request.is_ajax():
+            ids = request.POST['smses']
+            ids = ids.split('-')
+            smses = sms.objects.filter(id__in=ids)
+            number = 0 
+            for sms in smses:
+                if not sms.success:
+                    pass
+            data = {'message': u'Sẽ gửi chậm nhất trong 1h',
+                    'success': True}
+            return HttpResponse(simplejson.dumps(data), mimetype='json')
         firstDay = request.POST['firstDate'].split('/')
         secondDay = request.POST['secondDate'].split('/')
         day = int(firstDay[0])
@@ -1136,7 +1148,7 @@ def countSMS(request, type=None,
 
         type = request.POST['type1']
 
-    if type == None: type = 1
+    if type == None: type = '1'
     if day == None:
         day1 = datetime.now().day
         month1 = datetime.now().month

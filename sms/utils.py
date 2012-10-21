@@ -95,10 +95,10 @@ def send_sms_summary_mark(student, content, marks, user,
         if school:
             if school.id in [42, 44]: raise Exception('NotAllowedSMS')
             if cl:
-                sms_cont= to_ascii(u'Truong %s thong bao:\nEm %s lop %s co %s' % (
+                sms_cont = to_ascii(u'Truong %s thong bao:\nEm %s lop %s co %s' % (
                     unicode(school), student.short_name(), cl, content))
             else:
-                sms_cont= to_ascii(u'Truong %s thong bao:\nEm %s co %s' % (
+                sms_cont = to_ascii(u'Truong %s thong bao:\nEm %s co %s' % (
                     unicode(school), student.short_name(), content))
         else:
             raise Exception('SchoolIsNone')

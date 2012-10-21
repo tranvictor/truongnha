@@ -13,14 +13,16 @@
 {% endblock %}
 
 {% block content %}
-    <div class="btn-toolbar">
+    <div id="submenu" class="btn-toolbar">
+    <div class="btn-group">
         <form class="form-inline" action="{% url count_sms %}" name="info"
-              method="post"> {% csrf_token %}
+              method="post" style="margin-bottom:0;"> {% csrf_token %}
                 <div class="input-prepend" style="margin-right: 5px;">
                     <span class="add-on">Từ ngày</span>
                     <input id="id_date1" name="firstDate"
                         class="datepicker input-small"
                         type="text"
+                        style="margin-top: 0;"
                         value="{{day}}/{{month}}/{{year}}">
                 </div>
                 <div class="input-prepend" style="margin-right: 5px;">
@@ -28,6 +30,7 @@
                     <input id="id_date2" name="secondDate"
                         class="datepicker input-small"
                         type="text"
+                        style="margin-top: 0;"
                         value="{{day1}}/{{month1}}/{{year1}}">
                 </div>
 
@@ -68,9 +71,22 @@
                 </div>
         </form>
     </div>
+        <div class="pull-right">
+            <div class="btn-group">
+                <button id="retextSms" class="btn btn-warning disabled"
+                    title="Chức năng này đang hoàn thiện">
+                    <i class="icon-envelope"></i>
+                    Nhắn lại
+                </button>
+            </div>
+        </div>
+    </div>
 
     <table id="sms-table" class="table" width="100%">
         <tr>
+            <th title="Chọn tất cả tin thất bại" style="text-align: center;">
+                <input type="checkbox" id="checkbox_all"/>
+            </th>
             <th>
                 STT
             </th>
@@ -98,7 +114,15 @@
             </th>
         </tr>
         {% for l in list %}
-            <tr>
+            {% if l.success %}
+            <tr class="{{ l.id }} sms" data-status="success">
+            {% else %}
+            <tr class="{{ l.id }} sms failed" data-status="failed">
+            {% endif %}
+                <td style="text-align: center;">
+                    <input type="checkbox" id="checkbox_{{ l.id }}"
+                    class="studentCheckbox"/>
+                </td>
                 <td>
                     {{ forloop.counter }}
                 </td>

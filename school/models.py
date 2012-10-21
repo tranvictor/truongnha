@@ -1209,15 +1209,15 @@ class Mark(models.Model):
         return x
 
 
-class HistoryMark(models.Model):
-    date = models.DateTimeField("Thời gian sửa điểm", auto_now=True)
-    old_mark = models.FloatField("điểm cũ trước khi sửa", null=True, blank=True)
-    number = models.SmallIntegerField("thứ tự của điểm bị sửa")
-
-    term_id = models.ForeignKey(Term, verbose_name="Kì")
-    mark_id = models.ForeignKey(Mark, verbose_name="Điểm")
-    user_id = models.ForeignKey(User, verbose_name="Tài khoản")
-    subject_id = models.ForeignKey(Subject, verbose_name="Môn")
+#class HistoryMark(models.Model):
+#    date = models.DateTimeField("Thời gian sửa điểm", auto_now=True)
+#    old_mark = models.FloatField("điểm cũ trước khi sửa", null=True, blank=True)
+#    number = models.SmallIntegerField("thứ tự của điểm bị sửa")
+#
+#    term_id = models.ForeignKey(Term, verbose_name="Kì")
+#    mark_id = models.ForeignKey(Mark, verbose_name="Điểm")
+#    user_id = models.ForeignKey(User, verbose_name="Tài khoản")
+#    subject_id = models.ForeignKey(Subject, verbose_name="Môn")
 
 
 class TKMon(models.Model):
