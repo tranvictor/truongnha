@@ -151,7 +151,7 @@
 
         <div class="hint">
             Chú ý: Phải dùng theo
-            <a id="buttonExport"> mẫu này</a>
+            <a id="buttonExport" style="cursor:pointer"> mẫu này</a>
             (lấy mẫu file excel với số cột tùy ý)
         </div>
     </div>
@@ -165,10 +165,10 @@
     Miệng
     <select id="colMiengExport" style="width:70px">
         {% for i in secondLoop %}
-            {% if  i == MAX_VIEW %}
+            {% if  i == 4 %}
                 <option value="{{ i }}" selected> {{ i }} </option>
             {% else %}
-                {% if  i > MAX_VIEW %}
+                {% if  i > 4 %}
                     <option value="{{ i }}"> {{ i }} </option>
                 {% endif %}
             {% endif %}
@@ -177,10 +177,10 @@
     &nbsp;&nbsp;&nbsp; 15 phút
     <select id="col15PhutExport" style="width:70px">
         {% for i in secondLoop %}
-            {% if  i == MAX_VIEW %}
+            {% if  i == 4 %}
                 <option value="{{ i }}" selected> {{ i }} </option>
             {% else %}
-                {% if  i > MAX_VIEW %}
+                {% if  i > 4 %}
                     <option value="{{ i }}"> {{ i }} </option>
                 {% endif %}
             {% endif %}
@@ -189,10 +189,10 @@
     &nbsp;&nbsp;&nbsp;Một tiết
     <select id="colMotTietExport" style="width:70px">
         {% for i in secondLoop %}
-            {% if  i == MAX_VIEW %}
+            {% if  i == 4 %}
                 <option value="{{ i }}" selected> {{ i }} </option>
             {% else %}
-                {% if  i > MAX_VIEW %}
+                {% if  i > 4 %}
                     <option value="{{ i }}"> {{ i }} </option>
                 {% endif %}
             {% endif %}

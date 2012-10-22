@@ -220,6 +220,10 @@ li.ui-tabs-selected span {
     background-color: #B2FFDB !important;
 }
 
+.table td.highlight-left {
+	border-left: #BBBBBB thin solid !important;	
+}
+
 .fifth-row tbody tr:nth-child(5n) td {
     border-bottom: #BBBBBB thin solid !important;
 }

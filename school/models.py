@@ -566,7 +566,7 @@ class Class(models.Model):
     #this function will return list of students those are studying in this class
     def students(self):
         return self.student_set.filter(attend__is_member=True)\
-        .order_by('index', 'first_name', 'last_name', 'birthday').distinct()
+                .order_by('index').distinct()
 
     #this method return pair dict {id:  [mark, mark, ...]}, student query set
     #Return: {id: [mark, mark, ...]}, student query set
@@ -1214,6 +1214,7 @@ class HistoryMark(models.Model):
     old_mark = models.FloatField("điểm cũ trước khi sửa", null=True, blank=True)
     number = models.SmallIntegerField("thứ tự của điểm bị sửa")
 
+    term_id = models.ForeignKey(Term, verbose_name="Kì")
     mark_id = models.ForeignKey(Mark, verbose_name="Điểm")
     user_id = models.ForeignKey(User, verbose_name="Tài khoản")
     subject_id = models.ForeignKey(Subject, verbose_name="Môn")

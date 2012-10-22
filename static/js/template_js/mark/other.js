@@ -38,10 +38,12 @@
 		title: "Nhập điểm từ file Excel"
 	});
 	*/
+	
 	$("#buttonExport").click(function() {
 		//alert("chao");
 		$("#dialogExport").dialog('open');
-	});				
+	});	
+		
 	$("#dialogExport").dialog({
 		modal : true,
 		zIndex: 3999,

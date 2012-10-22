@@ -125,15 +125,15 @@ def viewClassDetail(request, class_id):
         cl = Class.objects.get(id=class_id)
         this_y = get_current_year(request)
         move_to_cls = cl.block_id.class_set.filter(year_id = this_y)\
-                                           .exclude(id=class_id)\
-                                           .order_by('index')
+                .exclude(id=class_id)\
+                .order_by('index')
         bl1 = Block.objects.filter(number = cl.block_id.number +1,
-                                   school_id = cl.block_id.school_id)
+                school_id = cl.block_id.school_id)
         move_to_cls1 = []
         if bl1:
             move_to_cls1 = bl1[0].class_set.filter(year_id = this_y)\
-                                           .exclude(id=class_id)\
-                                           .order_by('index')
+                    .exclude(id=class_id)\
+                    .order_by('index')
     except Class.DoesNotExist:
         return HttpResponseRedirect(reverse('index'))
     default_year = int(date.today().year) - cl.block_id.number - 6
@@ -181,10 +181,10 @@ def viewClassDetail(request, class_id):
                                 if include_name == 'true':
                                     send_SMS_then_email(
                                             student.sms_phone,
-                                            to_en1('Em ' + student.last_name +\
-                                                    ' ' + student.first_name +\
+                                            to_en1('Em ' + student.short_name() +\
                                                     ' ' + content),
                                             user,
+                                            student.user_id,
                                             True,
                                             school,
                                             u'Trường Nhà thông báo',
@@ -195,6 +195,7 @@ def viewClassDetail(request, class_id):
                                             student.sms_phone,
                                             to_en1(content),
                                             user,
+                                            student.user_id,
                                             True,
                                             school,
                                             u'Trường Nhà thông báo',

@@ -74,7 +74,6 @@ $(document).ready(function() {
         return false;
     });
 
-
     $("#submitform").bind('submit', function() {
         var $this = $(this);
         var d = $this.serialize();

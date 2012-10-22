@@ -9,7 +9,8 @@ from django.template.loader import render_to_string
 from django.shortcuts import render_to_response
 from django.utils import simplejson
 from decorators import need_login, school_function, operating_permission
-from school.models import Teacher, Pupil, Class, Group, Subject, Year, COMMENT_SUBJECT_LIST
+from school.models import Teacher, Pupil, Class, Group, Subject, Year,\
+        COMMENT_SUBJECT_LIST
 from school.forms import MoveClassForm, TeacherForm, TeamForm, GroupForm,\
         TeacherGroupForm, TeacherTTCNForm, TeacherTTLLForm, TeacherTTCBForm,\
         ThongTinCaNhanForm, ThongTinLienLacForm, PupilForm, ThongTinGiaDinhForm,\
@@ -19,7 +20,7 @@ from school.utils import get_position, move_student, get_school, delete_history,
         to_en1, to_date, add_teacher, del_teacher, in_school, get_teacher,\
         get_student, get_lower_bound, get_upper_bound, get_current_year,\
         add_subject, get_current_term
-from sms.utils import sendSMS, send_email, send_sms_summary_mark
+from sms.utils import send_email, send_sms_summary_mark, send_SMS_then_email
 
 SMS_SUMMARY = os.path.join('school', 'sms_summary.html')
 
@@ -299,30 +300,32 @@ def teachers(request):
                         number_of_failed = 0
                         number_of_email_sent = 0
                         for teacher in teachers:
-                            sms_sent = False
                             if teacher.sms_phone:
                                 try:
-                                    if sendSMS(teacher.sms_phone,
-                                                to_en1(content),
-                                                user) == '1':
-                                        number_of_sent += 1
-                                        sms_sent = True
-                                    else:
-                                        number_of_failed += 1
+                                    send_SMS_then_email(
+                                            teacher.sms_phone,
+                                            to_en1(content),
+                                            user,
+                                            teacher.user_id,
+                                            True,
+                                            school,
+                                            u'Trường Nhà thông báo',
+                                            content,
+                                            to_addr=[teacher.email])
+                                    number_of_sent += 1
                                 except Exception:
                                     number_of_failed += 1
                             else:
                                 number_of_blank += 1
-
-                            if not sms_sent and teacher.email:
-                                try:
-                                    send_email(u'Trường %s thông báo' % school.name,
+                                if teacher.email:
+                                    try:
+                                        send_email(
+                                                u'Trường Nhà thông báo',
                                                 content,
                                                 to_addr=[teacher.email])
-                                    number_of_email_sent += 1
-                                except Exception:
-                                    pass
-
+                                        number_of_email_sent += 1
+                                    except Exception:
+                                        pass
                         data = simplejson.dumps({
                             'number_of_sent': number_of_sent,
                             'number_of_blank': number_of_blank,

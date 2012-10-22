@@ -2,6 +2,7 @@
 from datetime import datetime
 import os
 from django.http import HttpResponseNotAllowed, HttpResponse
+from django.contrib.auth.models import User
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from app.models import Organization
@@ -10,8 +11,10 @@ from school.models import Pupil, TKDiemDanh, Attend, StartYear, Mark, Class,\
 from sms.models import sms
 from school.school_settings import CAP2_DS_MON, CAP1_DS_MON, CAP3_DS_MON
 from school.templateExcel import normalize, CHECKED_DATE
-from school.utils import to_en1, add_subject, get_lower_bound
+from school.utils import to_en1, add_subject, get_lower_bound,\
+        queryset_to_dict
 from school.utils import normalize as norm
+from sms.utils import to_ascii
 from django.db import transaction
 from django.db.models import Q
 import thread
@@ -21,6 +24,78 @@ TEST_TABLE = os.path.join('helptool','test_table.html')
 REALTIME = os.path.join('helptool','realtime_test.html')
 CONVERT_MARK= os.path.join('helptool','convert_mark.html')
 
+
+@transaction.commit_on_success
+def _sync_sms_receiver():
+    smses = sms.objects.all()
+    # Get all students and teachers with their phone numbers
+    # Now we have id and sms_phone
+    students = Pupil.objects.exclude(sms_phone='')\
+            .defer('sms_phone', 'id', 'user_id')
+    st_acc_id_list = [st.user_id_id for st in students]
+    teachers = Teacher.objects.exclude(sms_phone='')\
+            .defer('sms_phone', 'id', 'user_id')
+    te_acc_id_list = [te.user_id_id for te in teachers]
+    # Fetch all accounts of those people
+    accs = User.objects.filter(
+            id__in=st_acc_id_list + te_acc_id_list)
+    acc_dict = queryset_to_dict(accs)
+    st_acc_dict = {}
+    for st in students:
+        st_acc_dict[st.id] = acc_dict[st.user_id_id]
+    te_acc_dict = {}
+    for te in teachers:
+        te_acc_dict[te.id] = acc_dict[te.user_id_id]
+    # Build up map from phone number to people
+    phone_map = {}
+    for st in students:
+        if st.sms_phone:
+            if st.sms_phone in phone_map:
+                phone_map[st.sms_phone].append(st)
+                #print st.sms_phone, st.full_name()
+            else:
+                phone_map[st.sms_phone] = [st]
+    for te in teachers:
+        if te.sms_phone:
+            if te.sms_phone in phone_map:
+                phone_map[te.sms_phone].append(te)
+                #print te.sms_phone, te.full_name()
+            else:
+                phone_map[te.sms_phone] = [te]
+    number = 0
+    for s in smses:
+        if not s.receiver:
+            phone = '0' + s.phone[2:]
+            if phone in phone_map:
+                person = phone_map[phone]
+                if len(person) == 1:
+                    person = person[0]
+                    if isinstance(person, Pupil):
+                        s.receiver = st_acc_dict[person.id]
+                    else:
+                        s.receiver = te_acc_dict[person.id]
+                    s.save()
+                    number += 1
+                else:
+                    decided = None
+                    for p in person:
+                        short_name = to_ascii(p.short_name())
+                        full_name = to_ascii(p.full_name())
+                        if short_name in s.content or full_name in s.content:
+                            decided = p
+                            if isinstance(decided, Pupil):
+                                s.receiver = st_acc_dict[decided.id]
+                            else:
+                                s.receiver = te_acc_dict[decided.id]
+                            s.save()
+                            number += 1
+                            break
+                    print 'Confusing to detect phone owner for %s' % phone
+                    #print 'Decided: ', decided
+                    #print 'Content: ', s.content 
+            else:
+                print 'Cant find owner for the phone number %s' % phone
+    print 'Number: ', number
 
 def _sync_sms_recent():
     smses = sms.objects.all()
@@ -32,7 +107,6 @@ def _sync_pupil_disable():
     #students that do not have current class
     students = Pupil.objects.filter(~Q(id__in=attends))
     students.update(disable=True)
-
 
 def _sync_current():
     def finish_class(cl, st):

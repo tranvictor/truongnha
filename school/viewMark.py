@@ -263,7 +263,7 @@ def markForTeacher(request, type=1, term_id=-1, subject_id=-1, move=None):
     else:  selectedTerm = Term.objects.get(id=termChoice)
 
     if (selectedTerm.year_id.time < currentTerm.year_id.time) | (
-    (selectedTerm.year_id.time == currentTerm.year_id.time) & (selectedTerm.number < currentTerm.number)):
+        (selectedTerm.year_id.time == currentTerm.year_id.time) & (selectedTerm.number < currentTerm.number)):
         enableChangeMark = False
     termChoice = selectedTerm.id
     yearChoice = selectedTerm.year_id.id
@@ -476,7 +476,7 @@ def toDigit(x):
         return float(x)
 
 
-def update(s, primary, isComment, user):
+def update(s, primary, isComment, user,time_history):
     strings = s.split(':')
     idMark = int(strings[0])
     setOfNumber = strings[1].split('*')
@@ -488,7 +488,6 @@ def update(s, primary, isComment, user):
     m = Mark.objects.get(id=idMark)
     arrMark = m.toArrayMark()
     arrTime = m.toArrayTime()
-
     for i in range(length - 1):
         number = int(setOfNumber[i])
         value = setOfValue[i]
@@ -506,17 +505,22 @@ def update(s, primary, isComment, user):
                 old_value = str(m.ck)
             elif (isComment):
                 old_value = str(m.tb)
+            else:
+                old_value = ''
+            number_of_time = number
+            if number == 3 * MAX_COL + 3:
+                number_of_time -= 1
             if (old_value != value) & (old_value != '' ) & (old_value != 'None'):
-                h = HistoryMark()
-                h.old_mark = float(old_value)
-                h.number = number
-                h.mark_id = m
-                h.subject_id = m.subject_id
-                h.user_id = user
-                h.save()
-
+                if int(time) - int(arrTime[number_of_time]) > time_history:
+                    h = HistoryMark()
+                    h.old_mark = float(old_value)
+                    h.number = number
+                    h.mark_id = m
+                    h.subject_id = m.subject_id
+                    h.term_id = m.term_id
+                    h.user_id = user
+                    h.save()
         if number <= 3 * MAX_COL:
-
             arrMark[number] = value
             arrTime[number] = time
 
@@ -620,7 +624,7 @@ def saveMark(request):
     if request.method == 'POST':
         str = request.POST['data']
         strs = str.split('/')
-
+        print str
         position = get_position(request)
         user = request.user
         if   position == 4:
@@ -637,8 +641,9 @@ def saveMark(request):
         length = len(strs)
         primary = int(strs[2])
         isComment = strs[3] == "true"
+        time_history = 60
         for i in range(4, length):
-            update(strs[i], primary, isComment, user)
+            update(strs[i], primary, isComment, user,time_history)
 
         message = strs[0]
         data = simplejson.dumps({'message': message})

@@ -114,7 +114,7 @@
 
             $(".submitbutton").attr("disabled", true);
 
-            $("input[name^=term]").each(function () {
+            $("input[type=text]").each(function () {
                 $(this).on('keyup', function (event) {
                     var $this = $(this).parent("td");
                     var cellIndex = $this.index();
@@ -161,106 +161,6 @@
                     }
                     return false;
 
-                });
-            });
-
-
-            $("input[name=year]").each(function () {
-                $(this).on('keyup', function (event) {
-                    var $this = $(this).parent("td");
-                    var cellIndex = $this.index();
-                    if (event.keyCode == 40 || event.keyCode == 13) {
-                        $this.closest('tr').next().children().eq(cellIndex).find("input").focus();
-                        return false;
-                    }
-                    if (event.keyCode == 39) {
-                        $this.closest('td').next().find("input").focus();
-                        return false;
-                    }
-                    if (event.keyCode == 37) {
-                        $this.closest('td').prev().find("input").focus();
-                        return false;
-                    }
-                    if (event.keyCode == 38) {
-                        $this.closest('tr').prev().children().eq(cellIndex).find("input").focus();
-                        return false;
-                    }
-                    if ($(this).val().length > 1) $(this).val($(this).val().substring(0, 1));
-                    $(this).val($(this).val().replace(/[^TKBYtkby]/gi, ''));
-                    $(this).attr('value', $(this).val());
-                });
-
-                $(this).blur(function () {
-                    var id = $(this).parents("tr").attr('class').split(' ')[0];
-                    var old_value = $(this).parents("td").attr("data-hanhkiem");
-                    var y = getval($(this).val());
-                    $(this).val(y);
-                    $(this).attr('value', $(this).val());
-                    var data = { id:id, val:y, request_type:'year'};
-                    var arg = { type:"POST",
-                        url:"",
-                        data:data,
-                        datatype:"json",
-                        error:function () {
-                            $(".submitbutton").attr('disabled', false);
-                        }
-                    };
-                    if (y != old_value) {
-                        $(this).parents("td").attr("data-hanhkiem", y);
-                        $.ajax(arg);
-                    }
-                    return false;
-                });
-            });
-
-            $("input[name^=hk_thang]").each(function () {
-                $(this).on('keyup', function (event) {
-                    var $this = $(this).parent("td");
-                    var cellIndex = $this.index();
-                    if (event.keyCode == 40 || event.keyCode == 13) {
-                        $this.closest('tr').next().children().eq(cellIndex).find("input").focus();
-                        return false;
-                    }
-                    if (event.keyCode == 39) {
-                        $this.closest('td').next().find("input").focus();
-                        return false;
-                    }
-                    if (event.keyCode == 37) {
-                        $this.closest('td').prev().find("input").focus();
-                        return false;
-                    }
-                    if (event.keyCode == 38) {
-                        $this.closest('tr').prev().children().eq(cellIndex).find("input").focus();
-                        return false;
-                    }
-
-                    if ($(this).val().length > 1) $(this).val($(this).val().substring(0, 1));
-                    $(this).val($(this).val().replace(/[^TKBYtkby]/gi, ''));
-                    $(this).attr('value', $(this).val());
-                });
-
-
-                $(this).blur(function () {
-                    var id = $(this).parents("tr").attr('class').split(' ')[0];
-                    var old_value = $(this).parents("td").attr("data-hanhkiem");
-                    var value = getval($(this).val());
-                    $(this).val(value);
-                    $(this).attr('value', $(this).val());
-                    var thang = $(this).attr("name");
-                    var data = { id:id, request_type:thang, 'val':value};
-                    var arg = { type:"POST",
-                        url:"",
-                        data:data,
-                        datatype:"json",
-                        error:function () {
-                            $(".submitbutton").attr('disabled', false);
-                        }
-                    };
-                    if (value != old_value) {
-                        $(this).parents("td").attr("data-hanhkiem", value);
-                        $.ajax(arg);
-                    }
-                    return false;
                 });
             });
 

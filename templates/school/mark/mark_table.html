@@ -113,7 +113,7 @@
     </script>
 	
 {% spaceless %}
-   {% include "school/mark/js_initiate.html" %} 
+    {% include "school/mark/js_initiate.html" %} 
     {% ifnotequal subjectChoice -1 %}
         {% if user.userprofile.organization.level == 'T' %}
             {% include "school/mark/header_mark.html" %}
