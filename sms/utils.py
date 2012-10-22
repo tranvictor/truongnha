@@ -42,11 +42,8 @@ def _send_sms(phone, content, user, receiver=None, save_to_db=True,
             school = user.userprofile.organization
     except Exception:
         pass
-    print phone
-    print type(school)
     if phone:
         if school:
-            print school, school.id
             if school.id in [42, 44]: raise Exception('NotAllowedSMS')
             content = to_ascii(u'Truong %s thong bao:\n%s' % (
                 school, content))
@@ -54,11 +51,10 @@ def _send_sms(phone, content, user, receiver=None, save_to_db=True,
             content = to_ascii(u'Truongnha.com thong bao:\n%s' % content)
         s = sms.objects.create(phone=phone, content=content, sender=user,
                 receiver=receiver, recent=True, success=False)
-        print s
         if not settings.DEBUG and not is_task_called:
             return s.send_sms.delay(s, school=school)
         else:
-            return s._send_sms()
+            return s._send_sms(school=school)
 
 def send_email(subject, message, from_addr=None, to_addr=[]):
     #msg = MIMEText(message.encode('utf-8'), _charset='utf-8')
@@ -141,7 +137,7 @@ def send_SMS_then_email(phone, content, user, receiver=None,
         save_to_db=True, school=None, subject=None, message=None,
         from_addr=None, to_addr=[]):
     if not settings.DEBUG:
-        task_send_SMS_then_email.delay( phone, content, user, receiver,
+        task_send_SMS_then_email.delay(phone, content, user, receiver,
                 save_to_db, school, subject, message,
                 from_addr, to_addr)
     else:
