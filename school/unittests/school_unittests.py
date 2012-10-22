@@ -70,6 +70,7 @@ class AddSubjectTest(SchoolSetupTest):
         print 'Going to check response content'
         cont = simplejson.loads(response.content)
         self.assertEqual(cont['message'], u'Đã xóa thành công.')
+
     def phase12_delete_toan_or_nguvan(self):
         classes = self.year.class_set.order_by('id')
         # get a class
