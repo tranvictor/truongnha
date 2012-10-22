@@ -74,13 +74,13 @@ def send_email(subject, message, from_addr=None, to_addr=[]):
     else:
         _send_email(subject, message, from_addr, to_addr)
 
-def sendSMS(phone, content, user, save_to_db=True, school=None):
+def sendSMS(phone, content, user, receiver=None, save_to_db=True, school=None):
     if not settings.DEBUG:
-        task = _send_sms(phone, content, user, save_to_db, school)
+        task = _send_sms(phone, content, user, receiver, save_to_db, school)
         if task: return '1'
         else: return None
     else:
-        return _send_sms(phone, content, user, save_to_db, school)
+        return _send_sms(phone, content, user, receiver, save_to_db, school)
 
 def send_sms_summary_mark(student, content, marks, user,
         cl=None, school=None):

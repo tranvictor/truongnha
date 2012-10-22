@@ -4,7 +4,7 @@
 # open path for template folder
 import os
 import sys
-DEBUG = True
+DEBUG = False
 if os.environ.pop('DJANGO_SETTINGS_TESTING', None):
     IS_TESTING = True
 else:
@@ -286,7 +286,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'support@truongnha.com'
-EMAIL_HOST_PASSWORD = 'truongnhadotcom'
+EMAIL_HOST_PASSWORD = 'password'
 EMAIL_SUBJECT_PREFIX = '[www.truongnha.com]'
 #TEST_RUNNER = 'django_coverage.coverage_runner.CoverageRunner'
 
