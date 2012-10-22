@@ -97,18 +97,18 @@
     {% endif %}
     <div class="container-fluid">
         <div id="school-info" class="pull-left">
-            <span class="lead">
+
                 {% if user.is_authenticated %}
                     {% if user.is_superuser %}
-                        Quản trị hệ thống
+                        <span class="lead">Quản trị hệ thống</span>
                     {% else %}
-                        <span id="school-name">{{ user.userprofile.organization.name }}</span>
-                        <small> {{ user.userprofile.organization.get_status }}</small>
+                        <span id="school-name" class="lead">{{ user.userprofile.organization.name }}</span>
+                        <span> {{ user.userprofile.organization.get_status }}</span>
                     {% endif %}
                 {% else %}
-                    Dịch vụ phần mềm quản lý trường học
+                    <span class="lead">Dịch vụ phần mềm quản lý trường học</span>
                 {% endif %}
-            </span>
+
         </div>
         <div id="user-info" class="pull-right">
             {% if user.is_authenticated %}

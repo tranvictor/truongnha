@@ -1,187 +1,188 @@
-/*
-Command buttons.
-*/
-a.win-command {
-    display: inline-block;
-    cursor: pointer;
-    letter-spacing: 0.02em;
-    vertical-align: middle;
-}
-a.win-command,
-button.win-command {
-    background: none;
-    background-clip: border-box;
-    height: auto; /* height is 88px (label) or 68px (no label) */
-    padding: 12px 0; /* bottom dependent on label/img, 2px margin */
-    margin: 0 5px;
-    border: 0;
-    min-width: 42px;
-    text-align: center;
-    font-size: 9pt;
-    font-weight: normal;
-    line-height: 16px;
-}
+/**/
+/*Command buttons.*/
+/**/
+/*a.win-command {*/
+    /*display: inline-block;*/
+    /*cursor: pointer;*/
+    /*letter-spacing: 0.02em;*/
+    /*vertical-align: middle;*/
+/*}*/
+/*a.win-command,*/
+/*button.win-command {*/
+    /*background: none;*/
+    /*background-clip: border-box;*/
+    /*height: auto; *//* height is 88px (label) or 68px (no label) */
+    /*padding: 12px 0; *//* bottom dependent on label/img, 2px margin */
+    /*margin: 0 5px;*/
+    /*border: 0;*/
+    /*min-width: 42px;*/
+    /*text-align: center;*/
+    /*font-size: 9pt;*/
+    /*font-weight: normal;*/
+    /*line-height: 16px;*/
+/*}*/
 
-a.win-hidefocus:focus,
-button.win-hidefocus:focus {
-    outline: none;
-}
+/*a.win-hidefocus:focus,*/
+/*button.win-hidefocus:focus {*/
+    /*outline: none;*/
+/*}*/
 
-/*
-Command button icons.
-*/
-.win-commandicon {
-    display: inline-block;
-    margin: 0 28px; /* padding for command buttons, 2px/side for focus */
-    min-width: 0;
-    min-height: 0;
-    padding: 0;
+/**/
+/*Command button icons.*/
+/**/
+/*.win-commandicon {*/
+    /*display: inline-block;*/
+    /*margin: 0 28px; *//* padding for command buttons, 2px/side for focus */
+    /*min-width: 0;*/
+    /*min-height: 0;*/
+    /*padding: 0;*/
 
     /* Normal sizing */
-    width: 40px;
-    height: 40px;
-    box-sizing: border-box;
-    cursor: default;
-}
-.win-commandimage {
-    font-family: "IcoMoon";
-    letter-spacing: 0;
+    /*width: 40px;*/
+    /*height: 40px;*/
+    /*box-sizing: border-box;*/
+    /*cursor: default;*/
+/*}*/
+/*.win-commandimage {*/
+    /*font-family: "IcoMoon";*/
+    /*letter-spacing: 0;*/
 
     /* Applications provide their own content, like &#xE0D5;. */
-    vertical-align: middle;
-    font-size: 14pt;
-    margin: -2px;
-    line-height: 40px; /* line-height must match the content box height */
-    background-position: 0 0;
+    /*vertical-align: middle;*/
+    /*font-size: 14pt;*/
+    /*margin: -2px;*/
+    /*line-height: 40px; *//* line-height must match the content box height */
+    /*background-position: 0 0;*/
     /*background-origin: border-box;*/
-    display: inline-block;
+    /*display: inline-block;*/
     /* Still 40px */
-    width: 40px;
-    height: 40px;
-    background-size: 160px 80px;
-}
+    /*width: 40px;*/
+    /*height: 40px;*/
+    /*background-size: 160px 80px;*/
+/*}*/
 
-/*
-Command button "ring".
-*/
-.win-commandring,
-a:hover .win-commandring,
-a:active .win-commandring,
-a.win-command:disabled .win-commandring,
-a.win-command:disabled:active .win-commandring,
-button:hover .win-commandring,
-button:active .win-commandring,
-button.win-command:disabled .win-commandring,
-button.win-command:disabled:active .win-commandring {
-    border-width: 2px;
-    border-style: solid;
-    -webkit-border-radius: 50%;
-    -moz-border-radius: 50%;
-    border-radius: 50%;
-    background-clip: border-box;
-}
+/**/
+/*Command button "ring".*/
+/**/
+/*.win-commandring,*/
+/*a:hover .win-commandring,*/
+/*a:active .win-commandring,*/
+/*a.win-command:disabled .win-commandring,*/
+/*a.win-command:disabled:active .win-commandring,*/
+/*button:hover .win-commandring,*/
+/*button:active .win-commandring,*/
+/*button.win-command:disabled .win-commandring,*/
+/*button.win-command:disabled:active .win-commandring {*/
+    /*border-width: 2px;*/
+    /*border-style: solid;*/
+    /*-webkit-border-radius: 50%;*/
+    /*-moz-border-radius: 50%;*/
+    /*border-radius: 50%;*/
+    /*background-clip: border-box;*/
+/*}*/
 
-a:hover:active .win-commandring,
-a[aria-checked=true] .win-commandring,
-a[aria-checked=true]:active .win-commandring,
-a[aria-checked=true]:disabled .win-commandring,
-a[aria-checked=true]:disabled:active .win-commandring,
-button:hover:active .win-commandring,
-button[aria-checked=true] .win-commandring,
-button[aria-checked=true]:active .win-commandring,
-button[aria-checked=true]:disabled .win-commandring,
-button[aria-checked=true]:disabled:active .win-commandring {
-    background-clip: border-box;
-}
+/*a:hover:active .win-commandring,*/
+/*a[aria-checked=true] .win-commandring,*/
+/*a[aria-checked=true]:active .win-commandring,*/
+/*a[aria-checked=true]:disabled .win-commandring,*/
+/*a[aria-checked=true]:disabled:active .win-commandring,*/
+/*button:hover:active .win-commandring,*/
+/*button[aria-checked=true] .win-commandring,*/
+/*button[aria-checked=true]:active .win-commandring,*/
+/*button[aria-checked=true]:disabled .win-commandring,*/
+/*button[aria-checked=true]:disabled:active .win-commandring {*/
+    /*background-clip: border-box;*/
+/*}*/
 
-/*
-Command button labels.
-*/
-a.win-command .win-label,
-button.win-command .win-label {
-    position: relative;
-    line-height: 20px;
-    display: block;
-    max-width: 88px; /* 100px button, but allow for 2px margins and 4px padding on each side */
-    padding-left: 4px;  /* 12px between buttons, 6px per side, minus 2px margins */
-    padding-right: 4px;
-    overflow: hidden;
-    word-wrap: break-word;
-    word-break: keep-all;
-    top: 1px;
-}
-a.win-command,
-a.win-command:hover {
-    text-decoration: none
-}
+/**/
+/*Command button labels.*/
+/**/
+/*a.win-command .win-label,*/
+/*button.win-command .win-label {*/
+    /*position: relative;*/
+    /*line-height: 20px;*/
+    /*display: block;*/
+    /*max-width: 88px; *//* 100px button, but allow for 2px margins and 4px padding on each side */
+    /*padding-left: 4px;  *//* 12px between buttons, 6px per side, minus 2px margins */
+    /*padding-right: 4px;*/
+    /*overflow: hidden;*/
+    /*word-wrap: break-word;*/
+    /*word-break: keep-all;*/
+    /*top: 1px;*/
+/*}*/
+/*a.win-command,*/
+/*a.win-command:hover {*/
+    /*text-decoration: none*/
+/*}*/
 
-/*
-AppBarCommand separator.
-*/
-hr.win-command {
-    display: inline-block;
-    padding: 0;
-    margin: 14px 29px 34px 30px;
-    width: 1px;
-    height: 40px;
-    border: 0;
-    vertical-align: top;
-}
+/**/
+/*AppBarCommand separator.*/
+/**/
+/*hr.win-command {*/
+    /*display: inline-block;*/
+    /*padding: 0;*/
+    /*margin: 14px 29px 34px 30px;*/
+    /*width: 1px;*/
+    /*height: 40px;*/
+    /*border: 0;*/
+    /*vertical-align: top;*/
+/*}*/
 
-/*
-AppBar Edgy Container
-*/
-.win-appbar {
-    z-index: 1001;
-    border-width: 0;
-    width: 100%;
-    height: auto;
-    left: 0;
-    position: fixed;
-}
+/**/
+/*AppBar Edgy Container*/
+/**/
+/*.win-appbar {*/
+    /*z-index: 1001;*/
+    /*border-width: 0;*/
+    /*width: 100%;*/
+    /*height: auto;*/
+    /*left: 0;*/
+    /*position: fixed;*/
+/*}*/
 
-/*
-AppBar control.
-*/
-.win-commandlayout {
+/**/
+/*AppBar control.*/
+/**/
+/*.win-commandlayout {*/
     /*text-align: right;*/
-    padding-left: 10px;
+    /*padding-left: 10px;*/
     /*padding-right: calc(((100% + 5px) mod 20px) + 5px);*/
     /*width: calc(100% - 10px - (((100% + 5px) mod 20px) + 5px));*/
 
     /* Hide whitespace between buttons. */
-    font-size: 0;
+    /*font-size: 0;*/
 
-    min-height: 88px;
-}
-.win-commandlayout .win-selection {
-    float: left;
-}
+    /*min-height: 88px;*/
+/*}*/
+/*.win-commandlayout .win-selection {*/
+    /*float: left;*/
+/*}*/
 
 /* Narrow buttons and no labels when < 1024px. */
-@media (max-width: 1023px) {
-    a.win-command .win-label,
-    button.win-command .win-label {
+/*@media (max-width: 1023px) {*/
+    /*a.win-command .win-label,*/
+    /*button.win-command .win-label {*/
         /*display: none;*/
-    }
-    a.win-command .win-commandicon,
-    button.win-command .win-commandicon {
-        margin: 0 8px; /* 2px margin for focus */
-    }
-    .win-commandlayout {
-        min-height: 68px;
-    }
-    hr.win-command {
-        margin-bottom: 14px;
-        margin-top: 14px;
-        margin: 14px 5px 34px 5px;
+    /*}*/
+    /*a.win-command .win-commandicon,*/
+    /*button.win-command .win-commandicon {*/
+        /*margin: 0 8px; *//* 2px margin for focus */
+    /*}*/
+    /*.win-commandlayout {*/
+        /*min-height: 68px;*/
+    /*}*/
+    /*hr.win-command {*/
+        /*margin-bottom: 14px;*/
+        /*margin-top: 14px;*/
+        /*margin: 14px 5px 34px 5px;*/
 
-    }
-}
+    /*}*/
+/*}*/
 
-@media (min-width: 321px) and (max-width: 1023px) {
-    hr.win-command {
-        margin-left: 10px;
-        margin-right: 9px;
-    }
-}
+/*@media (min-width: 321px) and (max-width: 1023px) {*/
+    /*hr.win-command {*/
+        /*margin-left: 10px;*/
+        /*margin-right: 9px;*/
+    /*}*/
+/*}*/
+

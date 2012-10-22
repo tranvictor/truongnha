@@ -67,82 +67,84 @@
 </section>
 
 {% if user.userprofile.position == 'HIEU_TRUONG' or user.userprofile.position == 'HIEU_PHO' or user.userprofile.position == 'GIAO_VU' %}
-    <div id="main-menu" class="win-commandlayout pagination-centered">
-        {# Người sử dụng cấp trường       #}
-        {% if user.userprofile.organization.status != 0 %}
-            {# Đang trong năm học #}
-            <a id="sms" class="win-command" href="{% url sms_summary '' %}"
-               title="Thông báo tình hình học tập, rèn luyện của học sinh cho phụ huynh">
-                <span class="win-commandimage win-commandring"><i class="icon-envelope"></i></span>
-                <span class="win-label">Liên lạc</span>
-            </a>
-            <a id="report" class="win-command" href="{% url report %}"
-               title="Các báo cáo thống kê, tổng kết">
-                <span class="win-commandimage win-commandring"><i class="icon-bar-chart"></i></span>
-                <span id="command-report" class="win-label">Báo cáo</span>
-            </a>
-            <hr class="win-command"/>
+    <div id="main-menu">
+        <div class="pagination-centered">
+            {# Người sử dụng cấp trường       #}
+            {% if user.userprofile.organization.status != 0 %}
+                {# Đang trong năm học #}
+                <a id="sms" class="cmd" href="{% url sms_summary '' %}"
+                   title="Thông báo tình hình học tập, rèn luyện của học sinh cho phụ huynh">
+                    <i class="icon-envelope"></i>
+                    <span >Liên lạc</span>
+                </a>
+                <a id="report" class="cmd" href="{% url report %}"
+                   title="Các báo cáo thống kê, tổng kết">
+                    <i class="icon-bar-chart"></i>
+                    <span id="command-report" >Báo cáo</span>
+                </a>
+                {#<hr />#}
 
-            <a id="classes-teachers" class="win-command" href="{% url classes %}"
-               title="Thêm/xoá lớp và gán giáo viên chủ nhiệm lớp">
-                <span class="win-commandimage win-commandring"><i class="icon-th-large"></i></span>
-                <span class="win-label">Lớp học</span>
-            </a>
-            <a id="teachers" class="win-command" href="{% url teachers %}"
-               title="Quản lý danh sách giáo viên, cán bộ trong trường">
-                <span class="win-commandimage win-commandring"><i class="icon-group"></i></span>
-                <span class="win-label">Giáo viên</span>
-            </a>
+                <a id="classes-teachers" class="cmd" href="{% url classes %}"
+                   title="Thêm/xoá lớp và gán giáo viên chủ nhiệm lớp">
+                    <i class="icon-th-large"></i>
+                    <span >Lớp học</span>
+                </a>
+                <a id="teachers" class="cmd" href="{% url teachers %}"
+                   title="Quản lý danh sách giáo viên, cán bộ trong trường">
+                    <i class="icon-group"></i>
+                    <span >Giáo viên</span>
+                </a>
 
-            <hr class="win-command"/>
-            <a id="settings" class="win-command" href="{% url info %}" title="Thông tin trường, khóa điểm, tham số.">
-                <span class="win-commandimage win-commandring"><i class="icon-cogs"></i></span>
-                <span class="win-label">Thiết lập</span>
-            </a>
-            <a id="finish" class="win-command" href="{% url finish %}" title="Chuyển học kỳ, năm học, xem tổng kết">
-                <span class="win-commandimage win-commandring"><i class="icon-columns"></i></span>
-                <span class="win-label">Chuyển kỳ</span>
-            </a>
+                {#<hr />#}
+                <a id="settings" class="cmd" href="{% url info %}" title="Thông tin trường, khóa điểm, tham số.">
+                    <i class="icon-cogs"></i>
+                    <span >Thiết lập</span>
+                </a>
+                <a id="finish" class="cmd" href="{% url finish %}" title="Chuyển học kỳ, năm học, xem tổng kết">
+                    <i class="icon-columns"></i>
+                    <span >Chuyển kỳ</span>
+                </a>
 
-            <hr class="win-command"/>
-            <a id="timetable" class="win-command" href="{% url timetable_school %}" title="Thời khóa biểu toàn trường">
-                <span class="win-commandimage win-commandring"><i class="icon-calendar"></i></span>
-                <span class="win-label">Lịch học</span>
-            </a>
-            <a id="agenda" class="win-command" href="{% url school_subject_agenda %}"
-               title="Quảng lý phân phối chương trình các môn">
-                <span class="win-commandimage win-commandring"><i class="icon-book"></i></span>
-                <span class="win-label">Chương trình</span>
-            </a>
-            <a id="exams" class="win-command" href="{% url create_list_exam %}" title="Tạo danh sách phòng thi">
-                <span class="win-commandimage win-commandring"><i class="icon-pencil"></i></span>
-                <span class="win-label">Kỳ thi</span>
-            </a>
+                {#<hr />#}
+                <a id="timetable" class="cmd" href="{% url timetable_school %}" title="Thời khóa biểu toàn trường">
+                    <i class="icon-calendar"></i>
+                    <span >Lịch học</span>
+                </a>
+                <a id="agenda" class="cmd" href="{% url school_subject_agenda %}"
+                   title="Quảng lý phân phối chương trình các môn">
+                    <i class="icon-book"></i>
+                    <span >Chương trình</span>
+                </a>
+                <a id="exams" class="cmd" href="{% url create_list_exam %}" title="Tạo danh sách phòng thi">
+                    <i class="icon-pencil"></i>
+                    <span >Kỳ thi</span>
+                </a>
 
-            <hr class="win-command"/>
-            <a id="sitemap" class="win-command" href="/help/sitemap" title="Sơ đồ chức năng.">
-                <span class="win-commandimage win-commandring"><i class="icon-sitemap"></i></span>
-                <span class="win-label">Sơ đồ</span>
-            </a>
-            <a id="contact" class="win-command" href="{% url views.about %}"
-               title="Giới thiệu, liên lạc, góp ý">
-                <span class="win-commandimage win-commandring"><i class="icon-info-sign"></i></span>
-                <span class="win-label">Liên hệ</span>
-            </a>
+                {#<hr />#}
+                <a id="sitemap" class="cmd" href="/help/sitemap" title="Sơ đồ chức năng">
+                    <i class="icon-sitemap"></i>
+                    <span >Sơ đồ</span>
+                </a>
+                <a id="contact" class="cmd" href="{% url views.about %}"
+                   title="Giới thiệu, liên lạc, góp ý">
+                    <i class="icon-info-sign"></i>
+                    <span >Liên hệ</span>
+                </a>
 
-            <a id="help" class="win-command" href="{% url help.views.help %}"
-               title="Hướng dẫn sử dụng">
-                <span class="win-commandimage win-commandring"><i class="icon-question-sign"></i></span>
-                <span class="win-label">Trợ giúp</span>
-            </a>
-        {% else %}
-            {# Khi chưa khởi  tạo năm học #}
-            <a id="setup" class="win-command" href="{% url setup %}"
-               title="Khai báo thông tin trường học và tạo nhanh các lớp học">
-                <span class="win-commandimage win-commandring"><i class="icon-cog"></i></span>
-                <span class="win-label">Khởi tạo</span>
-            </a>
-        {% endif %}
+                <a id="help" class="cmd"href="{% url help.views.help %}"
+                   title="Hướng dẫn sử dụng">
+                    <i class="icon-question-sign"></i>
+                    <span >Trợ giúp</span>
+                </a>
+            {% else %}
+                {# Khi chưa khởi  tạo năm học #}
+                <a id="setup" class="cmd" href="{% url setup %}"
+                   title="Khai báo thông tin trường học và tạo nhanh các lớp học">
+                    <i class="icon-cog"></i>
+                    <span >Khởi tạo</span>
+                </a>
+            {% endif %}
+        </div>
     </div>
 {% endif %}
 
