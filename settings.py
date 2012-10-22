@@ -335,7 +335,6 @@ PIPELINE_CSS = {
             '/bootstrap/css/bootstrap.min.css',
             '/bootstrap/css/bootstrap-responsive.min.css',
             '/font-awaresome/css/font-awesome.css',
-            '/metroui/metro.css',
             '/css/datepicker.css',
             '/css/jquery_file_upload/jquery.fileupload-ui.css',
             '/css/truongnha.css',

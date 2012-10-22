@@ -388,6 +388,7 @@
 
             <br>
             <br>
+
             <div class="row-fluid" style="text-align: center;">
                 <div class="span6">
                     <a href="/about" class="btn btn-success btn-large">Thông tin sản phẩm</a>
@@ -401,24 +402,19 @@
             <br>
         </div>
     {% elif user.is_superuser %}
-        {#        <a class="win-command" href="{%url app.views.manage_register %}"#}
-        <a class="win-command" href="/manageRegister"
-           title="Đăng ký">
-            <span class="win-commandimage win-commandring"><i class="icon-check"></i></span>
-            <span class="win-label">Quản lý đăng ký</span>
+        {#        <a href="{%url app.views.manage_register %}"#}
+        <a class="btn btn-large btn-success" href="/manageRegister" title="Đăng ký">
+            Quản lý đăng ký
         </a>
 
-        {#        <a class="win-command" href="{%url app.views.system_subject_agenda%}"#}
-        <a class="win-command" href="/app/manage_agenda/"
+        {#        <a href="{%url app.views.system_subject_agenda%}"#}
+        <a class="btn btn-large btn-warning" href="/app/manage_agenda/"
            title="Quản lý phân phối chương trình của hệ thống">
-            <span class="win-commandimage win-commandring"><i class="icon-book"></i></span>
-            <span class="win-label">Chương trình</span>
+            Phân phối chương trình
         </a>
 
-        <a class="win-command" href="/admin"
-           title="Mở trình quản trị sẵn có của hệ thống">
-            <span class="win-commandimage win-commandring"><i class="icon-briefcase"></i></span>
-            <span class="win-label">Duyệt dữ liệu</span></a>
+        <a class="btn btn-large btn-danger" href="/admin" title="Mở trình quản trị sẵn có của hệ thống">
+            <span>Duyệt dữ liệu</span></a>
     {% endif %}
 {% endblock %}
 

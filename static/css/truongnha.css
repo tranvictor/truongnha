@@ -500,67 +500,6 @@ select#id_major, select#id_team_id, select#id_group_id {
     font-weight: normal;
 }
 
-a.win-command {
-    display: inline-block;
-    cursor: pointer;
-    letter-spacing: 0.02em;
-    vertical-align: middle;
-}
-
-/*a.win-command,*/
-/*button.win-command {*/
-    /*background: none;*/
-    /*background-clip: border-box;*/
-    /*height: auto;*/
-    /*padding: 12px 0;*/
-    /*margin: 0 5px;*/
-    /*border: 0;*/
-    /*min-width: 42px;*/
-    /*text-align: center;*/
-    /*font-size: 9pt;*/
-    /*font-weight: normal;*/
-    /*line-height: 16px;*/
-/*}*/
-
-/*a.win-hidefocus:focus,*/
-/*button.win-hidefocus:focus {*/
-    /*outline: none;*/
-/*}*/
-
-/*Command button icons.*/
-
-/*.win-commandicon {*/
-    /*display: inline-block;*/
-    /*margin: 0 28px;*/
-    /*min-width: 0;*/
-    /*min-height: 0;*/
-    /*padding: 0;*/
-
-    /*Normal sizing*/
-    /*width: 40px;*/
-    /*height: 40px;*/
-    /*box-sizing: border-box;*/
-    /*cursor: default;*/
-/*}*/
-
-/*.win-commandimage {*/
-    /*font-family: "IcoMoon";*/
-    /*letter-spacing: 0;*/
-
-    /*Applications provide their own content, like &#xE0D5;.*/
-    /*vertical-align: middle;*/
-    /*font-size: 14pt;*/
-    /*margin: -2px;*/
-    /*line-height: 40px;*/
-    /*background-position: 0 0;*/
-    /*background-origin: border-box;*/
-    /*display: inline-block;*/
-    /*Still 40px*/
-    /*width: 40px;*/
-    /*height: 40px;*/
-    /*background-size: 160px 80px;*/
-/*}*/
-
 .slidein {
     position: absolute;
     opacity: 0;
