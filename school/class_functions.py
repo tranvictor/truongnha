@@ -184,6 +184,7 @@ def viewClassDetail(request, class_id):
                                             to_en1('Em ' + student.short_name() +\
                                                     ' ' + content),
                                             user,
+                                            student.user_id,
                                             True,
                                             school,
                                             u'Trường Nhà thông báo',
@@ -194,6 +195,7 @@ def viewClassDetail(request, class_id):
                                             student.sms_phone,
                                             to_en1(content),
                                             user,
+                                            student.user_id,
                                             True,
                                             school,
                                             u'Trường Nhà thông báo',

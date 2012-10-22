@@ -157,8 +157,8 @@ class sms(models.Model):
             self.failed_reason = u'Tài khoản trường không đủ để thực hiện tin nhắn'
             self.save()
         
-    def _send_mark_sms(self, marks):
-        result = self._send_sms()
+    def _send_mark_sms(self, marks, school=None):
+        result = self._send_sms(school=school)
         if result == '1':
             for m in marks:
                 m.update_sent()
@@ -168,8 +168,8 @@ class sms(models.Model):
         return self._send_sms(school=school)
         
     @task()
-    def send_mark_sms(self, marks):
-        result = self._send_sms()
+    def send_mark_sms(self, marks, school=None):
+        result = self._send_sms(school=school)
         if result == '1':
             for m in marks:
                 m.update_sent()
