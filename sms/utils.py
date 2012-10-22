@@ -46,16 +46,15 @@ def _send_sms(phone, content, user, receiver=None, save_to_db=True,
         if school:
             if school.id in [42, 44]: raise Exception('NotAllowedSMS')
             content = to_ascii(u'Truong %s thong bao:\n%s' % (
-                unicode(school), content))
+                school, content))
         else:
             content = to_ascii(u'Truongnha.com thong bao:\n%s' % content)
-        s = None
         s = sms.objects.create(phone=phone, content=content, sender=user,
                 receiver=receiver, recent=True, success=False)
         if not settings.DEBUG and not is_task_called:
             return s.send_sms.delay(s, school=school)
         else:
-            return s._send_sms()
+            return s._send_sms(school=school)
 
 def send_email(subject, message, from_addr=None, to_addr=[]):
     #msg = MIMEText(message.encode('utf-8'), _charset='utf-8')
@@ -95,10 +94,10 @@ def send_sms_summary_mark(student, content, marks, user,
         if school:
             if school.id in [42, 44]: raise Exception('NotAllowedSMS')
             if cl:
-                sms_cont= to_ascii(u'Truong %s thong bao:\nEm %s lop %s co %s' % (
+                sms_cont = to_ascii(u'Truong %s thong bao:\nEm %s lop %s co %s' % (
                     unicode(school), student.short_name(), cl, content))
             else:
-                sms_cont= to_ascii(u'Truong %s thong bao:\nEm %s co %s' % (
+                sms_cont = to_ascii(u'Truong %s thong bao:\nEm %s co %s' % (
                     unicode(school), student.short_name(), content))
         else:
             raise Exception('SchoolIsNone')
@@ -107,9 +106,9 @@ def send_sms_summary_mark(student, content, marks, user,
                 sender=user, recent=True, success=False)
         s.save()
         if not settings.DEBUG:
-            return s.send_mark_sms.delay(s, marks)
+            return s.send_mark_sms.delay(s, marks, school=school)
         else:
-            return s._send_mark_sms(marks)
+            return s._send_mark_sms(marks, school=school)
 
 from celery import task
 
@@ -121,11 +120,12 @@ def task_send_email(subject, message, from_addr=None, to_addr=[]):
                 to_addr)
 
 @task()
-def task_send_SMS_then_email(phone, content, user, save_to_db=True, school=None,
-        subject=None, message=None, from_addr=None, to_addr=[]):
+def task_send_SMS_then_email(phone, content, user, receiver=None,
+        save_to_db=True, school=None, subject=None, message=None,
+        from_addr=None, to_addr=[]):
     try:
-        _send_sms(phone, content, user, save_to_db, school=school,
-                is_task_called=True) 
+        _send_sms(phone, content, user, receiver,
+                save_to_db, school=school, is_task_called=True) 
     except Exception:
         try:
             _send_email(subject, message, from_addr, to_addr)                
@@ -133,12 +133,13 @@ def task_send_SMS_then_email(phone, content, user, save_to_db=True, school=None,
             print e
             pass
 
-def send_SMS_then_email(phone, content, user, save_to_db=True, school=None,
-        subject=None, message=None, from_addr=None, to_addr=[]):
+def send_SMS_then_email(phone, content, user, receiver=None,
+        save_to_db=True, school=None, subject=None, message=None,
+        from_addr=None, to_addr=[]):
     if not settings.DEBUG:
-        task_send_SMS_then_email.delay(
-                phone, content, user, save_to_db, school,
-                subject, message, from_addr, to_addr)
+        task_send_SMS_then_email.delay(phone, content, user, receiver,
+                save_to_db, school, subject, message,
+                from_addr, to_addr)
     else:
         try:
             smsed = sendSMS(phone, content, user, save_to_db, school)

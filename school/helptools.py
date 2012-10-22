@@ -52,14 +52,14 @@ def _sync_sms_receiver():
         if st.sms_phone:
             if st.sms_phone in phone_map:
                 phone_map[st.sms_phone].append(st)
-                print st.sms_phone, st.full_name()
+                #print st.sms_phone, st.full_name()
             else:
                 phone_map[st.sms_phone] = [st]
     for te in teachers:
         if te.sms_phone:
             if te.sms_phone in phone_map:
                 phone_map[te.sms_phone].append(te)
-                print te.sms_phone, te.full_name()
+                #print te.sms_phone, te.full_name()
             else:
                 phone_map[te.sms_phone] = [te]
     number = 0
@@ -91,8 +91,8 @@ def _sync_sms_receiver():
                             number += 1
                             break
                     print 'Confusing to detect phone owner for %s' % phone
-                    print 'Decided: ', decided
-                    print 'Content: ', s.content 
+                    #print 'Decided: ', decided
+                    #print 'Content: ', s.content 
             else:
                 print 'Cant find owner for the phone number %s' % phone
     print 'Number: ', number

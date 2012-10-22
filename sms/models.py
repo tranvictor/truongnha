@@ -135,8 +135,9 @@ class sms(models.Model):
     def _send_sms(self, school=None):
         try:
             # 2 id user nay de cap phep nhan tin cho chi Van va account sensive
+            # two schools are allowed to sms ( Cam giang, Demo 10 for testing )
             if (int(self.sender_id) in [904, 16742]
-                    or (school and school.id in [11])): 
+                    or (school and school.id in [11, 10])): 
                 result = self._send_iNET_sms()
             else:
                 result = self._send_Viettel_sms()
@@ -156,8 +157,8 @@ class sms(models.Model):
             self.failed_reason = u'Tài khoản trường không đủ để thực hiện tin nhắn'
             self.save()
         
-    def _send_mark_sms(self, marks):
-        result = self._send_sms()
+    def _send_mark_sms(self, marks, school=None):
+        result = self._send_sms(school=school)
         if result == '1':
             for m in marks:
                 m.update_sent()
@@ -167,8 +168,8 @@ class sms(models.Model):
         return self._send_sms(school=school)
         
     @task()
-    def send_mark_sms(self, marks):
-        result = self._send_sms()
+    def send_mark_sms(self, marks, school=None):
+        result = self._send_sms(school=school)
         if result == '1':
             for m in marks:
                 m.update_sent()

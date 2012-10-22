@@ -101,14 +101,6 @@ $(document).ready(function () {
 
     });
 
-    var $tds = $('td');
-    for (var i = $tds.length; i--;){
-        var $this = $($tds[i]);
-        if ($this.css('display') != 'none'){
-            $this.css('width', parseInt($this.css('width')));
-        }
-    }
-
    // recover state when browser uses it's cache
     var checkedInput = $('table').find('input:checked');
     for (var i = checkedInput.length; i--;){
