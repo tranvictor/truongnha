@@ -331,19 +331,26 @@ class BasicPersonInfo(models.Model):
             sms_sent = False
             try:
                 subject = u'Kích hoạt tài khoản Trường Nhà'
-                message = u'Tài khoản trường ' +\
-                          unicode(
-                              self.school_id) + u' tại địa chỉ: http://www.truongnha.com của bạn là:\n' + u'Tên đăng nhập: ' + unicode(
-                    self.user_id.username) +\
-                          u'\n' + u'Mật khẩu: ' + unicode(raw_password) + u'\n' + u'Xin cảm ơn.'
+                message = u'''Tài khoản trường %s tại địa chỉ: \
+                        https://www.truongnha.com của bạn là:\n\
+                        Tên đăng nhập: %s\n Mật khẩu: %s\n\
+                        Xin cảm ơn.''' % (unicode(self.school_id),
+                        unicode(self.user_id.username),
+                        unicode(raw_password))
                 send_email(subject, message, to_addr=[self.email])
                 email_sent = True
             except Exception as e:
                 print e
             try:
-                content = 'Tai khoan Truongnha.com:\n' + 'ten: ' + self.user_id.username + '\nmat khau: ' + str(
-                    raw_password)
-                sendSMS(self.sms_phone, content, self.user_id, save_to_db=False)
+                content = '''Tai khoan Truongnha.com:\n\
+                        Ten: %s\n\
+                        Mat khau: %s\n\
+                        Xin cam on.''' % (self.user_id.username,
+                                raw_password)
+                sendSMS(self.sms_phone, content,
+                        self.user_id, self.user_id,
+                        save_to_db=False,
+                        school=self.school_id)
                 sms_sent = True
             except Exception as e:
                 print e
