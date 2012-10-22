@@ -379,7 +379,8 @@ def feedback(request):
             if (request.user.is_anonymous()
                     or request.user.username in [settings.DEMO_LOGIN_SCHOOL,
                         settings.DEMO_LOGIN_TEACHER,
-                        settings.DEMO_LOGIN_UPPER]):
+                        settings.DEMO_LOGIN_UPPER,
+                        settings.DEMO_LOGIN_STUDENT]):
                 url = 'url: ' + request.POST['feedback_url']
                 user_name = 'name: ' + unicode(request.POST['username'])
                 email = 'email: ' + unicode(request.POST['userEmail'])
