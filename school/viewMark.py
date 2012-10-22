@@ -476,7 +476,7 @@ def toDigit(x):
         return float(x)
 
 
-def update(s, primary, isComment, user,time_history):
+def update(s, primary, isComment, user, time_history):
     strings = s.split(':')
     idMark = int(strings[0])
     setOfNumber = strings[1].split('*')
@@ -491,12 +491,12 @@ def update(s, primary, isComment, user,time_history):
     for i in range(length - 1):
         number = int(setOfNumber[i])
         value = setOfValue[i]
-
+        current_time = int((timeNow - CHECKED_DATE).total_seconds() / 60)
         if value == '-1':
             value = ''
             time = ''
         else:
-            time = str(int((timeNow - CHECKED_DATE).total_seconds() / 60))
+            time = str(current_time)
 
         if number <= 3 * MAX_COL + 3:
             if number <= 3 * MAX_COL:
@@ -511,7 +511,7 @@ def update(s, primary, isComment, user,time_history):
             if number == 3 * MAX_COL + 3:
                 number_of_time -= 1
             if (old_value != value) & (old_value != '' ) & (old_value != 'None'):
-                if int(time) - int(arrTime[number_of_time]) > time_history:
+                if current_time - int(arrTime[number_of_time]) > time_history:
                     h = HistoryMark()
                     h.old_mark = float(old_value)
                     h.number = number
