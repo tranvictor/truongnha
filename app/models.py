@@ -437,7 +437,6 @@ class AuthenticationForm(forms.Form):
     def get_user(self):
         return self.user_cache
 
-
 class Feedback(models.Model):
     """
     Thông tin về các bản báo cáo lỗi hay liên hệ từ khách hàng
@@ -451,9 +450,15 @@ class Feedback(models.Model):
     class Meta:
         verbose_name_plural = "Phản hồi"
 
+    def save(self, *args, **kwargs):
+        email = self.email
+        fbl = Feedback.objects.filter(email = email)
+        for fb in fbl:
+            fb.delete()
+        super(Feedback,self).save(*args,**kwargs)
+
     def __unicode__(self):
         return self.fullname
-
 
 class FeedbackForm(forms.Form):
     #Hainhh    

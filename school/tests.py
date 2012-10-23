@@ -7,6 +7,7 @@ import os
 
 test_classes = []
 cl_name = os.environ.pop('DJANGO_CLASS_TESTING', None)
+print cl_name
 if cl_name:
     individual = True
 else: individual = False
@@ -15,7 +16,7 @@ def generate_test_class(module):
     for name, obj in inspect.getmembers(module):
         if inspect.isclass(obj) and issubclass(obj, TestCase):
             if individual:
-                if name != cl_name: break
+                if name != cl_name: continue
             print name, obj
             if issubclass(obj, BasicWorkFlow):
                 groups = obj.get_step_groups()

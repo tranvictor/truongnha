@@ -34,7 +34,7 @@ class BasicWorkFlow(TestCase):
         self.school_name = 'test_school'
         self.school_level = random.randint(2,3)
         self.province = '1'
-        self.phone = '0985241549'
+        self.phone = ''
         self.address = 'test_address'
         self.client = Client()
         self.factory = RequestFactory()
