@@ -63,7 +63,7 @@
         <br>
         Hướng dẫn: Nếu học sinh đăng kí thi lại môn nào thì nhập điểm vào môn đó, ngược lại thì bỏ trống.
         <form action="{% url  thi_lai selectedClass.id %}" method="post">{% csrf_token %}
-            <input type="submit" class="btn" value="Lưu và xếp loại">
+            <input type="submit" class="btn btn-primary" value="Lưu và xếp loại">
 
 
             {% for tkMonList,tbNam in list %}
