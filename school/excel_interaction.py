@@ -1072,7 +1072,7 @@ def processFileTKB(request, file_name):
     year = get_current_year(request)
     class_list = year.class_set.all()
     for cl in class_list:
-        all_t = cl.tkb_set.all().delete()
+        cl.tkb_set.all().delete()
 
     message = u'<ul>'
     for c in range(start_col + 2, sheet.ncols):
@@ -1106,7 +1106,7 @@ def processFileTKB(request, file_name):
             r = start_row + 10 * (d - 2) + 1
             for i in range(0, 10):
                 sb = None
-                subjectName = sheet.cell(r + i, c).value
+                subjectName = sheet.cell(r + i, c).value.strip()
                 sub_name =to_en1(subjectName).split('-')[0].strip().lower()
                 if sub_name in out_cache:
                     continue
@@ -1119,13 +1119,13 @@ def processFileTKB(request, file_name):
                             cache[sub_name] = _sb
                             break
                 setattr(t, 'period_' + str(i+1), sb)
-                if not sb and subjectName:
+                if (subjectName != '') and (not sb):
                     if sub_name == u'chao co':
                         setattr(t, 'chaoco', i+1)
                     elif sub_name == u'sinh hoat' or sub_name == u'sh':
                         setattr(t, 'sinhhoat', i+1)
                     else:
-                        message += u'<li>Không tồn tại môn ' + sheet.cell(r+i, c).value + u' trong lớp ' + sheet.cell(start_row,
+                        message += u'<li>Không tồn tại môn ' + subjectName + u' trong lớp ' + sheet.cell(start_row,
                         c).value.strip() + u'</li>'
                         out_cache.append(sub_name)
             t.save()
