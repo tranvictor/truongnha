@@ -451,10 +451,10 @@ class Feedback(models.Model):
         verbose_name_plural = "Phản hồi"
 
     def save(self, *args, **kwargs):
-        email = self.email
-        fbl = Feedback.objects.filter(email = email)
-        for fb in fbl:
-            fb.delete()
+#        email = self.email
+#        fbl = Feedback.objects.filter(email = email)
+#        for fb in fbl:
+#            fb.delete()
         super(Feedback,self).save(*args,**kwargs)
 
     def __unicode__(self):

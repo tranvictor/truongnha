@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 import school.report_urls as report_urls
 from school import views, shortlink
-import viewMark, viewFinish, exam, helptools, writeExcel, importMark, school_functions, class_functions, excel_interaction, makeTest
+import viewMark, viewFinish, exam, writeExcel, importMark, school_functions, class_functions, excel_interaction, makeTest
 
 urlpatterns = patterns('',
     url(r'^$', views.school_index , name = "school_index"),
@@ -92,6 +92,7 @@ urlpatterns = patterns('',
     #url(r'teachers_in_group/(?P<group_id>\w+)$',  views.teachers_in_group),
     url(r'students/organize/(?P<class_id>\w+)/(?P<type>\w+)$',  views.organize_students, name="orgamize_student"),
     url(r'viewTeacherDetail/(?P<teacher_id>\w+)$',  school_functions.viewTeacherDetail, name="teacher_detail"),
+    url(r'editTeacherDetail/(?P<teacher_id>\w+)$', school_functions.editTeacherDetail, name="edit_teacher_detail"),
     url(r'viewStudentDetail/(?P<student_id>\w+)',  school_functions.viewStudentDetail, name ="student_detail"),
     #url(r'getStudent/(?P<student_id>\w+)',  views.student, name="student"),
     url(r'viewClassDetail$', shortlink.viewClassDetail, name="class_detail"),

@@ -1,6 +1,7 @@
 # coding=utf-8
 import os
 import string
+from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect,\
@@ -315,6 +316,11 @@ def viewClassDetail(request, class_id):
                     return HttpResponse(data, mimetype='json')
 
     student_list = cl.students().order_by('index', 'first_name', 'last_name', 'birthday')
+    user_id_list = [ss.user_id_id for ss in student_list]
+    user_list = User.objects.filter(id__in = user_id_list)
+    active_list = {}
+    for user in user_list:
+        active_list[user.id] = user.is_active
     tmp = get_student(request)
     inCl = inClass(request, class_id)
     id = 0
@@ -342,7 +348,8 @@ def viewClassDetail(request, class_id):
                                  'selected_term':selected_term,
                                  'move_to_cls': move_to_cls,
                                  'move_to_cls1': move_to_cls1,
-                                 'default_date': default_date
+                                 'default_date': default_date,
+                                 'active_list' : active_list
     })
     return HttpResponse(t.render(c))
 
