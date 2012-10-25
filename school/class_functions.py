@@ -1273,7 +1273,6 @@ def edit_ki_luat(request, kt_id):
 @need_login
 @school_function
 def dd(request, class_id, day, month, year, api_called=False, data=None):
-
     school = get_school(request)
     _class = Class.objects.get(id = class_id)
     user = request.user
@@ -1303,8 +1302,8 @@ def dd(request, class_id, day, month, year, api_called=False, data=None):
                         return HttpResponseBadRequest()
                     try:
                         dd = DiemDanh.objects.get(student_id__exact=student.id,
-                                time__exact=time,
-                                term_id=term_id)
+                            time__exact=time,
+                            term_id=term_id)
                         if loai == u'':
                             if dd.loai == u'M':
                                 tkdd.muon -= 1
@@ -1352,7 +1351,7 @@ def dd(request, class_id, day, month, year, api_called=False, data=None):
                 try:
                     day = to_date(day)
                     ddl = DiemDanh.objects.filter(time__exact=day,
-                            student_id__in=std_list)
+                        student_id__in=std_list)
                     for dd in ddl:
                         student = dd.student_id
                         phone_number = student.sms_phone
@@ -1362,8 +1361,8 @@ def dd(request, class_id, day, month, year, api_called=False, data=None):
                             sms_message = u' Em ' + name + u' đã ' + dd.get_loai_display() + u' ngày ' + day.strftime("%d/%m/%Y")
                             try:
                                 sent = sendSMS(phone_number,
-                                        to_en1(sms_message),
-                                        user)
+                                    to_en1(sms_message),
+                                    user)
                             except Exception as e:
                                 if e.message == 'InvalidPhoneNumber':
                                     message = message + u'<li><b>Số ' + str(phone_number)\
@@ -1401,23 +1400,20 @@ def dd(request, class_id, day, month, year, api_called=False, data=None):
     year_id = get_current_year(request).id
     dncdata = {'date': d, 'class_id': class_id}
     dncform = DateAndClassForm(year_id, dncdata)
-    fl = []
-    for std in std_list:
-        form_list = []
+    fl = {}
+    stdid_list = [ss.id for ss in std_list]
+    for ss in stdid_list:
+        fl[ss] = {}
         for d in weeklist:
-            id = str(std.id) + "_" + d.strftime("%d/%m/%Y") +'_%s'
-            try:
-                dd = DiemDanh.objects.get(student_id__exact=std.id,
-                        time__exact=d,
-                        term_id=term_id)
-                form_list.append(DDForm(auto_id=id,instance=dd))
-            except Exception:
-                form_list.append(DDForm(auto_id=id))
-        fl.append(form_list)
-    list = zip(std_list,fl)
-    c = RequestContext(request,{'pos':pos,'class':_class,'list':list,
+            id = str(ss) + "_" + d.strftime("%d/%m/%Y") +'_%s'
+            fl[ss][d] = DDForm(auto_id=id)
+    dd_list = DiemDanh.objects.filter(student_id__in = stdid_list, time__in=weeklist)
+    for dd in dd_list:
+        id = str(dd.student_id_id) + "_" + d.strftime("%d/%m/%Y") +'_%s'
+        fl[dd.student_id_id][dd.time] = DDForm(auto_id=id,instance=dd)
+    c = RequestContext(request,{'pos':pos,'class':_class,'std_list':std_list,
                                 'week_list':weeklist,'dncform':dncform,
                                 'date':day, 'previous_week': previous_week,
-                                'next_week':next_week })
+                                'next_week':next_week, 'fl':fl })
     t = loader.get_template(os.path.join('school','dd.html'))
     return HttpResponse(t.render(c))
