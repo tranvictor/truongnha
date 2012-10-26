@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load dictionary %}
 
 {% block css %}
     <style type="text/css">
@@ -229,13 +230,18 @@
         </thead>
 
         <tbody>
-        {% for p,fl in list %}
+        {% for p in std_list %}
             <tr>
                 <td> {{ forloop.counter }}</td>
                 <td class="align-left" >{{ p.last_name }}</td>
                 <td class="align-left" style="border-left: none;">{{ p.first_name }}</td>
-                {% for f in fl %}
-                    <td class="dd col{{ forloop.counter }}"> {{ f.loai }} </td>
+                {% for d in week_list %}
+                    <td class="dd col{{ forloop.counter }}">
+                        {% with fl|get_value:p.id as ddl %}
+                            {% with ddl|get_value:d as f%}
+                                {{ f.loai }}
+                            {% endwith %}
+                        {% endwith %}</td>
                 {% endfor %}
             </tr>
         {% endfor %}

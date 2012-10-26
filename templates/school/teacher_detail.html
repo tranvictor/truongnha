@@ -43,25 +43,10 @@
                 data = $(this).serialize();
                 var arg = {
                     data:data,
-                    type:$(this).attr("method"),
+                    type:"POST",
                     url:$(this).attr("action"),
                     success:update_teacher_detail,
                     global:false
-                };
-                $.ajax(arg);
-                return false;
-            });
-            $("#resetpass").live("click", function () {
-                var $form = $("form.tttk");
-                var data = $form.serialize();
-                var arg = {
-                    data:data,
-                    type:$form.attr("method"),
-                    url:$form.attr("action"),
-                    global:false,
-                    success:function (json) {
-                        $("#notify").showNotification(json.message);
-                    }
                 };
                 $.ajax(arg);
                 return false;
@@ -81,7 +66,7 @@
         {{ message }} <br>
     {% endif %}
 
-    <form action="{% url teacher_detail id %}" method="post">{% csrf_token %}
+    <form action="{% url edit_teacher_detail id %}" method="post">{% csrf_token %}
         <div id="gv" class="container-fluid">
             {% if pos > 3 %}
                 <div id="taikhoan" class="span12">
