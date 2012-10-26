@@ -746,6 +746,9 @@ def hanh_kiem(request, class_id=0):
                 return HttpResponse(data, mimetype='json')
             except Exception as e:
                 print e
+                data = simplejson.dumps({'message': 'Có lỗi xảy ra.',
+                                         'success':False})
+                return HttpResponse(data, mimetype='json')
 
 
     listdh = zip(pupilList, form, all)
