@@ -1123,6 +1123,7 @@ def printNoPass(request, type=None, isExcel=None):
 def countSMS(request, type=None,
              day=None, month=None, year=None,
              day1=None, month1=None, year1=None):
+    school = get_school(request)
     if request.method == 'POST':
         # if resend request was posted
         if request.is_ajax():
@@ -1132,8 +1133,13 @@ def countSMS(request, type=None,
             number = 0 
             for s in smses:
                 if not s.success:
-                    pass
-            data = {'message': u'Sẽ gửi chậm nhất trong 1h',
+                    if s.type == 'THONG_BAO':
+                        s.send_sms.delay(s, school=school)
+                    else:
+                        s.send_mark_sms.delay(s, school=school)
+                number += 1
+            data = {'message': u'Sẽ gửi %d tin nhắn trong chậm nhất trong 1h'\
+                    % number,
                     'success': True}
             return HttpResponse(simplejson.dumps(data), mimetype='json')
         firstDay = request.POST['firstDate'].split('/')
@@ -1162,7 +1168,6 @@ def countSMS(request, type=None,
 
     firstDay = datetime(year, month, day)
     secondDay = datetime(year1, month1, day1, 23, 59, 0)
-    school = get_school(request)
     if int(type) == 1:
         list = sms.objects.filter(
             created__gte=firstDay,

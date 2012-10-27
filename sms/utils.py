@@ -103,6 +103,7 @@ def send_sms_summary_mark(student, content, marks, user,
             raise Exception('SchoolIsNone')
 
         s = sms(phone=phone, content=sms_cont,
+                type='THONG_BAO',
                 sender=user, recent=True, success=False)
         s.save()
         if not settings.DEBUG:

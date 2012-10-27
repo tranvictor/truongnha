@@ -463,14 +463,10 @@ def save_file(import_file, session):
     import_file_name = import_file.name
     session_key = session.session_key
     save_file_name = session_key + import_file_name
-    print save_file_name, 'save_file()'
     saved_file = open(os.path.join(settings.TEMP_FILE_LOCATION, save_file_name), 'wb+')
-    print '-----'
     for chunk in import_file.chunks():
-        print 'tag'
         saved_file.write(chunk)
     saved_file.close()
-    print save_file_name, 'saved'
     return save_file_name
 
 def process_file(file_name, task):
