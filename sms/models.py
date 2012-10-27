@@ -64,6 +64,13 @@ def get_tsp(phone):
     if head in BEELINE_HEAD: return 'BEELINE'
     return None
 
+REASON_DICT = {
+        '500': u'Lỗi hệ thống',
+        '21': u'Số điện thoại không hợp lệ',
+        '25': u'Tài khoản trường bạn không đủ để thực hiện tin nhắn',
+        '26': u'Lỗi ở cổng nhắn tin'
+        }
+
 class sms(models.Model):
     phone = models.CharField("Số điện thoại", max_length=20, blank=False)
     content = models.TextField("Nội dung")
@@ -95,6 +102,12 @@ class sms(models.Model):
         else:
             if self.success: return u'Đã gửi'
             else: return u'Thất bại'
+
+    def get_failed_reason(self):
+        if self.failed_reason in REASON_DICT:
+            return REASON_DICT[self.failed_reason]
+        else:
+            return u'Lỗi hệ thống'
 
     def _send_iNET_sms(self):
         phone = self.phone
@@ -152,7 +165,7 @@ class sms(models.Model):
                 result = self._send_Viettel_sms()
             if result != '1':
                 self.success = False
-                self.failed_reason = u'Tài khoản trường không đủ để thực hiện tin nhắn'
+                self.failed_reason = result 
                 self.recent = False
                 self.save()
             else:
@@ -163,7 +176,7 @@ class sms(models.Model):
         except Exception:
             self.recent= False
             self.success = False
-            self.failed_reason = u'Tài khoản trường không đủ để thực hiện tin nhắn'
+            self.failed_reason = 500
             self.save()
         
     def _send_mark_sms(self, marks=None, school=None):

@@ -26,6 +26,11 @@ CONVERT_MARK= os.path.join('helptool','convert_mark.html')
 
 
 @transaction.commit_on_success
+def _sync_sms_reason():
+    smses = sms.objects.filter(success=False)
+    smses.update(failed_reason='25')
+
+@transaction.commit_on_success
 def _sync_sms_receiver():
     smses = sms.objects.all()
     # Get all students and teachers with their phone numbers
