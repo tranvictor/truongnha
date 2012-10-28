@@ -391,6 +391,12 @@ def subjectPerClass(request, class_id):
                                             'teacher_id': request.POST['teacher_id'], 'index': index, 'primary': request.POST['primary'], 'type': request.POST['type'], 'nx': nx, 'number_lesson': request.POST['number_lesson']}
                 form = SubjectForm(school.id, data)
                 if form.is_valid():
+                    if request.POST['type'] not in [u'',u'Tự chọn']:
+                        subject_count = cl.subject_set.filter(type = request.POST['type']).count()
+                        if subject_count > 0:
+                            message = u'Đã có môn học cùng loại này.'
+                            data = simplejson.dumps({'message': message, 'success' : False})
+                            return HttpResponse(data, mimetype='json')
                     try:
                         if request.POST['teacher_id'] != u'':
                             teacher = Teacher.objects.get(id=int(data['teacher_id']))
