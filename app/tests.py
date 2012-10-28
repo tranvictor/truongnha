@@ -10,7 +10,7 @@ from django.core import mail
 import random
 import simplejson
 import re
-import sys
+import sys, traceback
 from cStringIO import StringIO
 
 # This class will test the very first steps on a workflow
@@ -226,6 +226,7 @@ class BasicWorkFlow(TestCase):
         except Exception as e:
             sys.stdout = old_stdout
             sys.stdout.write(self.stdout.getvalue())
+            traceback.print_exc(file=sys.stdout)
             self.fail("%s failed (%s: %s)" % (method, type(e), e))
 
 class SendEmailTest(TestCase):

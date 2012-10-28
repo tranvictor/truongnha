@@ -1129,7 +1129,8 @@ def countSMS(request, type=None,
         if request.is_ajax():
             ids = request.POST['smses']
             ids = ids.split('-')
-            smses = sms.objects.filter(id__in=ids)
+            smses = sms.objects.filter(
+                    id__in=[i for i in ids if i])
             number = 0 
             for s in smses:
                 if not s.success:
@@ -1185,6 +1186,7 @@ def countSMS(request, type=None,
             created__lte=secondDay,
             sender__userprofile__organization=school,
             success=False).order_by("-created")
+
     users = User.objects.filter(userprofile__organization=school)
     teacher_users = queryset_to_dict(users)
     #create dict that match student with their class
