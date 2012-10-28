@@ -1010,7 +1010,7 @@ class AddSubjectTest2(AddClassTest):
     def phase10_add_a_subject(self):
         block = self.school.block_set.latest('id')
         class_name = str(block.number) + ' Test 3'
-        cl = self.school.get_current_year().class_set.get(name = class_name)
+        cl = self.school.get_current_year().class_set.get(name=class_name)
         num_of_sub = cl.subject_set.count()
 
         response = self.client.post(
