@@ -24,6 +24,13 @@ TEST_TABLE = os.path.join('helptool','test_table.html')
 REALTIME = os.path.join('helptool','realtime_test.html')
 CONVERT_MARK= os.path.join('helptool','convert_mark.html')
 
+@transaction.commit_on_success
+def _sync_sms_type():
+    smses = sms.objects.all()
+    for s in smses:
+        if 'diem moi' in s.content.lower():
+            s.type = 'THONG_BAO'
+            s.save()
 
 @transaction.commit_on_success
 def _sync_sms_reason():
