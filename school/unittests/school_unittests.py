@@ -1022,7 +1022,7 @@ class AddSubjectTest2(AddClassTest):
                 'teacher_id' : u'',
                 'number_lesson': u'1',
                 'primary' : u'0',
-                'type' : u'Mĩ thuật',
+                'type' : u'Tự chọn',
                 },
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
