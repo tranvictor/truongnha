@@ -214,6 +214,7 @@ INSTALLED_APPS = (
     'crumbs', #requires django-crumbs
     'app',
     'school',
+    'personal',
     'sms',
     'api',
     'pagination',

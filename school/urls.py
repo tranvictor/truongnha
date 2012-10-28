@@ -1,8 +1,8 @@
 from django.conf.urls import patterns, include, url
 import school.report_urls as report_urls
 from school import views, shortlink
-import viewMark, viewFinish, exam, writeExcel, importMark, school_functions, class_functions, excel_interaction, makeTest
-
+import viewMark, viewFinish, exam, writeExcel, importMark, school_functions, class_functions, excel_interaction
+#import makeTest
 urlpatterns = patterns('',
     url(r'^$', views.school_index , name = "school_index"),
     # author: luulethe@gmail.com (cac ham den cho gach)
@@ -10,8 +10,8 @@ urlpatterns = patterns('',
     # 2 ham nay dung de test, tao tat ca cac thong tin con thieu cho sinh vien
     # sau nay hoan thien, co the bo di
     url(r'viewschool/(?P<school_id>\d+)$', views.ssv, name="view_school"),
-    url(r'thu$', makeTest.thu, name="test_thu"),
-    url(r'toolToMakeCol$', makeTest.toolToMakeCol, name="tool_to_make_col"),
+#    url(r'thu$', makeTest.thu, name="test_thu"),
+#    url(r'toolToMakeCol$', makeTest.toolToMakeCol, name="tool_to_make_col"),
     url(r'markTable$', viewMark.markTable, name="mark_table"),
     url(r'markTable/(?P<term_id>\w+)$', viewMark.markTable, name="mark_table"),
     url(r'markTable/(?P<term_id>\w+)/(?P<class_id>\w+)$', viewMark.markTable, name="mark_table"),

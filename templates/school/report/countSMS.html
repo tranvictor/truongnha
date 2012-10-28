@@ -74,7 +74,8 @@
         <div class="pull-right">
             <div class="btn-group">
                 <button id="retextSms" class="btn btn-warning disabled"
-                    title="Chức năng này đang hoàn thiện">
+                    title="Chức năng này đang hoàn thiện"
+                    disabled="disabled">
                     <i class="icon-envelope"></i>
                     Nhắn lại
                 </button>
@@ -155,7 +156,8 @@
                         {% else %}
                         <a class="click-tooltip"
                             href="#"
-                            title="{{l.failed_reason}}">Thất bại</a>
+                            title="{{l.failed_reason}}-{{l.get_failed_reason}}">
+                            Thất bại</a>
                         {% endif %}
                     {% endif %}
                 </td>
