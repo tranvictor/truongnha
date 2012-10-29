@@ -173,10 +173,10 @@ class sms(models.Model):
                 self.recent = False
                 self.save()
             return result
-        except Exception:
+        except Exception as e:
             self.recent= False
             self.success = False
-            self.failed_reason = 500
+            self.failed_reason = '500-%s' % unicode(e)
             self.save()
         
     def _send_mark_sms(self, marks=None, school=None):

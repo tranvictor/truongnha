@@ -1341,7 +1341,8 @@ def dd(request, class_id, day, month, year, api_called=False, data=None):
                             tkdd.save()
                             dd.save()
                     except Exception:
-                        dd = DiemDanh(student_id=student, time=time, loai=loai, term_id=term_id)
+                        dd = DiemDanh(student_id=student, time=time,
+                                loai=loai, term_id=term_id)
                         if loai == u'M':
                             tkdd.muon += 1
                         elif loai == u'P':
@@ -1371,7 +1372,9 @@ def dd(request, class_id, day, month, year, api_called=False, data=None):
                             try:
                                 sent = sendSMS(phone_number,
                                     to_en1(sms_message),
-                                    user)
+                                    user,
+                                    receiver=student.user_id,
+                                    school=school)
                             except Exception as e:
                                 if e.message == 'InvalidPhoneNumber':
                                     message = message + u'<li><b>Số ' + str(phone_number)\

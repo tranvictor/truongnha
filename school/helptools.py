@@ -16,13 +16,39 @@ from school.utils import to_en1, add_subject, get_lower_bound,\
 from school.utils import normalize as norm
 from sms.utils import to_ascii
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, Count
 import thread
 SYNC_RESULT = os.path.join('helptool','recover_marktime.html')
 SYNC_SUBJECT = os.path.join('helptool','sync_subject.html')
 TEST_TABLE = os.path.join('helptool','test_table.html')
 REALTIME = os.path.join('helptool','realtime_test.html')
 CONVERT_MARK= os.path.join('helptool','convert_mark.html')
+
+@transaction.commit_on_success
+def _sync_sms_content():
+    smses = sms.objects.all()
+    number = 0
+    sms_dict = {}
+    for s in smses:
+        key = '%s-%s' % (s.phone, s.content)
+        if key in sms_dict:
+            sms_dict[key].append(s)
+        else:
+            sms_dict[key] = [s]
+    for item in sms_dict.items():
+        key = item[0]
+        sms_list = item[1]
+        if len(sms_list) > 1:
+            number += 1
+            saved = None
+            for s in sms_list:
+                if s.success:
+                    saved = s
+            if not saved: saved = sms_list[0]
+            for s in sms_list:
+                if s != saved: s.delete()
+    print number
+    return sms_dict
 
 @transaction.commit_on_success
 def _sync_sms_type():

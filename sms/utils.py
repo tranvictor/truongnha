@@ -102,14 +102,23 @@ def send_sms_summary_mark(student, content, marks, user,
         else:
             raise Exception('SchoolIsNone')
 
-        s = sms(phone=phone, content=sms_cont,
-                type='THONG_BAO', receiver=student.user_id,
-                sender=user, recent=True, success=False)
-        s.save()
+        s = sms.objects.filter(phone=phone, content=sms_cont, type='THONG_BAO')
+        if len(s) > 0:
+            s = s[0]
+            s.recent = True
+            s.success = False
+            s.save()
+        else:
+            s = sms(phone=phone, content=sms_cont,
+                    type='THONG_BAO', receiver=student.user_id,
+                    sender=user, recent=True, success=False)
+            s.save()
         if not settings.DEBUG:
             return s.send_mark_sms.delay(s, marks, school=school)
         else:
             return s._send_mark_sms(marks, school=school)
+    else:
+        raise Exception('InvalidPhoneNumber')
 
 from celery import task
 
