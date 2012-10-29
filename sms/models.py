@@ -11,7 +11,10 @@ import xlrd
 import os
 import urllib
 import re
+import simplejson
 
+
+SMS_TYPES = (('TU DO', u'Tự do'), ('THONG_BAO', u'Thông báo'),)
 #TEMP_FILE_LOCATION = os.path.join(os.path.dirname(__file__), 'uploaded')
 def save_file(file):
     saved_file = open(os.path.join(settings.TEMP_FILE_LOCATION,
@@ -61,12 +64,25 @@ def get_tsp(phone):
     if head in BEELINE_HEAD: return 'BEELINE'
     return None
 
+REASON_DICT = {
+        '500': u'Lỗi hệ thống',
+        '21': u'Số điện thoại không hợp lệ',
+        '25': u'Tài khoản trường bạn không đủ để thực hiện tin nhắn',
+        '26': u'Lỗi ở cổng nhắn tin'
+        }
+
 class sms(models.Model):
     phone = models.CharField("Số điện thoại", max_length=20, blank=False)
     content = models.TextField("Nội dung")
+    type = models.CharField("Loại tin nhắn", max_length=10,
+            choices=SMS_TYPES, default='TU_DO')
     created = models.DateTimeField("Thời gian tạo", auto_now_add=True)
+    modified = models.DateTimeField("Thời gian sửa", auto_now=True)
     sender = models.ForeignKey(User, related_name='sent_sms')
     receiver = models.ForeignKey(User, related_name='received_sms', null=True)
+    #This field contains objects' ids those have to be updated after
+    #sms sent successfully
+    attachment = models.TextField("Liên quan", default='')
     recent = models.BooleanField(default=True)
     success = models.BooleanField(default=False)
     failed_reason = models.TextField("Lý do")
@@ -86,6 +102,12 @@ class sms(models.Model):
         else:
             if self.success: return u'Đã gửi'
             else: return u'Thất bại'
+
+    def get_failed_reason(self):
+        if self.failed_reason in REASON_DICT:
+            return REASON_DICT[self.failed_reason]
+        else:
+            return u'Lỗi hệ thống'
 
     def _send_iNET_sms(self):
         phone = self.phone
@@ -143,7 +165,7 @@ class sms(models.Model):
                 result = self._send_Viettel_sms()
             if result != '1':
                 self.success = False
-                self.failed_reason = u'Tài khoản trường không đủ để thực hiện tin nhắn'
+                self.failed_reason = result 
                 self.recent = False
                 self.save()
             else:
@@ -154,26 +176,46 @@ class sms(models.Model):
         except Exception:
             self.recent= False
             self.success = False
-            self.failed_reason = u'Tài khoản trường không đủ để thực hiện tin nhắn'
+            self.failed_reason = 500
             self.save()
         
-    def _send_mark_sms(self, marks, school=None):
+    def _send_mark_sms(self, marks=None, school=None):
         result = self._send_sms(school=school)
         if result == '1':
+            #if not marks:
+            #    attachs = simplejson.loads(self.attachment)
+            #    ids = attachs['m']
+            #    #marks = Mark.objects.filter(id__in=ids)
             for m in marks:
                 m.update_sent()
+        else:
+            attachs = {'m': []}
+            for m in marks:
+                attachs['m'].append(m.id)
+            self.attachment = simplejson.dumps(attachs)
+            self.save()
 
     @task()
     def send_sms(self, school=None):
         return self._send_sms(school=school)
         
     @task()
-    def send_mark_sms(self, marks, school=None):
+    def send_mark_sms(self, marks=None, school=None):
         result = self._send_sms(school=school)
         if result == '1':
+            #if not marks:
+            #    attachs = simplejson.loads(self.attachment)
+            #    ids = attachs['m']
+            #    marks = Mark.objects.filter(id__in=ids)
             for m in marks:
                 m.update_sent()
-        else: return result
+        else:
+            attachs = {'m': []}
+            for m in marks:
+                attachs['m'].append(m.id)
+            self.attachment = simplejson.dumps(attachs)
+            self.save()
+            return result
 
     def __unicode__(self):
         return self.phone

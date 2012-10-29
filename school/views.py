@@ -197,6 +197,7 @@ def info(request):
         phone = ''
         lock_time = ''
         class_labels = ''
+        semester_finish_time = ''
         if request.is_ajax():
             form = SchoolForm(data, request=request)
             setting_form = SettingForm(data, request=request)

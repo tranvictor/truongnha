@@ -1,8 +1,7 @@
 body {
     font-family: "OpenSansRegular",Tahoma,Arial,Helvetica,Sans-Serif;
-    font-size: 13px;
     font-weight: normal;
-    padding: 0 1em 1em 1em;
+    padding: .8em;
 }
 
 @media (max-width: 767px) {
@@ -24,19 +23,8 @@ body {
     color: rgba(255, 69, 0, 0.75);
 }
 
-/*#breadcrumb {*/
-    /*padding-top: 2em;*/
-    /*padding-bottom: 1em;*/
-    /*color: #aaaaaa;*/
-/*}*/
-
 #logo {
-    font-size: 1.7em;
-}
-
-header{
-    padding-top: .5em;
-    padding-bottom: .5em;
+    font-size: 1.5em;
 }
 
 nav {
@@ -46,8 +34,8 @@ nav {
     /*line-height: 3em;*/
 }
 
-nav i, header i {
-    font-size: 1.4em;
+header i {
+    font-size: 1.2em;
 }
 
 #breadcrumb-home i {
@@ -168,13 +156,7 @@ li.ui-tabs-selected span {
 }
 
 #ussitemap ul li {
-    padding: 2px 20px;
-}
-
-#ussitemap p {
-    display: inline-block;
-    padding-left: 1em;
-    /*clear:right;*/
+    padding: .2em .5em;
 }
 
 /*--- customize ----------------*/
@@ -221,11 +203,11 @@ li.ui-tabs-selected span {
 }
 
 .table td.highlight-left {
-	border-left: #BBBBBB thin solid !important;	
+	border-left: #CCC thin solid !important;
 }
 
 .fifth-row tbody tr:nth-child(5n) td {
-    border-bottom: #BBBBBB thin solid !important;
+    border-bottom: #CCC thin solid !important;
 }
 
 .truncated {
@@ -516,10 +498,7 @@ select#id_major, select#id_team_id, select#id_group_id {
     width: 100%;
     height: 3em;
     line-height: 3em;
-    /*padding: .5em;*/
-    /*background-color: #EEEEEE;*/
     border-bottom: thin solid #EEEEEE;
-    /*margin-bottom: 4px;*/
 }
 
 .lophoc:hover .slidein {
@@ -538,37 +517,44 @@ select#id_major, select#id_team_id, select#id_group_id {
     right: 0;
 }
 
-.tenlop {
+.lop {
     display: block;
     position: relative;
     float: left;
     overflow: hidden;
     width: 100%;
-    font-size: 1.3em;
+    /*font-weight: bold;*/
+    /*font-size: 1.3em;*/
 }
 
-.tenlop:hover {
-    text-decoration: none;
+.lop:hover {
+    /*text-decoration: none;*/
     background-color: #f5f5f5;
 }
 
-.tenlop .gvcn, .tenlop .siso {
-    font-size: 0.75em;
+.lop .tenlop {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.lop .gvcn, .lop .siso {
+    /*font-size: 0.75em;*/
     overflow: visible;
     color: rgba(0, 0, 0, .5)
 }
 
-.tenlop:hover .gvcn, .tenlop:hover .siso {
-    font-size: 0.75em;
+.lop:hover .gvcn, .lop:hover .siso {
+    /*font-size: 0.75em;*/
     overflow: visible;
     color: rgba(0, 0, 0, 1)
 }
-.tenlop .siso {
+
+.lop .siso {
     position: absolute;
     right: .25em;
 }
 
-.tenlop .gvcn {
+.lop .gvcn {
     position: absolute;
     left: 5em;
 }
@@ -585,7 +571,6 @@ select#id_major, select#id_team_id, select#id_group_id {
 td[data-gender="Nam"]{
     color: #ddd;
 }
-
 
 .grid td, .grid th {
     text-align: center;
@@ -717,24 +702,25 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 }
 
 
-.cmd {
-    display: inline-block;
-    background-color: #EEEEEE;
-    width: 4em;
-    height: 4em;
-    margin: 1px;
-    vertical-align: middle;
-    text-align: center;
-    padding: 1em;
+#main-menu {
+    margin-top: 1em;
 }
 
-.cmd:hover {
-    background-color: #DDD;
+.cmd {
+    display: inline-block;
+    /*background-color: #EEEEEE;*/
+    width: 5em;
+    height: 5em;
+    margin-top: 4px;
+}
+
+.cmd span {
+    margin: .1em;
+    vertical-align: middle;
 }
 
 .cmd i {
     font-size: 2em;
     display: block;
-    width: 100%;
-    padding: .8px;
 }
+

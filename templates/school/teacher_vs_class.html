@@ -35,7 +35,7 @@
 
 
     {% if user.userprofile.position == 'HIEU_TRUONG' or user.userprofile.position == 'HIEU_PHO' or user.userprofile.position == 'GIAO_VU' %}
-        <table class="table table-condensed table-striped">
+        <table class="table table-condensed">
             <thead>
             <tr>
                 <th>Lớp</th>
@@ -47,17 +47,14 @@
             <tbody>
             {% for grade in blockList %}
                 <tr>
-                    <td>Khối {{ grade.number }}</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <th colspan="4"><h4>Khối {{ grade.number }}</h4></th>
                 </tr>
 
                 {% for class in classList %}
                     {% if class.block_id == grade %}
                         <tr id="{{ class.id }}" teacher="{{class.teacher_id.id|default:''}}">
                             <td>
-                                <a class="tenlop" href="{% url class_detail class.id %}">{{ class.name }}</a>
+                                <a href="{% url class_detail class.id %}">{{ class.name }}</a>
                             </td>
                             <td>
                                 <select class="combobox" id="teacher{{ class.id }}">
@@ -121,7 +118,7 @@
                             {% if class.block_id == grade %}
                                 <tr>
                                     <td>
-                                        <a class="tenlop" href="{% url class_detail class.id %}">
+                                        <a href="{% url class_detail class.id %}">
                                             {{ class.name }}
                                         </a>
                                     </td>

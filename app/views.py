@@ -198,7 +198,6 @@ def manage_register(request, sort_by_date=0, sort_by_status=0):
                                             % (unicode(user.username),
                                                     unicode(raw_password))
                                     try:
-                                        print 'tag'
                                         sendSMS(school.phone, sms_msg, request.user)
                                     except Exception:
                                         pass
@@ -266,10 +265,10 @@ def manage_register(request, sort_by_date=0, sort_by_status=0):
 @never_cache
 @need_login
 def change_password(request,
-                    template_name='app/change_password.html',
-                    post_change_redirect=None,
-                    password_change_form=ChangePasswordForm,
-                    current_app=None, extra_context=None):
+        template_name='app/change_password.html',
+        post_change_redirect=None,
+        password_change_form=ChangePasswordForm,
+        current_app=None, extra_context=None):
     if not post_change_redirect:
         redirect = reverse('app.views.change_password_done')
     else: redirect = post_change_redirect

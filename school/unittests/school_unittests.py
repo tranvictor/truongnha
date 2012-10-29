@@ -1010,7 +1010,7 @@ class AddSubjectTest2(AddClassTest):
     def phase10_add_a_subject(self):
         block = self.school.block_set.latest('id')
         class_name = str(block.number) + ' Test 3'
-        cl = self.school.get_current_year().class_set.get(name = class_name)
+        cl = self.school.get_current_year().class_set.get(name=class_name)
         num_of_sub = cl.subject_set.count()
 
         response = self.client.post(
@@ -1022,7 +1022,7 @@ class AddSubjectTest2(AddClassTest):
                 'teacher_id' : u'',
                 'number_lesson': u'1',
                 'primary' : u'0',
-                'type' : u'Mĩ thuật',
+                'type' : u'Tự chọn',
                 },
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
@@ -1128,17 +1128,18 @@ class MarkTest(AddStudentTest2):
 class MoveStudentTest1(MarkTest):
     def phase14_move_student_to_class_with_same_sub(self):
         school = self.school
-        current_term = school.year_set.latest('time').term_set.get(number = school.status)
+        current_term = school.year_set.latest('time')\
+                .term_set.get(number=school.status)
         block = self.school.block_set.latest('id')
         class_name = str(block.number) + ' Test 1'
-        cl = self.school.get_current_year().class_set.get(name = class_name)
+        cl = self.school.get_current_year().class_set.get(name=class_name)
         pupil = cl.students().get(first_name=u'Nguyễn Thị',
             last_name=u'Xuân',
             birthday=u'1995-10-22')
         history_count = pupil.attend_set.count()
         num_of_std_1 = cl.students().count()
         move_class_name = str(block.number) + ' Test 2'
-        move_cl = self.school.get_current_year().class_set.get(name = move_class_name)
+        move_cl = self.school.get_current_year().class_set.get(name=move_class_name)
         num_of_std_2 = move_cl.students().count()
         sub_cl_count = cl.subject_set.count()
         sub_mcl_count = move_cl.subject_set.count()
@@ -1160,7 +1161,8 @@ class MoveStudentTest1(MarkTest):
         self.assertEqual(num_of_std_2 + 1, num_of_std_4)
         history_count_2 = pupil.attend_set.count()
         self.assertEqual(history_count + 1, history_count_2)
-        mark = pupil.mark_set.get(subject_id__name = u'Lịch sử',term_id = current_term.id)
+        mark = pupil.mark_set.get(subject_id__name = u'Lịch sử',
+                term_id=current_term.id)
         subject = move_cl.subject_set.get(name = u'Lịch sử')
         self.assertEqual(mark.current,True)
         self.assertEqual(mark.diem,'1*2|3*4*5|6*7*8')
@@ -1312,17 +1314,18 @@ class MoveStudentTest2(MarkTest):
 class MoveStudentTest3(MarkTest):
     def phase14_move_student_to_class_with_more_sub(self):
         school = self.school
-        current_term = school.year_set.latest('time').term_set.get(number = school.status)
+        current_term = school.year_set.latest('time').term_set\
+                .get(number=school.status)
         block = self.school.block_set.latest('id')
         class_name = str(block.number) + ' Test 1'
-        cl = self.school.get_current_year().class_set.get(name = class_name)
+        cl = self.school.get_current_year().class_set.get(name=class_name)
         pupil = cl.students().get(first_name=u'Nguyễn Thị',
             last_name=u'Xuân',
             birthday=u'1995-10-22')
         history_count = pupil.attend_set.count()
         num_of_std_1 = cl.students().count()
         class_name = str(block.number) + ' Test 3'
-        move_cl = self.school.get_current_year().class_set.get(name = class_name)
+        move_cl = self.school.get_current_year().class_set.get(name=class_name)
         sub_cl_count = cl.subject_set.count()
         sub_mcl_count = move_cl.subject_set.count()
         self.assertGreater(sub_mcl_count,sub_cl_count)

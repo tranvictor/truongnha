@@ -25,22 +25,21 @@
 
     </div>
 
-
-    <div class="form-header">
-        <form action="{% url mark_for_a_student class_id student_id %}" name="info" method="post"
+    <div id="submenu" class="btn-toolbar">
+        <form class="form-inline" action="{% url mark_for_a_student class_id student_id %}" name="info" method="post"
               id='myform'> {% csrf_token %}
-            Bảng điểm học kỳ
+            <label>Bảng điểm học kỳ</label>
             <select name="term" class="bangdiem">
                 {% for term in termList %}
                     <option value={{ term.id }} selected> {{ term }} </option>
                 {% endfor %}
             </select>
         </form>
-        <div align="right">
+
+        <div class="pull-right">
             <a class="btn" href="{% url mark_excel_for_a_student class_id student_id  termChoice %}"> Xuất ra Excel</a>
         </div>
     </div>
-
     <table class="table table-bordered grid">
         <tr>
             <th rowspan=2 style="text-align: center;" width="10%">

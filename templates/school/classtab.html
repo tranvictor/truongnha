@@ -199,8 +199,8 @@
     <div class="well form-inline pagination-centered">
         <form class="submitform" action="{% url class_tab block_id %}" method="post">{% csrf_token %}
             {% if pos >= 4 %}
-                <a href="{% url add_class %}" class="btn btn-danger">   Thêm lớp học</a>
-                <input type="submit" class="submitbutton btn " value="Đã lưu"/>
+                <a id="add-class" href="{% url add_class %}" class="btn btn-danger">Thêm lớp học</a>
+                <input type="submit" class="submitbutton btn" value="Đã lưu"/>
             {% endif %}
         </form>
     </div>

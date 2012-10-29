@@ -13,15 +13,15 @@
             {% if class.block_id_id == grade.id %}
                 <div class="row-fluid">
                     <div class="lophoc span12">
-                        <a class="tenlop" id="{{ class.id }}"
+                        <a class="lop" id="{{ class.id }}"
                            href="{% url class_detail class.id %}">
-                            <span title="Tên lớp">{{ class.name }} </span>
-                  <span class="gvcn" title="chủ nhiệm lớp">
-                    {{ teachers|get_value:class.teacher_id_id|default_if_none:".." }}
-                  </span>
-                  <span class="siso" title="Sĩ số">
-                    {{ numbers|get_value:class.id|default_if_none:"0" }}
-                  </span>
+                            <span class="tenlop" title="Tên lớp">{{ class.name }}</span>
+                            <span class="gvcn" title="chủ nhiệm lớp">
+                                {{ teachers|get_value:class.teacher_id_id|default_if_none:".." }}
+                            </span>
+                            <span class="siso" title="Sĩ số">
+                            {{ numbers|get_value:class.id|default_if_none:"0" }}
+                            </span>
                         </a>
 
                         <div class="slidein">
@@ -42,7 +42,7 @@
             {% if unc.block_id_id == grade.id and unc.number_of_students %}
                 <div class="row-fluid">
                     <div class="lophoc span12">
-                        <a class="tenlop" id="{{ unc.id }}"
+                        <a class="lop" id="{{ unc.id }}"
                            href="{% url unc_class_detail unc.id '' %}">
                   <span title="Danh sách học sinh chưa được phân lớp học"
                         style="color: #777;">
@@ -72,79 +72,81 @@
             {# Người sử dụng cấp trường       #}
             {% if user.userprofile.organization.status != 0 %}
                 {# Đang trong năm học #}
-                <a id="sms" class="cmd" href="{% url sms_summary '' %}"
+                <a id="sms" class="cmd btn btn-danger" href="{% url sms_summary '' %}"
                    title="Thông báo tình hình học tập, rèn luyện của học sinh cho phụ huynh">
-                    <i class="icon-envelope"></i>
-                    <span >Liên lạc</span>
+                    <span><i class="icon-envelope"></i>
+                    Liên lạc</span>
                 </a>
-                <a id="report" class="cmd" href="{% url report %}"
+                <a id="report" class="cmd btn btn-info" href="{% url report %}"
                    title="Các báo cáo thống kê, tổng kết">
-                    <i class="icon-bar-chart"></i>
-                    <span id="command-report" >Báo cáo</span>
+                    <span><i class="icon-bar-chart"></i>
+                    Báo cáo</span>
                 </a>
                 {#<hr />#}
 
-                <a id="classes-teachers" class="cmd" href="{% url classes %}"
+                <a id="classes-teachers" class="cmd btn btn-primary" href="{% url classes %}"
                    title="Thêm/xoá lớp và gán giáo viên chủ nhiệm lớp">
-                    <i class="icon-th-large"></i>
-                    <span >Lớp học</span>
+                    <span><i class="icon-th-large"></i>
+                    Lớp học</span>
                 </a>
-                <a id="teachers" class="cmd" href="{% url teachers %}"
+                <a id="teachers" class="cmd btn btn-primary" href="{% url teachers %}"
                    title="Quản lý danh sách giáo viên, cán bộ trong trường">
-                    <i class="icon-group"></i>
-                    <span >Giáo viên</span>
+                    <span><i class="icon-group"></i>
+                    Giáo viên</span>
                 </a>
 
                 {#<hr />#}
-                <a id="settings" class="cmd" href="{% url info %}" title="Thông tin trường, khóa điểm, tham số.">
-                    <i class="icon-cogs"></i>
-                    <span >Thiết lập</span>
+                <a id="settings" class="cmd btn btn-success" href="{% url info %}"
+                   title="Thông tin trường, khóa điểm, tham số.">
+                    <span><i class="icon-cogs"></i>
+                    Thiết lập</span>
                 </a>
-                <a id="finish" class="cmd" href="{% url finish %}" title="Chuyển học kỳ, năm học, xem tổng kết">
-                    <i class="icon-columns"></i>
-                    <span >Chuyển kỳ</span>
+                <a id="finish" class="cmd btn btn-warning" href="{% url finish %}"
+                   title="Chuyển học kỳ, năm học, xem tổng kết">
+                    <span><i class="icon-columns"></i>
+                    Chuyển kỳ</span>
                 </a>
-
-                {#<hr />#}
-                <a id="timetable" class="cmd" href="{% url timetable_school %}" title="Thời khóa biểu toàn trường">
-                    <i class="icon-calendar"></i>
-                    <span >Lịch học</span>
+                </div>
+                <div class="pagination-centered">                {#<hr />#}
+                <a id="timetable" class="cmd btn" href="{% url timetable_school %}" title="Thời khóa biểu toàn trường">
+                    <span><i class="icon-calendar"></i>
+                    Lịch học</span>
                 </a>
-                <a id="agenda" class="cmd" href="{% url school_subject_agenda %}"
+                <a id="agenda" class="cmd btn" href="{% url school_subject_agenda %}"
                    title="Quảng lý phân phối chương trình các môn">
-                    <i class="icon-book"></i>
-                    <span >Chương trình</span>
+                    <span><i class="icon-book"></i>
+                    Bài học</span>
                 </a>
-                <a id="exams" class="cmd" href="{% url create_list_exam %}" title="Tạo danh sách phòng thi">
-                    <i class="icon-pencil"></i>
-                    <span >Kỳ thi</span>
+                <a id="exams" class="cmd btn" href="{% url create_list_exam %}" title="Tạo danh sách phòng thi">
+                    <span><i class="icon-pencil"></i>
+                    Kỳ thi</span>
                 </a>
 
                 {#<hr />#}
-                <a id="sitemap" class="cmd" href="/help/sitemap" title="Sơ đồ chức năng">
-                    <i class="icon-sitemap"></i>
-                    <span >Sơ đồ</span>
+                <a id="sitemap" class="cmd btn" href="/help/sitemap" title="Sơ đồ chức năng">
+                    <span><i class="icon-sitemap"></i>
+                    Sơ đồ</span>
                 </a>
-                <a id="contact" class="cmd" href="{% url views.about %}"
+                <a id="contact" class="cmd btn" href="{% url views.about %}"
                    title="Giới thiệu, liên lạc, góp ý">
-                    <i class="icon-info-sign"></i>
-                    <span >Liên hệ</span>
+                    <span><i class="icon-info-sign"></i>
+                    Liên hệ</span>
                 </a>
 
-                <a id="help" class="cmd"href="{% url help.views.help %}"
+                <a id="help" class="cmd btn" href="{% url help.views.help %}"
                    title="Hướng dẫn sử dụng">
-                    <i class="icon-question-sign"></i>
-                    <span >Trợ giúp</span>
+                    <span><i class="icon-question-sign"></i>
+                    Trợ giúp</span>
                 </a>
             {% else %}
                 {# Khi chưa khởi  tạo năm học #}
-                <a id="setup" class="cmd" href="{% url setup %}"
+                <a id="setup" class="cmd btn" href="{% url setup %}"
                    title="Khai báo thông tin trường học và tạo nhanh các lớp học">
-                    <i class="icon-cog"></i>
-                    <span >Khởi tạo</span>
+                    <span><i class="icon-cog"></i>
+                    Khởi tạo</span>
                 </a>
             {% endif %}
-        </div>
+            </div>
     </div>
 {% endif %}
 

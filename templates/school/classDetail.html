@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load upload_tags %}
+{% load dictionary %}
 {#{% load comments %}#}
 {% block js %}
     <script type="text/javascript" src="/static/js/template_js/class_detail.js?{{ VERSION }}"></script>
@@ -196,7 +197,7 @@
                     style='-webkit-user-select: none; cursor:pointer;'>
                     {% if pos > 3 %}
                         <td>
-                            {% if ss.user_id.is_active %}
+                            {% if active_list|get_value:ss.user_id_id %}
                                 <i class='icon-key' id='lock-{{ ss.id }}'></i>
                             {% else %}
                                 <i class='icon-lock' id='lock-{{ ss.id }}'></i>

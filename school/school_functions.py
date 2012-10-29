@@ -568,34 +568,32 @@ def viewTeacherDetail(request, teacher_id):
     ttcnform2 = TeacherTTCNForm2(instance=teacher)
     ttllform = TeacherTTLLForm(instance=teacher)
     ttcbform = TeacherTTCBForm(instance=teacher)
-    if request.method == 'POST' and pos >= 3:
-        data = request.POST.copy()
-        message = u'Đã lưu'
-        ttcnform2 = TeacherTTCNForm2(data, instance=teacher)
-        ttllform = TeacherTTLLForm(data, instance=teacher)
-        if pos == 4:
-            ttcbform = TeacherTTCBForm(data, instance=teacher)
-            data['first_name'] = data['first_name'].strip()
-            data['last_name'] = data['last_name'].strip()
-            ttcnform = TeacherTTCNForm(school.id, data, instance=teacher)
-            if ttcnform.is_valid():
-                if 'group_id' in request.POST:
-                    if request.POST['group_id'] != '':
-                        try:
-                            t1 = school.team_set.get(id = request.POST['team_id'])
-                            g = t1.group_set.get(id = request.POST['group_id'])
-                            teacher.group_id = g
-                            teacher.save()
-                            ttcnform.save()
-                        except Exception:
-                            message = 'Có lỗi ở thông tin tổ nhóm'
-                    else:
-                        ttcnform.save()
-        if ttcnform2.is_valid():
-            ttcnform2.save()
-        if ttllform.is_valid():
-            ttllform.save()
+    t = loader.get_template(os.path.join('school', 'teacher_detail.html'))
+    c = RequestContext(request,
+            {'form': form, 'message': message,
+                'teacher': teacher, 'id': teacher_id,
+                'ttcnform': ttcnform,
+                'tng':tng, 'tgform':tgform,
+                'pos': pos, 'ttllform': ttllform,
+                'ttcbform': ttcbform,
+                'ttcnform2':ttcnform2})
+    return HttpResponse(t.render(c))
+
+@need_login
+def editTeacherDetail(request, teacher_id):
+    try:
+        teacher = Teacher.objects.get(id=teacher_id)
+    except Teacher.DoesNotExist:
+        return HttpResponseNotAllowed()
+    if not in_school(request, teacher.school_id):
+        return HttpResponseNotAllowed()
+    pos = get_position(request)
     if request.is_ajax() and pos >= 3:
+        data = request.POST.copy()
+        data['first_name'] = data['first_name'].strip()
+        data['last_name'] = data['last_name'].strip()
+        form = TeacherForm(teacher.school_id_id,data,instance=teacher)
+        message = u'Đã lưu'
         if request.method == 'POST':
             first_name = ''
             last_name = ''
@@ -609,73 +607,51 @@ def viewTeacherDetail(request, teacher_id):
             muc_luong = ''
             hs_luong = ''
             bhxh = ''
-            if pos == 4:
-                if not ttcnform.is_valid():
-                    message = 'Có lỗi ở dữ liệu nhập vào'
-                    for a in ttcnform:
-                        if a.name == 'first_name':
-                            if a.errors:
-                                first_name = str(a.errors)
-                        if a.name == 'last_name':
-                            if a.errors:
-                                last_name = str(a.errors)
-                        if a.name == 'birthday':
-                            if a.errors:
-                                birthday = str(a.errors)
-                if not ttcbform.is_valid():
-                    message = 'Có lỗi ở dữ liệu nhập vào'
-                    for a in ttcbform:
-                        if a.errors:
-                            if a.name == 'cmt':
-                                cmt = str(a.errors)
-                            if a.name == 'ngay_vao_doan':
-                                ngay_vao_doan = str(a.errors)
-                            if a.name == 'ngay_vao_dang':
-                                ngay_vao_dang = str(a.errors)
-                            if a.name == 'muc_luong':
-                                muc_luong = str(a.errors)
-                            if a.name == 'hs_luong':
-                                hs_luong = str(a.errors)
-                            if a.name == 'bhxh':
-                                bhxh = str(a.errors)
-            if not ttllform.is_valid():
+            if form.is_valid():
+                form.save()
+            else:
                 message = 'Có lỗi ở dữ liệu nhập vào'
-                for a in ttllform:
-                    if a.name == 'phone':
-                        if a.errors:
+                for a in form:
+                    if a.errors:
+                        if a.name == 'first_name':
+                            first_name = str(a.errors)
+                        if a.name == 'last_name':
+                            last_name = str(a.errors)
+                        if a.name == 'birthday':
+                            birthday = str(a.errors)
+                        if a.name == 'cmt':
+                            cmt = str(a.errors)
+                        if a.name == 'ngay_vao_doan':
+                            ngay_vao_doan = str(a.errors)
+                        if a.name == 'ngay_vao_dang':
+                            ngay_vao_dang = str(a.errors)
+                        if a.name == 'muc_luong':
+                            muc_luong = str(a.errors)
+                        if a.name == 'hs_luong':
+                            hs_luong = str(a.errors)
+                        if a.name == 'bhxh':
+                            bhxh = str(a.errors)
+                        if a.name == 'phone':
                             phone = str(a.errors)
-                    if a.name == 'email':
-                        if a.errors:
+                        if a.name == 'email':
                             email = str(a.errors)
-                    if a.name == 'sms_phone':
-                        if a.errors:
+                        if a.name == 'sms_phone':
                             sms_phone = str(a.errors)
             response = simplejson.dumps(
-                    {'first_name': first_name,
-                        'last_name': last_name,
-                        'birthday': birthday,
-                        'phone': phone,
-                        'email': email,
-                        'sms_phone': sms_phone,
-                        'cmt': cmt,
-                        'ngay_vao_doan': ngay_vao_doan,
-                        'ngay_vao_dang': ngay_vao_dang,
-                        'muc_luong': muc_luong,
-                        'hs_luong': hs_luong,
-                        'bhxh': bhxh,
-                        'message':message })
+                {'first_name': first_name,
+                 'last_name': last_name,
+                 'birthday': birthday,
+                 'phone': phone,
+                 'email': email,
+                 'sms_phone': sms_phone,
+                 'cmt': cmt,
+                 'ngay_vao_doan': ngay_vao_doan,
+                 'ngay_vao_dang': ngay_vao_dang,
+                 'muc_luong': muc_luong,
+                 'hs_luong': hs_luong,
+                 'bhxh': bhxh,
+                 'message':message })
             return HttpResponse(response, mimetype='json')
-
-    t = loader.get_template(os.path.join('school', 'teacher_detail.html'))
-    c = RequestContext(request,
-            {'form': form, 'message': message,
-                'teacher': teacher, 'id': teacher_id,
-                'ttcnform': ttcnform,
-                'tng':tng, 'tgform':tgform,
-                'pos': pos, 'ttllform': ttllform,
-                'ttcbform': ttcbform,
-                'ttcnform2':ttcnform2})
-    return HttpResponse(t.render(c))
 
 @need_login
 @school_function

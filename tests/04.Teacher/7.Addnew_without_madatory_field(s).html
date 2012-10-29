@@ -3,14 +3,44 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link rel="selenium.base" href="http://app.truongnha.com/" />
-<title>1.Addnew_without_madatory_field(s)</title>
+<link rel="selenium.base" href="http://truongnha.com/" />
+<title>7.Addnew_without_madatory_field(s)</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">1.Addnew_without_madatory_field(s)</td></tr>
+<tr><td rowspan="1" colspan="3">7.Addnew_without_madatory_field(s)</td></tr>
 </thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/school/teachers</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=teacher-list-menu</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=add-teacher</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=id_first_name</td>
+	<td>Nông Thành Công</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=submitaddTeacher</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td></td>
+	<td>Trường này là bắt buộc.</td>
+</tr>
 
 </tbody></table>
 </body>

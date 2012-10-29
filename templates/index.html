@@ -391,11 +391,11 @@
 
             <div class="row-fluid" style="text-align: center;">
                 <div class="span6">
-                    <a href="/about" class="btn btn-success btn-large">Thông tin sản phẩm</a>
+                    <a href="/about" id="about" class="btn btn-success btn-large">Thông tin sản phẩm</a>
                 </div>
 
                 <div class="span6">
-                    <a href="/help" class="btn btn-info btn-large">Hướng dẫn sử dụng</a>
+                    <a href="/help" id="help" class="btn btn-info btn-large">Hướng dẫn sử dụng</a>
                 </div>
             </div>
             <br>
@@ -403,17 +403,17 @@
         </div>
     {% elif user.is_superuser %}
         {#        <a href="{%url app.views.manage_register %}"#}
-        <a class="btn btn-large btn-success" href="/manageRegister" title="Đăng ký">
+        <a id="registration-man" class="btn btn-large btn-success" href="/manageRegister" title="Đăng ký">
             Quản lý đăng ký
         </a>
 
         {#        <a href="{%url app.views.system_subject_agenda%}"#}
-        <a class="btn btn-large btn-warning" href="/app/manage_agenda/"
+        <a id="program-man" class="btn btn-large btn-warning" href="/app/manage_agenda/"
            title="Quản lý phân phối chương trình của hệ thống">
             Phân phối chương trình
         </a>
 
-        <a class="btn btn-large btn-danger" href="/admin" title="Mở trình quản trị sẵn có của hệ thống">
+        <a id="db-man" class="btn btn-large btn-danger" href="/admin" title="Mở trình quản trị sẵn có của hệ thống">
             <span>Duyệt dữ liệu</span></a>
     {% endif %}
 {% endblock %}

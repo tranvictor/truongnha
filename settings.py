@@ -214,11 +214,12 @@ INSTALLED_APPS = (
     'crumbs', #requires django-crumbs
     'app',
     'school',
+    'personal',
     'sms',
     'api',
     'pagination',
     'djcelery',
-    #'south', #for database migration/upgrade
+    'south', #for database migration/upgrade
 #    'django_jenkins',
 )
 

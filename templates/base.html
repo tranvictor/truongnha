@@ -12,16 +12,19 @@
     {% endblock %}
     <link rel="shortcut icon" href="/static/images/favicon.ico"/>
 
-    <link href="/static/css/smoothness/jquery-ui-1.9.0.custom.min.css" rel="stylesheet" type="text/css"
-          media="screen"/>
-    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-    <link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet"/>
-    <link rel="stylesheet" type="text/css" href="/static/font-awaresome/css/font-awesome.css">
-    <link href="/static/css/datepicker.css" rel="stylesheet"/>
-    <link href="/static/css/jquery_file_upload/jquery.fileupload-ui.css" rel="stylesheet" type="text/css"
-          media="screen"/>
-    <link href="/static/css/truongnha.css?{{ VERSION }}" rel="stylesheet" type="text/css"/>
-    <link href="/static/css/template_css/popup.css?{{ VERSION }}" rel="stylesheet" type="text/css"/>
+{#    {% load compress %}#}
+{#    {% compress css %}#}
+        <link href="/static/css/smoothness/jquery-ui-1.9.1.custom.min.css" rel="stylesheet" type="text/css"
+              media="screen"/>
+        <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet"/>
+        <link rel="stylesheet" type="text/css" href="/static/font-awaresome/css/font-awesome.css">
+        <link rel="stylesheet" type="text/css" href="/static/metroui/metro.css">
+        <link href="/static/css/datepicker.css" rel="stylesheet"/>
+        <link href="/static/css/jquery_file_upload/jquery.fileupload-ui.css" rel="stylesheet" type="text/css"
+              media="screen"/>
+        <link href="/static/css/truongnha.css?{{ VERSION }}" rel="stylesheet" type="text/css"/>
+        <link href="/static/css/template_css/popup.css?{{ VERSION }}" rel="stylesheet" type="text/css"/>
 
     <link href="/static/joyride/joyride.min.css" rel="stylesheet">
 
@@ -30,30 +33,32 @@
         <!-- For extra css -->
     {% endblock %}
 
-    <script type="text/javascript"
-            src="/static/js/jquery-1.7.2.min.js"></script>
-    <script type="text/javascript"
-            src="/static/js/jquery-ui-1.9.0.custom.min.js"></script>
-    <script type="text/javascript"
-            src="/static/bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript"
-            src="/static/js/bootstrap-datepicker.min.js"></script>
-    <script type="text/javascript"
-            src="/static/js/jquery_file_upload/tmpl.min.js"></script>
-    <script type="text/javascript"
-            src="/static/js/jquery_file_upload/jquery.fileupload.min.js"></script>
-    <script type="text/javascript"
-            src="/static/js/jquery_file_upload/jquery.fileupload-ui.min.js"></script>
-    <script type="text/javascript"
-            src="/static/js/jquery_file_upload/jquery.iframe-transport.min.js"></script>
-    <script type="text/javascript"
-            src="/static/js/Class.create.min.js"></script>
-    <script type="text/javascript"
-            src="/static/js/jquery-encoder-0.1.0.js"></script>
-    <script type="text/javascript"
-            src="/static/js/template_js/base.js?{{ VERSION }}"></script>
-    <script type="text/javascript"
-            src="/static/joyride/joyride.min.js"></script>
+{#    {% compress js %}#}
+        <script type="text/javascript"
+                src="/static/js/jquery-1.7.2.min.js"></script>
+        <script type="text/javascript"
+                src="/static/js/jquery-ui-1.9.1.custom.min.js"></script>
+        <script type="text/javascript"
+                src="/static/bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript"
+                src="/static/js/bootstrap-datepicker.min.js"></script>
+        <script type="text/javascript"
+                src="/static/js/jquery_file_upload/tmpl.min.js"></script>
+        <script type="text/javascript"
+                src="/static/js/jquery_file_upload/jquery.fileupload.min.js"></script>
+        <script type="text/javascript"
+                src="/static/js/jquery_file_upload/jquery.fileupload-ui.min.js"></script>
+        <script type="text/javascript"
+                src="/static/js/jquery_file_upload/jquery.iframe-transport.min.js"></script>
+        <script type="text/javascript"
+                src="/static/js/Class.create.min.js"></script>
+        <script type="text/javascript"
+                src="/static/js/jquery-encoder-0.1.0.js"></script>
+        <script type="text/javascript"
+                src="/static/js/template_js/base.js?{{ VERSION }}"></script>
+        <script type="text/javascript"
+                src="/static/joyride/joyride.min.js"></script>
+{#    {% endcompress %}#}
 
     {% if not debug %}
     <script type="text/javascript">
