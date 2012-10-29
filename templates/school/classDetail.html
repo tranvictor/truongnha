@@ -68,12 +68,12 @@
 
         <div class="btn-group">
             {% if pos > 1 or inClass == 1 %}
-                <a id="btn-monhoc" title="Xem tất cả thông tin của của môn học trong lớp" class="btn "
+                <a id="btn-monhoc" title="Xem tất cả thông tin của của môn học trong lớp" class="btn"
                    href="{% url subject_per_class class.id %}">
                     Môn học</a>
             {% endif %}
 
-            <a id="btn-lichhoc" title="Xem thời khóa biểu lớp" class="btn "
+            <a id="btn-lichhoc" title="Xem thời khóa biểu lớp" class="btn"
                href="{% url timetable class.id %}">
                 Lịch học</a>
         </div>
@@ -294,7 +294,7 @@
                 <button id="activateAccount" class="btn"
                         title="Mở cho tài khoản học sinh được sử dụng. Các học sinh không sử dụng cần khóa lại để đảm bảo an toàn thông tin hơn.">
                     <i class="icon-key"></i>
-                    Mở tài khoản
+                    Mở và gửi tài khoản
                 </button>
                 <button id="deactivateAccount" class="btn">
                     <i class="icon-lock" title="Không cho học sinh/phụ huynh sử dụng hệ thống nữa."></i>
@@ -522,7 +522,7 @@
                         <button id="send" class="btn btn-danger" disabled="disabled"><i class="icon-envelope-alt"></i>
                             Gửi tin nhắn
                         </button>
-                        <button id="smsClose" class="btn ">Thôi</button>
+                        <button id="smsClose" class="btn">Thôi</button>
                     </td>
                 </tr>
 

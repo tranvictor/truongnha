@@ -12,53 +12,48 @@
     {% endblock %}
     <link rel="shortcut icon" href="/static/images/favicon.ico"/>
 
-{#    {% load compress %}#}
-{#    {% compress css %}#}
-        <link href="/static/css/smoothness/jquery-ui-1.9.0.custom.min.css" rel="stylesheet" type="text/css"
-              media="screen"/>
-        <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet"/>
-        <link rel="stylesheet" type="text/css" href="/static/font-awaresome/css/font-awesome.css">
-        <link href="/static/css/datepicker.css" rel="stylesheet"/>
-        <link href="/static/css/jquery_file_upload/jquery.fileupload-ui.css" rel="stylesheet" type="text/css"
-              media="screen"/>
-        <link href="/static/css/truongnha.css?{{ VERSION }}" rel="stylesheet" type="text/css"/>
-        <link href="/static/css/template_css/popup.css?{{ VERSION }}" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/smoothness/jquery-ui-1.9.0.custom.min.css" rel="stylesheet" type="text/css"
+          media="screen"/>
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="/static/font-awaresome/css/font-awesome.css">
+    <link href="/static/css/datepicker.css" rel="stylesheet"/>
+    <link href="/static/css/jquery_file_upload/jquery.fileupload-ui.css" rel="stylesheet" type="text/css"
+          media="screen"/>
+    <link href="/static/css/truongnha.css?{{ VERSION }}" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/template_css/popup.css?{{ VERSION }}" rel="stylesheet" type="text/css"/>
 
-        <link href="/static/joyride/joyride.min.css" rel="stylesheet">
-{#    {% endcompress %}#}
+    <link href="/static/joyride/joyride.min.css" rel="stylesheet">
 
 
     {% block css %}
         <!-- For extra css -->
     {% endblock %}
 
-{#    {% compress js %}#}
-        <script type="text/javascript"
-                src="/static/js/jquery-1.7.2.min.js"></script>
-        <script type="text/javascript"
-                src="/static/js/jquery-ui-1.9.0.custom.min.js"></script>
-        <script type="text/javascript"
-                src="/static/bootstrap/js/bootstrap.min.js"></script>
-        <script type="text/javascript"
-                src="/static/js/bootstrap-datepicker.min.js"></script>
-        <script type="text/javascript"
-                src="/static/js/jquery_file_upload/tmpl.min.js"></script>
-        <script type="text/javascript"
-                src="/static/js/jquery_file_upload/jquery.fileupload.min.js"></script>
-        <script type="text/javascript"
-                src="/static/js/jquery_file_upload/jquery.fileupload-ui.min.js"></script>
-        <script type="text/javascript"
-                src="/static/js/jquery_file_upload/jquery.iframe-transport.min.js"></script>
-        <script type="text/javascript"
-                src="/static/js/Class.create.min.js"></script>
-        <script type="text/javascript"
-                src="/static/js/jquery-encoder-0.1.0.js"></script>
-        <script type="text/javascript"
-                src="/static/js/template_js/base.js?{{ VERSION }}"></script>
-        <script type="text/javascript"
-                src="/static/joyride/joyride.min.js"></script>
-{#    {% endcompress %}#}
+    <script type="text/javascript"
+            src="/static/js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript"
+            src="/static/js/jquery-ui-1.9.0.custom.min.js"></script>
+    <script type="text/javascript"
+            src="/static/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript"
+            src="/static/js/bootstrap-datepicker.min.js"></script>
+    <script type="text/javascript"
+            src="/static/js/jquery_file_upload/tmpl.min.js"></script>
+    <script type="text/javascript"
+            src="/static/js/jquery_file_upload/jquery.fileupload.min.js"></script>
+    <script type="text/javascript"
+            src="/static/js/jquery_file_upload/jquery.fileupload-ui.min.js"></script>
+    <script type="text/javascript"
+            src="/static/js/jquery_file_upload/jquery.iframe-transport.min.js"></script>
+    <script type="text/javascript"
+            src="/static/js/Class.create.min.js"></script>
+    <script type="text/javascript"
+            src="/static/js/jquery-encoder-0.1.0.js"></script>
+    <script type="text/javascript"
+            src="/static/js/template_js/base.js?{{ VERSION }}"></script>
+    <script type="text/javascript"
+            src="/static/joyride/joyride.min.js"></script>
 
     {% if not debug %}
     <script type="text/javascript">
@@ -101,7 +96,7 @@
                         <span class="lead">Quản trị hệ thống</span>
                     {% else %}
                         <span id="school-name" class="lead">{{ user.userprofile.organization.name }}</span>
-                        <span> {{ user.userprofile.organization.get_status }}</span>
+                        &nbsp;<span> {{ user.userprofile.organization.get_status }}</span>
                     {% endif %}
                 {% else %}
                     <span class="lead">Dịch vụ phần mềm quản lý trường học</span>
@@ -128,7 +123,8 @@
 
                     <a id="logout" href="{% url django.contrib.auth.views.logout %}"
                        title="Thoát ra, kết thúc phiên làm việc. BẠN PHẢI ĐĂNG XUẤT NẾU ĐĂNG NHẬP TRÊN CÁC MÁY TÍNH DÙNG CHUNG ĐỂ TRÁNH NGƯỜI KHÁC THAY ĐỔI DỮ LIỆU.">
-                        <i class="icon-signout"></i>&nbsp;Đăng xuất
+                        <i class="icon-signout"></i>
+                        <small>Đăng xuất</small>
                     </a>
                 {% else %}
                     {{ user.last_name }} {{ user.first_name }}
@@ -184,6 +180,7 @@
 
 <div id="feedbackWindow" class="popup-windows">
     <form>
+        <h3>Góp ý</h3>
         {% if user.is_anonymous or user.username == 'truongnha_demo_account_school' or user.username == 'truongnha_demo_account_teacher' or user.username == 'truongnha_demo_account_upper' %}
             <label for="feedbackUsername">Họ và tên</label>
             <input class="span3" type="text" id="feedbackUsername">
