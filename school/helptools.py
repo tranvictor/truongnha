@@ -16,7 +16,7 @@ from school.utils import to_en1, add_subject, get_lower_bound,\
 from school.utils import normalize as norm
 from sms.utils import to_ascii
 from django.db import transaction
-from django.db.models import Q, Count
+from django.db.models import Q
 import thread
 SYNC_RESULT = os.path.join('helptool','recover_marktime.html')
 SYNC_SUBJECT = os.path.join('helptool','sync_subject.html')
@@ -47,7 +47,6 @@ def _sync_sms_content():
             if not saved: saved = sms_list[0]
             for s in sms_list:
                 if s != saved: s.delete()
-    print number
     return sms_dict
 
 @transaction.commit_on_success

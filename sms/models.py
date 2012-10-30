@@ -5,6 +5,7 @@ from django import forms
 from django.conf import settings
 from suds.client import Client
 from celery.contrib.methods import task
+from celery import Task
 
 
 import xlrd
@@ -70,6 +71,18 @@ REASON_DICT = {
         '25': u'Tài khoản trường bạn không đủ để thực hiện tin nhắn',
         '26': u'Lỗi ở cổng nhắn tin'
         }
+
+class SMSTask(Task):
+    abstract = True
+
+    def on_failure(self, exc, task_id, args, kwargs, einfo):
+        if self.max_retries == self.request.retries:
+            sms = args[0]
+            sms.recent = False
+            sms.success = False
+            sms.failed_reason = unicode(einfo.exception)
+            sms.save()
+
 
 class sms(models.Model):
     phone = models.CharField("Số điện thoại", max_length=20, blank=False)
@@ -155,29 +168,41 @@ class sms(models.Model):
             raise Exception("InvalidPhoneNumber")
         
     def _send_sms(self, school=None):
-        try:
-            # 2 id user nay de cap phep nhan tin cho chi Van va account sensive
-            # two schools are allowed to sms ( Cam giang, Demo 10 for testing )
-            if (int(self.sender_id) in [904, 16742]
-                    or (school and school.id in [11, 10])): 
-                result = self._send_iNET_sms()
-            else:
-                result = self._send_Viettel_sms()
-            if result != '1':
-                self.success = False
-                self.failed_reason = result 
-                self.recent = False
-                self.save()
-            else:
-                self.success = True
-                self.recent = False
-                self.save()
-            return result
-        except Exception as e:
-            self.recent= False
-            self.success = False
-            self.failed_reason = '500-%s' % unicode(e)
+        if (int(self.sender_id) in [904, 16742]
+                or (school and school.id in [11, 10])): 
+            result = self._send_iNET_sms()
+        else:
+            result = self._send_Viettel_sms()
+        if result == '1':
+            self.recent = False
+            self.success = True
             self.save()
+        else:
+            raise Exception('%s-SendFailed' % result)
+
+        #try:
+        #    # 2 id user nay de cap phep nhan tin cho chi Van va account sensive
+        #    # two schools are allowed to sms ( Cam giang, Demo 10 for testing )
+        #    if (int(self.sender_id) in [904, 16742]
+        #            or (school and school.id in [11, 10])): 
+        #        result = self._send_iNET_sms()
+        #    else:
+        #        result = self._send_Viettel_sms()
+        #    if result != '1':
+        #        self.success = False
+        #        self.failed_reason = result 
+        #        self.recent = False
+        #        self.save()
+        #    else:
+        #        self.success = True
+        #        self.recent = False
+        #        self.save()
+        #    return result
+        #except Exception as e:
+        #    self.recent= False
+        #    self.success = False
+        #    self.failed_reason = '500-%s' % unicode(e)
+        #    self.save()
         
     def _send_mark_sms(self, marks=None, school=None):
         result = self._send_sms(school=school)
@@ -195,27 +220,36 @@ class sms(models.Model):
             self.attachment = simplejson.dumps(attachs)
             self.save()
 
-    @task()
-    def send_sms(self, school=None):
-        return self._send_sms(school=school)
+    @task(base=SMSTask, default_retry_delay=2, max_retries=3)
+    def send_sms(self, *args, **kwargs):
+        school = kwargs['school'] if 'school' in kwargs else None
+        try:
+            return self._send_sms(school=school)
+        except Exception, e:
+            raise self._send_sms.retry(exc=e)
         
-    @task()
-    def send_mark_sms(self, marks=None, school=None):
-        result = self._send_sms(school=school)
-        if result == '1':
-            #if not marks:
-            #    attachs = simplejson.loads(self.attachment)
-            #    ids = attachs['m']
-            #    marks = Mark.objects.filter(id__in=ids)
-            for m in marks:
-                m.update_sent()
-        else:
-            attachs = {'m': []}
-            for m in marks:
-                attachs['m'].append(m.id)
-            self.attachment = simplejson.dumps(attachs)
-            self.save()
-            return result
+    @task(base=SMSTask, default_retry_delay=2, max_retries=3)
+    def send_mark_sms(self, *args, **kwargs): #marks=None, school=None):
+        try:
+            school = kwargs['school'] if 'school' in kwargs else None
+            marks = kwargs['school'] if 'school' in kwargs else None
+            result = self._send_sms(school=school)
+            if result == '1':
+                #if not marks:
+                #    attachs = simplejson.loads(self.attachment)
+                #    ids = attachs['m']
+                #    marks = Mark.objects.filter(id__in=ids)
+                for m in marks:
+                    m.update_sent()
+            else:
+                attachs = {'m': []}
+                for m in marks:
+                    attachs['m'].append(m.id)
+                self.attachment = simplejson.dumps(attachs)
+                self.save()
+                return result
+        except Exception, e:
+            raise self.send_mark_sms.retry(exc=e)
 
     def __unicode__(self):
         return self.phone
