@@ -21,26 +21,29 @@
         {{ message }}
     {% endif %}
 
-    <div id="miengiam" class="span6">
-
-    </div>
+{#    <div id="miengiam" class="span6">#}
+{##}
+{#    </div>#}
 
     <div id="submenu" class="btn-toolbar">
-        <form class="form-inline" action="{% url mark_for_a_student class_id student_id %}" name="info" method="post"
+        <form class="form-inline pull-left" action="{% url mark_for_a_student class_id student_id %}" name="info"
+              method="post"
               id='myform'> {% csrf_token %}
-            <label>Bảng điểm học kỳ</label>
-            <select name="term" class="bangdiem">
-                {% for term in termList %}
-                    <option value={{ term.id }} selected> {{ term }} </option>
-                {% endfor %}
-            </select>
+            <label>Bảng điểm học kỳ:
+                <select name="term" class="bangdiem" id="hocky">
+                    {% for term in termList %}
+                        <option value={{ term.id }} selected> {{ term }} </option>
+                    {% endfor %}
+                </select>
+            </label>
         </form>
 
         <div class="pull-right">
-            <a class="btn" href="{% url mark_excel_for_a_student class_id student_id  termChoice %}"> Xuất ra Excel</a>
+            <a class="btn" href="{% url mark_excel_for_a_student class_id student_id  termChoice %}"> Xuất ra
+                Excel</a>
         </div>
     </div>
-    <table class="table table-bordered grid">
+    <table class="table grid">
         <tr>
             <th rowspan=2 style="text-align: center;" width="10%">
                 Học kỳ
@@ -133,7 +136,7 @@
     </script>
 
 
-    <table class="table table-bordered grid">
+    <table class="table grid">
         <tr>
             <th rowspan=2 width="4%">
                 STT
@@ -313,6 +316,5 @@
                 </tr>
             {% endfor %}
         {% endifequal %}
-
     </table>
 {% endblock %}

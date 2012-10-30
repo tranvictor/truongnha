@@ -1,18 +1,19 @@
 body {
     font-family: "OpenSansRegular",Tahoma,Arial,Helvetica,Sans-Serif;
-    font-weight: normal;
     padding: .8em;
 }
 
 @media (max-width: 767px) {
     body {
         padding: .2em;
+        font-size: 12px;
     }
 }
 
 @media (max-width: 1023px) {
     body {
         padding: .4em;
+        font-size: 13px;
     }
 }
 
@@ -708,19 +709,23 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 
 .cmd {
     display: inline-block;
-    /*background-color: #EEEEEE;*/
-    width: 5em;
-    height: 5em;
+    width: 4.5em;
+    height: 4.5em;
     margin-top: 4px;
-}
-
-.cmd span {
-    margin: .1em;
-    vertical-align: middle;
+    font-size: 0.95em;
 }
 
 .cmd i {
-    font-size: 2em;
+    font-size: 2.25em;
     display: block;
+    vertical-align: middle;
+    padding-top: .2em;
+}
+
+.cmd p {
+    /*margin-top: 6em;*/
+    vertical-align: bottom;
+    text-align: center;
+    padding-top: .1em;
 }
 

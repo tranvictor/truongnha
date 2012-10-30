@@ -72,78 +72,78 @@
             {# Người sử dụng cấp trường       #}
             {% if user.userprofile.organization.status != 0 %}
                 {# Đang trong năm học #}
-                <a id="sms" class="cmd btn btn-danger" href="{% url sms_summary '' %}"
+                <a id="sms" class="cmd btn btn-info" href="{% url sms_summary '' %}"
                    title="Thông báo tình hình học tập, rèn luyện của học sinh cho phụ huynh">
-                    <span><i class="icon-envelope"></i>
-                    Liên lạc</span>
+                    <i class="icon-envelope"></i>
+                    <p>Liên lạc</p>
                 </a>
                 <a id="report" class="cmd btn btn-info" href="{% url report %}"
                    title="Các báo cáo thống kê, tổng kết">
-                    <span><i class="icon-bar-chart"></i>
-                    Báo cáo</span>
+                    <i class="icon-bar-chart"></i>
+                    <p>Báo cáo</p>
                 </a>
                 {#<hr />#}
 
                 <a id="classes-teachers" class="cmd btn btn-primary" href="{% url classes %}"
                    title="Thêm/xoá lớp và gán giáo viên chủ nhiệm lớp">
-                    <span><i class="icon-th-large"></i>
-                    Lớp học</span>
+                    <i class="icon-th-large"></i>
+                    <p>Lớp học</p>
                 </a>
                 <a id="teachers" class="cmd btn btn-primary" href="{% url teachers %}"
                    title="Quản lý danh sách giáo viên, cán bộ trong trường">
-                    <span><i class="icon-group"></i>
-                    Giáo viên</span>
+                    <i class="icon-group"></i>
+                    <p>Giáo viên</p>
                 </a>
 
                 {#<hr />#}
-                <a id="settings" class="cmd btn btn-success" href="{% url info %}"
+                <a id="settings" class="cmd btn btn-warning" href="{% url info %}"
                    title="Thông tin trường, khóa điểm, tham số.">
-                    <span><i class="icon-cogs"></i>
-                    Thiết lập</span>
+                    <i class="icon-cogs"></i>
+                    <p>Thiết lập</p>
                 </a>
-                <a id="finish" class="cmd btn btn-warning" href="{% url finish %}"
+                <a id="finish" class="cmd btn btn-danger" href="{% url finish %}"
                    title="Chuyển học kỳ, năm học, xem tổng kết">
-                    <span><i class="icon-columns"></i>
-                    Chuyển kỳ</span>
+                    <i class="icon-columns"></i>
+                    <p>Chuyển kỳ</p>
                 </a>
                 </div>
                 <div class="pagination-centered">                {#<hr />#}
                 <a id="timetable" class="cmd btn" href="{% url timetable_school %}" title="Thời khóa biểu toàn trường">
-                    <span><i class="icon-calendar"></i>
-                    Lịch học</span>
+                    <i class="icon-calendar"></i>
+                    <p>Lịch học</p>
                 </a>
                 <a id="agenda" class="cmd btn" href="{% url school_subject_agenda %}"
                    title="Quảng lý phân phối chương trình các môn">
-                    <span><i class="icon-book"></i>
-                    Bài học</span>
+                    <i class="icon-book"></i>
+                    <p>Bài học</p>
                 </a>
                 <a id="exams" class="cmd btn" href="{% url create_list_exam %}" title="Tạo danh sách phòng thi">
-                    <span><i class="icon-pencil"></i>
-                    Kỳ thi</span>
+                    <i class="icon-pencil"></i>
+                    <p>Kỳ thi</p>
                 </a>
 
                 {#<hr />#}
                 <a id="sitemap" class="cmd btn" href="/help/sitemap" title="Sơ đồ chức năng">
-                    <span><i class="icon-sitemap"></i>
-                    Sơ đồ</span>
+                    <i class="icon-sitemap"></i>
+                    <p>Sơ đồ</p>
                 </a>
                 <a id="contact" class="cmd btn" href="{% url views.about %}"
                    title="Giới thiệu, liên lạc, góp ý">
-                    <span><i class="icon-info-sign"></i>
-                    Liên hệ</span>
+                    <i class="icon-info-sign"></i>
+                    <p>Liên hệ</p>
                 </a>
 
                 <a id="help" class="cmd btn" href="{% url help.views.help %}"
                    title="Hướng dẫn sử dụng">
-                    <span><i class="icon-question-sign"></i>
-                    Trợ giúp</span>
+                    <i class="icon-question-sign"></i>
+                    <p>Trợ giúp</p>
                 </a>
             {% else %}
                 {# Khi chưa khởi  tạo năm học #}
                 <a id="setup" class="cmd btn" href="{% url setup %}"
                    title="Khai báo thông tin trường học và tạo nhanh các lớp học">
-                    <span><i class="icon-cog"></i>
-                    Khởi tạo</span>
+                    <i class="icon-cog"></i>
+                    <p>Khởi tạo</p>
                 </a>
             {% endif %}
             </div>
