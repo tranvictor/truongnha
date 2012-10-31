@@ -12,7 +12,7 @@ from sms.models import sms
 from school.school_settings import CAP2_DS_MON, CAP1_DS_MON, CAP3_DS_MON
 from school.templateExcel import normalize, CHECKED_DATE
 from school.utils import to_en1, add_subject, get_lower_bound,\
-        queryset_to_dict
+        queryset_to_dict, get_school, get_current_year
 from school.utils import normalize as norm
 from sms.utils import to_ascii
 from django.db import transaction
@@ -1060,4 +1060,19 @@ def _sync_subject_comment():
             print number
         s.hs = 1
         s.save()
+
+
+def sync_tkb_db(request):
+    school = get_school(request)
+    year = get_current_year(request)
+    classList = Class.objects.filter(year_id=year).order_by('name')
+    for cl in classList:
+        tkbs = cl.tkb_set.all().order_by('day')
+        previous_day = 0
+        for i_tkb in tkbs:
+            if i_tkb.day == previous_day:
+                i_tkb.delete()
+            else:
+                previous_day = i_tkb.day
+        tkbs = cl.tkb_set.all().order_by('day')
 
