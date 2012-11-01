@@ -720,18 +720,6 @@ def viewStudentDetail(request, student_id):
         ngay_vao_doi = ''
         ngay_vao_doan = ''
         ngay_vao_dang = ''
-        find = pupil.current_class().student_set\
-                .filter(first_name__exact=data['first_name'])\
-                .filter(last_name__exact = data['last_name'])\
-                .filter(birthday__exact = to_date(data['birthday']))\
-                .exclude(id__exact = pupil.id)
-        if find:
-            dup_student = find[0]
-            message = u'Thông tin học sinh vừa sửa trùng với học sinh STT {} {} {}.'.format(dup_student.index,dup_student.last_name,
-            dup_student.first_name)
-        elif pupilform.is_valid():
-            pupilform.save()
-            message = 'Bạn đã cập nhật thành công thông tin học sinh.'
         if not pupilform.is_valid():
             if not message:
                 message = 'Có lỗi ở dữ liệu nhập vào.'
@@ -781,6 +769,19 @@ def viewStudentDetail(request, student_id):
                 if a.name == 'ngay_vao_dang':
                     if a.errors:
                         ngay_vao_dang = str(a.errors)
+        else:
+            find = pupil.current_class().student_set\
+            .filter(first_name__exact=data['first_name'])\
+            .filter(last_name__exact = data['last_name'])\
+            .filter(birthday__exact = to_date(data['birthday']))\
+            .exclude(id__exact = pupil.id)
+            if find:
+                dup_student = find[0]
+                message = u'Thông tin học sinh vừa sửa trùng với học sinh STT {} {} {}.'.format(dup_student.index,dup_student.last_name,
+                    dup_student.first_name)
+            elif pupilform.is_valid():
+                pupilform.save()
+                message = 'Bạn đã cập nhật thành công thông tin học sinh.'
         response = simplejson.dumps({'message': message,
             'response_type': 'tths',
             'first_name': first_name,
