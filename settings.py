@@ -12,7 +12,7 @@ else:
 
 TEMPLATE_DEBUG = True
 
-VERSION = '0.9.9.1.2'
+VERSION = '0.9.9.1.4'
 
 ADMINS = (
     ('admin', 'qlnt@googlegroups.com'),

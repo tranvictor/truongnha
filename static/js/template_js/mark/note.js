@@ -42,14 +42,16 @@
 	});	
 	$("#saveNote").click(function(){
 		var data1=$("#editContent").val().trim();
-		data=idTeacher+"/"+idUser + "/"+idAr[currentIndex]+"/"+data1;
+        var teacher_id = $("#teacher_id").val();
+        var user_id = $("#user_id").val();
+		var data = teacher_id+"/"+ user_id + "/"+idAr[currentIndex]+"/"+data1;
 		var arg = { 
 			type:"POST",
 			url:"/school/saveNote",
 			global: false,
 			data: { 
-				data:data,
-			},
+				data:data
+            },
 			datatype:"json",
 			success: function(json) {
 				//$("#editWindow").slideUp(400);
