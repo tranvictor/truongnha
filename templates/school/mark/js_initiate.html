@@ -41,7 +41,7 @@ if ("{{selectedTerm.number}}" == 2)
 else	
 	isSecondTerm = 0; 
 var isComment="{{selectedSubject.nx}}"=="True";
-var idTeacher = "{{selectedSubject.teacher_id.id}}";
+var idTeacher = "{{selectedSubject.teacher_id_id}}";
 var mainInput=document.getElementById("mainInput");
 
 var maxColMieng    ={{maxColMieng}};
@@ -141,3 +141,9 @@ function intiateEditable()
 		}
 }	
 </script>
+<html>
+<div style="display: none;">
+    <input id="user_id" value="{{ user.id}}">
+    <input id="teacher_id" value="{{selectedSubject.teacher_id_id}}">
+</div>
+</html>
