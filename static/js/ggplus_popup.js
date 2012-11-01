@@ -145,9 +145,15 @@
             var viewportTop = top - $(document).scrollTop();
             var viewportHeight = $(window).height();
             var lowArea = false;
-            popupWindow.css({position:'absolute', visibility:'hidden',display:'block'});
+            popupWindow.css({
+                position:'absolute',
+                visibility:'hidden',
+                display:'block'});
             var popupHeight = popupWindow.outerHeight();
-            popupWindow.css({position:'absolute', visibility:'visible',display:'none'});
+            popupWindow.css({
+                position:'absolute',
+                visibility:'visible',
+                display:'none'});
             if (viewportHeight-viewportTop < popupHeight){
                 var buttonHeight = button.height();
                 top = top - popupHeight + buttonHeight;
@@ -160,16 +166,16 @@
                 'position':'absolute',
                 'z-index': '2000'
             }).bind('mouseleave',function(e){
-                        ev = jQuery.extend({}, e);
-                        popupWindow.fadeOut(400);
-                        if (live){
-                            applyValue(popupWindow, self);
-                            button.text(getValue(self));
-                        }
-                        if (autoCreatePopup)
-                            popupWindow.remove();
-                        callback.apply(this,[ev, popupWindow]);
-                    });
+                ev = jQuery.extend({}, e);
+                popupWindow.fadeOut(400);
+                if (live){
+                    applyValue(popupWindow, self);
+                    button.text(getValue(self));
+                }
+                if (autoCreatePopup)
+                popupWindow.remove();
+            callback.apply(this,[ev, popupWindow]);
+            });
             popupWindow.fadeIn(200);
         });
         //this.replaceWith(button);

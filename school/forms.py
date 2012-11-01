@@ -237,7 +237,8 @@ class SchoolForm(forms.Form):
         self.request = kwargs.pop('request')
         super(SchoolForm, self).__init__(*args, **kwargs)
         if get_permission(self.request) in [u'HIEU_TRUONG', u'HIEU_PHO']:
-            self.fields['name'] = forms.CharField(label=u'Tên trường:', max_length = 100 ) #tên đơn vị. tổ chức
+            self.fields['name'] = forms.CharField(label=u'Tên trường:',
+                    max_length = 100 ) #tên đơn vị. tổ chức
             school = get_school(self.request)
             self.fields['school_level'] = forms.ChoiceField(label=u"Cấp:",
                     choices=KHOI_CHOICES)
@@ -260,11 +261,6 @@ class SchoolForm(forms.Form):
             school.phone = self.cleaned_data['phone']
             school.email = self.cleaned_data['email']
             school.save()
-# TAH testing..
-            #noinspection PyUnresolvedReferences
-            log_it(self.request, school, "School changed:")
-            print "tah; logged"
-
         except Exception as e:
             print e
 
@@ -275,7 +271,7 @@ class SettingForm(forms.Form):
         self.fields['lock_time'] = forms.IntegerField(
                 label=u"Không cho sửa điểm sau:",
                 required=True,
-                help_text=u"Khoảng thời gian được sửa điểm từ lúc nhập") #
+                help_text=u"Khoảng thời gian giáo viên được sửa điểm từ lúc nhập") #
 
         self.fields['semester_start_time'] = forms.DateField(
                 label=u'Ngày bắt đầu học kỳ:',
@@ -292,6 +288,7 @@ class SettingForm(forms.Form):
                 validators=[validate_class_label],
                 widget=forms.Textarea,
                 required = False)
+
     def clean(self):
         cleaned_data = super(SettingForm, self).clean()
         semester_start_time = cleaned_data.get("semester_start_time")
@@ -302,6 +299,7 @@ class SettingForm(forms.Form):
                 self._errors["semester_finish_time"] = self.error_class([msg])
                 raise forms.ValidationError(msg)
         return cleaned_data
+
     def save_to_model(self):
         try:
             school = get_school(self.request)

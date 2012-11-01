@@ -24,6 +24,7 @@ from school.utils import get_latest_startyear, get_current_year, in_school,\
                             get_permission , gvcn, get_level, get_school, to_date,\
                             get_current_term, add_many_students, add_teacher, \
                             get_lower_bound, to_subject_name, to_en, normalize
+from school.helptools import sync_tkb_db
 import settings
 #Exporting session
 @school_function
@@ -1535,6 +1536,7 @@ def export_timetable(request):
     school = get_school(request)
     year = get_current_year(request)
     term = get_current_term(request)
+    sync_tkb_db(request)
     classList = Class.objects.filter(year_id=year).order_by('name')
     book = Workbook(encoding='utf-8')
     #renderring xls file

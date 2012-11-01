@@ -363,6 +363,8 @@ def subjectPerClass(request, class_id):
         return HttpResponseRedirect(reverse('index'))
     message = None
     cl = Class.objects.get(id=class_id)
+    if not in_school(request, cl.block_id.school_id):
+        return HttpResponseRedirect(reverse('index'))
     if user.userprofile.organization.level == 'S':
         school = cl.year_id.school_id
         year = cl.year_id

@@ -28,6 +28,7 @@ from school.utils import get_current_year, get_school, get_permission,\
         inClass, get_teacher, to_date, get_lower_bound, get_upper_bound,\
         to_en1, add_subject, make_default_password, queryset_to_dict
 from sms.utils import send_email, sendSMS
+from school.helptools import sync_tkb_db
 import settings
 
 START_YEAR = os.path.join('school', 'start_year.html')
@@ -186,7 +187,10 @@ def info(request):
         data['phone'] = data['phone'].strip()
         data['email'] = data['email'].strip()
         data['name'] = data['name'].strip()
-        data['school_level'] = data['school_level'].strip()
+        try:
+            data['school_level'] = data['school_level'].strip()
+        except Exception:
+            data['school_level'] = school.school_level
         data['lock_time'] = data['lock_time'].strip()
         data['class_labels'] = data['class_labels'].strip()
         data['semester_start_time'] = data['semester_start_time']
@@ -1020,8 +1024,11 @@ def timeTable(request, class_id):
         return HttpResponseRedirect(reverse('index'))
     if pos == 1 and inClass(request, class_id) == 0:
         return HttpResponseRedirect(reverse('index'))
-
+    sync_tkb_db(request)
     cl = Class.objects.get(id=class_id)
+    if not in_school(request, cl.block_id.school_id):
+        return HttpResponseRedirect(reverse('index'))
+
     if user.userprofile.organization.level == 'S':
         year = cl.year_id
     else:
@@ -1108,7 +1115,6 @@ def timeTable(request, class_id):
                         t.save()
             except Exception as e:
                 print e
-
     timeTables = TKB.objects.filter(class_id=class_id).order_by('day')
     subject = cl.subject_set.all()
     number_of_periods = {}
@@ -1162,6 +1168,7 @@ def timeTable_school(request):
         return HttpResponseRedirect(reverse('index'))
 
     year = get_current_year(request)
+    sync_tkb_db(request)
     classList = year.class_set.all().order_by('name')
     table = []
     for cl in classList:
@@ -1298,79 +1305,6 @@ def subjectAgenda(request, subject_id):
     return HttpResponse(t.render(c))
 
 @need_login
-def timetableStudent(request, day=date.today().day, month=date.today().month, year=date.today().year):
-    pos = get_position(request)
-    if pos != 1:
-        return HttpResponseRedirect(reverse('index'))
-    t1 = date(int(year), int(month), int(day))
-    try:
-        cl = request.user.pupil.class_id
-    except Exception:
-        return HttpResponseRedirect(reverse('index'))
-
-    t = cl.tkb_set.get(day=t1.weekday() + 2)
-
-    list = []
-    if t.period_1:
-        l1 = t.period_1.lesson_set.filter(ngay_day__exact=t1).order_by("index")
-        for i in l1:
-            if not (i in list): list.append(i)
-
-    if t.period_2:
-        l1 = t.period_2.lesson_set.filter(ngay_day__exact=t1).order_by("index")
-        for i in l1:
-            if not (i in list): list.append(i)
-
-    if t.period_3:
-        l1 = t.period_3.lesson_set.filter(ngay_day__exact=t1).order_by("index")
-        for i in l1:
-            if not (i in list): list.append(i)
-
-    if t.period_4:
-        l1 = t.period_4.lesson_set.filter(ngay_day__exact=t1).order_by("index")
-        for i in l1:
-            if not (i in list): list.append(i)
-
-    if t.period_5:
-        l1 = t.period_5.lesson_set.filter(ngay_day__exact=t1).order_by("index")
-        for i in l1:
-            if not (i in list): list.append(i)
-
-    if t.period_6:
-        l1 = t.period_6.lesson_set.filter(ngay_day__exact=t1).order_by("index")
-        for i in l1:
-            if not (i in list): list.append(i)
-
-    if t.period_7:
-        l1 = t.period_7.lesson_set.filter(ngay_day__exact=t1).order_by("index")
-        for i in l1:
-            if not (i in list): list.append(i)
-
-    if t.period_8:
-        l1 = t.period_8.lesson_set.filter(ngay_day__exact=t1).order_by("index")
-        for i in l1:
-            if not (i in list): list.append(i)
-
-    if t.period_9:
-        l1 = t.period_9.lesson_set.filter(ngay_day__exact=t1).order_by("index")
-        for i in l1:
-            if not (i in list): list.append(i)
-
-    if t.period_10:
-        l1 = t.period_10.lesson_set.filter(ngay_day__exact=t1).order_by("index")
-        for i in l1:
-            if not (i in list): list.append(i)
-
-    tp = loader.get_template(os.path.join('school', 'timetableTodayStudent.html'))
-    c = RequestContext(request, {'list': list,
-                                 'pos': pos,
-                                 'today': t1,
-                                 'class': cl,
-                                 'tkb': t,
-                                 })
-    return HttpResponse(tp.render(c))
-
-@need_login
 def timetableTeacher(request):
     pos = get_position(request)
 
@@ -1378,7 +1312,7 @@ def timetableTeacher(request):
 
     if not tc:
         return HttpResponseRedirect(reverse('index'))
-
+    sync_tkb_db(request)
     subjectList = tc.subject_set.all()
     table = {}
     for day in range(2, 8):
