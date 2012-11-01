@@ -187,7 +187,10 @@ def info(request):
         data['phone'] = data['phone'].strip()
         data['email'] = data['email'].strip()
         data['name'] = data['name'].strip()
-        data['school_level'] = data['school_level'].strip()
+        try:
+            data['school_level'] = data['school_level'].strip()
+        except Exception:
+            data['school_level'] = school.school_level
         data['lock_time'] = data['lock_time'].strip()
         data['class_labels'] = data['class_labels'].strip()
         data['semester_start_time'] = data['semester_start_time']
