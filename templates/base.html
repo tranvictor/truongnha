@@ -94,19 +94,18 @@
             <strong>Thông báo!</strong> {{ SYSTEM_WARNING }}
         </div>
     {% endif %}
-    <div class="container-fluid">
+    <div class="row-fluid">
         <div id="school-info" class="pull-left">
                 {% if user.is_authenticated %}
                     {% if user.is_superuser %}
                         <span class="lead">Quản trị hệ thống</span>
                     {% else %}
                         <span id="school-name" class="lead">{{ user.userprofile.organization.name }}</span>
-                        &nbsp;<span> {{ user.userprofile.organization.get_status }}</span>
+                        &nbsp;<small> {{ user.userprofile.organization.get_status }}</small>
                     {% endif %}
                 {% else %}
                     <span class="lead">Dịch vụ phần mềm quản lý trường học</span>
                 {% endif %}
-
         </div>
         <div id="user-info" class="pull-right">
             {% if user.is_authenticated %}
@@ -122,14 +121,14 @@
                             {% else %}
                                 {{ user.first_name }}
                             {% endif %}
-                            <small>({{ user.username }})</small>
+                            <small class="hidden-phone hidden-tablet">({{ user.username }})</small>
                         </span>
                     </a>
 
                     <a id="logout" href="{% url django.contrib.auth.views.logout %}"
                        title="Thoát ra, kết thúc phiên làm việc. BẠN PHẢI ĐĂNG XUẤT NẾU ĐĂNG NHẬP TRÊN CÁC MÁY TÍNH DÙNG CHUNG ĐỂ TRÁNH NGƯỜI KHÁC THAY ĐỔI DỮ LIỆU.">
                         <i class="icon-signout"></i>
-                        <small>Đăng xuất</small>
+                        <small class="hidden-phone hidden-tablet">Đăng xuất</small>
                     </a>
                 {% else %}
                     {{ user.last_name }} {{ user.first_name }}
@@ -149,11 +148,11 @@
 </header>
 
 <nav >
-    <div class="container-fluid">
+    <div class="row-fluid">
         <div id="breadcrumb" class="pull-left">
             <a id="breadcrumb-home" href="{% url index %}" title="Trang bắt đầu">
-                <i class="icon-home" style="color: rgba(255, 69, 0, 0.75);"></i>
-                <i class="icon-home" style="color: rgba(0, 136, 204, 0.75);margin-left: -.5em;"></i>
+                <i class="icon-home logo-nha"></i>
+                <i class="icon-home logo-truong" style=";margin-left: -.5em;"></i>
                 {#            Trường#}
             </a>
 
@@ -175,7 +174,7 @@
     </div>
 </nav>
 
-<section id="main" class="container-fluid">
+<section id="main" class="row-fluid">
     <div id="content">
         {% block content %}
         {% endblock %}
