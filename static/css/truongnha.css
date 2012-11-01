@@ -1,20 +1,36 @@
 body {
     font-family: "OpenSansRegular",Tahoma,Arial,Helvetica,Sans-Serif;
-    padding: .8em;
+    padding: 1em 2em;
 }
 
 @media (max-width: 767px) {
     body {
-        padding: .2em;
+        padding: .5em;
         font-size: 12px;
     }
 }
 
 @media (max-width: 1023px) {
     body {
-        padding: .4em;
+        padding: .7em;
         font-size: 13px;
     }
+}
+
+header i {
+    font-size: 1.2em;
+}
+
+nav {
+    padding-top: 1.2em;
+    padding-bottom: 1em;
+    color: #aaaaaa;
+    /*line-height: 3em;*/
+}
+
+#logo {
+    font-size: 1.5em;
+    line-height: 1.5em;
 }
 
 .logo-truong {
@@ -24,23 +40,9 @@ body {
     color: rgba(255, 69, 0, 0.75);
 }
 
-#logo {
-    font-size: 1.5em;
-}
-
-nav {
-    padding-top: 1em;
-    padding-bottom: 1em;
-    color: #aaaaaa;
-    /*line-height: 3em;*/
-}
-
-header i {
-    font-size: 1.2em;
-}
 
 #breadcrumb-home i {
-    font-size: 2.5em;
+    font-size: 2.25em;
     overflow: visible;
 }
 
