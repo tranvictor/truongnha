@@ -19,140 +19,127 @@
             $("input").attr('disabled', false);
             $("select").attr('disabled', false);
             $("select[name=start_year_id]").attr('disabled', true);
-        {% endif %}
-        $("#id_father_name").each(function () {
-            if ($(this).val() == '') {
-                $("#id_father_birthday").attr('disabled', true);
-                $("#id_father_job").attr('disabled', true);
-            }
-        });
 
-        $("#id_mother_name").each(function () {
-            if ($(this).val() == '') {
-                $("#id_mother_birthday").attr('disabled', true);
-                $("#id_mother_job").attr('disabled', true);
-            }
-        });
-        $("#id_father_name").change(function () {
-            if ($(this).val() == '') {
-                $("#id_father_birthday").val('');
-                $("#id_father_job").val('');
-                $("#id_father_birthday").attr('disabled', true);
-                $("#id_father_job").attr('disabled', true);
-            }
-            else {
-                $("#id_father_birthday").removeAttr('disabled');
-                $("#id_father_job").removeAttr('disabled');
-            }
-        });
+            $("#id_father_name").each(function () {
+                if ($(this).val() == '') {
+                    $("#id_father_birthday").attr('disabled', true);
+                    $("#id_father_job").attr('disabled', true);
+                }
+            });
 
-        $("#id_mother_name").change(function () {
-            if ($(this).val() == '') {
-                $("#id_mother_birthday").val('');
-                $("#id_mother_job").val('');
-                $("#id_mother_birthday").attr('disabled', true);
-                $("#id_mother_job").attr('disabled', true);
-            }
-            else {
-                $("#id_mother_birthday").removeAttr('disabled');
-                $("#id_mother_job").removeAttr('disabled');
-            }
-        });
+            $("#id_mother_name").each(function () {
+                if ($(this).val() == '') {
+                    $("#id_mother_birthday").attr('disabled', true);
+                    $("#id_mother_job").attr('disabled', true);
+                }
+            });
+            $("#id_father_name").change(function () {
+                if ($(this).val() == '') {
+                    $("#id_father_birthday").val('');
+                    $("#id_father_job").val('');
+                    $("#id_father_birthday").attr('disabled', true);
+                    $("#id_father_job").attr('disabled', true);
+                }
+                else {
+                    $("#id_father_birthday").removeAttr('disabled');
+                    $("#id_father_job").removeAttr('disabled');
+                }
+            });
 
-        $("#id_ngay_vao_doi").each(function () {
-            if (!$("#id_doi").is(':checked')) {
-                $(this).attr('disabled', true);
-            }
-        });
+            $("#id_mother_name").change(function () {
+                if ($(this).val() == '') {
+                    $("#id_mother_birthday").val('');
+                    $("#id_mother_job").val('');
+                    $("#id_mother_birthday").attr('disabled', true);
+                    $("#id_mother_job").attr('disabled', true);
+                }
+                else {
+                    $("#id_mother_birthday").removeAttr('disabled');
+                    $("#id_mother_job").removeAttr('disabled');
+                }
+            });
 
-        $("#id_ngay_vao_doan").each(function () {
-            if (!$("#id_doan").is(':checked')) {
-                $(this).attr('disabled', true);
-            }
-        });
+            $("#id_ngay_vao_doi").each(function () {
+                if (!$("#id_doi").is(':checked')) {
+                    $(this).attr('disabled', true);
+                }
+            });
 
-        $("#id_ngay_vao_dang").each(function () {
-            if (!$("#id_dang").is(':checked')) {
-                $(this).attr('disabled', true);
-            }
-        });
+            $("#id_ngay_vao_doan").each(function () {
+                if (!$("#id_doan").is(':checked')) {
+                    $(this).attr('disabled', true);
+                }
+            });
 
-        $("#id_doi").click(function () {
-            if (!$(this).is(':checked')) {
-                $("#id_ngay_vao_doi").val('');
-                $("#id_ngay_vao_doi").attr('disabled', true);
-            }
-            else {
-                $("#id_ngay_vao_doi").removeAttr('disabled');
-            }
-        });
+            $("#id_ngay_vao_dang").each(function () {
+                if (!$("#id_dang").is(':checked')) {
+                    $(this).attr('disabled', true);
+                }
+            });
 
-        $("#id_doan").click(function () {
-            if (!$(this).is(':checked')) {
-                $("#id_ngay_vao_doan").val('');
-                $("#id_ngay_vao_doan").attr('disabled', true);
-            }
-            else {
-                $("#id_ngay_vao_doan").removeAttr('disabled');
-            }
-        });
+            $("#id_doi").click(function () {
+                if (!$(this).is(':checked')) {
+                    $("#id_ngay_vao_doi").val('');
+                    $("#id_ngay_vao_doi").attr('disabled', true);
+                }
+                else {
+                    $("#id_ngay_vao_doi").removeAttr('disabled');
+                }
+            });
 
-        $("#id_dang").click(function () {
-            if (!$(this).is(':checked')) {
-                $("#id_ngay_vao_dang").val('');
-                $("#id_ngay_vao_dang").attr('disabled', true);
-            }
-            else {
-                $("#id_ngay_vao_dang").removeAttr('disabled');
-            }
-        });
-        var updateStudentDetail = function (json) {
-            $("#notify").showNotification(json.message);
-            if (json.response_type == 'tths') {
-                $("#id_first_name").parents("td").append(json.first_name);
-                $("#id_last_name").parents("td").append(json.last_name);
-                $("#id_birthday").parents("td").append(json.birthday);
-                $("#id_school_join_date").parents("td").append(json.school_join_date);
-                $("#id_school_join_mark").parents("td").append(json.school_join_mark);
-                $("#id_father_birthday").parents("td").append(json.father_birthday);
-                $("#id_mother_birthday").parents("td").append(json.mother_birthday);
-                $("#id_phone").parents("td").append(json.phone);
-                $("#id_father_phone").parents("td").append(json.father_phone);
-                $("#id_mother_phone").parents("td").append(json.mother_phone);
-                $("#id_email").parents("td").append(json.email);
-                $("#id_sms_phone").parents("td").append(json.sms_phone);
-                $("#id_ngay_vao_dang").parents("td").append(json.ngay_vao_dang);
-                $("#id_ngay_vao_doi").parents("td").append(json.ngay_vao_doi);
-                $("#id_ngay_vao_doan").parents("td").append(json.ngay_vao_doan);
-            }
-        };
-        $("form.student_detail").submit(function () {
-            $(".errorlist", this).empty();
-            var data = $(this).serialize();
-            var arg = {
-                data:data,
-                type:$(this).attr("method"),
-                url:$(this).attr("action"),
-                success:updateStudentDetail,
-                global:false
-            };
-            $.ajax(arg);
-            return false;
-        });
-        $("form.tttk").live("submit", function () {
-            var data = $(this).serialize();
-            var arg = {
-                data:data,
-                type:$(this).attr("method"),
-                url:$(this).attr("action"),
-                global:false,
-                success:function (json) {
-                    $("#notify").showNotification(json.message);
+            $("#id_doan").click(function () {
+                if (!$(this).is(':checked')) {
+                    $("#id_ngay_vao_doan").val('');
+                    $("#id_ngay_vao_doan").attr('disabled', true);
+                }
+                else {
+                    $("#id_ngay_vao_doan").removeAttr('disabled');
+                }
+            });
+
+            $("#id_dang").click(function () {
+                if (!$(this).is(':checked')) {
+                    $("#id_ngay_vao_dang").val('');
+                    $("#id_ngay_vao_dang").attr('disabled', true);
+                }
+                else {
+                    $("#id_ngay_vao_dang").removeAttr('disabled');
+                }
+            });
+            var updateStudentDetail = function (json) {
+                $("#notify").showNotification(json.message);
+                if (json.response_type == 'tths') {
+                    $("#id_first_name").parents("td").append(json.first_name);
+                    $("#id_last_name").parents("td").append(json.last_name);
+                    $("#id_birthday").parents("td").append(json.birthday);
+                    $("#id_school_join_date").parents("td").append(json.school_join_date);
+                    $("#id_school_join_mark").parents("td").append(json.school_join_mark);
+                    $("#id_father_birthday").parents("td").append(json.father_birthday);
+                    $("#id_mother_birthday").parents("td").append(json.mother_birthday);
+                    $("#id_phone").parents("td").append(json.phone);
+                    $("#id_father_phone").parents("td").append(json.father_phone);
+                    $("#id_mother_phone").parents("td").append(json.mother_phone);
+                    $("#id_email").parents("td").append(json.email);
+                    $("#id_sms_phone").parents("td").append(json.sms_phone);
+                    $("#id_ngay_vao_dang").parents("td").append(json.ngay_vao_dang);
+                    $("#id_ngay_vao_doi").parents("td").append(json.ngay_vao_doi);
+                    $("#id_ngay_vao_doan").parents("td").append(json.ngay_vao_doan);
                 }
             };
-            $.ajax(arg);
-            return false;
-        });
+            $("form.student_detail").submit(function () {
+                $(".errorlist", this).empty();
+                var data = $(this).serialize();
+                var arg = {
+                    data:data,
+                    type:$(this).attr("method"),
+                    url:$(this).attr("action"),
+                    success:updateStudentDetail,
+                    global:false
+                };
+                $.ajax(arg);
+                return false;
+            });
+        {% endif %}
         var changemarktable = function() {
             var arg = {
                 url:"{% url mark_for_a_student class.id id %}/" + $(this).val(),
@@ -163,51 +150,54 @@
             };
             $.ajax(arg);
         };
-        var ktkllink = function(){
-            var url = $(this).attr("href");
-            var arg = {
-                url:url,
-                success:function (response) {
-                    $("#tabs-2").html(response);
-                    applyListener();
-                },
-                global:false
+        {% if pos > 1 %}
+            var ktkllink = function(){
+                var url = $(this).attr("href");
+                var arg = {
+                    url:url,
+                    success:function (response) {
+                        $("#tabs-2").html(response);
+                        applyListener();
+                    },
+                    global:false
+                };
+                $.ajax(arg);
+                return false;
             };
-            $.ajax(arg);
-            return false;
-        };
-        var ktklform = function () {
-            var data = $(this).serialize();
-            var arg = {
-                data:data,
-                type:$(this).attr("method"),
-                url:$(this).attr("action"),
-                global:false,
-                success:function (response) {
-                    $("#tabs-2").html(response);
-                }
+            var ktklform = function () {
+                var data = $(this).serialize();
+                var arg = {
+                    data:data,
+                    type:$(this).attr("method"),
+                    url:$(this).attr("action"),
+                    global:false,
+                    success:function (response) {
+                        $("#tabs-2").html(response);
+                    }
+                };
+                $.ajax(arg);
+                return false;
             };
-            $.ajax(arg);
-            return false;
-        };
-        var ktkldel = function () {
-            var c = confirm("Bạn có muốn xóa thông tin này không");
-            if (!c) return false;
-            $.ajax({
-                url:this.href,
-                global:false,
-                dataType:'html',
-                type:'GET',
-                success:function (response) {
-                    $("#tabs-2").html(response);
-                }
-            });
-            return false;
-        };
+            var ktkldel = function () {
+                var c = confirm("Bạn có muốn xóa thông tin này không");
+                if (!c) return false;
+                $.ajax({
+                    url:this.href,
+                    global:false,
+                    dataType:'html',
+                    type:'GET',
+                    success:function (response) {
+                        $("#tabs-2").html(response);
+                    }
+                });
+                return false;
+            };
+            $("a.onPage").live("click",ktkllink);
+            $("form.onPage").live("submit",ktklform);
+            $("a.delOnPage").live("click",ktkldel );
+        {% endif %}
+
         $(".bangdiem").live("change",changemarktable);
-        $("a.onPage").live("click",ktkllink);
-        $("form.onPage").live("submit",ktklform);
-        $("a.delOnPage").live("click",ktkldel );
         {% if pos > 3 %}
             $.ajax({
                 url:"{% url cap_nhap_mien_giam class.id student.id %}",
@@ -219,16 +209,16 @@
                     applyListener();
                 }
             });
-            $.ajax({
-                url:"{% url student_account student.id %}",
-                global:false,
-                dataType:'html',
-                type:'GET',
-                success:function (response) {
-                    $("#taikhoan").html(response);
-                    applyListener();
-                }
-            });
+{#            $.ajax({#}
+{#                url:"{% url student_account student.id %}",#}
+{#                global:false,#}
+{#                dataType:'html',#}
+{#                type:'GET',#}
+{#                success:function (response) {#}
+{#                    $("#taikhoan").html(response);#}
+{#                    applyListener();#}
+{#                }#}
+{#            });#}
         {% endif %}
         $.ajax({
             url:"{% url move_one_student id %}",
@@ -292,8 +282,10 @@
         <div class="tab-content">
             <div id="tabs-1" class="tab-pane active">
                 <div id="taikhoan"></div>
+            {% if pos > 3 %}
                 <form action="{% url student_detail id %}" method="post" class="student_detail">
                     {% csrf_token %}
+            {% endif %}
                     <div class="container-fluid">
                         <div class="row-fluid">
                             <div id="ttcn" class="span6">
@@ -322,11 +314,12 @@
                             </div>
                         </div>
                     </div>
-
+            {% if pos > 3%}
                     <div class="form-actions pagination-centered">
                         <input class="btn btn-primary" type="submit" value="Lưu"/>
                     </div>
                 </form>
+            {% endif %}
             </div>
             <div id="tabs-2" class="tab-pane"></div>
             <div id="tabs-3" class="tab-pane">
