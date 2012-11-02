@@ -11,13 +11,6 @@
     {% load breadcrumb_tags %}
     {% add_crumb class 'class_detail' class.id %}
 {% endblock %}
-{% block css %}
-    <style type="text/css">
-        .table [class^="icon-"] {
-            color: #888;
-        }
-    </style>
-{% endblock %}
 {% block content %}
     <script type="text/javascript">
         function submitClass() {
@@ -511,16 +504,19 @@
                     <th>Nội dung</th>
                     <td>
                         <textarea class="smsContext item popupTextarea"
-                                  id="smsContent"
-                                  rows="4"
-                                  style="width: 250px; max-width: 250px; height: 100px;"></textarea>
+                            id="smsContent"
+                            rows="4"
+                            style="width: 250px; max-width: 250px; height: 100px;"></textarea>
                     </td>
                 </tr>
 
                 <tr>
                     <th></th>
                     <td>
-                        <button id="send" class="btn btn-danger" disabled="disabled"><i class="icon-envelope-alt"></i>
+                        <button id="send" class="btn btn-danger"
+                            data-loading-text="Đang gửi..."
+                            disabled="disabled">
+                            <i class="icon-envelope"></i>
                             Gửi tin nhắn
                         </button>
                         <button id="smsClose" class="btn">Thôi</button>
@@ -530,9 +526,10 @@
                 <tr>
                     <th></th>
                     <td>
-                        <div class="progressbar ui-widget ui-widget-content ui-corner-all"
-                             id="smsProgressbar"
-                             style="display: none; height: 15px; margin-left: 10px; padding-left: 0;">
+                        <div class="progress progress-striped active"
+                             id="smsProgressbar" style="display: none;">
+                            <div class="bar"
+                                style="width: 90%;"></div>
                         </div>
                         <div class="alert alert-error" id="smsErrorDetail"
                              style="display: none;">

@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django import forms
 from django.conf import settings
+from django.core import mail
 from suds.client import Client
 from celery.contrib.methods import task
 from celery import Task
@@ -72,6 +73,7 @@ REASON_DICT = {
         '26': u'Lỗi ở cổng nhắn tin'
         }
 
+# This task will recover sms when failure occurs
 class SMSTask(Task):
     abstract = True
 
@@ -80,9 +82,28 @@ class SMSTask(Task):
             sms = args[0]
             sms.recent = False
             sms.success = False
-            sms.failed_reason = unicode(einfo.exception)
+            sms.failed_reason = unicode(exc)
             sms.save()
 
+class SMSEmailTask(Task):
+    abstract = True
+
+    def on_failure(self, exc, task_id, args, kwargs, einfo):
+        if self.max_retries == self.request.retries:
+            sms = args[0]
+            sms.recent = False
+            sms.success = False
+            sms.failed_reason = unicode(exc)
+            sms.save()
+            
+            subject = kwargs['subject']
+            message = kwargs['message']
+            from_addr = kwargs['from_addr']
+            to_addr = kwargs['to_addr']
+            mail.send_mail(settings.EMAIL_SUBJECT_PREFIX + subject,
+                    message,
+                    from_addr,
+                    to_addr)
 
 class sms(models.Model):
     phone = models.CharField("Số điện thoại", max_length=20, blank=False)
@@ -168,42 +189,20 @@ class sms(models.Model):
             raise Exception("InvalidPhoneNumber")
         
     def _send_sms(self, school=None):
-        if (int(self.sender_id) in [904, 16742]
-                or (school and school.id in [11, 10])): 
-            result = self._send_iNET_sms()
+        if school and school.is_allowed_sms(): #school.id in [11, 10]:
+            if get_tsp(self.phone) == 'VIETTEL':
+                result = self._send_Viettel_sms()
+            else:
+                result = self._send_iNET_sms()
+            if result == '1':
+                self.recent = False
+                self.success = True
+                self.save()
+            else:
+                raise Exception('%s-SendFailed' % result)
         else:
-            result = self._send_Viettel_sms()
-        if result == '1':
-            self.recent = False
-            self.success = True
-            self.save()
-        else:
-            raise Exception('%s-SendFailed' % result)
+            raise Exception('SMSNotAllowed')
 
-        #try:
-        #    # 2 id user nay de cap phep nhan tin cho chi Van va account sensive
-        #    # two schools are allowed to sms ( Cam giang, Demo 10 for testing )
-        #    if (int(self.sender_id) in [904, 16742]
-        #            or (school and school.id in [11, 10])): 
-        #        result = self._send_iNET_sms()
-        #    else:
-        #        result = self._send_Viettel_sms()
-        #    if result != '1':
-        #        self.success = False
-        #        self.failed_reason = result 
-        #        self.recent = False
-        #        self.save()
-        #    else:
-        #        self.success = True
-        #        self.recent = False
-        #        self.save()
-        #    return result
-        #except Exception as e:
-        #    self.recent= False
-        #    self.success = False
-        #    self.failed_reason = '500-%s' % unicode(e)
-        #    self.save()
-        
     def _send_mark_sms(self, marks=None, school=None):
         result = self._send_sms(school=school)
         if result == '1':
@@ -226,7 +225,7 @@ class sms(models.Model):
         try:
             return self._send_sms(school=school)
         except Exception, e:
-            raise self._send_sms.retry(exc=e)
+            raise self.send_sms.retry(exc=e)
         
     @task(base=SMSTask, default_retry_delay=2, max_retries=3)
     def send_mark_sms(self, *args, **kwargs): #marks=None, school=None):
@@ -250,6 +249,14 @@ class sms(models.Model):
                 return result
         except Exception, e:
             raise self.send_mark_sms.retry(exc=e)
+
+    @task(base=SMSEmailTask, default_retry_delay=2, max_retries=3)
+    def send_sms_then_email(self, *args, **kwargs):
+        school = kwargs['school'] if 'school' in kwargs else None
+        try:
+            return self._send_sms(school=school)
+        except Exception, e:
+            raise self.send_sms_then_email.retry(exc=e)
 
     def __unicode__(self):
         return self.phone

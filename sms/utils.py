@@ -56,6 +56,31 @@ def _send_sms(phone, content, user, receiver=None, save_to_db=True,
         else:
             return s._send_sms(school=school)
 
+def send_SMS_then_email(phone, content, user, receiver=None, save_to_db=True,
+        school=None, is_task_called=False, subject=None, message=None,
+        from_addr=None, to_addr=[]):
+    phone = check_phone_number(phone)
+    try:
+        if not school:
+            school = user.userprofile.organization
+    except Exception:
+        pass
+    if phone:
+        if school:
+            if school.id in [42, 44]: raise Exception('NotAllowedSMS')
+            content = to_ascii(u'Truong %s thong bao:\n%s' % (
+                school, content))
+        else:
+            content = to_ascii(u'Truongnha.com thong bao:\n%s' % content)
+        s = sms.objects.create(phone=phone, content=content, sender=user,
+                receiver=receiver, recent=True, success=False)
+        if not settings.DEBUG:
+            return s.send_sms_then_email.delay(s, school=school,
+                    subject=subject, message=message,
+                    from_addr=from_addr, to_addr=to_addr)
+        else:
+            return s._send_sms(school=school)
+
 def send_email(subject, message, from_addr=None, to_addr=[]):
     #msg = MIMEText(message.encode('utf-8'), _charset='utf-8')
     #server = smtplib.SMTP('smtp.gmail.com',587) #port 465 or 587
@@ -128,41 +153,6 @@ def task_send_email(subject, message, from_addr=None, to_addr=[]):
                 message,
                 settings.EMAIL_HOST_USER,
                 to_addr)
-
-@task()
-def task_send_SMS_then_email(phone, content, user, receiver=None,
-        save_to_db=True, school=None, subject=None, message=None,
-        from_addr=None, to_addr=[]):
-    try:
-        _send_sms(phone, content, user, receiver,
-                save_to_db, school=school, is_task_called=True) 
-    except Exception:
-        try:
-            _send_email(subject, message, from_addr, to_addr)                
-        except Exception as e:
-            print e
-            pass
-
-def send_SMS_then_email(phone, content, user, receiver=None,
-        save_to_db=True, school=None, subject=None, message=None,
-        from_addr=None, to_addr=[]):
-    if not settings.DEBUG:
-        task_send_SMS_then_email.delay(phone, content, user, receiver,
-                save_to_db, school, subject, message,
-                from_addr, to_addr)
-    else:
-        try:
-            smsed = sendSMS(phone, content, user, save_to_db, school)
-        except Exception:
-            smsed = None
-        if smsed != '1':
-            if to_addr and to_addr[0]:
-                send_email(subject, message, from_addr, to_addr)
-                return False, True
-            else:
-                return False, False
-        else:
-            return True, False
 
 def save_file(file):
     saved_file = open(os.path.join(settings.TEMP_FILE_LOCATION,

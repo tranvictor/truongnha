@@ -132,6 +132,13 @@ class Organization(models.Model):
         else:
             return ''
 
+    #TODO: check quota for school
+    def is_allowed_sms(self):
+        if self.id in settings.SCHOOL_ALLOWED_SMS:
+            return True
+        else:
+            return False
+
     def get_active_students(self):
         return self.pupil_set.filter(unc_class_id=None,
                 disable=False).distinct()
@@ -174,7 +181,7 @@ class Organization(models.Model):
         if self.id:
             setting_file_name = str(self.id)
             setting_file_name = os.path.join(SCHOOL_SETTING_FOLDER,
-                                            setting_file_name)
+                    setting_file_name)
         else:
             raise Exception('OrganizationNotSaved')
 

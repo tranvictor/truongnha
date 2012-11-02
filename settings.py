@@ -4,7 +4,7 @@
 # open path for template folder
 import os
 import sys
-DEBUG = True
+DEBUG = False
 if os.environ.pop('DJANGO_SETTINGS_TESTING', None):
     IS_TESTING = True
 else:
@@ -28,7 +28,11 @@ PREVENTED_CLASSES = [892, 927, 894, 895, 925,
         896, 897, 898, 899, 900, 901, 902, 903]
 PREVENTED_TEACHERS = [1187]
 
+# 
+SCHOOL_ALLOWED_SMS = [10, 11]
+
 MANAGERS = ADMINS
+
 if IS_TESTING:
     DATABASES = {
        'default': {
@@ -286,8 +290,8 @@ EXPORTED_FILE_LOCATION = os.path.join(MEDIA_URL, 'exported')
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'support@truongnha.com'
-EMAIL_HOST_PASSWORD = 'password'
+EMAIL_HOST_USER = 'testEmail@truongnha.com'
+EMAIL_HOST_PASSWORD = 'HJKKLj898#456'
 EMAIL_SUBJECT_PREFIX = '[www.truongnha.com]'
 #TEST_RUNNER = 'django_coverage.coverage_runner.CoverageRunner'
 
