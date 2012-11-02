@@ -31,29 +31,29 @@ var applyListener = function () {
         }
     });
 
-    $('*[class~="tiptiphover_delay"]').tooltip({
-        placement:'bottom',
-        delay:1500
-    });
+    //$('*[class~="tiptiphover_delay"]').tooltip({
+    //    placement:'bottom',
+    //    delay:1500
+    //});
 
-    //    change all default tooltip (title) to tiptip
-    $(function () {
-        var placement = ['bottom', 'top', 'left', 'right'];
-        for (var i= placement.length; i--;){
-            var place = placement[i];
-            var selector = place!='bottom'?(place + '-title'):'title';
-            $('['+selector+']').tooltip({
-                placement: place,
-                title:function () {
-                    return $(this).attr(selector);
-                },
-                delay:{
-                    'show':1000,
-                    'hide':100
-                }
-            });
-        }
-    })
+    ////    change all default tooltip (title) to tiptip
+    //$(function () {
+    //    var placement = ['bottom', 'top', 'left', 'right'];
+    //    for (var i= placement.length; i--;){
+    //        var place = placement[i];
+    //        var selector = place!='bottom'?(place + '-title'):'title';
+    //        $('['+selector+']').tooltip({
+    //            placement: place,
+    //            title:function () {
+    //                return $(this).attr(selector);
+    //            },
+    //            delay:{
+    //                'show':1000,
+    //                'hide':100
+    //            }
+    //        });
+    //    }
+    //})
 };
 
 $(document).ready(function () {
