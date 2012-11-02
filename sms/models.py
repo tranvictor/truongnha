@@ -231,7 +231,7 @@ class sms(models.Model):
     def send_mark_sms(self, *args, **kwargs): #marks=None, school=None):
         try:
             school = kwargs['school'] if 'school' in kwargs else None
-            marks = kwargs['school'] if 'school' in kwargs else None
+            marks = kwargs['marks'] if 'marks' in kwargs else None
             result = self._send_sms(school=school)
             if result == '1':
                 #if not marks:
