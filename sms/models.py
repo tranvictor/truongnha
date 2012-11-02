@@ -198,6 +198,7 @@ class sms(models.Model):
                 self.recent = False
                 self.success = True
                 self.save()
+                return result
             else:
                 raise Exception('%s-SendFailed' % result)
         else:
