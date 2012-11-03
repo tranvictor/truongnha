@@ -410,11 +410,11 @@ def feedback(request):
                     phone = profile.organization.phone
                 else:
                     if profile.position == 'HOC_SINH':
-                        email = user.pupil_id.email
-                        phone = user.pupil_id.sms_phone
+                        email = user.pupil.email
+                        phone = user.pupil.sms_phone
                     elif profile.position == 'GIAO_VIEN':
-                        email = user.teacher_id.email
-                        phone = user.teacher_id.sms_phone
+                        email = user.teacher.email
+                        phone = user.teacher.sms_phone
                 user_email = 'email: ' + unicode(email)
                 user_phone = 'phone: ' + unicode(phone)
                 school = 'school: ' + unicode(get_school(request))
