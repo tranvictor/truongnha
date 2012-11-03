@@ -807,9 +807,10 @@ def get_school(request):
     if request.user.userprofile.organization.level == 'S':
         school_id = request.session.get('school_id', 0)
         if school_id:
-            school = Organization.objects.get(id = school_id)
+            school = Organization.objects.get(id=school_id)
         else:
-            school = request.user.userprofile.organization
+            #school = request.user.userprofile.organization
+            raise Exception('UserDoesNotHaveAnySchool')
         return school
     if request.user.userprofile.organization.level != 'T':
         raise Exception('UserDoesNotHaveAnySchool')

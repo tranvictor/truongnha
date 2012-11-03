@@ -17,7 +17,8 @@ def need_login(func):
             request = args[0]
             if request.user.is_anonymous():
                 return HttpResponseRedirect(reverse('login_redirect',
-                    args=[urllib.quote(urllib.quote(request.get_full_path(), ''), '')]))
+                    args=[urllib.quote(urllib.quote(
+                        request.get_full_path(), ''), '')]))
         except Exception as e:
             print e
             raise Exception("IllegalRequestCall")
@@ -97,7 +98,6 @@ def school_function(func):
         else: return func(*args)
 
     return wrapper
-
 
 def operating_permission(rules):
     permission_list = [permission.split('__')[0] for permission in rules]
