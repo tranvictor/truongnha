@@ -38,7 +38,7 @@ class AddSubjectTest(SchoolSetupTest):
                 'number_lesson': u'1',
                 'nx' : u'on',
                 'primary' : u'0',
-                'type' : u'Mĩ thuật',
+                'type' : u'Tự chọn',
                 },
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
@@ -70,6 +70,13 @@ class AddSubjectTest(SchoolSetupTest):
         print 'Going to check response content'
         cont = simplejson.loads(response.content)
         self.assertEqual(cont['message'], u'Đã xóa thành công.')
+        print 'Going to check in db'
+        check_sub = None
+        try:
+            check_sub = cl.subject_set.get(name = u'Mĩ thuật test')
+        except Exception as e:
+            pass
+        self.assertIsNone(check_sub)
 
     def phase12_delete_toan_or_nguvan(self):
         classes = self.year.class_set.order_by('id')
@@ -91,12 +98,14 @@ class AddSubjectTest(SchoolSetupTest):
         print 'Going to check response content'
         cont = simplejson.loads(response.content)
         self.assertEqual(cont['message'], u'Bad request.')
+
     def phase13_modify_subject(self):
         classes = self.year.class_set.order_by('id')
         # get a class
         self.assertEqual(len(classes)>0, True)
         cl = classes[0]
         sub = cl.subject_set.get(type = u'Toán')
+
         print 'Update with negative heso'
         response = self.client.post(
             reverse('subject_per_class',args=[cl.id]),
@@ -112,7 +121,42 @@ class AddSubjectTest(SchoolSetupTest):
         self.assertEqual(response['Content-Type'], 'json')
         print 'Going to check response content'
         cont = simplejson.loads(response.content)
-        self.assertEqual(cont['message'], u'Hệ số không được nhỏ hơn 0')
+        self.assertEqual(cont['message'], u'Hệ số không được nhỏ hơn 0.')
+
+        print 'Update with too large heso'
+        response = self.client.post(
+            reverse('subject_per_class',args=[cl.id]),
+                {
+                'request_type': u'hs',
+                'hs' : u'10',
+                'id' : sub.id,
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['message'], u'Hệ số không được lớn hơn 3.')
+
+
+        print 'Update with invalid heso'
+        response = self.client.post(
+            reverse('subject_per_class',args=[cl.id]),
+                {
+                'request_type': u'hs',
+                'hs' : u'1x',
+                'id' : sub.id,
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['message'], u'Hệ số phải là số thực.')
 
         print 'Update with valid heso'
         response = self.client.post(
@@ -130,7 +174,75 @@ class AddSubjectTest(SchoolSetupTest):
         print 'Going to check response content'
         cont = simplejson.loads(response.content)
         self.assertEqual(cont['message'], u'Cập nhật thành công.')
-        
+
+        print 'Update with valid number of lesson'
+        response = self.client.post(
+            reverse('subject_per_class',args=[cl.id]),
+                {
+                'request_type': u'number_lesson',
+                'value' : u'2',
+                'id' : sub.id,
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['message'], u'Cập nhật thành công.')
+
+        print 'Update with invalid number of lesson'
+        response = self.client.post(
+            reverse('subject_per_class',args=[cl.id]),
+                {
+                'request_type': u'number_lesson',
+                'value' : u'-2',
+                'id' : sub.id,
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['message'], u'Số tiết trong một tuần không được nhỏ hơn 0.')
+
+        print 'Update with invalid number of lesson'
+        response = self.client.post(
+            reverse('subject_per_class',args=[cl.id]),
+                {
+                'request_type': u'number_lesson',
+                'value' : u'20',
+                'id' : sub.id,
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['message'], u'Số tiết trong một tuần không được lớn hơn 10.')
+
+        print 'Update with invalid number of lesson'
+        response = self.client.post(
+            reverse('subject_per_class',args=[cl.id]),
+                {
+                'request_type': u'number_lesson',
+                'value' : u'5.5',
+                'id' : sub.id,
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['message'], u'Số tiết phải là số nguyên.')
+
 class DiemDanhTest(AddStudentTest):
     def diemdanh_a_student(self, cl, st, t, today):
         data=''

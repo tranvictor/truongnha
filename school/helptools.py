@@ -1063,7 +1063,6 @@ def _sync_subject_comment():
 
 
 def sync_tkb_db(request):
-    school = get_school(request)
     year = get_current_year(request)
     classList = Class.objects.filter(year_id=year).order_by('name')
     for cl in classList:
@@ -1074,5 +1073,4 @@ def sync_tkb_db(request):
                 i_tkb.delete()
             else:
                 previous_day = i_tkb.day
-        tkbs = cl.tkb_set.all().order_by('day')
 
