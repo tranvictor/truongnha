@@ -238,10 +238,8 @@
             {% endfor %}
             </tbody>
         </table>
-    </div>
-
-    <div class="btn-toolbar">
-        {% if pos > 3 or gvcn == 1 or user.userprofile.organization.level == 'S' %}
+        <div class="btn-toolbar">
+            {% if pos > 3 or gvcn == 1 or user.userprofile.organization.level == 'S' %}
             <div class="btn-group ">
                 {% ifequal class.year_id.school_id.status 1 %}
                     <a id="btn-tongket" title="Tính trung bình học lực của cả lớp" class="btn"
@@ -298,7 +296,10 @@
         {% endif %}
     </div>
 
-    {% if pos > 3 %}
+
+    </div>
+
+        {% if pos > 3 %}
         <div class="span4 dataform"
              id="add-student-div"
              style="display: none;">
