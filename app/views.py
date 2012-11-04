@@ -64,6 +64,7 @@ def register(request):
         return HttpResponseRedirect(reverse('school_index'))
     else:
         message = ''
+        # test new brance
         if request.method == 'POST':
             if not settings.IS_TESTING:
                 captchar_check = captcha.submit(
