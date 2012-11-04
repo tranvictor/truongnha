@@ -447,15 +447,15 @@ def subjectPerClass(request, class_id):
             try:
                 shs = int(request.POST['value'])
             except Exception:
-                message = u'Số tiết phải là số nguyên'
+                message = u'Số tiết phải là số nguyên.'
                 data = simplejson.dumps({'message': message})
                 return HttpResponse(data, mimetype='json')
             if shs < 0:
-                message = u'Số tiết trong một tuần không được nhỏ hơn 0'
+                message = u'Số tiết trong một tuần không được nhỏ hơn 0.'
                 data = simplejson.dumps({'message': message})
                 return HttpResponse(data, mimetype='json')
             elif shs > 10:
-                message = u'Số tiết trong một tuần không được lớn hơn 10'
+                message = u'Số tiết trong một tuần không được lớn hơn 10.'
                 data = simplejson.dumps({'message': message})
                 return HttpResponse(data, mimetype='json')
             else:
@@ -495,16 +495,16 @@ def subjectPerClass(request, class_id):
             try:
                 shs = float(request.POST['hs'])
             except Exception:
-                message = u'Hệ số phải là số thực'
+                message = u'Hệ số phải là số thực.'
                 data = simplejson.dumps({'message': message})
                 return HttpResponse(data, mimetype='json')
 
             if shs < 0:
-                message = u'Hệ số không được nhỏ hơn 0'
+                message = u'Hệ số không được nhỏ hơn 0.'
                 data = simplejson.dumps({'message': message})
                 return HttpResponse(data, mimetype='json')
             elif shs > 3:
-                message = u'Hệ số không được lớn hơn 3'
+                message = u'Hệ số không được lớn hơn 3.'
                 data = simplejson.dumps({'message': message})
                 return HttpResponse(data, mimetype='json')
             else:
