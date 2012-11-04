@@ -908,7 +908,6 @@ def exportMark(request, term_id, subject_id, colMieng=4, col15Phut=4, colMotTiet
     tt1 = time.time()
 
     user = request.user
-
     selectedSubject = Subject.objects.get(id=subject_id)
     try:
         if in_school(request, selectedSubject.class_id.year_id.school_id) == False:
@@ -922,8 +921,9 @@ def exportMark(request, term_id, subject_id, colMieng=4, col15Phut=4, colMotTiet
         pass
     elif position == 3:
         try:
-            if (selectedSubject.class_id.teacher_id.id == request.user.teacher.id):
-                pass
+            if (selectedSubject.class_id.teacher_id != None):
+                if (selectedSubject.class_id.teacher_id.id == request.user.teacher.id):
+                    pass
             elif (selectedSubject.teacher_id.id != request.user.teacher.id):
                 return HttpResponseRedirect('/school')
         except Exception as e:
