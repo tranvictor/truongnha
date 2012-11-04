@@ -49,12 +49,26 @@ def _send_sms(phone, content, user, receiver=None, save_to_db=True,
                 school, content))
         else:
             content = to_ascii(u'Truongnha.com thong bao:\n%s' % content)
-        s = sms.objects.create(phone=phone, content=content, sender=user,
-                receiver=receiver, recent=True, success=False)
-        if not settings.DEBUG and not is_task_called:
-            return s.send_sms.delay(s, school=school)
+        existing = sms.objects.filter(phone=phone, content=content).count()
+        sending = sms.objects.filter(phone=phone, content=content,
+                recent=True).count()
+        if sending: return None
+        if existing > 0:
+            failed = sms.objects.filter(phone=phone, content=content, 
+                    success=False).count()
+            if failed: s = sms.objects.filter(phone=phone, content=content,
+                    success=False)[0]
+            else: s = None
         else:
-            return s._send_sms(school=school)
+            s = sms.objects.create(phone=phone, content=content, sender=user,
+                receiver=receiver, recent=True, success=False)
+        if s:
+            if not settings.DEBUG and not is_task_called:
+                return s.send_sms.delay(s, school=school)
+            else:
+                return s._send_sms(school=school)
+        else:
+            return None
 
 def send_SMS_then_email(phone, content, user, receiver=None, save_to_db=True,
         school=None, is_task_called=False, subject=None, message=None,
@@ -72,14 +86,30 @@ def send_SMS_then_email(phone, content, user, receiver=None, save_to_db=True,
                 school, content))
         else:
             content = to_ascii(u'Truongnha.com thong bao:\n%s' % content)
-        s = sms.objects.create(phone=phone, content=content, sender=user,
-                receiver=receiver, recent=True, success=False)
-        if not settings.DEBUG:
-            return s.send_sms_then_email.delay(s, school=school,
-                    subject=subject, message=message,
-                    from_addr=from_addr, to_addr=to_addr)
+        existing = sms.objects.filter(phone=phone, content=content).count()
+        sending = sms.objects.filter(phone=phone, content=content,
+                recent=True).count()
+        # the sms is being sent, ignore it
+        if sending: return None
+        if existing > 0:
+            failed = sms.objects.filter(phone=phone, content=content, 
+                    success=False).count()
+            if failed: s = sms.objects.filter(phone=phone, content=content,
+                    success=False)[0]
+            else: s = None
         else:
-            return s._send_sms(school=school)
+            s = sms.objects.create(phone=phone, content=content, sender=user,
+                receiver=receiver, recent=True, success=False)
+        # if s is a new message, send it
+        if s:
+            if not settings.DEBUG:
+                return s.send_sms_then_email.delay(s, school=school,
+                        subject=subject, message=message,
+                        from_addr=from_addr, to_addr=to_addr)
+            else:
+                return s._send_sms(school=school)
+        else: # s is already sent
+            return None
 
 def send_email(subject, message, from_addr=None, to_addr=[]):
     #msg = MIMEText(message.encode('utf-8'), _charset='utf-8')
