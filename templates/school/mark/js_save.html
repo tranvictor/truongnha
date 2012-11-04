@@ -19,15 +19,17 @@
     setNoEdit();
 </script>
 {% if enableChangeMark %}
-    {% if enableChangeMark %}
-        <div class="pagination-right">
-            {% if selectedSubject.nx %}
-                <p class="dimmed">Típ: Bạn chỉ cần gõ tắt: D -> Đ (Đạt), C -> CĐ (Chưa đạt)</p>
-            {% else %}
-                <p class="dimmed">Típ: Bạn không cần gõ dấu phảy. Ví dụ nhập 7.5 thì chỉ cần gõ 75.</p>
-            {% endif %}
-        </div>
-    {% endif %}
+	<div class="pagination-right">
+		{% if user.userprofile.position == "GIAO_VIEN" %}
+			<p class="dimmed"> Thời gian được phép sửa điểm là {{ time_str }}	</p>
+		{% endif %}
+		
+		{% if selectedSubject.nx %}
+			<p class="dimmed">Típ: Bạn chỉ cần gõ tắt: D -> Đ (Đạt), C -> CĐ (Chưa đạt)</p>			
+		{% else %}
+			<p class="dimmed">Típ: Bạn không cần gõ dấu phảy. Ví dụ nhập 7.5 thì chỉ cần gõ 75.</p>
+		{% endif %}
+	</div>
 
     <script type="text/javascript">
         if (!haveError) {
