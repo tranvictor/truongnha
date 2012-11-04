@@ -98,6 +98,8 @@
                                     Sắp xếp
                                 </a>
                             </li>
+                        {% endif %}
+                        {% if pos > 3 %}
                             <li>
                                 <a id="move-students"
                                    href="#move_modal"
@@ -107,8 +109,6 @@
                                     Chuyển lớp
                                 </a>
                             </li>
-                        {% endif %}
-                        {% if pos > 3 %}
                             <li>
                                 <a
                                         title="Nhập danh sách học sinh từ file Excel"
@@ -389,6 +389,7 @@
 
     <div id="student_placeholder" style="display: none;">
     </div>
+    {% if pos > 3 %}
     <div class="modal fade" id="move_modal" style="display: none;">
         <div class="modal-header">
             <a class="close" data-dismiss="modal">×</a>
@@ -414,6 +415,7 @@
             <a href="#" class="btn" id="move-modal-exit">Thôi</a>
         </div>
     </div>
+
     <div class="modal fade" id="upload_modal" style="display: none;">
         <div class="modal-header">
             <a class="close" data-dismiss="modal">×</a>
@@ -478,7 +480,7 @@
             <a href="#" class="btn" id="upload-modal-exit">Thôi</a>
         </div>
     </div>
-
+    {% endif %}
     <div id="smsWindow" class="popup-windows">
         <section>
             <table class="table table-condensed no-border">
