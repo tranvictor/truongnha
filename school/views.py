@@ -1307,7 +1307,7 @@ def subjectAgenda(request, subject_id):
 @need_login
 def timetableTeacher(request):
     pos = get_position(request)
-
+    year = get_current_year(request)
     tc = get_teacher(request)
 
     if not tc:
@@ -1322,6 +1322,8 @@ def timetableTeacher(request):
 
     for sub in subjectList:
         cl = sub.class_id
+        if not cl.year_id.id == year.id:
+            continue
         for d in range(2, 8):
             tkbs = cl.tkb_set.get(day= d)
             nums = tkbs.get_numbers(sub)
