@@ -161,9 +161,6 @@ class RegisterView(TemplateView):
                     return HttpResponse(response, mimetype='json')
             else:
                 message = u"Có lỗi ở thông tin nhập vào"
-                for f in register_form:
-                    print f.errors
-                    print f.label
                 success = False
                 if request.is_ajax():
                     response = simplejson.dumps({
