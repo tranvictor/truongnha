@@ -1514,7 +1514,6 @@ def use_system_agenda(request, subject_id):
     if not school.status:
         return HttpResponseRedirect(reverse('setup'))
     try:
-        year = get_current_year(request)
         sub = Subject.objects.get(id=subject_id)
     except Exception:
         return HttpResponseRedirect(reverse('setup'))
@@ -1554,3 +1553,34 @@ def use_system_agenda(request, subject_id):
     t = loader.get_template(os.path.join('school', 'use_system_agenda.html'))
     return HttpResponse(t.render(c))
 
+@need_login
+def use_system_agenda(request, subject, grade, term):
+    school = get_school(request)
+    pos = get_position(request)
+    if pos < 4:
+        return HttpResponseRedirect(reverse('index'))
+
+
+    if request.method == 'POST':
+        SchoolLesson.objects.filter(school = school, subject=subject, grade=grade, term=term).delete()
+        lessSystem = SystemLesson.objects.filter(subject=subject, grade=grade, term=term)
+
+        if lessSystem is not None:
+            for iless in lessSystem:
+                less = SchoolLesson()
+                less.school = school
+                less.index = iless.index
+                less.subject = subject
+                less.term = term
+                less.note = iless.note
+                less.title = iless.title
+                less.save()
+
+        return HttpResponseRedirect(reverse('school_subject_agenda',args=[subject, grade, term]))
+    try:
+        lessons = SystemLesson.objects.filter(subject=subject, grade=grade, term=term)
+    except Exception:
+        lessons = None
+    c = RequestContext(request,{'list': lessons, 'sub' : subject, 'grade' : grade, 'term' : term, 'subject': SUBJECT_CHOICES[int(subject) - 1][1]})
+    t = loader.get_template(os.path.join('school', 'use_system_agenda_for_school.html'))
+    return HttpResponse(t.render(c))

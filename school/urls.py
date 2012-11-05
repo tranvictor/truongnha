@@ -180,6 +180,7 @@ urlpatterns = patterns('',
     url(r'export_school_agenda/(?P<subject>\w+)/(?P<grade>\w+)/(?P<term>\w+)$', excel_interaction.export_school_agenda, name="export_school_agenda"),
     url(r'use_school_agenda/(?P<subject_id>\w+)$', views.use_school_agenda, name="use_school_agenda"),
     url(r'use_system_agenda/(?P<subject_id>\w+)$', views.use_system_agenda, name="use_system_agenda"),
+    url(r'use_system_agenda/(?P<subject>\w+)/(?P<grade>\w+)/(?P<term>\w+)$', views.use_system_agenda_for_school, name="use_system_agenda_for_school"),
     url(r'report/', include(report_urls)),
     url(r'export_gvcn/$', excel_interaction.export_gvcn_list, name="export_gvcn_list"),
 #help
