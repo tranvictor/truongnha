@@ -28,6 +28,12 @@ class BaseTeacherView(TemplateView):
     def _right_teacher_id(self, teacher_id):
         return teacher_id == self.teacher.id
 
+    # Do the same work with Django reverse method but add
+    # valid teacher_id to **kwargs as an extra work
+    def reverse(self, *args, **kwargs):
+        kwargs['teacher_id'] = self.teacher_id
+        return reverse(*args, **kwargs)
+
     def dispatch(self, request, *args, **kwargs):
         # Try to dispatch to the right method; if a method doesn't exist,
         # defer to the error handler. Also defer to the error handler if the
@@ -44,10 +50,14 @@ class BaseTeacherView(TemplateView):
         self.request = request
         self.teacher_id = kwargs['teacher_id']
         self.teacher = self._get_teacher()
-        if (not self.allow_other_teacher
-                and not self._right_teacher_id(self.teacher_id)):
-            return render_to_response(NOT_ALLOWED_TEACHER_TEMPLATE,
-                    {}, context_instance=RequestContext(request))
+        if not self.teacher_id:
+            self.teacher_id = self.teacher.id
+            return HttpResponseRedirect(self.reserve('teacher_index'))
+        else:
+            if (not self.allow_other_teacher
+                    and not self._right_teacher_id(self.teacher_id)):
+                return render_to_response(NOT_ALLOWED_TEACHER_TEMPLATE,
+                        {}, context_instance=RequestContext(request))
         self.args = args
         self.kwargs = kwargs
         print self.teacher_id, 'before view'
@@ -70,10 +80,15 @@ class RegisterView(TemplateView):
 
         class Meta:
             model = models.Register
+            exclude = ('status', 'register_date', 'default_user_name',
+                    'default_password')
+
+    form = RegisterForm
 
     def get(self, request):
         if request.user.is_authenticated():
-            return HttpResponseRedirect(reverse('teacher_index'))
+            return HttpResponseRedirect(reverse('teacher_index',
+                kwargs={'teacher_id':''}))
         register_form = RegisterView.form()
         return render_to_response(RegisterView.template_name,
                 {'register_form': register_form},
