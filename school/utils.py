@@ -594,11 +594,11 @@ def completely_del_student(student):
     student.user_id.delete()
 
 
-def add_teacher( first_name=None, last_name=None, full_name=None,
-                 birthday=None, sms_phone='', sex='N', dan_toc='Kinh',
-                 major='', current_address='', home_town='', birthplace='',
-                 school=None, team_id=None, group_id=None, email='',
-                 force_update=False):
+def add_teacher(first_name=None, last_name=None, full_name=None,
+        birthday=None, sms_phone='', sex='N', dan_toc='Kinh',
+        major='', current_address='', home_town='', birthplace='',
+        school=None, team_id=None, group_id=None, email='',
+        force_update=False):
     if full_name:
         first_name, last_name = extract_fullname(full_name)
     else:
@@ -654,9 +654,8 @@ def add_teacher( first_name=None, last_name=None, full_name=None,
     teacher.last_name = last_name
     teacher.school_id = school
     teacher.birthday = birthday
-    find = school.teacher_set.filter( first_name__exact = first_name,
-                                      last_name__exact = last_name,
-                                      birthday__exact = birthday)
+    find = school.teacher_set.filter(first_name__exact=first_name,
+            last_name__exact=last_name, birthday__exact=birthday)
     if find :
         if force_update:
             teacher = find[0]

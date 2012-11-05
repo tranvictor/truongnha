@@ -28,6 +28,12 @@ $(document).ready(function () {
             $("#notify").showNotification("Họ và tên còn trống", 2000);
             return false;
         } else $("#id_name").css('border-color', '#CCC');
+        var registerBirthday = $("#id_birthday").val().replace(/^\s+|\s+$/g, '');
+        if (registerBirthday == "") {
+            $("#id_birthday").css('border-color', 'red');
+            $("#notify").showNotification("Ngày sinh còn trống", 2000);
+            return false;
+        } else $("#id_birthday").css('border-color', '#CCC');
         var registerPhone = $("#id_phone").val().replace(/^\s+|\s+$/g, '');
         if (registerPhone == "") {
             $("#id_phone").css('border-color', 'red');
@@ -42,17 +48,27 @@ $(document).ready(function () {
             return false;
         } else $("#id_email").css('border-color', '#CCC');
                 var recaptchaChallengeField = $("#recaptcha_challenge_field").val();
+        var registerSex = $("#id_sex").val().replace(/^\s+|\s+$/g, '');
+        if (registerSex == "") {
+            $("#id_sex").css('border-color', 'red');
+            $("#notify").showNotification("Giới tính còn trống", 2000);
+            return false;
+        } else $("#id_sex").css('border-color', '#CCC');
+
         var recaptchaResponseField = $("#recaptcha_response_field").val();
         // end checking
+        $("#notify").showNotification("Đang gửi dữ liệu...", 15000);
         if (self.text() == "Gửi") {
             var arg = { type:"POST",
                 url:"",
                 global:false,
-                data:{ name:registerName,
-                    phone:registerPhone,
-                    email:registerEmail,
-                    recaptcha_challenge_field:recaptchaChallengeField,
-                    recaptcha_response_field:recaptchaResponseField},
+                data:{ name: registerName,
+                    birthday: registerBirthday,
+                    phone: registerPhone,
+                    email: registerEmail,
+                    sex: registerSex,
+                    recaptcha_challenge_field: recaptchaChallengeField,
+                    recaptcha_response_field: recaptchaResponseField},
                 datatype:"json",
                 success:function (json) {
                     if (json.success) {

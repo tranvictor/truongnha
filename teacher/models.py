@@ -2,6 +2,8 @@
 import itertools, string
 import random
 import urllib2
+import unicodedata
+import re
 from datetime import date
 from django.db import models
 from django.contrib.auth.models import User
@@ -13,33 +15,38 @@ from sms.utils import sendSMS, send_email
 GENDER = ((u'Nam', u'Nam'), (u'Nữ', u'Nữ'), (u'Khác', u'Khác'))
 
 INITIAL_CONSONANTS = (set(string.ascii_lowercase)
-                      - set('aeiou')
-                      - set('qxcsjfw')
-                      | set('@#$%')
-                      | {'bl', 'br', 'cl', 'cr', 'dr', 'ch', 'gi', 'kh', 'ph',
-                         'pr', 'sk', 'ng', 'th', 'tr'})
+        - set('aeiou')
+        - set('qxcsjfw')
+        | set('@#$%')
+        | {'bl', 'br', 'cl', 'cr', 'dr', 'ch', 'gi', 'kh', 'ph',
+            'pr', 'sk', 'ng', 'th', 'tr'})
 
 FINAL_CONSONANTS = (set(string.ascii_lowercase)
-                    - set('aeiouxfjw')
-                    | set('@#$%')
-- set('qx')
-                    | {'ct', 'ft', 'mp', 'nd', 'ng', 'nk', 'nt', 'pt'})
+        - set('aeiouxfjw')
+        - set('qx')
+        | set('@#$%')
+        | {'ct', 'ft', 'mp', 'nd', 'ng', 'nk', 'nt', 'pt'})
 
 VOWELS = 'aeiou' # we'll keep this simple
 
 # each syllable is consonant-vowel-consonant "pronounceable"
-syllables = map(''.join,
-    itertools.product(INITIAL_CONSONANTS,
-        VOWELS,
-        FINAL_CONSONANTS))
+syllables = map(''.join, itertools.product(INITIAL_CONSONANTS,
+    VOWELS, FINAL_CONSONANTS))
+
 
 REGISTER_STATUS_CHOICES = (('DA_CAP', u"Đã cấp"), ('CHUA_CAP', u"Chưa cấp"))
 class Register(models.Model):
     name = models.CharField("Họ và tên",
             max_length=validations.FULL_NAME_MAX_LENGTH, blank=False)
+    birthday = models.DateField("Ngày sinh",
+            null=True, validators=[validations.birthday], blank=True)
     phone = models.CharField("Số điện thoại",
-            max_length=validations.SMS_PHONE_MAX_LENGTH, blank=True)
+            validators=[validations.phone],
+            max_length=validations.SMS_PHONE_MAX_LENGTH)
     email = models.EmailField("Email", blank=False)
+    sex = models.CharField("Giới tính",
+            max_length=validations.SEX_MAX_LENGTH,
+            choices=GENDER, default='Nam')
     status = models.CharField(u"Trạng thái",
             max_length=validations.STATUS_MAX_LENGTH, default='CHUA_CAP',
             choices=REGISTER_STATUS_CHOICES)
@@ -60,7 +67,7 @@ class Person(models.Model):
     first_name = models.CharField("Tên",
             max_length=validations.FIRST_NAME_MAX_LENGTH)
     birthday = models.DateField("Ngày sinh",
-            null=True, validators=[validations.birthday])
+            null=True, validators=[validations.birthday], blank=True)
     home_town = models.CharField("Quê quán",
             max_length=validations.HOME_TOWN_MAX_LENGTH, blank=True)
     sex = models.CharField("Giới tính",
@@ -79,13 +86,44 @@ class Person(models.Model):
     class Meta:
         abstract = True
 
-    def activate_account(self, words=3, digits=2):
-        self.user_id.is_active = True
+    @classmethod
+    def extract_fullname(cls, name):
+        eles = [e.capitalize() for e in name.split(' ') if e]
+        if not eles: raise Exception('BadName')
+        firstname = eles[-1]
+        lastname = ''
+        if len(firstname) == 1 and len(eles)>=2:
+            firstname = ' '.join(eles[-2:])
+            lastname = ' '.join(eles[:-2])
+        else:
+            firstname = eles[-1]
+            lastname = ' '.join(eles[:-1])
+        return firstname, lastname
+
+    def make_username(self):
+        username = self.short_name()
+        username = re.compile(r'\W+').sub('', username)
+        username = unicodedata.normalize('NFKD',
+                unicode(username)).encode('ascii','ignore').lower()
+        if len(username) > 28: username = username[:28]
+        i = 0
+        username1 = username
+        while User.objects.filter(username__exact=username1):
+            i += 1
+            username1 = username + str(i)
+        return username1
+
+    def make_password(self, words=3, digits=2):
         max_number = 10 ** digits
         raw_password = ''.join(random.sample(syllables, words))
         if digits > 0:
             raw_password += str(int(random.random() * max_number))
-        self.user_id.password = make_password(raw_password)
+        return raw_password
+
+    def activate_account(self, words=3, digits=2):
+        self.user.is_active = True
+        raw_password = self.make_password()
+        self.user.password = make_password(raw_password)
         if self.email or self.sms_phone:
             #Send Email
             email_sent = False
@@ -95,7 +133,7 @@ class Person(models.Model):
                 message = u'Tài khoản tại địa chỉ: \
                         https://www.truongnha.com của bạn là:\n\
                         Tên đăng nhập: %s\n Mật khẩu: %s\n\
-                        Xin cảm ơn.' % (unicode(self.user_id.username),
+                        Xin cảm ơn.' % (unicode(self.user.username),
                                 unicode(raw_password))
                 send_email(subject, message, to_addr=[self.email])
                 email_sent = True
@@ -105,12 +143,11 @@ class Person(models.Model):
                 content = 'Tai khoan Truongnha.com:\n\
                         Ten: %s\n\
                         Mat khau: %s\n\
-                        Xin cam on.' % (self.user_id.username,
+                        Xin cam on.' % (self.user.username,
                                 raw_password)
                 sendSMS(self.sms_phone, content,
-                        self.user_id, self.user_id,
-                        save_to_db=False,
-                        school=self.school_id)
+                        self.user, self.user,
+                        save_to_db=False)
                 sms_sent = True
             except Exception as e:
                 print e
@@ -119,13 +156,13 @@ class Person(models.Model):
                 #Send an SMS
         else:
             raise Exception("NoWayToContact")
-        self.user_id.save()
+        self.user.save()
         return raw_password
 
     def deactive_account(self):
-        if self.user_id.is_active:
-            self.user_id.is_active = False
-            self.user_id.save()
+        if self.user.is_active:
+            self.user.is_active = False
+            self.user.save()
         else:
             raise Exception("Already deactive")
 
@@ -219,7 +256,7 @@ class Student(Person):
     current_status = models.CharField("Tình trạng",
             max_length=200, blank=True, null=True, default='OK')
 
-    user_id = models.OneToOneField(User, verbose_name="tài khoản",
+    user = models.OneToOneField(User, verbose_name="tài khoản",
             null=True, blank=True) 
     classes = models.ManyToManyField(Class,
             through="Attend", related_name='student_set')
@@ -247,8 +284,8 @@ class Student(Person):
             return attends[0]._class
 
     def disable_account(self):
-        self.user_id.is_active = False
-        self.user_id.save()
+        self.user.is_active = False
+        self.user.save()
 
     class Meta:
         verbose_name = "Học sinh"
