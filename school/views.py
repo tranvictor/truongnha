@@ -1554,7 +1554,7 @@ def use_system_agenda(request, subject_id):
     return HttpResponse(t.render(c))
 
 @need_login
-def use_system_agenda(request, subject, grade, term):
+def use_system_agenda_for_school(request, subject, grade, term):
     school = get_school(request)
     pos = get_position(request)
     if pos < 4:
