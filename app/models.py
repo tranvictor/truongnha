@@ -481,13 +481,18 @@ class Register(models.Model):
     register_phone= models.CharField("Số điện thoại", max_length=15, blank=True)
     register_email= models.CharField("Email", max_length=250, blank=False)
     school_name = models.CharField("Tên trường", max_length=250, blank=False)
-    school_level = models.CharField(u"Khối học", max_length=6, blank=False, choices=KHOI_CHOICES)
+    school_level = models.CharField(u"Khối học", max_length=6, blank=False,
+            choices=KHOI_CHOICES)
     school_address = models.CharField(u"Địa chỉ", max_length=250, blank=True)
-    school_province = models.CharField(u"Tỉnh/Thành phố", max_length=150, choices=TINH_CHOICES)
-    status = models.CharField(u"Trạng thái", max_length=150, default='CHUA_CAP', choices=REGISTER_STATUS_CHOICES)
-    register_date = models.DateField(u"Ngày đăng ký", default=date.today() )
-    default_user_name = models.CharField(u'Tài khoản mặc định', max_length=250, blank=True)
-    default_password = models.CharField(u'Mật khẩu mặc định', max_length=250, blank=True)
+    school_province = models.CharField(u"Tỉnh/Thành phố", max_length=150,
+            choices=TINH_CHOICES)
+    status = models.CharField(u"Trạng thái", max_length=150, default='CHUA_CAP',
+            choices=REGISTER_STATUS_CHOICES)
+    register_date = models.DateField(u"Ngày đăng ký", default=date.today())
+    default_user_name = models.CharField(u'Tài khoản mặc định', max_length=250,
+            blank=True)
+    default_password = models.CharField(u'Mật khẩu mặc định', max_length=250,
+            blank=True)
     def __unicode__(self):
         return '-'.join([unicode(self.register_name), unicode(self.school_name)])
 

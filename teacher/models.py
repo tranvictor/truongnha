@@ -2,6 +2,7 @@
 import itertools, string
 import random
 import urllib2
+from datetime import date
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
@@ -32,7 +33,24 @@ syllables = map(''.join,
         VOWELS,
         FINAL_CONSONANTS))
 
+REGISTER_STATUS_CHOICES = (('DA_CAP', u"Đã cấp"), ('CHUA_CAP', u"Chưa cấp"))
+class Register(models.Model):
+    name = models.CharField("Họ và tên",
+            max_length=validations.FULL_NAME_MAX_LENGTH, blank=False)
+    phone = models.CharField("Số điện thoại",
+            max_length=validations.SMS_PHONE_MAX_LENGTH, blank=True)
+    email = models.EmailField("Email", blank=False)
+    status = models.CharField(u"Trạng thái",
+            max_length=validations.STATUS_MAX_LENGTH, default='CHUA_CAP',
+            choices=REGISTER_STATUS_CHOICES)
+    register_date = models.DateField(u"Ngày đăng ký", default=date.today())
+    default_user_name = models.CharField(u'Tài khoản mặc định',
+            max_length=validations.USERNAME_MAX_LENGTH, blank=True)
+    default_password = models.CharField(u'Mật khẩu mặc định',
+            max_length=validations.PASSWORD_MAX_LENGTH, blank=True)
 
+    def __unicode__(self):
+        return '-'.join([unicode(self.register_name), unicode(self.school_name)])
 
 class Person(models.Model):
     last_name = models.CharField("Họ",

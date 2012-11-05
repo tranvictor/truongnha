@@ -32,10 +32,10 @@ urlpatterns = patterns('',
     
     # urls for app app
     url(r'^app/', include(app_urls)),
-    
     # url for school app
     #url(r'^school/(?P<school_id>\d+)/', include(school_urls)),
     url(r'^school/', include(school_urls)),
+    url(r'^teacher/', include(api_urls)),
     url(r'^api/', include(api_urls)),
 
     url(r'^about/$', views.about, name="about"),
