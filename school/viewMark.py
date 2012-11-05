@@ -309,6 +309,15 @@ def markForTeacher(request, type=1, term_id=-1, subject_id=-1, move=None):
     timeToEdit = int(selectedTerm.year_id.school_id.get_setting('lock_time')) * 60
     now = datetime.datetime.now()
     timeNow = int((now - CHECKED_DATE).total_seconds())
+    if timeToEdit < 1440:
+        time_str = str(int(timeToEdit / 60)) + " giờ"
+    elif timeToEdit == 60 * 10000:
+        time_str = " cả học kỳ"
+    else:
+        hour = int((timeToEdit % 1440) / 60)
+        time_str = str(int(timeToEdit / 1440)) + " ngày"
+        if hour != 0:
+            time_str += " " + str(hour) + " giờ"
 
     print "lock time:", selectedTerm.year_id.school_id.get_setting('lock_time')
 
@@ -344,6 +353,7 @@ def markForTeacher(request, type=1, term_id=-1, subject_id=-1, move=None):
 
         'timeToEdit': timeToEdit,
         'timeNow': timeNow,
+        'time_str':time_str,
         'now': now,
         'isSchool': isSchool,
         }
