@@ -25,6 +25,23 @@ REALTIME = os.path.join('helptool','realtime_test.html')
 CONVERT_MARK= os.path.join('helptool','convert_mark.html')
 
 @transaction.commit_on_success
+def _sync_start_year():
+    school = Organization.objects.all()
+    for s in school:
+        stys = s.year_set.all()
+        dict = {}
+        for sty in stys:
+            if sty.time in dict:
+                dict[sty.time].append(sty)
+            else:
+                dict[sty.time] = [sty]
+        for i in dict.items():
+            l = i[1]
+            if len(l) > 1:
+                for ll in l:
+                    print ll.id, ll, s
+
+@transaction.commit_on_success
 def _sync_sms_content():
     smses = sms.objects.all()
     number = 0

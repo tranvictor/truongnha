@@ -21,7 +21,8 @@ from school.forms import UsernameChangeForm, SchoolForm,\
 from school.models import UncategorizedClass, Term, Subject, Pupil,\
         Class, DiemDanh, StartYear, Year, Lesson, TKDiemDanh, TKB,\
         SchoolLesson, Block, Teacher, Attend, COMMENT_SUBJECT_LIST
-from decorators import need_login, school_function, operating_permission
+from decorators import need_login, school_function, operating_permission,\
+        year_started
 from school.school_settings import CAP2_DS_MON, CAP1_DS_MON, CAP3_DS_MON
 from school.utils import get_current_year, get_school, get_permission,\
         get_current_term, move_student, get_position, in_school,\
@@ -1403,18 +1404,11 @@ def ssv(request,school_id):
         context_instance=context)
 
 @need_login
+@school_function
+@year_started
+@operating_permission(['HIEU_TRUONG', 'HIEU_PHO'])
 def school_subject_agenda(request, subject = 1, grade = 6, term = 1):
     school = get_school(request)
-    if not school.status:
-        return HttpResponseRedirect(reverse('setup'))
-    try:
-        year = get_current_year(request)
-    except Exception:
-        return HttpResponseRedirect(reverse('setup'))
-
-    user_type = get_permission(request)
-    if not user_type in ['HIEU_TRUONG', 'HIEU_PHO']:
-        return
     lessons = ''
     cap = int(school.school_level)
     if cap == 3:
