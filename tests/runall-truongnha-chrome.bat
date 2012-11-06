@@ -1,1 +1,1 @@
-for /d %%i in (*) do java -jar selenium-server.jar -htmlSuite *googlechrome "http://www.truongnha.com" %%i/suite.html results_%%i.html
+for /d %%i in (*) do java -jar selenium-server.jar -htmlSuite *googlechrome "http://truongnha.com" %%i/suite.html results_cr_%%i.html
