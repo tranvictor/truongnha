@@ -130,10 +130,7 @@ class Person(models.Model):
             sms_sent = False
             try:
                 subject = u'Kích hoạt tài khoản Trường Nhà'
-                message = u'Tài khoản tại địa chỉ: \
-                        https://www.truongnha.com của bạn là:\n\
-                        Tên đăng nhập: %s\n Mật khẩu: %s\n\
-                        Xin cảm ơn.' % (unicode(self.user.username),
+                message = u'Tài khoản tại địa chỉ: https://www.truongnha.com của bạn là:\nTên đăng nhập: %s\nMật khẩu: %s\nXin cảm ơn.' % (unicode(self.user.username),
                                 unicode(raw_password))
                 send_email(subject, message, to_addr=[self.email])
                 email_sent = True
