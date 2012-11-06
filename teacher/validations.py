@@ -14,6 +14,9 @@ SMS_PHONE_MAX_LENGTH = 13 # because of region code: 84, +84
 CURRENT_ADDRESS_MAX_LENGTH = 250
 CLASS_NAME_MAX_LENGTH = 250
 RECEIVABLES_NAME_MAX_LENGTH = 500
+STATUS_MAX_LENGTH = 150
+USERNAME_MAX_LENGTH = 150
+PASSWORD_MAX_LENGTH = 150
 
 def birthday(value):
     if value < date(1900, 1, 1) or value > date.today():

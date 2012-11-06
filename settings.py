@@ -223,7 +223,8 @@ INSTALLED_APPS = (
     'api',
     'pagination',
     'djcelery',
-    #'south', #for database migration/upgrade
+    'bootstrapform',
+    'south', #for database migration/upgrade
 #    'django_jenkins',
 )
 

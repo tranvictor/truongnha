@@ -105,7 +105,7 @@
         <br>
         <br>
         <div class="row-fluid pagination-centered">
-            <div class="span4 control-group">
+            <div class="span3 control-group">
                 <div class="controls">
                     <a class="btn btn-primary btn-large" id="login" href="/login">
                         Đăng nhập</a>
@@ -115,7 +115,7 @@
                     </p>
                 </div>
             </div>
-            <div class="span4 control-group">
+            <div class="span3 control-group">
                 <div class="controls">
                     <form id="login-form" style="display: none;" action="/login/" method="POST">{% csrf_token %}
                         <input id="id_username" type="text" name="username" maxlength="30">
@@ -167,16 +167,28 @@
                     </p>
                 </div>
             </div>
-            <div class="span4 control-group">
+            <div class="span3 control-group">
                 <div class="controls">
                     <a class="btn btn-large btn-danger" id="register" href="/register">
                         Đăng ký trường mới</a>
 
                     <p class="help-block">
-                        Hiệu trưởng, hiệu phó đăng ký để sử dụng.
+                        Hiệu trưởng, hiệu phó đăng ký tài khoản cho trường học.
                     </p>
                 </div>
             </div>
+            <div class="span3 control-group">
+                <div class="controls">
+                    <a class="btn btn-large btn-danger" id="register"
+                        href="{% url 'teacher_register' %}">
+                        Đăng ký</a>
+
+                    <p class="help-block">
+                        Dành cho giáo viên muốn quản lý lớp của mình, lớp dạy thêm.
+                    </p>
+                </div>
+            </div>
+
         </div>
         <br><br>
         <div class="row-fluid">

@@ -202,6 +202,8 @@ class sms(models.Model):
             else:
                 raise Exception('%s-SendFailed' % result)
         else:
+            #TODO: allow for teacher app, in this app
+            # we don't have any school
             raise Exception('SMSNotAllowed')
 
     def _send_mark_sms(self, marks=None, school=None):
