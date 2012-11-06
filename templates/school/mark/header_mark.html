@@ -1,7 +1,7 @@
 ﻿{% load upload_tags %}
 <div class="notify-widget-pane">
     <button style="display:none;background: none;border: none;" id="buttonSave" onclick="update()">
-        <div id="messageChanging" class="notify"></div>
+        <span id="messageChanging" class="notify"></span>
     </button>
 </div>
 
@@ -113,7 +113,7 @@
     </div>
     <div class="modal-body">
         <!-- The file upload form used as target for the file upload widget -->
-        <form id="fileupload" action="" method="POST" enctype="multipart/form-data">
+        <form id="fileupload" method="POST" enctype="multipart/form-data">
             <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
             <div class="row fileupload-buttonbar">
                 <div class="span5">
@@ -165,36 +165,30 @@
     Miệng
     <select id="colMiengExport" style="width:70px">
         {% for i in secondLoop %}
-            {% if  i == 4 %}
+            {% if i == 4 %}
                 <option value="{{ i }}" selected> {{ i }} </option>
-            {% else %}
-                {% if  i > 4 %}
-                    <option value="{{ i }}"> {{ i }} </option>
-                {% endif %}
+            {% elif i > 4 %}
+                <option value="{{ i }}"> {{ i }} </option>
             {% endif %}
         {% endfor %}
     </select>
     &nbsp;&nbsp;&nbsp; 15 phút
     <select id="col15PhutExport" style="width:70px">
         {% for i in secondLoop %}
-            {% if  i == 4 %}
+            {% if i == 4 %}
                 <option value="{{ i }}" selected> {{ i }} </option>
-            {% else %}
-                {% if  i > 4 %}
-                    <option value="{{ i }}"> {{ i }} </option>
-                {% endif %}
+            {% elif i > 4 %}
+                <option value="{{ i }}"> {{ i }} </option>
             {% endif %}
         {% endfor %}
     </select>
     &nbsp;&nbsp;&nbsp;Một tiết
     <select id="colMotTietExport" style="width:70px">
         {% for i in secondLoop %}
-            {% if  i == 4 %}
+            {% if i == 4 %}
                 <option value="{{ i }}" selected> {{ i }} </option>
-            {% else %}
-                {% if  i > 4 %}
+            {% elif i > 4 %}
                     <option value="{{ i }}"> {{ i }} </option>
-                {% endif %}
             {% endif %}
         {% endfor %}
     </select>
