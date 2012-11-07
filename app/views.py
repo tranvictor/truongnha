@@ -505,7 +505,7 @@ def profile_detail(request, username, public_profile_field=None,
             print e
 
         try:
-            profile_obj.phone = request.POST['phone']
+#            profile_obj.phone = request.POST['phone']
             profile_obj.notes = request.POST['notes']
             profile_obj.save()
             message = u'Đã lưu'
