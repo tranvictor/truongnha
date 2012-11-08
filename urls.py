@@ -10,6 +10,7 @@ import api.urls as api_urls
 import teacher.urls as teacher_urls
 import help.urls as help_urls
 import views
+from teacher.views import ActivateView
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
@@ -45,6 +46,7 @@ urlpatterns = patterns('',
     #url(r'^school/(?P<school_id>\d+)/', include(school_urls)),
     url(r'^school/', include(school_urls)),
     url(r'^teacher/(?P<teacher_id>\d*)/', include(teacher_urls)),
+    url(r'^teacher/activate/(?P<activation_key>[a-zA-Z0-9_.-]+)/$', ActivateView.as_view(), name='teacher_activate'),
     url(r'^api/', include(api_urls)),
 
     url(r'^about/$', views.about, name="about"),

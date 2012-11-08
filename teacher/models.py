@@ -43,7 +43,7 @@ class Register(models.Model):
     phone = models.CharField("Số điện thoại",
             validators=[validations.phone],
             max_length=validations.SMS_PHONE_MAX_LENGTH)
-    email = models.EmailField("Email", blank=False)
+    email = models.EmailField("Email", blank=False, max_length=validations.USERNAME_MAX_LENGTH, unique=True)
     sex = models.CharField("Giới tính",
             max_length=validations.SEX_MAX_LENGTH,
             choices=GENDER, default='Nam')
@@ -55,9 +55,11 @@ class Register(models.Model):
             max_length=validations.USERNAME_MAX_LENGTH, blank=True)
     default_password = models.CharField(u'Mật khẩu mặc định',
             max_length=validations.PASSWORD_MAX_LENGTH, blank=True)
+    activation_key = models.CharField(max_length=validations.ACTIVATION_MAX_LENGTH)
 
     def __unicode__(self):
-        return '-'.join([unicode(self.register_name), unicode(self.school_name)])
+        return '-'.join([unicode(self.name), unicode(self.activation_key), unicode(self.email)])
+
 
 class Person(models.Model):
     last_name = models.CharField("Họ",
@@ -101,11 +103,11 @@ class Person(models.Model):
         return firstname, lastname
 
     def make_username(self):
-        username = self.short_name()
-        username = re.compile(r'\W+').sub('', username)
-        username = unicodedata.normalize('NFKD',
-                unicode(username)).encode('ascii','ignore').lower()
-        if len(username) > 28: username = username[:28]
+        username = self.email.lower()
+#        username = re.compile(r'\W+').sub('', username)
+#        username = unicodedata.normalize('NFKD',
+#                unicode(username)).encode('ascii','ignore').lower()
+#        if len(username) > 28: username = username[:28]
         i = 0
         username1 = username
         while User.objects.filter(username__exact=username1):

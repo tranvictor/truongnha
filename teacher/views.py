@@ -2,6 +2,8 @@
 # Create your views here.
 import os
 import simplejson
+import random
+import string
 from datetime import date
 from recaptcha.client import captcha
 from django.views.generic import TemplateView
@@ -14,7 +16,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 
 from teacher import models
-from teacher.models import Person, Teacher
+from teacher.models import Person, Teacher, Register
 from sms.utils import send_email
 import settings
 
@@ -80,39 +82,10 @@ class RegisterView(TemplateView):
             super(RegisterView.RegisterForm, self).__init__(*args, **kwargs)
             self.fields['birthday'].widget.attrs.update({'class' : 'datepicker'})
 
-        def save(self):
-            super(RegisterView.RegisterForm, self).save()
-            message = u'Tên người đăng ký: %s\nNgày sinh: %s\nĐiện thoại người đăng ký: %s\nEmail người đăng ký: %s\n' % (self.cleaned_data['name'],
-                    self.cleaned_data['birthday'],
-                    self.cleaned_data['phone'],
-                    self.cleaned_data['email'],)
-            send_email(u'Đăng kí tài khoản mới', message,
-                    to_addr=['vu.tran54@gmail.com'])
-            first_name, last_name = Person.extract_fullname(
-                    self.cleaned_data['name'])
-
-            teacher = Teacher(
-                    first_name=first_name,
-                    last_name=last_name,
-                    sms_phone=self.cleaned_data['phone'],
-                    email=self.cleaned_data['email'],
-                    birthday=self.cleaned_data['birthday'],
-                    sex=self.cleaned_data['sex'])
-            username = teacher.make_username()
-            raw_password = teacher.make_password()
-            user = User.objects.create(
-                    username=username,
-                    password=make_password(raw_password),
-                    first_name=first_name,
-                    last_name=last_name)
-            teacher.user = user
-            teacher.save()
-            return teacher
-
         class Meta:
-            model = models.Register
+            model = Register
             exclude = ('status', 'register_date', 'default_user_name',
-                    'default_password')
+                    'default_password', 'activation_key')
 
     form = RegisterForm
 
@@ -145,22 +118,37 @@ class RegisterView(TemplateView):
         else:
             data = request.POST.copy()
             data['register_date'] = date.today()
+            activation_key = ''.join(random.choice(string.ascii_uppercase + string.digits) for n in range(20))
+            data['activation_key'] = activation_key
             register_form = RegisterView.form(data=data)
             if register_form.is_valid():
-                teacher = register_form.save()
-                teacher.activate_account()
+                new_register = register_form.save(commit = False)
+                new_register.activation_key = activation_key
+                new_register.save()
+
+
                 message = u'Bạn đã đăng ký thành công. \
-                        Tài khoản của bạn sẽ được gửi vào email sớm nhất có thể.'
+                        Vui lòng kiểm tra email để kích hoạt tài khoản.'
+                mail_message = u'Vui lòng truy cập vào địa chỉ http://truongnha.com/teacher/activate/%s/ để hoàn tất đăng kí và kích hoạt tài khoản của bạn.' % (data['activation_key'])
+                send_email(u'Hoàn tất đăng kí tại TruongNha.com', mail_message,
+                    to_addr=[data['email']])
+
                 success = True
                 if request.is_ajax():
                     response = simplejson.dumps({
                         'success': success,
                         'message': message,
-                        'redirect': reverse('login')
+                        'redirect': reverse('index')
                     })
                     return HttpResponse(response, mimetype='json')
             else:
                 message = u"Có lỗi ở thông tin nhập vào"
+                try:
+                    old_register = Register.objects.get(email=data['email'])
+                    if old_register:
+                        message += u': Email đã tồn tại.'
+                except Exception as e:
+                    pass
                 success = False
                 if request.is_ajax():
                     response = simplejson.dumps({
@@ -173,3 +161,52 @@ class IndexView(BaseTeacherView):
     def get(self, *args, **kwargs):
         print 'in view'
         return HttpResponse('', mimetype='json')
+
+class ActivateView(TemplateView):
+    template_name = os.path.join('teacher', 'activate.html')
+    def get(self, *args, **kwargs):
+        key = self.kwargs['activation_key']
+        try:
+            register = Register.objects.get(activation_key = key, status__exact = 'CHUA_CAP')
+        except Exception as e:
+            print e
+            message = u'Địa chỉ kích hoạt không tồn tại. Tài khoản của bạn đã được kích hoạt hoặc không hợp lệ.'
+            success = False
+            return render_to_response(ActivateView.template_name,
+                    {'message': message, 'success' : success})
+
+
+        register.status='DA_CAP'
+        register.save()
+        message = u'Tên người đăng ký: %s\nNgày sinh: %s\nĐiện thoại người đăng ký: %s\nEmail người đăng ký: %s\n' % (register.name,
+                register.birthday,
+                register.phone,
+                register.email,)
+        send_email(u'Đăng kí tài khoản mới', message,
+                to_addr=['vu.tran54@gmail.com', 'loi.luuthe@gmail.com'])
+        first_name, last_name = Person.extract_fullname(
+                register.name)
+
+        teacher = Teacher(
+                first_name=first_name,
+                last_name=last_name,
+                sms_phone=register.phone,
+                email=register.email,
+                birthday=register.birthday,
+                sex=register.sex)
+        username = teacher.make_username()
+        raw_password = teacher.make_password()
+        user = User.objects.create(
+                username=username,
+                password=make_password(raw_password),
+                first_name=first_name,
+                last_name=last_name)
+        teacher.user = user
+        teacher.save()
+        teacher.activate_account()
+        message = u'Chúc mừng bạn đã kích hoạt thành công tài khoản. Vui lòng kiểm tra email để biết được thông tin đăng nhập.'
+        success = True
+        return render_to_response(ActivateView.template_name,
+                {'message': message, 'success' : success})
+
+

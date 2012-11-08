@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load bootstrap %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Kích hoạt tài khoản cho giáo viên' %}
+{% endblock %}
+
+{% block content %}
+    <div class="row-fluid">
+        <div class="span10 alert alert-error">
+            <div class="lead">{{ message }}</div>
+
+            <a class="btn btn-primary btn-large" href="/"><i class="icon-home"></i> Trở về trang chủ</a>
+
+            <a class="btn btn-warning btn-large" href="{% url login %}"><i class="icon-signin"></i> Đăng nhập để sử dụng hệ thống</a>
+        </div>
+    </div>
+{% endblock %}
