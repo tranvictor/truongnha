@@ -21,7 +21,8 @@ from school.forms import UsernameChangeForm, SchoolForm,\
 from school.models import UncategorizedClass, Term, Subject, Pupil,\
         Class, DiemDanh, StartYear, Year, Lesson, TKDiemDanh, TKB,\
         SchoolLesson, Block, Teacher, Attend, COMMENT_SUBJECT_LIST
-from decorators import need_login, school_function, operating_permission
+from decorators import need_login, school_function, operating_permission,\
+        year_started
 from school.school_settings import CAP2_DS_MON, CAP1_DS_MON, CAP3_DS_MON
 from school.utils import get_current_year, get_school, get_permission,\
         get_current_term, move_student, get_position, in_school,\
@@ -1307,7 +1308,7 @@ def subjectAgenda(request, subject_id):
 @need_login
 def timetableTeacher(request):
     pos = get_position(request)
-
+    year = get_current_year(request)
     tc = get_teacher(request)
 
     if not tc:
@@ -1322,6 +1323,8 @@ def timetableTeacher(request):
 
     for sub in subjectList:
         cl = sub.class_id
+        if not cl.year_id.id == year.id:
+            continue
         for d in range(2, 8):
             tkbs = cl.tkb_set.get(day= d)
             nums = tkbs.get_numbers(sub)
@@ -1401,18 +1404,11 @@ def ssv(request,school_id):
         context_instance=context)
 
 @need_login
+@school_function
+@year_started
+@operating_permission(['HIEU_TRUONG', 'HIEU_PHO'])
 def school_subject_agenda(request, subject = 1, grade = 6, term = 1):
     school = get_school(request)
-    if not school.status:
-        return HttpResponseRedirect(reverse('setup'))
-    try:
-        year = get_current_year(request)
-    except Exception:
-        return HttpResponseRedirect(reverse('setup'))
-
-    user_type = get_permission(request)
-    if not user_type in ['HIEU_TRUONG', 'HIEU_PHO']:
-        return
     lessons = ''
     cap = int(school.school_level)
     if cap == 3:
@@ -1512,7 +1508,6 @@ def use_system_agenda(request, subject_id):
     if not school.status:
         return HttpResponseRedirect(reverse('setup'))
     try:
-        year = get_current_year(request)
         sub = Subject.objects.get(id=subject_id)
     except Exception:
         return HttpResponseRedirect(reverse('setup'))
@@ -1552,3 +1547,34 @@ def use_system_agenda(request, subject_id):
     t = loader.get_template(os.path.join('school', 'use_system_agenda.html'))
     return HttpResponse(t.render(c))
 
+@need_login
+def use_system_agenda_for_school(request, subject, grade, term):
+    school = get_school(request)
+    pos = get_position(request)
+    if pos < 4:
+        return HttpResponseRedirect(reverse('index'))
+
+
+    if request.method == 'POST':
+        SchoolLesson.objects.filter(school = school, subject=subject, grade=grade, term=term).delete()
+        lessSystem = SystemLesson.objects.filter(subject=subject, grade=grade, term=term)
+
+        if lessSystem is not None:
+            for iless in lessSystem:
+                less = SchoolLesson()
+                less.school = school
+                less.index = iless.index
+                less.subject = subject
+                less.term = term
+                less.note = iless.note
+                less.title = iless.title
+                less.save()
+
+        return HttpResponseRedirect(reverse('school_subject_agenda',args=[subject, grade, term]))
+    try:
+        lessons = SystemLesson.objects.filter(subject=subject, grade=grade, term=term)
+    except Exception:
+        lessons = None
+    c = RequestContext(request,{'list': lessons, 'sub' : subject, 'grade' : grade, 'term' : term, 'subject': SUBJECT_CHOICES[int(subject) - 1][1]})
+    t = loader.get_template(os.path.join('school', 'use_system_agenda_for_school.html'))
+    return HttpResponse(t.render(c))

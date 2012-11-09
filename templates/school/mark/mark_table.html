@@ -75,7 +75,7 @@
         <label>Học kỳ</label>
         <select class="input-medium" id="term" onchange="submitTerm();">
             {% for term in termList %}
-                <option value={{ term.id }} selected> {{ term }} </option>
+                <option value={{ term.id }}> {{ term }} </option>
             {% endfor %}
         </select>
         {% if user.userprofile.position != "GIAO_VIEN" %}

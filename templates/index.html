@@ -75,7 +75,7 @@
 {% block content %}
     {% if not user.is_authenticated %}
         <div class="row-fluid" style="background-color: #ECFFB3;">
-            <div class="pagination-centered" style="padding-top:5em;">
+            <div class="pagination-centered hidden-phone" style="padding-top:5em;">
                 <i class="icon-home" style="color: rgba(169, 1, 75, 0.8);font-size:10em;"
                    title="Trường học, giáo viên"></i>
                 <span style="font-size: 2em">
@@ -258,21 +258,12 @@
         <br>
         <h2 class="pagination-centered">Một số video hướng dẫn sử dụng</h2>
         <div class="row-fluid">
-            <div class="span6">
-                <h3>Video hướng dẫn sử dụng</h3>
-                <iframe width="100%" height="400"
-                        src="http://www.youtube.com/embed/videoseries?list=PLuNGr6xiwkabACXeCfKRlYSSST37VV8ZR&amp;hl=en_US"
-                        frameborder="0" allowfullscreen></iframe>
-            </div>
             <div class="span3">
-                <h3>Quản lý trường</h3>
+                <h3>Cho quản lý trường</h3>
+                <h5>Khởi tạo</h5>
                 <ul>
                     <li><a target="_blank" href="http://www.youtube.com/watch?v=4HtMwI6Ejkk&fs=1">
                         Khởi tạo dữ liệu lần đầu cho trường
-                    </a></li>
-
-                    <li><a target="_blank" href="http://www.youtube.com/watch?v=OjA6vTz3SQc&fs=1">
-                        Phân lớp đầu năm học
                     </a></li>
 
                     <li><a target="_blank" href="http://www.youtube.com/watch?v=iqL_NQ-5PBU&fs=1">
@@ -283,15 +274,12 @@
                         Quản lý giáo viên
                     </a></li>
 
-                    <li><a target="_blank" href="http://www.youtube.com/watch?v=jGYB5gFn3sA&fs=1">
-                        Nhắn tin liên lạc
+                    <li><a target="_blank" href="http://www.youtube.com/watch?v=RsfUBrbFixA&fs=1">
+                        Chuyển sang học kì, năm học khác
                     </a></li>
 
-                    <li><a target="_blank" href="http://www.youtube.com/watch?v=vtnqezBasq4&fs=1">
-                        Báo cáo</a></li>
-
-                    <li><a target="_blank" href="http://www.youtube.com/watch?v=RsfUBrbFixA&fs=1">
-                        Chuyển kì, sang năm học mới
+                    <li><a target="_blank" href="http://www.youtube.com/watch?v=OjA6vTz3SQc&fs=1">
+                        Phân lớp đầu năm học mới
                     </a></li>
 
                     <li><a target="_blank" href="http://www.youtube.com/watch?v=9MS6vF_kpxw&fs=1">
@@ -299,16 +287,23 @@
                     </a></li>
 
                     <li><a target="_blank" href="http://www.youtube.com/watch?v=M6mb1cr1lsE&fs=1">
-                        Thông tin tài khoản
-                    </a></li>
-
-                    <li><a target="_blank" href="http://www.youtube.com/watch?v=JxOVxSJwTn4&fs=1">
-                        Kì thi
+                        Thông tin tài khoản người dùng
                     </a></li>
                 </ul>
-            </div>
-            <div class="span3">
-                <h3>Quản lý lớp</h3>
+                <h5>Báo cáo/liên lạc</h5>
+                <ul>
+                    <li><a target="_blank" href="http://www.youtube.com/watch?v=jGYB5gFn3sA&fs=1">
+                        Nhắn tin liên lạc
+                    </a></li>
+
+                    <li><a target="_blank" href="http://www.youtube.com/watch?v=vtnqezBasq4&fs=1">
+                        Báo cáo</a></li>
+
+                    {#                    <li><a target="_blank" href="http://www.youtube.com/watch?v=JxOVxSJwTn4&fs=1">#}
+                    {#                        Kì thi#}
+                    {#                    </a></li>#}
+                </ul>
+                <h5>Quản lý lớp/học tập</h5>
                 <ul>
                     <li><a target="_blank" href="http://www.youtube.com/watch?v=AcgXRqRdygg&fs=1">
                         Nhập điểm
@@ -329,21 +324,56 @@
                     </a></li>
 
                     <li><a target="_blank" href="http://www.youtube.com/watch?v=FqKNUDGVHKI&fs=1">
-                        Xem tổng kết lớp
-                    </a></li>
-                    <li><a target="_blank" href="http://www.youtube.com/watch?v=i_f0pKmhZmQ&fs=1">
-                        Nhập điểm thi lại
+                        Tổng kết lớp cuối năm
                     </a></li>
 
-                    <li><a target="_blank" href="http://www.youtube.com/watch?v=tiVQOmYqXmA&fs=1">
-                        Nhập điểm rèn luyện thêm trong hè
-                    </a></li>
-
+                    <li>Nhập điểm
+                        <a target="_blank" href="http://www.youtube.com/watch?v=i_f0pKmhZmQ&fs=1">
+                            thi lại</a>, <a target="_blank" href="http://www.youtube.com/watch?v=tiVQOmYqXmA&fs=1">
+                            rèn luyện thêm
+                        </a></li>
                 </ul>
             </div>
+            <div class="span6">
+                <h3>Xem lần lượt các video hướng dẫn</h3>
+                <iframe width="100%" height="400"
+                        src="http://www.youtube.com/embed/videoseries?list=PLuNGr6xiwkabACXeCfKRlYSSST37VV8ZR&amp;hl=en_US"
+                        frameborder="0" allowfullscreen></iframe>
+            </div>
+            <div class="span3">
+                <h3>Cho giáo viên</h3>
+                <ul>
+                    <li><a target="_blank" href="http://www.youtube.com/watch?v=mAg3F9CKijA">
+                        Nhập điểm
+                    </a></li>
 
+                    <li><a target="_blank" href="http://www.youtube.com/watch?v=lpf6RdOdgXY">
+                        Nhập điểm danh
+                    </a></li>
+                    <li><a target="_blank" href="http://www.youtube.com/watch?v=5_r3uLS24bc">
+                        Nhập hạnh kiểm
+                    </a></li>
 
-            </ul>
+                    <li><a target="_blank" href="http://www.youtube.com/watch?v=qrP68COcPa0">
+                        Quản lý lớp chủ nhiệm
+                    </a></li>
+
+                    <li><a target="_blank" href="http://www.youtube.com/watch?v=Ha_fX4d_R_c">
+                        Nhắn tin cho các giáo viên khác
+                    </a></li>
+
+                    <li><a target="_blank" href="http://www.youtube.com/watch?v=hr5G9tJwOxY">
+                        Xem thông tin học sinh các lớp khác
+                    </a></li>
+                    <li><a target="_blank" href="http://www.youtube.com/watch?v=ap3ZwzGPVoY">
+                        Xem tài khoản/đổi mật khẩu
+                    </a></li>
+
+                    <li style="list-style-type: "><a target="_blank" href="http://www.youtube.com/watch?v=Pxo30d_XEP0">
+                        Lịch giảng dạy
+                    </a></li>
+                </ul>
+            </div>
         </div>
         <br>
         <br>
@@ -515,7 +545,6 @@
            title="Quản lý phân phối chương trình của hệ thống">
             Phân phối chương trình
         </a>
-
         <a id="db-man" class="btn btn-large btn-danger" href="/admin" title="Mở trình quản trị sẵn có của hệ thống">
             <span>Duyệt dữ liệu</span></a>
     {% endif %}

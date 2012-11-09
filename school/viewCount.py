@@ -1173,19 +1173,19 @@ def countSMS(request, type=None,
         list = sms.objects.filter(
             created__gte=firstDay,
             created__lte=secondDay,
-            sender__userprofile__organization=school).order_by("-created")
+            sender__userprofile__organization=school).order_by("-modified")
     elif int(type) == 2:
         list = sms.objects.filter(
             created__gte=firstDay,
             created__lte=secondDay,
             sender__userprofile__organization=school,
-            success=True).order_by("-created")
+            success=True).order_by("-modified")
     elif int(type) == 3:
         list = sms.objects.filter(
             created__gte=firstDay,
             created__lte=secondDay,
             sender__userprofile__organization=school,
-            success=False).order_by("-created")
+            success=False).order_by("-modified")
 
     users = User.objects.filter(userprofile__organization=school)
     teacher_users = queryset_to_dict(users)

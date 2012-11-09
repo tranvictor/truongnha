@@ -234,7 +234,7 @@ def viewClassDetail(request, class_id):
                 lb = get_lower_bound(school)
                 syear = this_year() - cl.block_id.number + lb
                 start_year, temp = StartYear.objects.get_or_create(
-                        time=syear, school_id = school)
+                        time=syear, school_id=school)
                 data = None
                 try:
                     data = {'first_name': request.POST['first_name'],

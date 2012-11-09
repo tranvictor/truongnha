@@ -105,7 +105,7 @@ div.notify-widget-pane {
     width: 100%;
 }
 
-div.notify {
+div.notify, span.notify {
     font-size: 12px;
     font-weight: bold;
     text-align: center;
