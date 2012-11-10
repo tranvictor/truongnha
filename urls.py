@@ -10,7 +10,7 @@ import api.urls as api_urls
 import teacher.urls as teacher_urls
 import help.urls as help_urls
 import views
-from teacher.views import ActivateView
+from teacher.views import ActivateView, ForgetPasswordView
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
@@ -33,6 +33,7 @@ urlpatterns = patterns('',
         name="manage_register"),
     url(r'^manageRegister/(?P<sort_by_date>\w+)/(?P<sort_by_status>\w+)/$',
         app_views.manage_register, name="manage_register"),
+    url(r'^teacher/forgetpassword$',ForgetPasswordView.as_view(), name='teacher_forget_password'),
 
 
     # Uncomment the next line to enable the admin:
