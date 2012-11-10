@@ -64,11 +64,10 @@
             width: 100%;
         }
 
-            /*.carousel-caption {*/
-            /*top: 0;*/
-            /*bottom: auto;*/
-            /*background: rgba(0, 0,  0, .5);*/
-            /*}*/
+        div.dropdown:hover > ul.dropdown-menu{
+            display: block;
+            margin: 0;
+        }
     </style>
 {% endblock %}
 
@@ -123,7 +122,7 @@
                         <input id="login_type" type="text" name="login_type" maxlength="30">
                     </form>
                     <div class="dropdown" style="display: inline-block;">
-                        <a class="btn btn-info btn-large dropdown-toggle" data-toggle="dropdown" href="#">
+                        <a class="btn btn-info btn-large dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" href="#">
                             Dùng thử
                             <span class="caret"></span>
                         </a>
@@ -145,20 +144,20 @@
                                     Giáo viên/Giáo viên chủ nhiệm</a>
                             </li>
                             <li>
-                                <a title="Dùng thử với tài khoản sở giáo dục"
-                                   href="#"
-                                   class=""
-                                   id="demo-login-upper">
-                                    <span class="icon-bullhorn"></span>
-                                    Sở giáo dục</a>
-                            </li>
-                            <li>
                                 <a title="Dùng thử với tài khoản học sinh/phụ huynh"
                                    href="#"
                                    class=""
                                    id="demo-login-student">
                                     <span class="icon-user"></span>
                                     Học sinh/Phụ huynh</a>
+                            </li>
+                            <li>
+                                <a title="Dùng thử với tài khoản sở giáo dục"
+                                   href="#"
+                                   class=""
+                                   id="demo-login-upper">
+                                    <span class="icon-bullhorn"></span>
+                                    Sở giáo dục</a>
                             </li>
                         </ul>
                     </div>
