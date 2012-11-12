@@ -20,8 +20,7 @@ SMS_TYPES = (('TU DO', u'Tự do'), ('THONG_BAO', u'Thông báo'),)
 #TEMP_FILE_LOCATION = os.path.join(os.path.dirname(__file__), 'uploaded')
 def save_file(file):
     saved_file = open(os.path.join(settings.TEMP_FILE_LOCATION,
-        'sms_input.xls'),
-        'wb+')
+        'sms_input.xls'), 'wb+')
     for chunk in file.chunks():
         saved_file.write(chunk)
     saved_file.close()

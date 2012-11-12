@@ -8,11 +8,11 @@ from django.template import RequestContext
 from app.models import Organization
 from school.models import Pupil, TKDiemDanh, Attend, StartYear, Mark, Class,\
         Teacher, Subject, TKMon, DiemDanh, Year
-from sms.models import sms
+from sms.models import sms, get_tsp
 from school.school_settings import CAP2_DS_MON, CAP1_DS_MON, CAP3_DS_MON
 from school.templateExcel import normalize, CHECKED_DATE
 from school.utils import to_en1, add_subject, get_lower_bound,\
-        queryset_to_dict, get_school, get_current_year
+        queryset_to_dict, get_current_year
 from school.utils import normalize as norm
 from sms.utils import to_ascii
 from django.db import transaction
@@ -23,6 +23,29 @@ SYNC_SUBJECT = os.path.join('helptool','sync_subject.html')
 TEST_TABLE = os.path.join('helptool','test_table.html')
 REALTIME = os.path.join('helptool','realtime_test.html')
 CONVERT_MARK= os.path.join('helptool','convert_mark.html')
+
+def _tsp_statistic(school=None):
+    if school:
+        teacher_phone = school.teacher_set.exclude(sms_phone='').values('sms_phone')
+        student_phone = school.pupil_set.exclude(sms_phone='').values('sms_phone')
+    else:
+        teacher_phone = Teacher.objects.exclude(sms_phone='').values('sms_phone')
+        student_phone = Pupil.objects.exclude(sms_phone='').values('sms_phone')
+    phones = []
+    for tphone in teacher_phone:
+        phones.append(tphone['sms_phone'])
+    for sphone in student_phone:
+        phones.append(sphone['sms_phone'])
+    total = len(phones)
+    result = {}
+    for p in phones:
+        tsp = get_tsp(p)
+        if not tsp: tsp = 'OTHERS'
+        if tsp in result: result[tsp] += 1
+        else: result[tsp] = 1
+    print 'total', total
+    for re in result.items():
+        print re[0], re[1]
 
 @transaction.commit_on_success
 def _sync_start_year():

@@ -146,6 +146,9 @@ class Organization(models.Model):
     def get_teachers(self):
         return self.teacher_set.all()
 
+    def get_students(self):
+        return self.pupil_set.all()
+
     def save_settings(self, attribute, value):
         if type(attribute) != str or (type(value) != str
             and type(value) != unicode and type(value) != int):
