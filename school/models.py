@@ -375,7 +375,7 @@ class BasicPersonInfo(models.Model):
     #This method return a short name to present a person's name
     #eg: Tran Huy Vu -> TH Vu
     def short_name(self):
-        l = [''.join([w[0] for w in self.last_name.split(' ')]),
+        l = [''.join([w[0] if w else "" for w in self.last_name.split(' ')]),
              self.first_name]
         return ' '.join(l)
 
