@@ -183,7 +183,7 @@ def viewClassDetail(request, class_id):
                                     send_SMS_then_email(
                                             student.sms_phone,
                                             to_en1('Em ' + student.short_name() +\
-                                                    ' ' + content),
+                                                    ': ' + content),
                                             user,
                                             student.user_id,
                                             True,
