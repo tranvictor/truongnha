@@ -370,7 +370,7 @@ def login(request, template_name='app/login.html',
         redirect_field_name: redirect_to
     }
     return render_to_response(template_name, context,
-                              context_instance=django.template.RequestContext(request))
+            context_instance=django.template.RequestContext(request))
 
 def feedback(request):
     if request.method == 'POST': # If the form has been submitted...

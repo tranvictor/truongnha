@@ -14,8 +14,8 @@ from django.shortcuts import render_to_response
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
+from django.core.exceptions import ObjectDoesNotExist
 import validations
-from teacher import models
 from teacher.models import Person, Teacher, Register
 from sms.utils import send_email
 import settings
@@ -30,13 +30,12 @@ class BaseTeacherView(TemplateView):
         # can't be accessed by other users
         self.teacher_id = None
         self.allow_other_teacher = False
-        print 'invoke constructor'
         
     def _get_teacher(self):
         return self.request.user.teachers
 
     def _right_teacher_id(self, teacher_id):
-        return teacher_id == self.teacher.id
+        return teacher_id == unicode(self.teacher.id)
 
     # Do the same work with Django reverse method but add
     # valid teacher_id to **kwargs as an extra work
@@ -70,8 +69,12 @@ class BaseTeacherView(TemplateView):
                         {}, context_instance=RequestContext(request))
         self.args = args
         self.kwargs = kwargs
-        print self.teacher_id, 'before view'
         return handler(request, *args, **kwargs)
+
+class IndexView(BaseTeacherView):
+    def get(self, *args, **kwargs):
+        print 'in view'
+        return HttpResponse('', mimetype='json')
 
 class RegisterView(TemplateView):
     template_name = os.path.join('teacher', 'register.html')
@@ -118,7 +121,8 @@ class RegisterView(TemplateView):
         else:
             data = request.POST.copy()
             data['register_date'] = date.today()
-            activation_key = ''.join(random.choice(string.ascii_uppercase + string.digits) for n in range(20))
+            activation_key = ''.join(random.choice(string.ascii_uppercase
+                + string.digits) for n in range(20))
             data['activation_key'] = activation_key
             register_form = RegisterView.form(data=data)
             if register_form.is_valid():
@@ -147,7 +151,7 @@ class RegisterView(TemplateView):
                     old_register = Register.objects.get(email=data['email'])
                     if old_register:
                         message += u': Email đã tồn tại.'
-                except Exception as e:
+                except ObjectDoesNotExist:
                     pass
                 success = False
                 if request.is_ajax():
@@ -157,17 +161,14 @@ class RegisterView(TemplateView):
                     })
                     return HttpResponse(response, mimetype='json')
 
-class IndexView(BaseTeacherView):
-    def get(self, *args, **kwargs):
-        print 'in view'
-        return HttpResponse('', mimetype='json')
 
 class ActivateView(TemplateView):
     template_name = os.path.join('teacher', 'activate.html')
     def get(self, *args, **kwargs):
         key = self.kwargs['activation_key']
         try:
-            register = Register.objects.get(activation_key = key, status__exact = 'CHUA_CAP')
+            register = Register.objects.get(activation_key=key,
+                    status__exact='CHUA_CAP')
         except Exception as e:
             print e
             message = u'Địa chỉ kích hoạt không tồn tại. Tài khoản của bạn đã được kích hoạt hoặc không hợp lệ.'
@@ -215,7 +216,8 @@ class ForgetPasswordView(TemplateView):
     class ForgetPasswordForm(forms.Form):
         account = forms.CharField(required=True, label='Tài khoản')
         email = forms.EmailField(required=True, label='Email')
-        phone = forms.CharField(required=True,validators=[validations.phone],label='Số điện thoại')
+        phone = forms.CharField(required=True,
+                validators=[validations.phone], label='Số điện thoại')
 
         def clean(self):
             cleaned_data = super(ForgetPasswordView.ForgetPasswordForm, self).clean()
@@ -228,28 +230,31 @@ class ForgetPasswordView(TemplateView):
                     teacher = user.teacher
                     if phone and email:
                         if teacher.sms_phone != phone:
-                            self._errors["phone"] = self.error_class([u'Số điện thoại không trùng với tài khoản.'])
+                            self._errors["phone"] = self.error_class(
+                                    [u'Số điện thoại không trùng với tài khoản.'])
                             del cleaned_data["phone"]
                         if teacher.email != email:
-                            self._errors["email"] = self.error_class([u'Email không trùng với tài khoản.'])
+                            self._errors["email"] = self.error_class(
+                                    [u'Email không trùng với tài khoản.'])
                             del cleaned_data["email"]
                 except:
-                    self._errors["account"] = self.error_class([u'Tài khoản không tồn tại.'])
+                    self._errors["account"] = self.error_class(
+                            [u'Tài khoản không tồn tại.'])
                     del cleaned_data["account"]
             return cleaned_data
 
     form = ForgetPasswordForm
 
     def get(self,request):
-        forget_password_form = ForgetPasswordView.form
+        fpwd_form = ForgetPasswordView.form
         return render_to_response(ForgetPasswordView.template_name,
-                                  {'form':forget_password_form},
-                                  context_instance=RequestContext(request))
+                {'form':fpwd_form},
+                context_instance=RequestContext(request))
 
     def post(self,request):
         data = request.POST.copy()
-        forget_password_form = ForgetPasswordView.form(data=data)
-        if forget_password_form.is_valid():
+        fpwd_form = ForgetPasswordView.form(data=data)
+        if fpwd_form.is_valid():
             email = data['email']
             phone = data['phone']
             teacher = Teacher.objects.get(email=email,sms_phone=phone)
@@ -261,12 +266,11 @@ class ForgetPasswordView(TemplateView):
             return HttpResponse(response, mimetype='json')
         else:
             error = {}
-            for k, v in forget_password_form.errors.items():
-                error[forget_password_form[k].auto_id] = forget_password_form.error_class.as_text(v)
+            for k, v in fpwd_form.errors.items():
+                error[fpwd_form[k].auto_id] = fpwd_form.error_class.as_text(v)
             response = simplejson.dumps({
                 'success': False,
                 'err': error,
-                'message': u'Có lỗi ở dữ liệu nhập vào'
-            })
+                'message': u'Có lỗi ở dữ liệu nhập vào'})
             return HttpResponse(response, mimetype='json')
 

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load bootstrap %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Thông báo' %}
+{% endblock %}
+
+{% block content %}
+    <div class="row-fluid">
+        <div class="span10 alert alert-error">
+            <div class="lead">Bạn không có quyền truy cập vào các nội dung này.</div>
+
+            <a class="btn btn-primary btn-large" href="/"><i class="icon-home"></i> Trở về trang chủ</a>
+        </div>
+    </div>
+{% endblock %}

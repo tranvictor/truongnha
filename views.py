@@ -9,9 +9,16 @@ ABOUT = os.path.join('about.html')
 
 def index(request):
     if not request.user.is_authenticated():
-        return render_to_response("index.html", context_instance=RequestContext(request)) 
+        return render_to_response("index.html",
+                context_instance=RequestContext(request)) 
+    elif request.user.teachers:
+        return HttpResponseRedirect(reverse('teacher_index',
+            args=[request.user.teachers.id]))
+    elif request.user.student:
+        raise Exception('StudentNotSupported')
     elif request.user.is_superuser:
-        return render_to_response("index.html", context_instance=RequestContext(request))
+        return render_to_response("index.html",
+                context_instance=RequestContext(request))
     elif request.user.get_profile().position in OVER_SCHOOL:
         return HttpResponseRedirect(reverse('department_report'))
     else:

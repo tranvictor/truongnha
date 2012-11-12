@@ -33,7 +33,7 @@ urlpatterns = patterns('',
         name="manage_register"),
     url(r'^manageRegister/(?P<sort_by_date>\w+)/(?P<sort_by_status>\w+)/$',
         app_views.manage_register, name="manage_register"),
-    url(r'^teacher/forgetpassword$',ForgetPasswordView.as_view(), name='teacher_forget_password'),
+    url(r'^teacher/forgetpassword$', ForgetPasswordView.as_view(), name='teacher_forget_password'),
 
 
     # Uncomment the next line to enable the admin:

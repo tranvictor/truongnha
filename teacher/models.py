@@ -2,8 +2,6 @@
 import itertools, string
 import random
 import urllib2
-import unicodedata
-import re
 from datetime import date
 from django.db import models
 from django.contrib.auth.models import User
@@ -43,7 +41,8 @@ class Register(models.Model):
     phone = models.CharField("Số điện thoại",
             validators=[validations.phone],
             max_length=validations.SMS_PHONE_MAX_LENGTH)
-    email = models.EmailField("Email", blank=False, max_length=validations.USERNAME_MAX_LENGTH, unique=True)
+    email = models.EmailField("Email", blank=False,
+            max_length=validations.USERNAME_MAX_LENGTH, unique=True)
     sex = models.CharField("Giới tính",
             max_length=validations.SEX_MAX_LENGTH,
             choices=GENDER, default='Nam')
