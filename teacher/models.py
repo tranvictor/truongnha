@@ -33,7 +33,6 @@ VOWELS = 'aeiou' # we'll keep this simple
 syllables = map(''.join, itertools.product(INITIAL_CONSONANTS,
     VOWELS, FINAL_CONSONANTS))
 
-
 REGISTER_STATUS_CHOICES = (('DA_CAP', u"Đã cấp"), ('CHUA_CAP', u"Chưa cấp"))
 class Register(models.Model):
     name = models.CharField("Họ và tên",
