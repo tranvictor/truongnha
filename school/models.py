@@ -412,6 +412,7 @@ class Teacher(BasicPersonInfo):
     bhxh = models.CharField("Số bảo hiểm xã hội",
         null=True, blank=True,
         max_length=10, validators=[validate_num])
+    balance = models.FloatField(u'Tài khoản', default=15)
 
     user_id = models.OneToOneField(User, verbose_name="Tài khoản")
     school_id = models.ForeignKey(Organization, verbose_name="Trường")

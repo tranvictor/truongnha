@@ -292,14 +292,17 @@ class UserProfile(models.Model):
                                 blank=True) #để gửi tin nhắn.
     notes = models.CharField('Ghi chú', max_length=255, blank=True)
     username_change = models.IntegerField(default=0)
+    balance = models.FloatField(u'Tài khoản', default=15)
 
-    def __unicode__(self):
-        return self.user.__unicode__()
     def isSchool(self):
         if self.position =='GIAM_DOC_SO' or self.position=='TRUONG_PHONG':
             return False
         else:
             return True
+
+    def __unicode__(self):
+        return self.user.__unicode__()
+
 class IP(models.Model):
     user = models.ForeignKey(User, null=True)
     ip = models.CharField('IP', max_length=20, unique=True, blank=False)

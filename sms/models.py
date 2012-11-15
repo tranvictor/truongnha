@@ -190,17 +190,25 @@ class sms(models.Model):
         
     def _send_sms(self, school=None):
         if school and school.is_allowed_sms(): #school.id in [11, 10]:
-            if get_tsp(self.phone) == 'VIETTEL':
-                result = self._send_Viettel_sms()
+            if self.sender.userprofile.is_allowed_sms():
+                if get_tsp(self.phone) == 'VIETTEL':
+                    result = self._send_Viettel_sms()
+                else:
+                    result = self._send_iNET_sms()
+                if result == '1':
+                    self.recent = False
+                    self.success = True
+                    self.save()
+                    self.sender.userprofile.balance -=1 
+                    self.sender.save()
+                    return result
+                else:
+                    raise Exception('%s-SendFailed' % result)
             else:
-                result = self._send_iNET_sms()
-            if result == '1':
+                self.failed_reason = 'BalanceNotEnough'
                 self.recent = False
-                self.success = True
+                self.success = False
                 self.save()
-                return result
-            else:
-                raise Exception('%s-SendFailed' % result)
         else:
             #TODO: allow for teacher app, in this app
             # we don't have any school
