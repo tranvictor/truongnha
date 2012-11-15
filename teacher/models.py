@@ -190,6 +190,7 @@ class Class(models.Model):
             max_length=validations.CLASS_NAME_MAX_LENGTH)
     index = models.IntegerField("Số thứ tự", default=0)
     created = models.DateTimeField("Thời gian tạo", auto_now_add=True)
+    cl_note = models.TextField("Ghi chú", blank=True)
     teacher_id = models.ForeignKey(Teacher, verbose_name="Giáo viên",
             null=True, blank=True)
 

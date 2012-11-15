@@ -72,9 +72,12 @@ class BaseTeacherView(TemplateView):
         return handler(request, *args, **kwargs)
 
 class IndexView(BaseTeacherView):
+    template_name = os.path.join('teacher', 'index.html')
     def get(self, *args, **kwargs):
-        print 'in view'
-        return HttpResponse('', mimetype='json')
+        classes = self.teacher.class_set.order_by('-created')
+        return render_to_response(IndexView.template_name,
+                {'classes': classes, },
+                context_instance=RequestContext(self.request))
 
 class RegisterView(TemplateView):
     template_name = os.path.join('teacher', 'register.html')

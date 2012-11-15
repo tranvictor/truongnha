@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.db import models
 import os
@@ -11,12 +12,20 @@ def index(request):
     if not request.user.is_authenticated():
         return render_to_response("index.html",
                 context_instance=RequestContext(request)) 
-    elif request.user.teachers:
-        return HttpResponseRedirect(reverse('teacher_index',
-            args=[request.user.teachers.id]))
-    elif request.user.student:
-        raise Exception('StudentNotSupported')
-    elif request.user.is_superuser:
+    else:
+        try:
+            request.user.teachers
+            return HttpResponseRedirect(reverse('teacher_index',
+                args=[request.user.teachers.id]))
+        except ObjectDoesNotExist:
+            pass
+        try:
+            request.user.student
+            raise Exception('StudentNotSupported')
+        except ObjectDoesNotExist:
+            pass
+
+    if request.user.is_superuser:
         return render_to_response("index.html",
                 context_instance=RequestContext(request))
     elif request.user.get_profile().position in OVER_SCHOOL:

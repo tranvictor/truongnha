@@ -1,0 +1,48 @@
+{% extends "teacher/base-teacher.html" %}
+{% block breadcrumb %}
+  {{ block.super }}
+  {% load breadcrumb_tags %}
+  {% add_crumb 'Trang chủ' %}
+{% endblock %}
+
+{% block css %}
+<style type="text/css">
+  a.btn {
+    margin-top: 2.12766%;
+  }
+
+  a.btn:nth-child(odd) {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  h3 {
+    color: #FFF;
+    font-weight: normal;
+    padding: 0;
+    margin: 0;
+  }
+</style>
+{% endblock %}
+
+{% block menu %}
+<h2>Các lớp</h2>
+{% for cl in classes %}
+  <div class="row-fluid">
+    <a class="span12 btn-success btn" href="#" title="Quản lý lớp {{cl}}">
+      <h3>{{cl}}</h3>
+      <p>Sĩ số: {{cl.number_of_student}}</p>
+      <p>Ghi chú: {{cl.cl_note}}</p>
+    </a>
+  </div>
+{% endfor %}
+  <div class="row-fluid">
+    <a class="span12 btn-success btn" href="#" title="Quản lý lớp {{cl}}">
+      <h3>Thêm lớp mới</h3>
+    </a>
+  </div>
+{% endblock %}
+
+{% block content %}
+<h2>DASHBOARD</h2>
+{% endblock %}

@@ -94,7 +94,7 @@
             {% if user.is_superuser %}
               <span class="lead">Quản trị hệ thống</span>
             {% else %}
-              <span id="school-name" class="lead">Tên giáo viên</span>&nbsp;<small>Trang thai</small>
+            <span id="school-name" class="lead">{{ user.teachers.last_name }} {{ user.teachers.first_name}}</span>&nbsp;<small></small>
             {% endif %}
           {% else %}
             <span class="lead">Dịch vụ phần mềm quản lý trường học</span>
@@ -102,35 +102,12 @@
         </div>
         <div id="user-info" class="pull-right">
             {% if user.is_authenticated %}
-                {% if not user.is_superuser %}
-                    <a href="/app/{{ user.username }}"
-                       title="Sửa thông tin người sử dụng, đổi mật khẩu, đổi tên tài khoản.">
-                        <i class="icon-user"></i>
-                        <span class="hidden-phone">
-                            {% if user.pupil_id %}
-                                {{ user.pupil.last_name }} {{ user.pupil.first_name }}
-                            {% elif user.teacher_id %}
-                                {{ user.teacher.last_name }} {{ user.teacher.first_name }}
-                            {% else %}
-                                {{ user.first_name }}
-                            {% endif %}
-                            <small class="hidden-phone hidden-tablet">({{ user.username }})</small>
-                        </span>
-                    </a>
-
-                    <a id="logout" href="{% url django.contrib.auth.views.logout %}"
-                       title="Thoát ra, kết thúc phiên làm việc. BẠN PHẢI ĐĂNG XUẤT NẾU ĐĂNG NHẬP TRÊN CÁC MÁY TÍNH DÙNG CHUNG ĐỂ TRÁNH NGƯỜI KHÁC THAY ĐỔI DỮ LIỆU.">
-                        <i class="icon-signout"></i>
-                        <small class="hidden-phone hidden-tablet">Đăng xuất</small>
-                    </a>
-                {% else %}
                     {{ user.last_name }} {{ user.first_name }}
                     <small>({{ user.username }})</small>
 
                     <a href="{% url django.contrib.auth.views.logout %}">
                         Đăng xuất <i class="icon-signout"></i>
                     </a>
-                {% endif %}
             {% else %}
                 <a id="logo" href="{% url index %}" title="Dịch vụ phần mềm quản lý trường học">
                     <span class="logo-truong">Trường</span><span class="logo-nha">Nhà</span>
