@@ -14,6 +14,7 @@ import os
 import urllib
 import re
 import simplejson
+import datetime
 
 
 SMS_TYPES = (('TU DO', u'Tự do'), ('THONG_BAO', u'Thông báo'),)
@@ -109,8 +110,8 @@ class sms(models.Model):
     content = models.TextField("Nội dung")
     type = models.CharField("Loại tin nhắn", max_length=10,
             choices=SMS_TYPES, default='TU_DO')
-    created = models.DateTimeField("Thời gian tạo", auto_now_add=True)
-    modified = models.DateTimeField("Thời gian sửa", auto_now=True)
+    created = models.DateTimeField("Thời gian tạo")
+    modified = models.DateTimeField("Thời gian sửa")
     sender = models.ForeignKey(User, related_name='sent_sms')
     receiver = models.ForeignKey(User, related_name='received_sms', null=True)
     #This field contains objects' ids those have to be updated after
@@ -259,6 +260,12 @@ class sms(models.Model):
             return self._send_sms(school=school)
         except Exception, e:
             raise self.send_sms_then_email.retry(exc=e)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created = datetime.datetime.today()
+        self.modified = datetime.datetime.today()
+        super(sms, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.phone
