@@ -32,57 +32,57 @@
                     });
             ;
 
-            var done = function (json) {
-                if (json.message != null && json.message != '')
-                    $("#smsNotification").html("<ul>" + json.message + "</ul>");
-                else
-                    $("#smsNotification").html('');
-                $("#smsNotification").dialog("open");
-            };
+{#            var done = function (json) {#}
+{#                if (json.message != null && json.message != '')#}
+{#                    $("#smsNotification").html("<ul>" + json.message + "</ul>");#}
+{#                else#}
+{#                    $("#smsNotification").html('');#}
+{#                $("#smsNotification").dialog("open");#}
+{#            };#}
 
-            $("#smsNotification").dialog({
-                modal:true,
-                buttons:{
-                    Đóng:function () {
-                        $(this).dialog('close');
-                    }
-                },
-                autoOpen:false,
-                width:500,
-                height:450,
-                maxWidth:500,
-                maxHeight:450,
-                title:"Tin nhắn đã gửi"
-            });
-
-            var sendSMS = function () {
-                var data = '';
-                $(":checkbox").each(function () {
-                    if ($(this).is(':checked')) {
-                        var id = $(this).attr('id').split('_')[1];
-                        data = data + id + '-';
-                        $(this).prop("checked", false);
-                    }
-                });
-                if (data == '') {
-                    alert("Hãy chọn ít nhất một cột");
-                    return false;
-                }
-                var arg = { type:"POST",
-                    url:"",
-                    data:{data:data, request_type:'sms'},
-                    datatype:"json",
-                    success:done
-                };
-                $.ajax(arg);
-                return false;
-            };
-
-            $("#sendSMS").click(sendSMS);
-            var add_attribute = function(){
-                var value = $(this).val();
-                $(this).attr("loai",value);
-            };
+{#            $("#smsNotification").dialog({#}
+{#                modal:true,#}
+{#                buttons:{#}
+{#                    Đóng:function () {#}
+{#                        $(this).dialog('close');#}
+{#                    }#}
+{#                },#}
+{#                autoOpen:false,#}
+{#                width:500,#}
+{#                height:450,#}
+{#                maxWidth:500,#}
+{#                maxHeight:450,#}
+{#                title:"Tin nhắn đã gửi"#}
+{#            });#}
+{##}
+{#            var sendSMS = function () {#}
+{#                var data = '';#}
+{#                $(":checkbox").each(function () {#}
+{#                    if ($(this).is(':checked')) {#}
+{#                        var id = $(this).attr('id').split('_')[1];#}
+{#                        data = data + id + '-';#}
+{#                        $(this).prop("checked", false);#}
+{#                    }#}
+{#                });#}
+{#                if (data == '') {#}
+{#                    alert("Hãy chọn ít nhất một cột");#}
+{#                    return false;#}
+{#                }#}
+{#                var arg = { type:"POST",#}
+{#                    url:"",#}
+{#                    data:{data:data, request_type:'sms'},#}
+{#                    datatype:"json",#}
+{#                    success:done#}
+{#                };#}
+{#                $.ajax(arg);#}
+{#                return false;#}
+{#            };#}
+{##}
+{#            $("#sendSMS").click(sendSMS);#}
+{#            var add_attribute = function(){#}
+{#                var value = $(this).val();#}
+{#                $(this).attr("loai",value);#}
+{#            };#}
             $("input[name=loai]").each(add_attribute);
 
             $("input[name=loai]").on('keyup', function (event) {
@@ -190,9 +190,9 @@
     </div>
 
     <div id="submenu" class="btn-toolbar">
-        <button id="sendSMS" class="btn btn-danger" title="Gửi SMS cho những tháng đã chọn">
-            <i class="icon-envelope-alt"></i> Gửi tin nhắn
-        </button>
+{#        <button id="sendSMS" class="btn btn-danger" title="Gửi SMS cho những tháng đã chọn">#}
+{#            <i class="icon-envelope-alt"></i> Gửi tin nhắn#}
+{#        </button>#}
 
         {#        <div class="alert">#}
         {#            <button type="button" class="close" data-dismiss="alert">×</button>#}
@@ -250,8 +250,8 @@
 
     <div class="pagination-right"><p class="dimmed">Có thể dùng phím ENTER hoặc mũi tên để di chuyển giữa các ô.</p></div>
 
-    <div style="display: None;">
-        <div id="smsNotification">
-        </div>
-    </div>
+{#    <div style="display: None;">#}
+{#        <div id="smsNotification">#}
+{#        </div>#}
+{#    </div>#}
 {% endblock %}

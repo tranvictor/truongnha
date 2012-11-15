@@ -235,18 +235,22 @@ def sms_summary(request, class_id=None):
         HttpResponse(simplejson.dumps({
             'message': message,
             'success': success}, mimetype='json'))
-    info_list, students, marks = cl._generate_mark_summary(term)
+    students = cl.students()
+    info_list, marks = cl._generate_mark_summary(term, student_query=students)
+    dd_info_list, dd_list = cl._generate_diemdanh_summary(term, student_query=students)
     if request.method == 'POST' and request.is_ajax():
         ids = request.POST['students'].split('-')
         ids = [int(id) for id in ids if id]
         number = 0
         for st in students:
             if (st.sms_phone and st.id in ids
-                    and info_list[st.id] != u'Không có điểm mới'):
+                and (info_list[st.id] != u'Không có điểm mới.' or dd_info_list[st.id] != '')):
                 try:
+                    content = info_list[st.id] + ' ' + dd_info_list[st.id]
                     send_sms_summary_mark(st,
-                            info_list[st.id],
+                            content,
                             marks[st.id],
+                            dd_list[st.id],
                             request.user,
                             cl=cl,
                             school=school)
@@ -257,13 +261,15 @@ def sms_summary(request, class_id=None):
         message = '<li>%d tin nhắn sẽ được gửi trong chậm nhất 1h</li>'\
                 % (number)
         if len(ids) > number:
-            message += '<li>%d học sinh không có điểm mới để gửi hoặc không có số điện\
+            message += '<li>%d học sinh không có thông tin mới để gửi hoặc không có số điện\
                 thoại</li>' % (len(ids) - number)
         return HttpResponse(simplejson.dumps({
             'message': message,
             'success': True}), mimetype='json')
 
     # GET reponse
+    for std in info_list:
+        info_list[std] += dd_info_list[std]
     return render_to_response(SMS_SUMMARY,
             {'info_list': info_list,
                 'students': students,

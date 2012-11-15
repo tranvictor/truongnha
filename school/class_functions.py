@@ -1355,51 +1355,51 @@ def dd(request, class_id, day, month, year, api_called=False, data=None):
                         tkdd.save()
                         dd.save()
             return HttpResponse()
-        elif request.POST['request_type'] == 'sms':
-            data = request.POST['data']
-            data = data.split('-')
-            message = ''
-            for day in data:
-                try:
-                    day = to_date(day)
-                    ddl = DiemDanh.objects.filter(time__exact=day,
-                        student_id__in=std_list)
-                    for dd in ddl:
-                        student = dd.student_id
-                        phone_number = student.sms_phone
-                        name = ' '.join([student.last_name, student.first_name])
-                        if phone_number:
-                            #noinspection PyUnresolvedReferences
-                            sms_message = u' Em ' + name + u' đã ' + dd.get_loai_display() + u' ngày ' + day.strftime("%d/%m/%Y")
-                            try:
-                                sent = sendSMS(phone_number,
-                                    to_en1(sms_message),
-                                    user,
-                                    receiver=student.user_id,
-                                    school=school)
-                            except Exception as e:
-                                if e.message == 'InvalidPhoneNumber':
-                                    message = message + u'<li><b>Số ' + str(phone_number)\
-                                              + u' không tồn tại</b>'\
-                                              + u': ' + sms_message + u'</li>'
-                                    continue
-                                else:
-                                    message = e.message
-                                    continue
-                            if sent == '1':
-                                message = message + u'<li><b>-> ' + str(phone_number) + u': ' + sms_message + u'</b></li>'
-                            else:
-                                message = message + u'<li> ' + str(phone_number) + u': ' + sms_message + u'</li>'
-                        else:
-                            notify_message = u' Em ' + name + u' chưa có số điện thoại để gửi tin nhắn'
-                            message = message + u'<li> ' + u'<b>Lỗi</b>' + u': ' + notify_message + u'</li>'
-                except Exception as e:
-                    if e.message == 'PharseDateException':
-                        pass
-                    else:
-                        raise e
-            data = simplejson.dumps({'message': message})
-            return HttpResponse(data, mimetype='json')
+#        elif request.POST['request_type'] == 'sms':
+#            data = request.POST['data']
+#            data = data.split('-')
+#            message = ''
+#            for day in data:
+#                try:
+#                    day = to_date(day)
+#                    ddl = DiemDanh.objects.filter(time__exact=day,
+#                        student_id__in=std_list)
+#                    for dd in ddl:
+#                        student = dd.student_id
+#                        phone_number = student.sms_phone
+#                        name = ' '.join([student.last_name, student.first_name])
+#                        if phone_number:
+#                            #noinspection PyUnresolvedReferences
+#                            sms_message = u' Em ' + name + u' đã ' + dd.get_loai_display() + u' ngày ' + day.strftime("%d/%m/%Y")
+#                            try:
+#                                sent = sendSMS(phone_number,
+#                                    to_en1(sms_message),
+#                                    user,
+#                                    receiver=student.user_id,
+#                                    school=school)
+#                            except Exception as e:
+#                                if e.message == 'InvalidPhoneNumber':
+#                                    message = message + u'<li><b>Số ' + str(phone_number)\
+#                                              + u' không tồn tại</b>'\
+#                                              + u': ' + sms_message + u'</li>'
+#                                    continue
+#                                else:
+#                                    message = e.message
+#                                    continue
+#                            if sent == '1':
+#                                message = message + u'<li><b>-> ' + str(phone_number) + u': ' + sms_message + u'</b></li>'
+#                            else:
+#                                message = message + u'<li> ' + str(phone_number) + u': ' + sms_message + u'</li>'
+#                        else:
+#                            notify_message = u' Em ' + name + u' chưa có số điện thoại để gửi tin nhắn'
+#                            message = message + u'<li> ' + u'<b>Lỗi</b>' + u': ' + notify_message + u'</li>'
+#                except Exception as e:
+#                    if e.message == 'PharseDateException':
+#                        pass
+#                    else:
+#                        raise e
+#            data = simplejson.dumps({'message': message})
+#            return HttpResponse(data, mimetype='json')
 
     day = date(int(year), int(month), int(day))
     previous_week = day - timedelta(days = 7)

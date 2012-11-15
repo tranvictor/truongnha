@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import date
+from datetime import date, timedelta
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -625,6 +625,52 @@ class Class(models.Model):
             result[sid] = tk if sid in result else [tk]
         return result, sts
 
+        #this method return queryset of unsent diemđanh in current weeek
+    def _diem_danh_in_week(self, term, student_query=None):
+        if student_query: sts = student_query
+        else: sts =self.students()
+#        day = date.today()
+#        week_start = day - timedelta(day.weekday())
+#        week_list = []
+#        for i in range(6):
+#            week_list.append(week_start)
+#            week_start += timedelta(1)
+#        dd_list = DiemDanh.objects.filter(student_id__in = sts, time__in=week_list, sent=False)
+        dd_list = DiemDanh.objects.filter(student_id__in = sts, sent=False)
+        return dd_list
+
+    def _generate_diemdanh_summary(self, term, student_query=None):
+        if student_query: sts = student_query
+        else: sts = self.students()
+        dd_list = self._diem_danh_in_week(term, sts)
+        new_ddlist = {}
+        kq_dd = {}
+        for std in sts:
+            dds = dd_list.filter(student_id = std)
+            new_ddlist[std.id] = dds
+            kq_dd[std.id] = {}
+            kq_dd[std.id]['P'] = []
+            kq_dd[std.id]['K'] = []
+            kq_dd[std.id]['M'] = []
+        for dd in dd_list:
+            day = int(dd.time.day)
+            month = int(dd.time.month)
+            short_date = str(day) + '-' + str(month)
+            kq_dd[dd.student_id_id][dd.loai].append(short_date)
+        info = {}
+        for std in sts:
+            info[std.id] = ''
+        for std in kq_dd:
+            if kq_dd[std]['P'] or kq_dd[std]['K'] or kq_dd[std]['M']:
+                info[std] = 'Diem danh: '
+                for loai in kq_dd[std]:
+                    if kq_dd[std][loai]:
+                        info[std] += loai + ':'
+                        for t in kq_dd[std][loai]:
+                            info[std] += t + ','
+                        info[std] = info[std][:-1]
+        return info, new_ddlist
+
     #this method return a pair of list of string that contain all the new
     #information about marks of students in the class, student query set and
     #subject query set
@@ -659,9 +705,9 @@ class Class(models.Model):
                 if summ_m:
                     content.append(u'%s:%s' % (subject.short_name(),
                                                summ_m))
-            if len(content) == 1: result[sid] = u'Không có điểm mới'
+            if len(content) == 1: result[sid] = u'Không có điểm mới.'
             else: result[sid] = '\n'.join(content)
-        return result, sts, marks
+        return result, marks
 
     #this method return number of students those are studying in this class
     #Note: not include students those moved to other classes
@@ -1435,6 +1481,7 @@ class DiemDanh(models.Model):
     time = models.DateField("Ngày")
     loai = models.CharField("Tình trạng",
         max_length=10, choices=DIEM_DANH_TYPE)
+    sent = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Điểm danh"
@@ -1443,6 +1490,10 @@ class DiemDanh(models.Model):
 
     def __unicode__(self):
         return u"%s %s" % (unicode(self.student_id), unicode(self.time))
+
+    def update_sent(self):
+        self.sent = True
+        self.save()
 
 
 class TKDiemDanh(models.Model):

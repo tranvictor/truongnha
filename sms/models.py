@@ -214,7 +214,7 @@ class sms(models.Model):
             # we don't have any school
             raise Exception('SMSNotAllowed')
 
-    def _send_mark_sms(self, marks=None, school=None):
+    def _send_mark_sms(self, marks=None, dds=None, school=None):
         result = self._send_sms(school=school)
         if result == '1':
             #if not marks:
@@ -223,10 +223,14 @@ class sms(models.Model):
             #    #marks = Mark.objects.filter(id__in=ids)
             for m in marks:
                 m.update_sent()
+            for dd in dds:
+                dd.update_sent()
         else:
-            attachs = {'m': []}
+            attachs = {'m': [],'dd': []}
             for m in marks:
                 attachs['m'].append(m.id)
+            for dd in dds:
+                attachs['dd'].append(dd.id)
             self.attachment = simplejson.dumps(attachs)
             self.save()
 
@@ -243,6 +247,7 @@ class sms(models.Model):
         try:
             school = kwargs['school'] if 'school' in kwargs else None
             marks = kwargs['marks'] if 'marks' in kwargs else None
+            dds = kwargs['dds'] if 'dds' in kwargs else None
             result = self._send_sms(school=school)
             if result == '1':
                 #if not marks:
@@ -251,6 +256,8 @@ class sms(models.Model):
                 #    marks = Mark.objects.filter(id__in=ids)
                 for m in marks:
                     m.update_sent()
+                for dd in dds:
+                    dd.update_sent()
             else:
                 attachs = {'m': []}
                 for m in marks:
