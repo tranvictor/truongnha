@@ -9,7 +9,7 @@ from django import forms
 from recaptcha.client import captcha
 from django.contrib.auth.forms import PasswordChangeForm
 from school.forms import UsernameChangeForm
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.template import loader
 from django.core.urlresolvers import reverse
 import django.template
@@ -477,12 +477,14 @@ def system_subject_agenda(request, subject = 1, grade = 6, term = 1):
 def profile_detail(request, username, public_profile_field=None,
                    template_name='app/profile_detail.html'):
     user = get_object_or_404(User, username=username)
+    if user != request.user:
+        return HttpResponseNotFound()
+    passwordform = PasswordChangeForm(user)
+    accountform = UsernameChangeForm(user)
     try:
         profile_obj = user.get_profile()
-        passwordform = PasswordChangeForm(user)
-        accountform = UsernameChangeForm(user)
     except ObjectDoesNotExist:
-        raise Http404
+        profile_obj = None
     message = ''
     if request.method == 'POST':
         try:
