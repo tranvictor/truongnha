@@ -229,8 +229,7 @@ class ForgetPasswordView(TemplateView):
             email = cleaned_data.get("email")
             if account:
                 try:
-                    user = User.objects.select_related().get(username=account)
-                    teacher = user.teacher
+                    teacher = Teacher.objects.select_related().get(user__username=account)
                     if phone and email:
                         if teacher.sms_phone != phone:
                             self._errors["phone"] = self.error_class(
