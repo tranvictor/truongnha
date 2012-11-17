@@ -19,7 +19,9 @@
   </div>
 {% endfor %}
   <div class="row-fluid">
-    <a class="span12 btn-success btn" href="#" title="Quản lý lớp {{cl}}">
+    <a class="span12 btn-success btn"
+      href="{% url class_create user_teacher.id 'create' %}"
+      title="Quản lý lớp {{cl}}">
       <h3>Thêm lớp mới</h3>
     </a>
   </div>

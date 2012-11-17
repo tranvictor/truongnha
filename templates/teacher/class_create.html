@@ -1,4 +1,4 @@
-{% extends "teacher/base-teacher.html" %}
+{% extends "teacher/index.html" %}
 {% load bootstrap %}
 {% block breadcrumb %}
   {{ block.super }}
@@ -6,36 +6,15 @@
   {% add_crumb 'Thêm lớp học' %}
 {% endblock %}
 
-{% block menu %}
-<h2>Các lớp</h2>
-{% for cl in classes %}
-  <div class="row-fluid">
-    <a class="span12 btn-success btn"
-      href="{% url class_view cl.teacher_id_id cl.id %}"
-      title="Quản lý lớp {{cl}}">
-      <h3>{{cl}}</h3>
-      <p>Sĩ số: {{cl.number_of_student}}</p>
-      <p>Ghi chú: {{cl.cl_note}}</p>
-    </a>
-  </div>
-{% endfor %}
-  <div class="row-fluid">
-    <a class="span12 btn-success btn" href="#" title="Quản lý lớp {{cl}}">
-      <h3>Thêm lớp mới</h3>
-    </a>
-  </div>
-{% endblock %}
-
 {% block content %}
 <h2>Tạo lớp mới</h2>
-<form class="well form-horizontal"
+<form class="form-horizontal"
   action="{{ create_url }}"
   id="createClassForm" method="post">{% csrf_token %}
-  <legend>Tạo lớp môn học mới</legend>
   {{ create_form|bootstrap }}
   <div class="form-actions">
     <button class="btn btn-primary" id="sendRegister">Lưu</button>
-    <button class="btn btn-primary" id="sendRegister">Hủy</button>
+    <button class="btn" id="sendRegister">Hủy</button>
   </div>
 </form>
 {% endblock %}
