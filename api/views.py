@@ -21,6 +21,7 @@ from decorators import need_login, operating_permission, school_function
 import simplejson
 import datetime
 import re
+from school.templateExcel import  MAX_COL, CHECKED_DATE
 class ApiLogin(View):
     """
     A basic view, that can be handle GET and POST requests.
@@ -260,7 +261,6 @@ class Subject(View):
                 'number_lession': s.number_lession,
                 'teacher': s.teacher_id.full_name()})
         return Response(status=status.HTTP_200_OK, content=result)
-        
 
 class Mark(View):
     @need_login
@@ -558,3 +558,121 @@ class StudentProfile(View):
         except Exception as e:
             print e
             return Response(status.HTTP_403_FORBIDDEN)
+
+
+class MarkForASubject(View):
+    @need_login
+    @school_function
+    @operating_permission(['HIEU_PHO', 'HIEU_TRUONG', 'GIAO_VIEN'])
+    def get(self, request, subject_id,term_id):
+        selected_subject = Subject.objects.get(id=subject_id)
+        selected_term = Term.objects.get(id=term_id)
+        time_to_edit = int(selected_term.year_id.school_id.get_setting('lock_time')) * 60
+        now = datetime.datetime.now()
+        time_now = int((now - CHECKED_DATE).total_seconds() / 60)
+        print time_to_edit
+        list = []
+        marks = Mark.objects.filter(term_id=term_id, subject_id=subject_id, current=True).order_by(
+            'student_id__index', 'student_id__first_name', 'student_id__last_name', 'student_id__birthday')
+        if selected_term.number == 2:
+            before_term = Term.objects.get(year_id=selected_term.year_id, number=1).id
+            term1s = Mark.objects.filter(term_id=before_term, subject_id=subject_id, current=True).order_by(
+                'student_id__index', 'student_id__first_name', 'student_id__last_name', 'student_id__birthday')
+            tbnams = TKMon.objects.filter(subject_id=subject_id, current=True).order_by('student_id__index',
+                'student_id__first_name', 'student_id__last_name', 'student_id__birthday')
+            # to avoid lazy query
+            temp = len(term1s)
+            temp = len(tbnams)
+        for (t,m) in enumerate(marks):
+            adict = {}
+            adict.update({"id": int(m.id)})
+            adict.update({"last_name": m.student_id.last_name})
+            adict.update({"first_name": m.student_id.first_name})
+
+            arr_mark = m.toArrayMark()
+            arr_time = m.toArrayTime()
+            arr_sent = m.to_array_sent()
+            temp_arr = []
+            for (i, a) in enumerate(arr_mark):
+                if arr_mark[i] != '':
+                    a_mark = {}
+                    a_mark.update({'n': i})
+                    a_mark.update({'m': arr_mark[i]})
+                    if arr_sent[i] == '1':
+                        a_mark.update({'s': 1})
+                    else:
+                        a_mark.update({'s': 0})
+                    if (time_now - int(arr_time[i]) > time_to_edit):
+                        a_mark.update({'e': 0})
+                    else:
+                        a_mark.update({'e': 1})
+
+                    temp_arr.append(a_mark)
+
+            if m.ck != None:
+                a_mark = {}
+                a_mark.update({'n': 3 * MAX_COL + 1})
+                a_mark.update({'m': m.ck})
+
+                if arr_sent[3 * MAX_COL + 1] == '1':
+                    a_mark.update({'s': 1})
+                else:
+                    a_mark.update({'s': 0})
+
+                if (time_now - int(arr_time[3 * MAX_COL + 1]) > time_to_edit):
+                    a_mark.update({'e': 0})
+                else:
+                    a_mark.update({'e': 1})
+
+                temp_arr.append(a_mark)
+
+            if selected_term.number == 2 :
+                if term1s[t].tb != None:
+                    a_mark = {}
+                    a_mark.update({'n': 3 * MAX_COL + 2})
+                    a_mark.update({'m': term1s[t].tb})
+                    arr_sent1 = term1s[t].to_array_sent()
+                    if arr_sent1[3 * MAX_COL + 2] == '1':
+                        a_mark.update({'s': 1})
+                    else:
+                        a_mark.update({'s': 0})
+
+                    a_mark.update({'e': 0})
+                    temp_arr.append(a_mark)
+
+            if m.tb != None:
+                a_mark = {}
+                a_mark.update({'n': 3 * MAX_COL + 2})
+                a_mark.update({'m': m.tb})
+                if arr_sent[3 * MAX_COL + 2] == '1':
+                    a_mark.update({'s': 1})
+                else:
+                    a_mark.update({'s': 0})
+
+                if (time_now - int(arr_time[3 * MAX_COL + 2]) > time_to_edit):
+                    a_mark.update({'e': 0})
+                else:
+                    a_mark.update({'e': 1})
+
+                temp_arr.append(a_mark)
+
+            if selected_term.number == 2 :
+                if tbnams[t].tb_nam != None:
+                    a_mark = {}
+                    a_mark.update({'n': 3 * MAX_COL + 3})
+                    a_mark.update({'m': tbnams[t].tb_nam})
+                    if tbnams[t].sent:
+                        a_mark.update({'s': 1})
+                    else:
+                        a_mark.update({'s': 0})
+                    a_mark.update({'e': 0})
+                    temp_arr.append(a_mark)
+
+            adict.update({"mark": temp_arr})
+            list.append(adict)
+        return Response(status=status.HTTP_200_OK, content=list)
+
+    @need_login
+    @operating_permission(['HIEU_PHO', 'HIEU_TRUONG', 'GIAO_VIEN'])
+    def post(self, request):
+        pass
