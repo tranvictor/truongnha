@@ -76,10 +76,12 @@ $(document).ready(function () {
                         window.location.replace(json.redirect);
                     } else {
                         $("#notify").showNotification(json.message, 2000);
+                        Recaptcha.reload();
                     }
                 },
                 error:function () {
                     $("#notify").showNotification("Gặp lỗi khi gửi đăng ký", 2000);
+                    Recaptcha.reload();
                 }
             };
             $.ajax(arg);
