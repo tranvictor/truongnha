@@ -6,6 +6,7 @@ from datetime import date
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
+from django.core.urlresolvers import reverse
 
 import validations
 from sms.utils import sendSMS, send_email
@@ -31,9 +32,16 @@ VOWELS = 'aeiou' # we'll keep this simple
 syllables = map(''.join, itertools.product(INITIAL_CONSONANTS,
     VOWELS, FINAL_CONSONANTS))
 
+class AbstractTeacherModel(models.Model):
+    # Return url of an object following the RESTFUL convention
+    def get_url(self, method, *args):
+        return reverse('-'.join([self.__class__.__name__, method]),
+                args=args)
+    class Meta:
+        abstract = True
 
 REGISTER_STATUS_CHOICES = (('DA_CAP', u"Đã cấp"), ('CHUA_CAP', u"Chưa cấp"))
-class Register(models.Model):
+class Register(AbstractTeacherModel):
     name = models.CharField("Họ và tên",
             max_length=validations.FULL_NAME_MAX_LENGTH, blank=False)
     birthday = models.DateField("Ngày sinh",
@@ -60,7 +68,7 @@ class Register(models.Model):
         return '-'.join([unicode(self.name), unicode(self.activation_key), unicode(self.email)])
 
 
-class Person(models.Model):
+class Person(AbstractTeacherModel):
     last_name = models.CharField("Họ",
             max_length=validations.LAST_NAME_MAX_LENGTH, blank=True)
     #vi phan nhap bang tay, ho ten se dc luu vao first_name
@@ -185,7 +193,7 @@ class Teacher(Person):
         verbose_name = "Giáo viên"
         verbose_name_plural = "Giáo viên"
 
-class Class(models.Model):
+class Class(AbstractTeacherModel):
     name = models.CharField("Tên lớp",
             max_length=validations.CLASS_NAME_MAX_LENGTH)
     index = models.IntegerField("Số thứ tự", default=0)
@@ -290,7 +298,7 @@ class Student(Person):
         verbose_name = "Học sinh"
         verbose_name_plural = "Học sinh"
 
-class Attend(models.Model):
+class Attend(AbstractTeacherModel):
     pupil = models.ForeignKey(Student, verbose_name=u"Học sinh")
     _class = models.ForeignKey(Class, verbose_name=u"Lớp")
     attend_time = models.DateTimeField("Thời gian nhập lớp")
@@ -315,7 +323,7 @@ class Attend(models.Model):
     def __unicode__(self):
         return unicode(self.pupil) + '_' + unicode(self._class)
 
-class Mark(models.Model):
+class Mark(AbstractTeacherModel):
     created = models.DateTimeField("Thời gian tạo", auto_now_add=True)
     modified = models.DateTimeField("Thời gian sửa", auto_now=True)
     
@@ -332,7 +340,7 @@ class Mark(models.Model):
         verbose_name = "Điểm"
         verbose_name_plural = "Điểm"
 
-class Note(models.Model):
+class Note(AbstractTeacherModel):
     created = models.DateTimeField("Thời gian tạo", auto_now_add=True)
     modified = models.DateTimeField("Thời gian sửa", auto_now=True)
     
@@ -345,7 +353,7 @@ class Note(models.Model):
         verbose_name = "Ghi chú"
         verbose_name_plural = "Ghi chú"
 
-class Receivables(models.Model):
+class Receivables(AbstractTeacherModel):
     name = models.CharField("Tên khoản thu",
             max_length=validations.RECEIVABLES_NAME_MAX_LENGTH)
     amount = models.FloatField("Số tiền", null=True, blank=True,
@@ -360,7 +368,7 @@ class Receivables(models.Model):
         verbose_name = "Khoản thu"
         verbose_name_plural = "Khoản thu"
 
-class Payment(models.Model):
+class Payment(AbstractTeacherModel):
     amount = models.FloatField("Số tiền", null=True, blank=True,
             validators=[validations.amount])
     note = models.TextField("Ghi chú", blank=True)

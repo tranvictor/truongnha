@@ -136,6 +136,7 @@ class BaseTeacherView(TemplateView):
         #
         # THIS METHOD SHOULD NOT BE OVERRIDED
         params = self._post(*args, **kwargs)
+        print 'params', params
         if self.request.is_ajax():
             return HttpResponse(simplejson.dumps(
                 params), mimetype='json')
@@ -185,16 +186,16 @@ class ClassView(IndexView):
     def _post_create(self, *args, **kwargs):
         create_form = self.ClassForm(self.request.POST.copy())
         if create_form.is_valid():
-            cl = create_form.save()
+            cl = create_form.save(self.teacher)
             return {'message': u'Bạn vừa tạo thành công lớp học',
                     'success': True,
                     'class_name': cl.name,
                     'class_url': self.reverse('class_view',
-                        args=[cl.id], kwargs={'request_type': 'view'}),
+                        kwargs={'class_id': cl.id, 'request_type': 'view'}),
                     'class_modify': self.reverse('class_view',
-                        args=[cl.id], kwargs={'request_type': 'modify'}),
+                        kwargs={'class_id': cl.id, 'request_type': 'modify'}),
                     'class_remove': self.reverse('class_view',
-                        args=[cl.id], kwargs={'request_type': 'remove'})}
+                        kwargs={'class_id': cl.id, 'request_type': 'remove'})}
         else:
             error = {}
             for k, v in create_form.errors.items():
@@ -221,11 +222,13 @@ class ClassView(IndexView):
             req_type = kwargs['request_type']
         except KeyError:
             req_type = 'view'
+        print 'request_type', req_type
         if req_type in self.request_type:
-            handler = getattr(self, '_post' + req_type,
+            handler = getattr(self, '_post_' + req_type,
                     self.http_method_not_allowed)
         else:
             handler = self.request_type_not_allowed
+        print handler
         return handler(*args, **kwargs)
 
 class RegisterView(TemplateView):

@@ -9,7 +9,9 @@
 <h2>Các lớp</h2>
 {% for cl in classes %}
   <div class="row-fluid">
-    <a class="span12 btn-success btn" href="#" title="Quản lý lớp {{cl}}">
+    <a class="span12 btn-success btn"
+      href="{% url class_view cl.teacher_id_id cl.id 'view' %}"
+      title="Quản lý lớp {{cl}}">
       <h3>{{cl}}</h3>
       <p>Sĩ số: {{cl.number_of_student}}</p>
       <p>Ghi chú: {{cl.cl_note}}</p>
