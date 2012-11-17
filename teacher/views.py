@@ -10,13 +10,14 @@ from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.template import RequestContext
+from django.template.loader import render_to_string
 from django.shortcuts import render_to_response
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ObjectDoesNotExist
 import validations
-from teacher.models import Person, Teacher, Register
+from teacher.models import Person, Teacher, Register, Class
 from sms.utils import send_email
 import settings
 
@@ -37,9 +38,9 @@ class BaseTeacherView(TemplateView):
     def _right_teacher_id(self, teacher_id):
         return teacher_id == unicode(self.teacher.id)
 
-    # Do the same work with Django reverse method but add
-    # valid teacher_id to **kwargs as an extra work
     def reverse(self, *args, **kwargs):
+        # Do the same work with Django reverse method but add
+        # valid teacher_id to **kwargs as an extra work
         kwargs['teacher_id'] = self.teacher_id
         return reverse(*args, **kwargs)
 
@@ -71,13 +72,81 @@ class BaseTeacherView(TemplateView):
         self.kwargs = kwargs
         return handler(request, *args, **kwargs)
 
+    def _menu(self, *args, **kwargs):
+        # This method return objects attached to menu
+        classes = self.teacher.class_set.order_by('-created')
+        return {'classes': classes}
+
+    def _get(self, *args, **kwargs):
+        # This method return all the needs to render reponse.
+        # Every view class inheritted from this class
+        # SHOULD OVERRIDE this method to deal with request processing.
+        # SHOULD NOT return NONE, return {} instead
+        raise Exception('NotImplemented')
+
+    def get(self, *args, **kwargs):
+        # This method handles get request:
+        # If the request is via ajax, it's assumed to be called 
+        # inside client's javascript. In this case, we return 
+        # only the content part of the view (not include menu part)
+        # in json: {'success': True, 'content': html_string}
+        # Otherwise, the normal HttpResponse will be returned
+        # (including menu and content part)
+        # This situation appears when user access directly via url
+        # (not from ajax)
+        #
+        #
+        # THIS METHOD SHOULD NOT BE OVERRIDED
+        menus = self._menu(*args, **kwargs)
+        params = self._get(*args, **kwargs)
+        params.update(menus)
+        if self.request.is_ajax():
+            params['full'] = False
+            res = render_to_string(self.template_name, params,
+                    context_instance=RequestContext(self.request))
+            return HttpResponse(simplejson.dumps(
+                {'success': True, 'content': res}),
+                mimetype='json')
+
+        else:
+            params['full'] = True
+            return render_to_response(self.template_name,
+                    params, context_instance=RequestContext(self.request))
+
 class IndexView(BaseTeacherView):
     template_name = os.path.join('teacher', 'index.html')
-    def get(self, *args, **kwargs):
-        classes = self.teacher.class_set.order_by('-created')
-        return render_to_response(IndexView.template_name,
-                {'classes': classes, },
-                context_instance=RequestContext(self.request))
+
+    def _get(*args, **kwargs):
+        return {}
+    
+class ClassView(IndexView):
+    template_name = os.path.join('teacher', 'class.html')
+    request_type = ['view', 'create', 'remove', 'modify']
+
+    class ClassForm(forms.ModelForm):
+        def __init__(self, *args, **kwargs):
+            super(ClassView.ClassForm, self).__init__(*args, **kwargs)
+
+        
+        class Meta:
+            model = Class
+            exclude = ('index', 'created')
+
+    def _get_create(self, *args, **kwargs):
+
+
+    # Extract the request_type to call appropriate method
+    def _get(self, *args, **kwargs):
+        try:
+            req_type = kwargs['request_type']
+        except KeyError:
+            req_type = 'view'
+        if req_type in self.request_type:
+            handler = getattr(self, '_get_' + req_type,
+                    self.http_method_not_allowed)
+        else:
+            handler = self.request_type_not_allowed
+        return handler(*args, **kwargs)
 
 class RegisterView(TemplateView):
     template_name = os.path.join('teacher', 'register.html')

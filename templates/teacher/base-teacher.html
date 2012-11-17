@@ -1,3 +1,4 @@
+{% if full %}
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -151,10 +152,12 @@
             {% block menu %}
             {% endblock %}
           </div>
+{% endif %}
           <div class="span9">
             {% block content %}
             {% endblock %}
           </div>
+{% if full %}
         </div>
     </div>
     <div class="placeholder" style="clear: both;"></div>
@@ -202,4 +205,4 @@
 
 </body>
 </html>
-
+{% endif %}
