@@ -290,7 +290,7 @@ def markForTeacher(request, type=1, term_id=-1, subject_id=-1, move=None):
     max_col_mot_tiet = 0
 
     if subjectChoice != -1:
-        list = getMark(subjectChoice, selectedTerm)
+        #list = getMark(subjectChoice, selectedTerm)
         list, maxColMieng, maxCol15Phut, maxColMotTiet = getMark(subjectChoice, selectedTerm)
         max_col_mieng, max_col_15phut, max_col_mot_tiet = min_col(selectedSubject)
 
