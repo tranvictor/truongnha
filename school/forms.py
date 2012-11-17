@@ -556,7 +556,7 @@ class UsernameChangeForm(forms.Form):
             return new_username
         raise forms.ValidationError(u"Tên đăng nhập này đã tồn tại")
 
-    def save(self,commit=True):
+    def save(self, commit=True):
         self.user.username = self.cleaned_data["new_username"]
         self.user.userprofile.username_change = 1
         if commit:

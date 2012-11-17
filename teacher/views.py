@@ -4,7 +4,7 @@ import os
 import simplejson
 import random
 import string
-from datetime import date
+from datetime import date, datetime
 from recaptcha.client import captcha
 from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseRedirect
@@ -41,7 +41,7 @@ class BaseTeacherView(TemplateView):
     def reverse(self, *args, **kwargs):
         # Do the same work with Django reverse method but add
         # valid teacher_id to **kwargs as an extra work
-        kwargs['teacher_id'] = self.teacher_id
+        kwargs['kwargs']['teacher_id'] = self.teacher_id
         return reverse(*args, **kwargs)
 
     def dispatch(self, request, *args, **kwargs):
@@ -84,6 +84,13 @@ class BaseTeacherView(TemplateView):
         # SHOULD NOT return NONE, return {} instead
         raise Exception('NotImplemented')
 
+    def _post(self, *args, **kwargs):
+        # This method return all the needs to notify after post request.
+        # Every view class inheritted from this class
+        # SHOULD OVERRIDE this method to deal with request processing.
+        # SHOULD NOT return NONE, return {} instead
+        raise Exception('NotImplemented')
+
     def get(self, *args, **kwargs):
         # This method handles get request:
         # If the request is via ajax, it's assumed to be called 
@@ -113,6 +120,32 @@ class BaseTeacherView(TemplateView):
             return render_to_response(self.template_name,
                     params, context_instance=RequestContext(self.request))
 
+    def post(self, *args, **kwargs):
+        # This method handles post request:
+        # If the request is via ajax, it's assumed to be called 
+        # inside client's javascript. In this case, we return 
+        # the result, message, error list ...
+        # in json: {'success': True/False,
+        # 'message': message_string,
+        # 'error_list': error_list,
+        # ........................}
+        # Otherwise, the normal HttpResponse will be returned
+        # (including menu and content part)
+        # This situation appears when user disable their javascript
+        # functionalities (not from ajax)
+        #
+        # THIS METHOD SHOULD NOT BE OVERRIDED
+        params = self._post(*args, **kwargs)
+        if self.request.is_ajax():
+            return HttpResponse(simplejson.dumps(
+                params), mimetype='json')
+
+        else:
+            # This this a dump return, it just stands here to
+            # handle nonajax post which is usually not supported
+            return HttpResponse(unicode(params))
+
+
 class IndexView(BaseTeacherView):
     template_name = os.path.join('teacher', 'index.html')
 
@@ -126,14 +159,49 @@ class ClassView(IndexView):
     class ClassForm(forms.ModelForm):
         def __init__(self, *args, **kwargs):
             super(ClassView.ClassForm, self).__init__(*args, **kwargs)
-
         
+        def save(self, teacher, commit=True, *args, **kwargs):
+            cl = super(ClassView.ClassForm, self).save(commit=commit,
+                    *args, **kwargs)
+            cl.index = teacher.class_set.count()
+            cl.teacher_id = teacher
+            if not cl.id:
+                self.cl.created = datetime.now()
+            if commit:
+                cl.save()
+            return cl
+
         class Meta:
             model = Class
-            exclude = ('index', 'created')
+            exclude = ('index', 'created', 'teacher_id')
 
     def _get_create(self, *args, **kwargs):
+        self.template_name = os.path.join('teacher', 'class_create.html')
+        create_form = self.ClassForm()
+        return {'create_form': create_form,
+                'create_url': self.reverse('class_create',
+                    kwargs={'request_type': 'create'})}
 
+    def _post_create(self, *args, **kwargs):
+        create_form = self.ClassForm(self.request.POST.copy())
+        if create_form.is_valid():
+            cl = create_form.save()
+            return {'message': u'Bạn vừa tạo thành công lớp học',
+                    'success': True,
+                    'class_name': cl.name,
+                    'class_url': self.reverse('class_view',
+                        args=[cl.id], kwargs={'request_type': 'view'}),
+                    'class_modify': self.reverse('class_view',
+                        args=[cl.id], kwargs={'request_type': 'modify'}),
+                    'class_remove': self.reverse('class_view',
+                        args=[cl.id], kwargs={'request_type': 'remove'})}
+        else:
+            error = {}
+            for k, v in create_form.errors.items():
+                error[create_form[k].auto_id] = create_form.error_class.as_text(v)
+            return {'success': False,
+                    'error': error,
+                    'message': u'Có lỗi ở dữ liệu nhập vào'}
 
     # Extract the request_type to call appropriate method
     def _get(self, *args, **kwargs):
@@ -143,6 +211,18 @@ class ClassView(IndexView):
             req_type = 'view'
         if req_type in self.request_type:
             handler = getattr(self, '_get_' + req_type,
+                    self.http_method_not_allowed)
+        else:
+            handler = self.request_type_not_allowed
+        return handler(*args, **kwargs)
+    
+    def _post(self, *args, **kwargs):
+        try:
+            req_type = kwargs['request_type']
+        except KeyError:
+            req_type = 'view'
+        if req_type in self.request_type:
+            handler = getattr(self, '_post' + req_type,
                     self.http_method_not_allowed)
         else:
             handler = self.request_type_not_allowed
