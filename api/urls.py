@@ -28,4 +28,6 @@ urlpatterns = patterns('',
 
     url(r'markForAStudent/(?P<student_id>\w+)/(?P<term_id>\w+)$',
         MarkForAStudent.as_view(), name='api_get_mark_for_a_student'),
+    url(r'markForAStudent/(?P<student_id>\w+)$',
+        MarkForAStudent.as_view(), name='api_get_mark_for_a_student'),
 )
