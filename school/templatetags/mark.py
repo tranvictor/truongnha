@@ -24,7 +24,9 @@ def convertHlToVietnamese(x):
 
 @register.filter
 def convertMarkToCharacter(x):
-    if x >= 5:
+    if (x == None):
+        return ""
+    elif x >= 5:
         return u'Đ'
     else:
         return  u'CĐ'

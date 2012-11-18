@@ -13,20 +13,22 @@ from app.views import login
 from sms.models import sms
 from school.class_functions import dd
 from school.models import Class, Pupil, Term, Subject, DiemDanh, TBNam, TKB,\
-        KhenThuong, KiLuat
+    KhenThuong, KiLuat
 from school.utils import get_position, get_school, is_teacher,\
-        get_current_term, get_current_year
+    get_current_term, get_current_year
 from school.forms import MarkForm
 from decorators import need_login, operating_permission, school_function
 import simplejson
 import datetime
 import re
-from school.templateExcel import  MAX_COL, CHECKED_DATE
+from school.templateExcel import  MAX_COL, CHECKED_DATE, normalize
+
 class ApiLogin(View):
     """
     A basic view, that can be handle GET and POST requests.
     Applies some simple form validation on POST requests.
     """
+
     def get(self, request):
         response = login(request, api_called=True)
         if response.status_code == 200:
@@ -46,14 +48,14 @@ class ApiLogin(View):
                 user = None
                 if user_position == 1:
                     user = {
-                    'type': user_position,
-                    'last_name': request.user.last_name,
-                    'first_name': request.user.first_name,
-                    'class': request.user.pupil.class_id,
-                    'school': get_school(request).name,
-                    'birth': request.user.pupil.birthday
+                        'type': user_position,
+                        'last_name': request.user.last_name,
+                        'first_name': request.user.first_name,
+                        'class': request.user.pupil.class_id,
+                        'school': get_school(request).name,
+                        'birth': request.user.pupil.birthday
                     }
-                elif user_position in [2,3]:
+                elif user_position in [2, 3]:
                     user = {
                         'type': user_position,
                         'last_name': request.user.last_name,
@@ -82,7 +84,7 @@ class ApiLogin(View):
                     result['teaching_class'] = {}
                     classes = []
                     for subject in teaching_subjects:
-                        temp ={
+                        temp = {
                             'classId': subject.class_id.id,
                             'className': subject.class_id.name,
                             'subject': subject.name,
@@ -113,14 +115,16 @@ class ApiLogin(View):
             elif user_position > 3:
                 #TODO: return necessary information for school's admins
                 return Response(status=status.HTTP_404_NOT_FOUND)
-            return Response(status=status.HTTP_200_OK, content= result)
+            return Response(status=status.HTTP_200_OK, content=result)
         else:
             return Response(status.HTTP_401_UNAUTHORIZED)
+
 
 class ApiLogout(View):
     def get(self, request):
         logout(request=request)
         return Response(status=status.HTTP_200_OK)
+
 
 class ApiGetStudentList(View):
     def get(self, request,
@@ -132,30 +136,31 @@ class ApiGetStudentList(View):
         if request.user.is_anonymous():
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         position = get_position(request)
-        if position >=3:
+        if position >= 3:
             try:
                 _class = Class.objects.filter(
-                        block_id__school_id=get_school(request)).get(id=class_id)
+                    block_id__school_id=get_school(request)).get(id=class_id)
             except ObjectDoesNotExist:
                 return Response(status.HTTP_400_BAD_REQUEST)
             if all: student_list = _class.attended_student()
             else: student_list = _class.students()
-            result ={
-                'SUBJECT':'Ten Mon hoc' # Vu~ cho ten mon hoc vao day cai :|
+            result = {
+                'SUBJECT': 'Ten Mon hoc' # Vu~ cho ten mon hoc vao day cai :|
             }
             list = []
             for student in student_list:
                 s = {
                     'id': student.id,
-                    'name': student.last_name +' '+ student.first_name,
+                    'name': student.last_name + ' ' + student.first_name,
                     'sex': student.sex,
                     'birth': student.birthday
                 }
                 list.append(s)
-            result['list']=list
+            result['list'] = list
             return Response(status=status.HTTP_200_OK, content=result)
         else:
             return Response(status.HTTP_403_FORBIDDEN)
+
 
 class Attendance(View):
     def get(self, request,
@@ -168,17 +173,17 @@ class Attendance(View):
         date = None
         try:
             _class = Class.objects.filter(
-                    block_id__school_id=get_school(request)).get(id=class_id)
+                block_id__school_id=get_school(request)).get(id=class_id)
         except ObjectDoesNotExist:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         try:
-            date = datetime.datetime(int(year), int(month), int(day)) 
+            date = datetime.datetime(int(year), int(month), int(day))
         except Exception:
             pass
         student_list = _class.students()
         if date:
             diemdanh_list = DiemDanh.objects.filter(student_id__in=student_list,
-                    time = date.date())
+                time=date.date())
         else:
             diemdanh_list = []
         list = []
@@ -200,6 +205,7 @@ class Attendance(View):
                 'status': sta}
             list.append(s)
         return Response(status=status.HTTP_200_OK, content=list)
+
     @need_login
     @operating_permission(['HIEU_PHO', 'HIEU_TRUONG', 'GIAO_VIEN'])
     def post(self, request):
@@ -216,20 +222,20 @@ class Attendance(View):
         day = request.POST['date']
         data = request.POST['list']
         try:
-            _class = Class.objects.get(id = int(class_id))
+            _class = Class.objects.get(id=int(class_id))
         except ObjectDoesNotExist:
             return Response(status.HTTP_404_NOT_FOUND)
         if (is_teacher(request)
-                and request.user.teacher in _class.associated_teacher()):
+            and request.user.teacher in _class.associated_teacher()):
             date_parts = day.split('-')
             try:
                 response = dd(request,
-                            class_id,
-                            date_parts[0],
-                            date_parts[1],
-                            date_parts[2],
-                            api_called=True,
-                            data=data)
+                    class_id,
+                    date_parts[0],
+                    date_parts[1],
+                    date_parts[2],
+                    api_called=True,
+                    data=data)
                 if response.status_code == 200:
                     return Response(status.HTTP_200_OK)
                 else:
@@ -239,6 +245,7 @@ class Attendance(View):
                 raise e
         else:
             return Response(status.HTTP_403_FORBIDDEN)
+
 
 class Subject(View):
     @need_login
@@ -262,6 +269,7 @@ class Subject(View):
                 'teacher': s.teacher_id.full_name()})
         return Response(status=status.HTTP_200_OK, content=result)
 
+
 class Mark(View):
     @need_login
     @school_function
@@ -274,8 +282,8 @@ class Mark(View):
         except ObjectDoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         marks = Mark.objects.filter(student_id=st,
-                                    subject_id=subject,
-                                    term_id=term)
+            subject_id=subject,
+            term_id=term)
         result = []
         for m in marks:
             a_mark = {}
@@ -283,6 +291,7 @@ class Mark(View):
                 a_mark[f.name] = getattr(m, f.name)
             result.append(a_mark)
         return Response(status=status.HTTP_200_OK, content=result)
+
     @need_login
     @school_function
     @operating_permission(['HIEU_PHO', 'HIEU_TRUONG', 'GIAO_VIEN'])
@@ -296,7 +305,7 @@ class Mark(View):
             data = simplejson.loads(data)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST,
-                    content={'error':'JsonStringNotFormed'})
+                content={'error': 'JsonStringNotFormed'})
         ids = data.keys()
         marks = Mark.objects.filter(id__in=ids)
         for m in marks:
@@ -305,10 +314,10 @@ class Mark(View):
                 form.save()
             else:
                 return Response(status=status.HTTP_400_BAD_REQUEST,
-                        content={'error':'MarkNotValid'})
+                    content={'error': 'MarkNotValid'})
         return Response(status=status.HTTP_200_OK)
 
-         
+
 class SchoolSetting(View):
     @need_login
     @school_function
@@ -318,7 +327,7 @@ class SchoolSetting(View):
         classes = school.get_setting('class_labels')
         print classes
         return Response(status=status.HTTP_200_OK,
-                        content={'classes': classes})
+            content={'classes': classes})
 
     @need_login
     @school_function
@@ -332,8 +341,8 @@ class SchoolSetting(View):
             cl_label_re = re.compile(r'(6|7|8|9)(\s*)(\w+)', flags=re.U)
         elif school.school_level == '3':
             cl_label_re = re.compile(r'(10|11|12)(\s*)(\w+)', flags=re.U)
-        classes =cl_label_re.findall(cl_labels)
-        setting = [] 
+        classes = cl_label_re.findall(cl_labels)
+        setting = []
         success = True
         for cl in classes:
             grade, class_label = cl[0], cl[2]
@@ -347,8 +356,9 @@ class SchoolSetting(View):
                 result += u"u'%s'," % st
             result += u']'
             school.save_settings('class_labels', result)
-        data = { 'success': success, 'setting': setting}
+        data = {'success': success, 'setting': setting}
         return Response(status.HTTP_200_OK, content=data)
+
 
 class SmsStatus(View):
     @need_login
@@ -360,7 +370,8 @@ class SmsStatus(View):
         for s in _smses:
             result[s.id] = '%s-%s' % (s.recent, s.success)
         return Response(status.HTTP_200_OK, content=result)
-            
+
+
 class SmsSummary(View):
     @need_login
     @school_function
@@ -381,9 +392,10 @@ class SmsSummary(View):
         term = get_current_term(request)
         info_list, students, subjects = cl._generate_mark_summary(term)
         result = {
-                'info_list': info_list,
-                'students': students}
+            'info_list': info_list,
+            'students': students}
         return Response(status.HTTP_200_OK, content=result)
+
 
 class hanhkiem(View):
     def get(self, request, class_id):
@@ -410,11 +422,13 @@ class hanhkiem(View):
                 'sms_phone': student.sms_phone,
                 'email': student.email,
                 }
-            FieldList = ['hk_thang_9', 'hk_thang_10', 'hk_thang_11', 'hk_thang_12', 'hk_thang_1', 'hk_thang_2', 'hk_thang_3', 'hk_thang_4', 'hk_thang_5', 'term1', 'term2', 'year', 'hk_ren_luyen_lai']
+            FieldList = ['hk_thang_9', 'hk_thang_10', 'hk_thang_11', 'hk_thang_12', 'hk_thang_1', 'hk_thang_2',
+                         'hk_thang_3', 'hk_thang_4', 'hk_thang_5', 'term1', 'term2', 'year', 'hk_ren_luyen_lai']
             for i in FieldList:
                 s[i] = getattr(hanhkiem, i)
             list.append(s)
         return Response(status=status.HTTP_200_OK, content=list)
+
     @need_login
     @operating_permission(['HIEU_PHO', 'HIEU_TRUONG', 'GIAO_VIEN'])
     @transaction.commit_manually
@@ -433,7 +447,7 @@ class hanhkiem(View):
         list = data.split("%")
         term = get_current_term(request)
         try:
-            _class = Class.objects.get(id = int(class_id))
+            _class = Class.objects.get(id=int(class_id))
         except ObjectDoesNotExist:
             return Response(status.HTTP_404_NOT_FOUND)
         if (is_teacher(request)
@@ -448,7 +462,8 @@ class hanhkiem(View):
                     hk = p.tbnam_set.get(year_id__exact=year.id)
 
                     valid_value = ['T', 'K', 'TB', 'Y', '']
-                    FieldList = ['hk_thang_9', 'hk_thang_10', 'hk_thang_11', 'hk_thang_12', 'hk_thang_1', 'hk_thang_2', 'hk_thang_3', 'hk_thang_4', 'hk_thang_5', 'term1', 'term2', 'year', 'hk_ren_luyen_lai']
+                    FieldList = ['hk_thang_9', 'hk_thang_10', 'hk_thang_11', 'hk_thang_12', 'hk_thang_1', 'hk_thang_2',
+                                 'hk_thang_3', 'hk_thang_4', 'hk_thang_5', 'term1', 'term2', 'year', 'hk_ren_luyen_lai']
                     if not (field in FieldList):
                         raise Exception("Bad request")
                     if not (type in valid_value):
@@ -467,6 +482,7 @@ class hanhkiem(View):
             transaction.commit()
         else:
             return Response(status.HTTP_403_FORBIDDEN)
+
 
 class Schedule(View):
     @need_login
@@ -488,38 +504,39 @@ class Schedule(View):
                         tmp.class_id = cl
                         tmp.save()
                     for field in range(1, 11):
-                        sub = getattr(tmp, 'period_'+str(field))
+                        sub = getattr(tmp, 'period_' + str(field))
                         if not sub: continue
-                        new_dict = {'class' : cl.name, 'subject' : sub.name, 'time' : field}
+                        new_dict = {'class': cl.name, 'subject': sub.name, 'time': field}
                         table[d].append(new_dict)
                     if tmp.chaoco:
-                        new_dict = {'class' : cl.name, 'subject' : u'Chào cờ', 'time' : tmp.chaoco}
+                        new_dict = {'class': cl.name, 'subject': u'Chào cờ', 'time': tmp.chaoco}
                         table[d].append(new_dict)
                     if tmp.sinhhoat:
-                        new_dict = {'class' : cl.name, 'subject' : u'Sinh hoạt', 'time' : tmp.sinhhoat}
+                        new_dict = {'class': cl.name, 'subject': u'Sinh hoạt', 'time': tmp.sinhhoat}
                         table[d].append(new_dict)
             return HttpResponse(simplejson.dumps(table), mimetype='json')
         except Exception as e:
             print e
             return Response(status.HTTP_403_FORBIDDEN)
 
+
 class StudentProfile(View):
     @need_login
     def get(self, request, student_id):
         try:
             student = Pupil.objects.get(id=student_id)
-            ttcn_fields = ('last_name','first_name','birthday',
-                      'sex','start_year_id','birth_place','dan_toc',
-                      'ton_giao','uu_tien','quoc_tich','home_town',
-                      'ban_dk','school_join_date','school_join_mark')
-            ttll_fields = ('current_address','phone','father_phone',
-                           'mother_phone','sms_phone','email')
+            ttcn_fields = ('last_name', 'first_name', 'birthday',
+                           'sex', 'start_year_id', 'birth_place', 'dan_toc',
+                           'ton_giao', 'uu_tien', 'quoc_tich', 'home_town',
+                           'ban_dk', 'school_join_date', 'school_join_mark')
+            ttll_fields = ('current_address', 'phone', 'father_phone',
+                           'mother_phone', 'sms_phone', 'email')
 
-            ttgd_fields = ('father_name','father_birthday','father_job',
-                           'mother_name','mother_birthday','mother_job')
+            ttgd_fields = ('father_name', 'father_birthday', 'father_job',
+                           'mother_name', 'mother_birthday', 'mother_job')
 
-            ttdd_fields = {'doi','ngay_vao_doi','doan','ngay_vao_doan','dang','ngay_vao_dang'}
-            data = {'ttcn' : {}, 'ttll' : {}, 'ttgd' : {}, 'ttdd' : {}, 'khenthuong' : [], 'kiluat' : [] }
+            ttdd_fields = {'doi', 'ngay_vao_doi', 'doan', 'ngay_vao_doan', 'dang', 'ngay_vao_dang'}
+            data = {'ttcn': {}, 'ttll': {}, 'ttgd': {}, 'ttdd': {}, 'khenthuong': [], 'kiluat': []}
             for field in ttcn_fields:
                 tmp = getattr(student, field)
                 data['ttcn'][field] = unicode(tmp)
@@ -552,9 +569,8 @@ class StudentProfile(View):
                     new_dict[field] = unicode(tmp)
                 data['kiluat'].append(new_dict)
 
-
             return HttpResponse(simplejson.dumps(data), mimetype='json')
-#            return Response(status=status.HTTP_200_OK, content=list)
+        #            return Response(status=status.HTTP_200_OK, content=list)
         except Exception as e:
             print e
             return Response(status.HTTP_403_FORBIDDEN)
@@ -564,7 +580,7 @@ class MarkForASubject(View):
     @need_login
     @school_function
     @operating_permission(['HIEU_PHO', 'HIEU_TRUONG', 'GIAO_VIEN'])
-    def get(self, request, subject_id,term_id):
+    def get(self, request, subject_id, term_id):
         selected_subject = Subject.objects.get(id=subject_id)
         selected_term = Term.objects.get(id=term_id)
         time_to_edit = int(selected_term.year_id.school_id.get_setting('lock_time')) * 60
@@ -583,7 +599,7 @@ class MarkForASubject(View):
             # to avoid lazy query
             temp = len(term1s)
             temp = len(tbnams)
-        for (t,m) in enumerate(marks):
+        for (t, m) in enumerate(marks):
             adict = {}
             adict.update({"id": int(m.id)})
             adict.update({"last_name": m.student_id.last_name})
@@ -594,10 +610,10 @@ class MarkForASubject(View):
             arr_sent = m.to_array_sent()
             temp_arr = []
             for (i, a) in enumerate(arr_mark):
-                if arr_mark[i] != '':
+                if a != '':
                     a_mark = {}
                     a_mark.update({'n': i})
-                    a_mark.update({'m': arr_mark[i]})
+                    a_mark.update({'m': a})
                     if arr_sent[i] == '1':
                         a_mark.update({'s': 1})
                     else:
@@ -626,7 +642,7 @@ class MarkForASubject(View):
 
                 temp_arr.append(a_mark)
 
-            if selected_term.number == 2 :
+            if selected_term.number == 2:
                 if term1s[t].tb != None:
                     a_mark = {}
                     a_mark.update({'n': 3 * MAX_COL + 2})
@@ -642,7 +658,7 @@ class MarkForASubject(View):
 
             if m.tb != None:
                 a_mark = {}
-                a_mark.update({'n': 3 * MAX_COL + 2})
+                a_mark.update({'n': 3 * MAX_COL + 3})
                 a_mark.update({'m': m.tb})
                 if arr_sent[3 * MAX_COL + 2] == '1':
                     a_mark.update({'s': 1})
@@ -656,10 +672,10 @@ class MarkForASubject(View):
 
                 temp_arr.append(a_mark)
 
-            if selected_term.number == 2 :
+            if selected_term.number == 2:
                 if tbnams[t].tb_nam != None:
                     a_mark = {}
-                    a_mark.update({'n': 3 * MAX_COL + 3})
+                    a_mark.update({'n': 3 * MAX_COL + 4})
                     a_mark.update({'m': tbnams[t].tb_nam})
                     if tbnams[t].sent:
                         a_mark.update({'s': 1})
@@ -670,6 +686,70 @@ class MarkForASubject(View):
 
             adict.update({"mark": temp_arr})
             list.append(adict)
+        return Response(status=status.HTTP_200_OK, content=list)
+
+    @need_login
+    @operating_permission(['HIEU_PHO', 'HIEU_TRUONG', 'GIAO_VIEN'])
+    def post(self, request):
+        pass
+
+
+class MarkForAStudent(View):
+    @need_login
+    @school_function
+    @operating_permission(['HOC_SINH'])
+    def get(self, request, student_id, term_id=None):
+        if term_id == None:
+            term_id = get_current_term(request)
+        selected_term = Term.objects.get(id=term_id)
+        marks = Mark.objects.filter(term_id=term_id, student_id=student_id).order_by("subject_id__index",
+            "subject_id__name")
+        if selected_term.number == 2:
+            before_term = Term.objects.get(year_id=selected_term.year_id,number=1)
+            term1s = Mark.objects.filter(term_id=before_term, student_id=student_id).order_by("subject_id__index",
+                "subject_id__name")
+            tbnams = TKMon.objects.filter(student_id=student_id)
+
+        list = []
+        for m in marks:
+            a_subject = {}
+            subject = m.subject_id
+            a_subject.update({"id":subject_id})
+            a_subject.update({"name":subject.name})
+            arr_mark = m.toArrayMark()
+            temp_mark = []
+            for (i,a) in enumerate(arr_mark):
+                if a != '' :
+                    a_mark = {}
+                    a_mark.update({"n":i})
+                    a_mark.update({"m":normalize(a,subject.nx)})
+                    temp_mark.append(a_mark)
+            if m.ck != None:
+                a_mark = {}
+                a_mark.update({"n":3*MAX_COL+1})
+                a_mark.update({"m":normalize(m.ck,subject.nx)})
+                temp_mark.append(a_mark)
+            if selected_term.number == 2:
+                term1 = Mark.objects.get(student_id=student_id,term_id=before_term,subject_id=subject)
+                if term1.tb != None:
+                    a_mark = {}
+                    a_mark.update({"n":3*MAX_COL+2})
+                    a_mark.update({"m":normalize(term1.tb,subject.nx)})
+                    temp_mark.append(a_mark)
+            if m.tb != None:
+                a_mark = {}
+                a_mark.update({"n":3*MAX_COL+3})
+                a_mark.update({"m":normalize(m.tb,subject.nx)})
+                temp_mark.append(a_mark)
+            if selected_term.number == 2:
+                tbnam = TKMon.objects.get(student_id=student_id,subject_id=subject)
+                a_mark = {}
+                a_mark.update({"n":3*MAX_COL+4})
+                a_mark.update({"m":normalize(tbnam.tb_nam,subject.nx)})
+                temp_mark.append(a_mark)
+
+            a_subject.update({"mark":temp_mark})
+            list.append(a_subject)
         return Response(status=status.HTTP_200_OK, content=list)
 
     @need_login
