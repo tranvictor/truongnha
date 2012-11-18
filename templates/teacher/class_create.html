@@ -11,7 +11,7 @@
 <form class="form-horizontal"
   action="{{ create_url }}"
   id="createClassForm" method="post">{% csrf_token %}
-  {{ create_form|bootstrap }}
+  {{ form|bootstrap }}
   <div class="form-actions">
     <button class="btn btn-primary" id="sendRegister">Lưu</button>
     <button class="btn" id="sendRegister">Hủy</button>
