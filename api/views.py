@@ -714,7 +714,7 @@ class MarkForAStudent(View):
         for m in marks:
             a_subject = {}
             subject = m.subject_id
-            a_subject.update({"id":subject_id})
+            a_subject.update({"id":int(subject.id)})
             a_subject.update({"name":subject.name})
             arr_mark = m.toArrayMark()
             temp_mark = []
