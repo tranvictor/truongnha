@@ -9,7 +9,6 @@
 {% block content %}
 <h2>Thêm học sinh</h2>
 <form class="form-horizontal"
-  action="{{ create_url }}"
   id="createStudentForm" method="post">{% csrf_token %}
   {{ form|bootstrap }}
   <div class="form-actions">

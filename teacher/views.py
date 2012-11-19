@@ -38,7 +38,7 @@ class ClassView(RestfulView, BaseTeacherView):
             super(ClassView.ClassForm, self).__init__(*args, **kwargs)
         
         def save(self, teacher, commit=True, *args, **kwargs):
-            cl = super(ClassView.ClassForm, self).save(commit=commit,
+            cl = super(ClassView.ClassForm, self).save(commit=False,
                     *args, **kwargs)
             cl.index = teacher.class_set.count()
             cl.teacher_id = teacher
@@ -141,7 +141,9 @@ class ClassView(RestfulView, BaseTeacherView):
             return {'success': False,
                     'message': u'Lớp không tồn tại'}
         students = cl.students()
-        return {'students': students}
+        print students
+        return {'cl': cl,
+                'students': students}
 
 class StudentView(RestfulView, BaseTeacherView):
     request_type = ['view', 'modify', 'create', 'remove']
@@ -149,21 +151,20 @@ class StudentView(RestfulView, BaseTeacherView):
     class StudentForm(forms.ModelForm):
         def __init__(self, *args, **kwargs):
             super(StudentView.StudentForm, self).__init__(*args, **kwargs)
+            self.fields['birthday'].widget.attrs.update({'class' : 'datepicker'})
         
         def save(self, cl, commit=True, *args, **kwargs):
-            st = super(ClassView.ClassForm, self).save(commit=commit,
+            st = super(StudentView.StudentForm, self).save(commit=False,
                     *args, **kwargs)
-            st.index = cl.number_of_student()
-            if not cl.id:
-                self.cl.created = datetime.now()
+            st.index = cl.number_of_students()
             if commit:
-                cl.save()
-            Attend.objects.create(
-                    pupil=st,
-                    _class=cl,
-                    attend_time=datetime.datetime.now(),
-                    leave_time=None)
-            return cl
+                st.save()
+                if not st.id:
+                    Attend.objects.create(
+                            pupil=st, _class=cl,
+                            attend_time=datetime.now(),
+                            leave_time=None)
+            return st
 
         class Meta:
             model = Student
@@ -175,9 +176,98 @@ class StudentView(RestfulView, BaseTeacherView):
         print create_form
         return {'form': create_form,
                 'create_url': self.reverse('student_create',
-                    kwargs={
-                        'class_id': kwargs['class_id'],
+                    kwargs={'class_id': kwargs['class_id'],
                         'request_type': 'create'})}
+
+    def _post_create(self, *args, **kwargs):
+        cl_id = kwargs['class_id']
+        try:
+            cl = self.teacher.class_set.get(id=cl_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Lớp không tồn tại'}
+
+        create_form = self.StudentForm(self.request.POST.copy())
+        if create_form.is_valid():
+            st = create_form.save(cl)
+            return {'message': u'Bạn vừa tạo thành công học sinh',
+                    'success': True,
+                    'student': st,
+                    'student_url': self.reverse('student_view',
+                        kwargs={'class_id': cl.id,
+                            'student_id': st.id,
+                            'request_type': 'view'}),
+                    'student_modify': self.reverse('student_view',
+                        kwargs={'class_id': cl.id,
+                            'student_id': st.id,
+                            'request_type': 'modify'}),
+                    'student_remove': self.reverse('student_view',
+                        kwargs={'class_id': cl.id,
+                            'student_id': st.id,
+                            'request_type': 'remove'})}
+        else:
+            error = {}
+            for k, v in create_form.errors.items():
+                error[create_form[k].auto_id] = create_form.error_class.as_text(v)
+            return {'success': False,
+                    'error': error,
+                    'message': u'Có lỗi ở dữ liệu nhập vào'}
+
+    def _get_modify(self, *args, **kwargs):
+        self.template_name = os.path.join('teacher', 'student_create.html')
+        try:
+            cl = self.teacher.class_set.get(id=kwargs['class_id'])
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Lớp không tồn tại'}
+        try:
+            st = cl.student_set.get(id=kwargs['student_id'])
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Học sinh không tồn tại'}
+        create_form = self.StudentForm(instance=st)
+        return {'form': create_form,
+                'create_url': self.reverse('student_create',
+                    kwargs={'class_id': kwargs['class_id'],
+                        'request_type': 'create'})}
+    
+    def _post_modify(self, *args, **kwargs):
+        try:
+            cl = self.teacher.class_set.get(id=kwargs['class_id'])
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Lớp không tồn tại'}
+        try:
+            st = cl.student_set.get(id=kwargs['student_id'])
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Học sinh không tồn tại'}
+        modify_form = self.StudentForm(self.request.POST.copy(),
+                instance=st)
+        if modify_form.is_valid():
+            st = modify_form.save(cl)
+            return {'message': u'Bạn vừa cập nhật thành công học sinh',
+                    'success': True,
+                    'student': st,
+                    'student_url': self.reverse('student_view',
+                        kwargs={'class_id': cl.id,
+                            'student_id': st.id,
+                            'request_type': 'view'}),
+                    'student_modify': self.reverse('student_view',
+                        kwargs={'class_id': cl.id,
+                            'student_id': st.id,
+                            'request_type': 'modify'}),
+                    'student_remove': self.reverse('student_view',
+                        kwargs={'class_id': cl.id,
+                            'student_id': st.id,
+                            'request_type': 'remove'})}
+        else:
+            error = {}
+            for k, v in modify_form.errors.items():
+                error[modify_form[k].auto_id] = modify_form.error_class.as_text(v)
+            return {'success': False,
+                    'error': error,
+                    'message': u'Có lỗi ở dữ liệu nhập vào'}
 
 class RegisterView(TemplateView):
     template_name = os.path.join('teacher', 'register.html')
@@ -229,7 +319,7 @@ class RegisterView(TemplateView):
             data['activation_key'] = activation_key
             register_form = RegisterView.form(data=data)
             if register_form.is_valid():
-                new_register = register_form.save(commit = False)
+                new_register = register_form.save(commit=False)
                 new_register.activation_key = activation_key
                 new_register.save()
 

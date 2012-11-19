@@ -9,7 +9,6 @@
 {% block content %}
 <h2>Tạo lớp mới</h2>
 <form class="form-horizontal"
-  action="{{ create_url }}"
   id="createClassForm" method="post">{% csrf_token %}
   {{ form|bootstrap }}
   <div class="form-actions">
