@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Django settings for qlnt project
 
+
 # open path for template folder
 import os
 import sys
