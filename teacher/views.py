@@ -269,6 +269,21 @@ class StudentView(RestfulView, BaseTeacherView):
                     'error': error,
                     'message': u'Có lỗi ở dữ liệu nhập vào'}
 
+    def _post_remove(self, *args, **kwargs):
+        try:
+            cl = self.teacher.class_set.get(id=kwargs['class_id'])
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Lớp không tồn tại'}
+        try:
+            st = cl.student_set.get(id=kwargs['student_id'])
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Học sinh không tồn tại'}
+        st.delete()
+        return {'success': True,
+                'message': u'Bạn đã xóa học sinh %s' % st.full_name()}
+
 class RegisterView(TemplateView):
     template_name = os.path.join('teacher', 'register.html')
 

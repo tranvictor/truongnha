@@ -8,64 +8,92 @@
 
 {% block content %}
 <h2>Danh sách học sinh</h2>
-<div id="student-table-div">
-  <div id="after-post-alert"></div>
-  {% if students %}
-  <table class="table table-hover fifth-row" id="student-table'">
-    <thead>
-      <tr>
-        <th class="align-left" title="Tài khoản">
-          <i class="icon-user"></i>
-        </th>
-        <th title="Chọn cả lớp" style="text-align: center;">
-          <input type="checkbox" id="checkbox_all" class="studentCheckbox"/>
-        </th>
-        <th style="text-align: center;">STT</th>
-        <th id="thLastName">Họ</th>
-        <th id="thFirstName">Tên</th>
-        <th id="thBirthday">Ngày sinh</th>
-        <th>Giới tính</th>
-        <th title="Điện thoại nhắn tin">Điện thoại</th>
-        <th></th>
-        <th title="Nơi ở hiện tại">Địa chỉ</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for ss in students %}
-      <tr class="{{ ss.id }} student"
-        style='-webkit-user-select: none; cursor:pointer;'>
-        <td>
-          <i class='icon-key' id='lock-{{ ss.id }}'></i>
-        </td>
-        <td style="text-align: center;">
-          <input type="checkbox" id="checkbox_{{ ss.id }}" class="studentCheckbox"/>
-        </td>
-        <td style="text-align: center;"> {{ forloop.counter }} </td>
-        <td><a title="Xem toàn bộ thông tin chi tiết"
-            href="{% url student_view user_teacher.id cl.id ss.id 'modify' %}">
-            {{ ss.last_name }}</a></td>
-        <td><a title="Xem toàn bộ thông tin chi tiết"
-            href="{% url student_view user_teacher.id cl.id ss.id 'modify' %}">
-            {{ ss.first_name }}</a>
-        </td>
-        <td> {{ ss.birthday|date:"SHORT_DATE_FORMAT" }} </td>
-        <td data-gender="{{ ss.sex }}"> {{ ss.sex }} </td>
-        <td class="smsPhone"> {{ ss.sms_phone }}</td>
-        {% if ss.email %}
-        <td title="{{ ss.email }}">
-          <i class="icon-envelope"></i>
-        </td>
-        {% else %}
-        <td></td>
-        {% endif %}
-        <td class="truncated" title="{{ ss.current_address }}">
-          {{ ss.current_address }} </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  Lớp chưa có học sinh nào.
-  {% endif %}
+<div id="submenu" class="btn-toolbar">
+  <div class="btn-group">
+    <a id="btn-diem" title="Nhập hoặc chỉnh sửa điểm các môn học"
+      class="btn btn-primary" href="">
+      <i class="icon-star-empty"></i>
+      Điểm</a>
+  </div>
+  <div class="pull-right">
+    <div class="btn-group">
+      <a id="textSms" class="btn btn-warning"
+        title="Nhắn tin đến những học sinh đã chọn">
+        <i class="icon-envelope"></i>
+        Nhắn tin
+      </a>
+    </div>
+    <div class="btn-group">
+      <a id="add-student"
+        class="btn btn-primary"
+        title="Thêm học sinh mới"
+        href="{% url student_create user_teacher.id cl.id 'create' %}">
+        <i class="icon-plus"></i>
+        Thêm
+      </a>
+    </div>
+  </div>
+</div>
+<div class="row-fluid">
+  <div id="student-table-div">
+    <div id="after-post-alert"></div>
+    {% if students %}
+    <table class="table table-hover fifth-row" id="student-table'">
+      <thead>
+        <tr>
+          <th class="align-left" title="Tài khoản">
+            <i class="icon-user"></i>
+          </th>
+          <th title="Chọn cả lớp" style="text-align: center;">
+            <input type="checkbox" id="checkbox_all" class="studentCheckbox"/>
+          </th>
+          <th style="text-align: center;">STT</th>
+          <th id="thLastName">Họ</th>
+          <th id="thFirstName">Tên</th>
+          <th id="thBirthday">Ngày sinh</th>
+          <th>Giới tính</th>
+          <th title="Điện thoại nhắn tin">Điện thoại</th>
+          <th></th>
+          <th title="Nơi ở hiện tại">Địa chỉ</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ss in students %}
+        <tr class="{{ ss.id }} student"
+          style='-webkit-user-select: none; cursor:pointer;'>
+          <td>
+            <i class='icon-key' id='lock-{{ ss.id }}'></i>
+          </td>
+          <td style="text-align: center;">
+            <input type="checkbox" id="checkbox_{{ ss.id }}" class="studentCheckbox"/>
+          </td>
+          <td style="text-align: center;"> {{ forloop.counter }} </td>
+          <td><a title="Xem toàn bộ thông tin chi tiết"
+              href="{% url student_view user_teacher.id cl.id ss.id 'modify' %}">
+              {{ ss.last_name }}</a></td>
+          <td><a title="Xem toàn bộ thông tin chi tiết"
+              href="{% url student_view user_teacher.id cl.id ss.id 'modify' %}">
+              {{ ss.first_name }}</a>
+          </td>
+          <td> {{ ss.birthday|date:"SHORT_DATE_FORMAT" }} </td>
+          <td data-gender="{{ ss.sex }}"> {{ ss.sex }} </td>
+          <td class="smsPhone"> {{ ss.sms_phone }}</td>
+          {% if ss.email %}
+          <td title="{{ ss.email }}">
+            <i class="icon-envelope"></i>
+          </td>
+          {% else %}
+          <td></td>
+          {% endif %}
+          <td class="truncated" title="{{ ss.current_address }}">
+            {{ ss.current_address }} </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    Lớp chưa có học sinh nào.
+    {% endif %}
+  </div>
 </div>
 {% endblock %}
