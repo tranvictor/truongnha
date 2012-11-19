@@ -144,6 +144,14 @@ class BaseTeacherView(TemplateView):
 
 # This class provide 2 method to extract request type
 # and call appropriate method to handle particular request type
+# This calling has its own convention:
+# - When a get or post request for the request type as (create, modify, remove,
+# view), for example is view and the method is post, it will search for method
+# named: _post_view, thus every view class that inherits this class should have
+# the handling methods in the name of _(post|get)_(create|modify|remove|view)
+# - If a method such as _get_view cant be found, it will call
+# request_type_not_allowed method (see BaseTeacherView for more detail about
+# this method)
 class RestfulView:
     def _get(self, *args, **kwargs):
         try:

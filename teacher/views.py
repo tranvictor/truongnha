@@ -16,7 +16,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ObjectDoesNotExist
 import validations
-from teacher.models import Person, Teacher, Register, Class
+from teacher.models import Person, Teacher, Register, Class,\
+        Attend, Student
 from sms.utils import send_email
 from teacher.base import BaseTeacherView, RestfulView
 import settings
@@ -28,6 +29,7 @@ class IndexView(BaseTeacherView):
     def _get(*args, **kwargs):
         return {}
     
+# The order RestfulView -> BaseTeacherView here is important
 class ClassView(RestfulView, BaseTeacherView):
     request_type = ['view', 'create', 'remove', 'modify']
 
@@ -52,7 +54,6 @@ class ClassView(RestfulView, BaseTeacherView):
 
     def _get_create(self, *args, **kwargs):
         self.template_name = os.path.join('teacher', 'class_create.html')
-        print self.template_name
         create_form = self.ClassForm()
         return {'form': create_form,
                 'create_url': self.reverse('class_create',
@@ -130,7 +131,54 @@ class ClassView(RestfulView, BaseTeacherView):
         cl.delete()
         return {'success': True,
                 'message': u'Bạn đã xóa lớp %s' % cl.name}
+
+    def _get_view(self, *args, **kwargs):
+        self.template_name = os.path.join('teacher', 'class_view.html')
+        cl_id = kwargs['class_id']
+        try:
+            cl = self.teacher.class_set.get(id=cl_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Lớp không tồn tại'}
+        students = cl.students()
+        return {'students': students}
+
+class StudentView(RestfulView, BaseTeacherView):
+    request_type = ['view', 'modify', 'create', 'remove']
+
+    class StudentForm(forms.ModelForm):
+        def __init__(self, *args, **kwargs):
+            super(StudentView.StudentForm, self).__init__(*args, **kwargs)
+        
+        def save(self, cl, commit=True, *args, **kwargs):
+            st = super(ClassView.ClassForm, self).save(commit=commit,
+                    *args, **kwargs)
+            st.index = cl.number_of_student()
+            if not cl.id:
+                self.cl.created = datetime.now()
+            if commit:
+                cl.save()
+            Attend.objects.create(
+                    pupil=st,
+                    _class=cl,
+                    attend_time=datetime.datetime.now(),
+                    leave_time=None)
+            return cl
+
+        class Meta:
+            model = Student
+            exclude = ('index', 'current_status', 'user', 'classes')
     
+    def _get_create(self, *args, **kwargs):
+        self.template_name = os.path.join('teacher', 'student_create.html')
+        create_form = self.StudentForm()
+        print create_form
+        return {'form': create_form,
+                'create_url': self.reverse('student_create',
+                    kwargs={
+                        'class_id': kwargs['class_id'],
+                        'request_type': 'create'})}
+
 class RegisterView(TemplateView):
     template_name = os.path.join('teacher', 'register.html')
 

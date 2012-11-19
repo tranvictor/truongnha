@@ -892,9 +892,9 @@ class Pupil(BasicPersonInfo):
     def _move_to_upper_class(self, _class):
         cur_cl = self.current_class()
         Mark.objects.filter(subject_id__class_id=cur_cl, student_id=self)\
-        .update(current=False)
+                .update(current=False)
         self.tkmon_set.filter(subject_id__class_id=cur_cl)\
-        .update(current=False)
+                .update(current=False)
         return self._move_to_class(_class)
 
     def get_school(self):

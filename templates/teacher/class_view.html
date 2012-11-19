@@ -1,0 +1,69 @@
+{% extends "teacher/index.html" %}
+{% load bootstrap %}
+{% block breadcrumb %}
+  {{ block.super }}
+  {% load breadcrumb_tags %}
+  {% add_crumb 'Thêm lớp học' %}
+{% endblock %}
+
+{% block content %}
+<h2>Danh sách học sinh</h2>
+<div id="student-table-div">
+  <div id="after-post-alert"></div>
+  {% if teachers %}
+  <table class="table table-hover fifth-row" id="student-table'">
+    <thead>
+      <tr>
+        <th class="align-left" title="Tài khoản">
+          <i class="icon-user"></i>
+        </th>
+        <th title="Chọn cả lớp" style="text-align: center;">
+          <input type="checkbox" id="checkbox_all" class="studentCheckbox"/>
+        </th>
+        <th style="text-align: center;">STT</th>
+        <th id="thLastName">Họ</th>
+        <th id="thFirstName">Tên</th>
+        <th id="thBirthday">Ngày sinh</th>
+        <th>Giới tính</th>
+        <th title="Điện thoại nhắn tin">Điện thoại</th>
+        <th></th>
+        <th title="Nơi ở hiện tại">Địa chỉ</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ss in students %}
+      <tr class="{{ ss.id }} student"
+        style='-webkit-user-select: none; cursor:pointer;'>
+        <td>
+          <i class='icon-key' id='lock-{{ ss.id }}'></i>
+        </td>
+        <td style="text-align: center;">
+          <input type="checkbox" id="checkbox_{{ ss.id }}" class="studentCheckbox"/>
+        </td>
+        <td style="text-align: center;"> {{ forloop.counter }} </td>
+        <td><a title="Xem toàn bộ thông tin chi tiết"
+            href="{% url student_detail ss.id %}">{{ ss.last_name }}</a></td>
+        <td><a title="Xem toàn bộ thông tin chi tiết"
+            href="{% url student_detail ss.id %}">{{ ss.first_name }}</a>
+        </td>
+        <td> {{ ss.birthday|date:"SHORT_DATE_FORMAT" }} </td>
+        <td data-gender="{{ ss.sex }}"> {{ ss.sex }} </td>
+        <td class="smsPhone"> {{ ss.sms_phone }}</td>
+        {% if ss.email %}
+        <td title="{{ ss.email }}">
+          <i class="icon-envelope"></i>
+        </td>
+        {% else %}
+        <td></td>
+        {% endif %}
+        <td class="truncated" title="{{ ss.current_address }}">
+          {{ ss.current_address }} </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  Lớp chưa có học sinh nào.
+  {% endif %}
+</div>
+{% endblock %}

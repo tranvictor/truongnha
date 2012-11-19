@@ -3,17 +3,17 @@
 {% block breadcrumb %}
   {{ block.super }}
   {% load breadcrumb_tags %}
-  {% add_crumb 'Thêm lớp học' %}
+  {% add_crumb 'Thêm học sinh' %}
 {% endblock %}
 
 {% block content %}
-<h2>Tạo lớp mới</h2>
+<h2>Thêm học sinh</h2>
 <form class="form-horizontal"
   action="{{ create_url }}"
-  id="createClassForm" method="post">{% csrf_token %}
+  id="createStudentForm" method="post">{% csrf_token %}
   {{ form|bootstrap }}
   <div class="form-actions">
-    <button class="btn btn-primary" id="sendClass">Lưu</button>
+    <button class="btn btn-primary" id="sendRegister">Lưu</button>
     <button class="btn">Hủy</button>
   </div>
 </form>
