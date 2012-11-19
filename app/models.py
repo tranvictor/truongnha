@@ -300,6 +300,10 @@ class UserProfile(models.Model):
         else:
             return True
 
+    #TODO: check the balance
+    def is_allowed_sms(self):
+        return True
+
     def __unicode__(self):
         return self.user.__unicode__()
 
