@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 import school.report_urls as report_urls
-from school import views, shortlink
+from school import views, shortlink, helptools
 import viewMark, viewFinish, exam, writeExcel, importMark,\
         school_functions, class_functions, excel_interaction
 #import makeTest
