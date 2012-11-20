@@ -29,7 +29,12 @@
         title="Thêm học sinh mới"
         href="{% url student_create user_teacher.id cl.id 'create' %}">
         <i class="icon-plus"></i>
-        Thêm
+      </a>
+      <a id="delSelected"
+        class="btn btn-danger disabled"
+        title="Xóa những học sinh đang được chọn"
+        href="#">
+        <i class="icon-minus"></i>
       </a>
     </div>
   </div>
