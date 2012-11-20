@@ -21,7 +21,8 @@ from teacher.models import Person, Teacher, Register, Class,\
 from sms.utils import send_email
 from teacher.base import BaseTeacherView, RestfulView
 import settings
-
+from django.contrib.sites.models import Site
+from django.contrib.sites.models import get_current_site
 
 class IndexView(BaseTeacherView):
     template_name = os.path.join('teacher', 'index.html')
@@ -43,7 +44,7 @@ class ClassView(RestfulView, BaseTeacherView):
             cl.index = teacher.class_set.count()
             cl.teacher_id = teacher
             if not cl.id:
-                self.cl.created = datetime.now()
+                cl.created = datetime.now()
             if commit:
                 cl.save()
             return cl
@@ -341,8 +342,11 @@ class RegisterView(TemplateView):
 
                 message = u'Bạn đã đăng ký thành công. \
                         Vui lòng kiểm tra email để kích hoạt tài khoản.'
-                mail_message = u'Vui lòng truy cập vào địa chỉ http://truongnha.com/teacher/activate/%s/ để hoàn tất đăng kí và kích hoạt tài khoản của bạn.' % (data['activation_key'])
-                send_email(u'Hoàn tất đăng kí tại TruongNha.com', mail_message,
+                site = request.get_host()
+                if site != 'localhost:8000':
+                    site = 'https://' + site
+                mail_message = u'Vui lòng truy cập vào địa chỉ %s/teacher/activate/%s/ để hoàn tất đăng kí và kích hoạt tài khoản của bạn.' % (site, data['activation_key'])
+                send_email(u'Hoàn tất đăng kí tại ' + unicode(site), mail_message,
                     to_addr=[data['email']])
 
                 success = True
