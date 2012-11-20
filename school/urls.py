@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 import school.report_urls as report_urls
-from school import views, shortlink, helptools
+from school import views, shortlink
 import viewMark, viewFinish, exam, writeExcel, importMark,\
         school_functions, class_functions, excel_interaction
 #import makeTest
@@ -203,7 +203,7 @@ urlpatterns = patterns('',
     #url(r'sync_major/$',  helptools.sync_major, name="sync_major"),
     #url(r'sync_user/$', helptools.disable_user, name="disable_user"),
     #url(r'sync_birthday/$', helptools.sync_birthday, name="sync_birthday"),
-    url(r'convert_diem_danh$',helptools.convert_diem_danh, name="convert_diem_danh"),
+    #url(r'convert_diem_danh$',helptools.convert_diem_danh, name="convert_diem_danh"),
     #url(r'sync_name/$', helptools.sync_name, name="sync_name"),
     #url(r'sync_class_name/$', helptools.sync_class_name, name="sync_class_name"),
     #url(r'sync_startyear/$', helptools.sync_start_year, name="sync_start_year"),
