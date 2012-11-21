@@ -139,7 +139,7 @@ class Person(AbstractTeacherModel):
             sms_sent = False
             try:
                 subject = u'Kích hoạt tài khoản Trường Nhà'
-                message = u'Thông tin tài khoản tại: https://www.truongnha.com của bạn:\nTên đăng nhập: %s\nMật khẩu: %s\nXin cảm ơn.' % (unicode(self.user.username),
+                message = u'Tài khoản tại địa chỉ: https://www.truongnha.com của bạn là:\nTên đăng nhập: %s\nMật khẩu: %s\nXin cảm ơn.' % (unicode(self.user.username),
                                 unicode(raw_password))
                 send_email(subject, message, to_addr=[self.email])
                 email_sent = True

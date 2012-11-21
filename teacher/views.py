@@ -17,10 +17,11 @@ from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ObjectDoesNotExist
 import validations
 from teacher.models import Person, Teacher, Register, Class,\
-        Attend, Student, Mark
+        Attend, Student
 from sms.utils import send_email
 from teacher.base import BaseTeacherView, RestfulView
 import settings
+
 
 class IndexView(BaseTeacherView):
     template_name = os.path.join('teacher', 'index.html')
@@ -158,8 +159,8 @@ class StudentView(RestfulView, BaseTeacherView):
             st.index = cl.number_of_students()
             if commit:
                 st.save()
-                if st.id:
-                    tmp = Attend.objects.create(
+                if not st.id:
+                    Attend.objects.create(
                             pupil=st, _class=cl,
                             attend_time=datetime.now(),
                             leave_time=None)
@@ -340,11 +341,8 @@ class RegisterView(TemplateView):
 
                 message = u'Bạn đã đăng ký thành công. \
                         Vui lòng kiểm tra email để kích hoạt tài khoản.'
-                site = request.get_host()
-                if site != 'localhost:8000':
-                    site = 'https://' + site
-                mail_message = u'Vui lòng truy cập vào địa chỉ %s/teacher/activate/%s/ để hoàn tất đăng kí và kích hoạt tài khoản của bạn.' % (site, data['activation_key'])
-                send_email(u'Hoàn tất đăng kí tại ' + unicode(site), mail_message,
+                mail_message = u'Vui lòng truy cập vào địa chỉ http://truongnha.com/teacher/activate/%s/ để hoàn tất đăng kí và kích hoạt tài khoản của bạn.' % (data['activation_key'])
+                send_email(u'Hoàn tất đăng kí tại TruongNha.com', mail_message,
                     to_addr=[data['email']])
 
                 success = True
@@ -483,80 +481,3 @@ class ForgetPasswordView(TemplateView):
                 'message': u'Có lỗi ở dữ liệu nhập vào'})
             return HttpResponse(response, mimetype='json')
 
-class MarkView(RestfulView, BaseTeacherView):
-    request_type = ['modify', 'create', 'remove']
-
-    class MarkForm(forms.ModelForm):
-#        def __init__(self, *args, **kwargs):
-#            super(MarkView.MarkForm, self).__init__(*args, **kwargs)
-        def save(self, cl, student, commit=True, *args, **kwargs):
-            mark = super(MarkView.MarkForm, self).save(commit=False,
-                *args, **kwargs)
-            mark.class_id = cl
-            mark.student_id = student
-            if commit:
-                mark.save()
-            return mark
-        class Meta:
-            model = Mark
-            exclude = ('created', 'modified', 'class_id', 'student_id')
-
-    def _get_create(self, *args, **kwargs):
-        self.template_name = os.path.join('teacher', 'mark_create.html')
-        cl_id = kwargs['class_id']
-        student_id = kwargs['student_id']
-        cl = self.teacher.class_set.get(id=cl_id)
-        student = Student.objects.get(id = student_id)
-        if cl.id == student.current_class().id:
-            create_form = self.MarkForm()
-            print create_form
-            return {'form': create_form,
-                    'class' : cl,
-                    'success' : True,
-                    'student' : student,
-                    'create_url': self.reverse('mark_create',
-                        kwargs={'class_id': kwargs['class_id'],
-                                'student_id': kwargs['student_id'],
-                                'request_type': 'create'})}
-        else:
-            return {'success': False,
-                    'message': u'Học sinh không nằm trong lớp'}
-
-    def _post_create(self, *args, **kwargs):
-        cl_id = kwargs['class_id']
-        student_id = kwargs['student_id']
-        try:
-            cl = self.teacher.class_set.get(id=cl_id)
-            student = Student.objects.get(id = student_id)
-        except ObjectDoesNotExist:
-            return {'success': False,
-                    'message': u'Lớp hoặc học sinh không tồn tại'}
-        if cl.id != student.current_class().id:
-            return {'success': False,
-                    'message': u'Học sinh không nằm trong lớp'}
-        create_form = self.MarkForm(self.request.POST.copy())
-        if create_form.is_valid():
-            mark = create_form.save(cl, student)
-            return {'message': u'Bạn vừa thêm thành công điểm',
-                    'success': True,
-                    'student': student,
-                    'class' : cl,
-                    'mark' : mark,
-                    'student_modify': self.reverse('mark_view',
-                        kwargs={'class_id': cl.id,
-                                'student_id': student.id,
-                                'mark_id':mark.id,
-                                'request_type': 'modify'}),
-
-                    'student_remove': self.reverse('mark_view',
-                        kwargs={'class_id': cl.id,
-                                'student_id': student.id,
-                                'mark_id':mark.id,
-                                'request_type': 'remove'})}
-        else:
-            error = {}
-            for k, v in create_form.errors.items():
-                error[create_form[k].auto_id] = create_form.error_class.as_text(v)
-            return {'success': False,
-                    'error': error,
-                    'message': u'Có lỗi ở dữ liệu nhập vào'}
