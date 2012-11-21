@@ -339,6 +339,8 @@ class Mark(AbstractTeacherModel):
     class Meta:
         verbose_name = "Điểm"
         verbose_name_plural = "Điểm"
+    def __unicode__(self):
+        return unicode(self.diem) + u"_" + unicode(self.student_id) + u'_' + unicode(self.class_id)
 
 class Note(AbstractTeacherModel):
     created = models.DateTimeField("Thời gian tạo", auto_now_add=True)

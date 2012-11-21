@@ -157,12 +157,14 @@ class StudentView(RestfulView, BaseTeacherView):
                     *args, **kwargs)
             st.index = cl.number_of_students()
             if commit:
-                st.save()
-                if st.id:
-                    tmp = Attend.objects.create(
+                if not st.id:
+                    st.save()
+                    Attend.objects.create(
                             pupil=st, _class=cl,
                             attend_time=datetime.now(),
                             leave_time=None)
+                else:
+                    st.save()
             return st
 
         class Meta:
@@ -542,13 +544,13 @@ class MarkView(RestfulView, BaseTeacherView):
                     'student': student,
                     'class' : cl,
                     'mark' : mark,
-                    'student_modify': self.reverse('mark_view',
+                    'mark_modify': self.reverse('mark_view',
                         kwargs={'class_id': cl.id,
                                 'student_id': student.id,
                                 'mark_id':mark.id,
                                 'request_type': 'modify'}),
 
-                    'student_remove': self.reverse('mark_view',
+                    'mark_remove': self.reverse('mark_view',
                         kwargs={'class_id': cl.id,
                                 'student_id': student.id,
                                 'mark_id':mark.id,
@@ -560,3 +562,115 @@ class MarkView(RestfulView, BaseTeacherView):
             return {'success': False,
                     'error': error,
                     'message': u'Có lỗi ở dữ liệu nhập vào'}
+    def _get_modify(self, *args, **kwargs):
+        self.template_name = os.path.join('teacher', 'mark_create.html')
+        cl_id = kwargs['class_id']
+        student_id = kwargs['student_id']
+        mark_id = kwargs['mark_id']
+        try:
+            cl = self.teacher.class_set.get(id=cl_id)
+            student = Student.objects.get(id = student_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Lớp hoặc học sinh không tồn tại'}
+        if cl.id != student.current_class().id:
+            return {'success': False,
+                    'message': u'Học sinh không nằm trong lớp'}
+        try:
+            mark = student.mark_set.get(id = mark_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Điểm không tồn tại'}
+
+        if mark.class_id.id != int(cl_id):
+            return {'success': False,
+                    'message': u'Điểm không nằm trong lớp'}
+
+        create_form = self.MarkForm(instance=mark)
+        return {'form': create_form,
+                'class' : cl,
+                'success' : True,
+                'student' : student,
+                'create_url': self.reverse('mark_create',
+                    kwargs={'class_id': kwargs['class_id'],
+                            'student_id': kwargs['student_id'],
+                            'request_type': 'create'})}
+
+    def _post_modify(self, *args, **kwargs):
+        self.template_name = os.path.join('teacher', 'mark_create.html')
+        cl_id = kwargs['class_id']
+        student_id = kwargs['student_id']
+        mark_id = kwargs['mark_id']
+        try:
+            cl = self.teacher.class_set.get(id=cl_id)
+            student = Student.objects.get(id = student_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Lớp hoặc học sinh không tồn tại'}
+        if cl.id != student.current_class().id:
+            return {'success': False,
+                    'message': u'Học sinh không nằm trong lớp'}
+        try:
+            mark = student.mark_set.get(id = mark_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Điểm không tồn tại'}
+
+        if mark.class_id.id != int(cl_id):
+            return {'success': False,
+                    'message': u'Điểm không nằm trong lớp'}
+
+        modify_form = self.MarkForm(self.request.POST.copy(),
+            instance=mark)
+        if modify_form.is_valid():
+            mark = modify_form.save(cl, student)
+            return {'message': u'Bạn vừa cập nhật thành công điểm',
+                    'success': True,
+                    'student': student,
+                    'class' : cl,
+                    'mark' : mark,
+                    'mark_modify': self.reverse('mark_view',
+                        kwargs={'class_id': cl.id,
+                                'student_id': student.id,
+                                'mark_id':mark.id,
+                                'request_type': 'modify'}),
+
+                    'mark_remove': self.reverse('mark_view',
+                        kwargs={'class_id': cl.id,
+                                'student_id': student.id,
+                                'mark_id':mark.id,
+                                'request_type': 'remove'})}
+        else:
+            error = {}
+            for k, v in modify_form.errors.items():
+                error[modify_form[k].auto_id] = modify_form.error_class.as_text(v)
+            return {'success': False,
+                    'error': error,
+                    'message': u'Có lỗi ở dữ liệu nhập vào'}
+
+    def _post_remove(self, *args, **kwargs):
+        self.template_name = os.path.join('teacher', 'mark_create.html')
+        cl_id = kwargs['class_id']
+        student_id = kwargs['student_id']
+        mark_id = kwargs['mark_id']
+        try:
+            cl = self.teacher.class_set.get(id=cl_id)
+            student = Student.objects.get(id = student_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Lớp hoặc học sinh không tồn tại'}
+        if cl.id != student.current_class().id:
+            return {'success': False,
+                    'message': u'Học sinh không nằm trong lớp'}
+        try:
+            mark = student.mark_set.get(id = mark_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Điểm không tồn tại'}
+
+        if mark.class_id.id != int(cl_id):
+            return {'success': False,
+                    'message': u'Điểm không nằm trong lớp'}
+        mark.delete()
+        return {'success': True,
+                'message': u'Bạn đã xóa điểm %s' % mark}
