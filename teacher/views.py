@@ -81,24 +81,14 @@ class ClassView(RestfulView, BaseTeacherView):
     
     def _get_modify(self, *args, **kwargs):
         self.template_name = os.path.join('teacher', 'class_create.html')
-        cl_id = kwargs['class_id']
-        try:
-            cl = self.teacher.class_set.get(id=cl_id)
-        except ObjectDoesNotExist:
-            return {'success': False,
-                    'message': u'Lớp không tồn tại'}
+        cl = kwargs['cleaned_params']['class']
         modify_form = self.ClassForm(instance=cl)
         return {'form': modify_form,
                 'modify_url': self.reverse('class_view',
-                    kwargs={'class_id': cl_id, 'request_type': 'modify'})}
+                    kwargs={'class_id': cl.id, 'request_type': 'modify'})}
 
     def _post_modify(self, *args, **kwargs):
-        cl_id = kwargs['class_id']
-        try:
-            cl = self.teacher.class_set.get(id=cl_id)
-        except ObjectDoesNotExist:
-            return {'success': False,
-                    'message': u'Lớp không tồn tại'}
+        cl = kwargs['cleaned_params']['class']
         modify_form = self.ClassForm(self.request.POST.copy(),
                 instance=cl)
         if modify_form.is_valid():
@@ -121,24 +111,14 @@ class ClassView(RestfulView, BaseTeacherView):
                     'message': u'Có lỗi ở dữ liệu nhập vào'}
 
     def _post_remove(self, *args, **kwargs):
-        cl_id = kwargs['class_id']
-        try:
-            cl = self.teacher.class_set.get(id=cl_id)
-        except ObjectDoesNotExist:
-            return {'success': False,
-                    'message': u'Lớp không tồn tại'}
+        cl = kwargs['cleaned_params']['class']
         cl.delete()
         return {'success': True,
                 'message': u'Bạn đã xóa lớp %s' % cl.name}
 
     def _get_view(self, *args, **kwargs):
         self.template_name = os.path.join('teacher', 'class_view.html')
-        cl_id = kwargs['class_id']
-        try:
-            cl = self.teacher.class_set.get(id=cl_id)
-        except ObjectDoesNotExist:
-            return {'success': False,
-                    'message': u'Lớp không tồn tại'}
+        cl = kwargs['cleaned_params']['class']
         students = cl.students()
         print students
         return {'cl': cl,
@@ -181,13 +161,7 @@ class StudentView(RestfulView, BaseTeacherView):
                         'request_type': 'create'})}
 
     def _post_create(self, *args, **kwargs):
-        cl_id = kwargs['class_id']
-        try:
-            cl = self.teacher.class_set.get(id=cl_id)
-        except ObjectDoesNotExist:
-            return {'success': False,
-                    'message': u'Lớp không tồn tại'}
-
+        cl = kwargs['cleaned_params']['class']
         create_form = self.StudentForm(self.request.POST.copy())
         if create_form.is_valid():
             st = create_form.save(cl)
@@ -216,16 +190,7 @@ class StudentView(RestfulView, BaseTeacherView):
 
     def _get_modify(self, *args, **kwargs):
         self.template_name = os.path.join('teacher', 'student_create.html')
-        try:
-            cl = self.teacher.class_set.get(id=kwargs['class_id'])
-        except ObjectDoesNotExist:
-            return {'success': False,
-                    'message': u'Lớp không tồn tại'}
-        try:
-            st = cl.student_set.get(id=kwargs['student_id'])
-        except ObjectDoesNotExist:
-            return {'success': False,
-                    'message': u'Học sinh không tồn tại'}
+        st = kwargs['cleaned_params']['student']
         create_form = self.StudentForm(instance=st)
         return {'form': create_form,
                 'create_url': self.reverse('student_create',
@@ -233,16 +198,8 @@ class StudentView(RestfulView, BaseTeacherView):
                         'request_type': 'create'})}
     
     def _post_modify(self, *args, **kwargs):
-        try:
-            cl = self.teacher.class_set.get(id=kwargs['class_id'])
-        except ObjectDoesNotExist:
-            return {'success': False,
-                    'message': u'Lớp không tồn tại'}
-        try:
-            st = cl.student_set.get(id=kwargs['student_id'])
-        except ObjectDoesNotExist:
-            return {'success': False,
-                    'message': u'Học sinh không tồn tại'}
+        cl = kwargs['cleaned_params']['class']
+        st = kwargs['cleaned_params']['student']
         modify_form = self.StudentForm(self.request.POST.copy(),
                 instance=st)
         if modify_form.is_valid():

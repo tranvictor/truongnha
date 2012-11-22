@@ -4,9 +4,10 @@ import simplejson
 from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from django.template import RequestContext
+from django.template import RequestContext, loader, Context
 from django.shortcuts import render_to_response
 from django.template.loader import render_to_string
+from django.core.exceptions import ObjectDoesNotExist
 
 NOT_ALLOWED_TEACHER_TEMPLATE = os.path.join('teacher', 'not-allowed.html')
 
@@ -32,8 +33,16 @@ class BaseTeacherView(TemplateView):
         return reverse(*args, **kwargs)
     
     def request_type_not_allowed(self, request, *args, **kwargs):
-        return render_to_response(NOT_ALLOWED_TEACHER_TEMPLATE,
-                {}, context_instance=RequestContext(request))
+        t = loader.get_template(NOT_ALLOWED_TEACHER_TEMPLATE)
+        c = Context({})
+        return HttpResponse(t.render(c), status=405)
+
+    def illegal_request(self, params):
+        # This method get called if user make an illegal request
+        # It have to return a warning page
+        t = loader.get_template(NOT_ALLOWED_TEACHER_TEMPLATE)
+        c = Context({})
+        return HttpResponse(t.render(c), status=403)
 
     def dispatch(self, request, *args, **kwargs):
         # Try to dispatch to the right method; if a method doesn't exist,
@@ -83,6 +92,47 @@ class BaseTeacherView(TemplateView):
         # SHOULD NOT return NONE, return {} instead
         raise Exception('NotImplemented')
 
+    def validate_params(self, *args, **kwargs):
+        # THIS METHOD WILL BE CALLED TO VALIDATE RIGHT AFTER get(), post()... get
+        # called.
+        # This method try to validate the policy of each URI parameters
+        # for example: if URI refers to teacher A, class B so it try to
+        # ensure that B should belongs to A
+        # This base method will try to validate online parameters from kwargs
+        # which is teacher_id, class_id, student_id (teacher_id is already
+        # validated inside dispatch, see self.dispatch for more detail)
+        # After validation, it will pass cleaned_params to kwargs and return
+        # args, kwargs, in case it's  failed to validate those params, only one
+        # dictionay will be return (eg: {'success': False, 'message': 'Lop ko
+        # dung'}), this dictionary will be handled by self.illegal_request()
+        # This method can be invoked for further validations about mark_id,
+        # note_id, etc...
+        #
+        cleaned_params = {'teacher': self.teacher}
+        if 'class_id' in kwargs:
+            # Going to validate class_id
+            cl_id = kwargs['class_id']
+            try:
+                cl = self.teacher.class_set.get(id=cl_id)
+                cleaned_params['class'] = cl
+            except ObjectDoesNotExist:
+                return {'success': False,
+                        'message': u'Lớp không tồn tại'}
+
+        if 'student_id' in kwargs:
+            # Going to validate student_id
+            pass
+            try:
+                st = cl.student_set.get(id=kwargs['student_id'])
+                cleaned_params['student'] = st
+            except ObjectDoesNotExist:
+                return {'success': False,
+                        'message': u'Học sinh không tồn tại'}
+
+        kwargs['cleaned_params'] = cleaned_params
+        return args, kwargs
+
+
     def get(self, *args, **kwargs):
         # This method handles get request:
         # If the request is via ajax, it's assumed to be called 
@@ -96,6 +146,13 @@ class BaseTeacherView(TemplateView):
         #
         #
         # THIS METHOD SHOULD NOT BE OVERRIDED
+
+        # Try to validate parameters, avoid illegal request
+        params = self.validate_params(self, *args, **kwargs)
+        # if request is illegal, call self.illegal(params)
+        if len(params) == 1: return self.illegal_request(params)
+        # else grap args, kwargs to pass to other hanlder
+        else: args, kwargs = params
         menus = self._menu(*args, **kwargs)
         params = self._get(*args, **kwargs)
         # If params is instance of HttpReponse, return it
@@ -131,8 +188,14 @@ class BaseTeacherView(TemplateView):
         # functionalities (not from ajax)
         #
         # THIS METHOD SHOULD NOT BE OVERRIDED
+
+        # Try to validate parameters, avoid illegal request
+        params = self.validate_params(self, *args, **kwargs)
+        # if request is illegal, call self.illegal(params)
+        if len(params) == 1: return self.illegal_request(params)
+        # else grap args, kwargs to pass to other hanlder
+        else: args, kwargs = params
         params = self._post(*args, **kwargs)
-        print 'params', params
         if self.request.is_ajax():
             return HttpResponse(simplejson.dumps(
                 params), mimetype='json')
