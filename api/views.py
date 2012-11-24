@@ -52,7 +52,7 @@ class ApiLogin(View):
                         'type': user_position,
                         'last_name': request.user.last_name,
                         'first_name': request.user.first_name,
-                        'class': request.user.pupil.class_id,
+                        'class': request.user.pupil.class_id.name,
                         'school': get_school(request).name,
                         'birth': request.user.pupil.birthday,
                         'studentId':request.user.pupil.id,
@@ -80,9 +80,10 @@ class ApiLogin(View):
             if user_position == 1 :
                 #TODO: return necessary information for students
                 #return Response(status=status.HTTP_404_NOT_FOUND)
-                term_id = get_current_term(request, except_summer=True).id
-                list = getMarkForAStudent(request.user.pupil.id, term_id)
-                result['mark'] = list
+                #term_id = get_current_term(request, except_summer=True).id
+                #list = getMarkForAStudent(request.user.pupil.id, term_id)
+                #result['mark'] = list
+                pass
             elif user_position == 3:
                 try:
                     teaching_subjects = request.user.teacher.teaching_subject()
