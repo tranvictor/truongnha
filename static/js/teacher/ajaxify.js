@@ -60,6 +60,7 @@
 
             $.ajax({
                 url: url,
+                global: false,
                 success: function(res, textStatus, jqXHR){
                     console.log('succeeded');
                     console.log(res.content);
@@ -84,6 +85,7 @@
                     $content.html(contentHtml)
                             .ajaxify()
                             .css('opacity', 100).show();
+                    applyListener();
                     /* you could fade in here if you'd like */
                     // Add the scripts
 					$scripts.each(function(){
@@ -115,10 +117,10 @@
 						// ^ we use the full url here as that is what reinvigorate supports
 					}
                 },
-                //error: function(jqXHR, textStatus, errorThrown){
-                //    document.location.href = url;
-				//	return false;
-                //}
+                error: function(jqXHR, textStatus, errorThrown){
+                    document.location.href = url;
+					return false;
+                }
             });
         });
     });
