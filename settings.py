@@ -4,7 +4,7 @@
 # open path for template folder
 import os
 import sys
-DEBUG = False
+DEBUG = True
 if os.environ.pop('DJANGO_SETTINGS_TESTING', None):
     IS_TESTING = True
 else:
@@ -48,9 +48,9 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'freeschool',
-            'USER': 'freeschool',
-            'PASSWORD':'freeschool',
+            'NAME': 'currentdb17',
+            'USER': 'root',
+            'PASSWORD':'',
             'OPTIONS': { 'init_command': 'SET storage_engine=INNODB',},
         },
     }
