@@ -88,10 +88,11 @@
         })();
     </script>
     {% endif %}
-
+{% endif %}
     {% block js %}
         <!-- For extra js -->
     {% endblock %}
+{% if full %}
     <!--[if lt IE 9]>
 	  <script type="text/javascript" src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	  <![endif]-->
@@ -193,7 +194,7 @@
             {% endblock %}
           </div>
 {% endif %}
-          <div class="span9">
+          <div id="inner-content" class="span9">
             {% block content %}
             {% endblock %}
           </div>

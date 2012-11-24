@@ -150,7 +150,7 @@ class BaseTeacherView(TemplateView):
         # Try to validate parameters, avoid illegal request
         params = self.validate_params(self, *args, **kwargs)
         # if request is illegal, call self.illegal(params)
-        if len(params) == 1: return self.illegal_request(params)
+        if type(params) == dict: return self.illegal_request(params)
         # else grap args, kwargs to pass to other hanlder
         else: args, kwargs = params
         menus = self._menu(*args, **kwargs)
