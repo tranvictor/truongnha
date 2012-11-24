@@ -13,7 +13,7 @@ from app.views import login
 from sms.models import sms
 from school.class_functions import dd
 from school.models import Class, Pupil, Term, Subject, DiemDanh, TBNam, TKB,\
-    KhenThuong, KiLuat
+    KhenThuong, KiLuat, Mark, TKMon
 from school.utils import get_position, get_school, is_teacher,\
     get_current_term, get_current_year
 from school.forms import MarkForm
@@ -247,7 +247,7 @@ class Attendance(View):
             return Response(status.HTTP_403_FORBIDDEN)
 
 
-class Subject(View):
+class GetSubject(View):
     @need_login
     @school_function
     def get(self, request, class_id):
@@ -270,7 +270,7 @@ class Subject(View):
         return Response(status=status.HTTP_200_OK, content=result)
 
 
-class Mark(View):
+class GetMark(View):
     @need_login
     @school_function
     @operating_permission(['HIEU_PHO', 'HIEU_TRUONG', 'GIAO_VIEN'])
@@ -577,9 +577,9 @@ class StudentProfile(View):
 
 
 class MarkForASubject(View):
-    @need_login
-    @school_function
-    @operating_permission(['HIEU_PHO', 'HIEU_TRUONG', 'GIAO_VIEN'])
+    #@need_login
+    #@school_function
+    #@operating_permission(['HIEU_PHO', 'HIEU_TRUONG', 'GIAO_VIEN'])
     def get(self, request, subject_id, term_id):
         selected_subject = Subject.objects.get(id=subject_id)
         selected_term = Term.objects.get(id=term_id)
@@ -686,7 +686,10 @@ class MarkForASubject(View):
 
             adict.update({"mark": temp_arr})
             list.append(adict)
+        #print list
         return Response(status=status.HTTP_200_OK, content=list)
+        #return HttpResponse(simplejson.dumps(list), mimetype='json')
+
 
     @need_login
     @operating_permission(['HIEU_PHO', 'HIEU_TRUONG', 'GIAO_VIEN'])
@@ -700,7 +703,7 @@ class MarkForAStudent(View):
     @operating_permission(['HOC_SINH'])
     def get(self, request, student_id, term_id=None):
         if term_id == None:
-            term_id = get_current_term(request)
+            term_id = get_current_term(request).id
         selected_term = Term.objects.get(id=term_id)
         marks = Mark.objects.filter(term_id=term_id, student_id=student_id).order_by("subject_id__index",
             "subject_id__name")
@@ -750,7 +753,8 @@ class MarkForAStudent(View):
 
             a_subject.update({"mark":temp_mark})
             list.append(a_subject)
-        return Response(status=status.HTTP_200_OK, content=list)
+        #return Response(status=status.HTTP_200_OK, content=list)
+        return HttpResponse(simplejson.dumps(list), mimetype='json')
 
     @need_login
     @operating_permission(['HIEU_PHO', 'HIEU_TRUONG', 'GIAO_VIEN'])
