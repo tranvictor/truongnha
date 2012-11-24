@@ -33,7 +33,7 @@ class customDateField(forms.DateField):
         super(customDateField, self).__init__(*args, **kwargs)
 
 MOBI_HEAD = ['90', '93', '122', '126', '121', '128', '120']
-VINA_HEAD = ['91', '94', '123', '125', '127', '129']
+VINA_HEAD = ['91', '94', '123', '124', '125', '127', '129']
 VIETTEL_HEAD = ['96', '97', '98', '162', '163', '164', '165', '166', '167', '168', '169']
 EVN_HEAD = ['95']
 VIETNAMMOBILE_HEAD = ['92', '188']
