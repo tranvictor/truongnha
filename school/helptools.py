@@ -8,7 +8,7 @@ from django.template import RequestContext
 from app.models import Organization
 from school.models import Pupil, TKDiemDanh, Attend, StartYear, Mark, Class,\
         Teacher, Subject, TKMon, DiemDanh, Year
-from sms.models import sms, get_tsp
+from sms.models import sms, get_tsp, regc
 from school.school_settings import CAP2_DS_MON, CAP1_DS_MON, CAP3_DS_MON
 from school.templateExcel import normalize, CHECKED_DATE
 from school.utils import to_en1, add_subject, get_lower_bound,\
@@ -40,7 +40,12 @@ def _tsp_statistic(school=None):
     result = {}
     for p in phones:
         tsp = get_tsp(p)
-        if not tsp: tsp = 'OTHERS'
+        if not tsp:
+            tsp = 'OTHERS'
+            header = regc(p)
+            if not header: print p, 'invalid format'
+            else:
+                print header.groups()[1]
         if tsp in result: result[tsp] += 1
         else: result[tsp] = 1
     print 'total', total

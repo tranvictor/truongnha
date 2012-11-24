@@ -38,7 +38,7 @@ VIETTEL_HEAD = ['96', '97', '98', '162', '163', '164', '165', '166', '167', '168
 EVN_HEAD = ['95']
 VIETNAMMOBILE_HEAD = ['92', '188']
 BEELINE_HEAD = ['199']
-re_phone = re.compile('(84|\+84|0)(90|93|122|126|121|128|120|91|94|123|125|127|129\
+re_phone = re.compile('(84|\+84|0)(90|93|122|126|121|128|120|91|94|123|124|125|127|129\
         |97|98|162|163|164|165|166|167|168|169|96|95|92|199)(\d{7})$')
 #this function check if phone number is valid or not
 #return: True - valid, False - invalid
