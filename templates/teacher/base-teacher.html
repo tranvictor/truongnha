@@ -44,7 +44,6 @@
       }
     </style>
     {% block css %}
-        <!-- For extra css -->
     {% endblock %}
 
     <script type="text/javascript"
@@ -70,6 +69,12 @@
     <script type="text/javascript"
       src="/static/js/teacher/base.js?{{ VERSION }}"></script>
     <script type="text/javascript"
+      src="/static/js/teacher/jquery.scrollto.min.js?{{ VERSION }}"></script>
+    <script type="text/javascript"
+      src="/static/js/teacher/jquery.history.js?{{ VERSION }}"></script>
+    <script type="text/javascript"
+      src="/static/js/teacher/ajaxify.js?{{ VERSION }}"></script>
+    <script type="text/javascript"
       src="/static/joyride/joyride.min.js"></script>
 
     {% if not debug %}
@@ -90,13 +95,8 @@
     {% endif %}
 {% endif %}
     {% block js %}
-        <!-- For extra js -->
     {% endblock %}
 {% if full %}
-    <!--[if lt IE 9]>
-	  <script type="text/javascript" src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-	  <![endif]-->
-
 </head>
 
 <body>

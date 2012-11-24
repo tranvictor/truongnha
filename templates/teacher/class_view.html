@@ -11,7 +11,7 @@
 <div id="submenu" class="btn-toolbar">
   <div class="btn-group">
     <a id="btn-diem" title="Nhập hoặc chỉnh sửa điểm các môn học"
-      class="btn btn-primary" href="">
+      class="btn btn-primary ajaxify" href="">
       <i class="icon-star-empty"></i>
       Điểm</a>
   </div>
@@ -73,10 +73,10 @@
             <input type="checkbox" id="checkbox_{{ ss.id }}" class="studentCheckbox"/>
           </td>
           <td style="text-align: center;"> {{ forloop.counter }} </td>
-          <td><a title="Xem toàn bộ thông tin chi tiết"
+          <td><a class="ajaxify" title="Xem toàn bộ thông tin chi tiết"
               href="{% url student_view user_teacher.id cl.id ss.id 'modify' %}">
               {{ ss.last_name }}</a></td>
-          <td><a title="Xem toàn bộ thông tin chi tiết"
+          <td><a class="ajaxify" title="Xem toàn bộ thông tin chi tiết"
               href="{% url student_view user_teacher.id cl.id ss.id 'modify' %}">
               {{ ss.first_name }}</a>
           </td>
