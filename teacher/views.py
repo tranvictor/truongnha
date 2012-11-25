@@ -688,10 +688,11 @@ class ClassMarkView(RestfulView, BaseTeacherView):
                     'message': u'Lớp học không tồn tại'}
         form = ClassMarkView.HSForm(data)
         if form.is_valid():
-            marks = cl.mark_set.filter(id__in = marks_id)
-            for mark in marks:
-                mark.hs = data['hs']
-                mark.save()
+            if marks_id != [u'']:
+                marks = cl.mark_set.filter(id__in = marks_id)
+                for mark in marks:
+                    mark.hs = data['hs']
+                    mark.save()
             return {'success': True,
                     'message': u'Đã sửa xong hệ số'}
         else:
