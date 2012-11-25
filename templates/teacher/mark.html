@@ -1,0 +1,108 @@
+{% extends "teacher/index.html" %}
+{% load bootstrap %}
+{% load lookup %}
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb class  %}
+    {% add_crumb 'Bảng điểm' %}
+{% endblock %}
+{% block js %}
+    <script type="text/javascript" src="/static/js/bootstrap-form-error.js?{{ VERSION }}"></script>
+    <script type="text/javascript">
+        var teacher_id = {{ user_teacher.id }}
+        var class_id = {{ class.id }}
+    </script>
+    <script type="text/javascript" src="/static/js/teacher/mark.js ? {{ VERSION }}"></script>
+{% endblock %}
+{% block content %}
+<h2> Bảng điểm </h2>
+<div id="submenu" class="btn-toolbar">
+    <div class="btn-group">
+        <a id="btn-add-mark" title="Thêm cột điểm"
+           class="btn btn-primary ajaxify" href="">
+            <i class="icon-star-empty"></i>
+            Thêm cột</a>
+        <a id="btn-edit-hs" title="Sửa hệ số của cột"
+            class="btn btn-info" href="">
+            <i class="icon-edit"></i>
+            Sửa hệ số</a>
+        <a id="btn-edit-mark" title="Sửa điểm"
+           class="btn btn-warning" href="" style="display: none">
+            <i class="icon-edit"></i>
+            Sửa điểm</a>
+    </div>
+    <div class="pull-right">
+    </div>
+</div>
+    <div id="add-column-modal" class="modal hide fade">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h2> Thêm cột </h2>
+        </div>
+        <div class="modal-body">
+            {{ add_column_form|bootstrap }}
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Đóng</button>
+            <button class="btn btn-primary" id="add-column-button">Thêm</button>
+        </div>
+    </div>
+<div class="row-fluid">
+    <div>
+        <table class="table table-bordered table-hover grid-edit">
+            <thead>
+            <tr>
+                <th rowspan="2">STT</th>
+                <th rowspan="2">Họ</th>
+                <th rowspan="2">Tên</th>
+                <th colspan="{{ total_column }}" id="hs-thread">Hệ số</th>
+            </tr>
+            <tr id="hs-row">
+                {% for k,v in hs_number_max.items %}
+                    {% for i in v|times %}
+                        <th class="{{ k|make_class }}-{{ forloop.counter0 }}">
+                            <input type="text" value="{{ k }}" disabled="disabled">
+                        </th>
+                    {% endfor %}
+                {% endfor %}
+                {% if not total_column %}
+                    <th><input type="text" value="1.0" disabled="disabled"></th>
+                {% endif %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for std in students %}
+                <tr id="{{ class.id }}-{{ std.id }}" class="student-mark">
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ std.last_name }}</td>
+                    <td>{{ std.first_name }}</td>
+                    {% for k,v in hs_number_max.items %}
+                        {% for i in v|times %}
+                            {% with marks_set|get_dict_value:std.id as std_mark %}
+                                {% with std_mark|get_dict_value:k as std_mark_hs %}
+                                    {% with std_mark_hs|get_list_value:forloop.counter0 as mark%}
+                                        <td class="{{ k|make_class }}-{{ forloop.counter0 }}">
+                                            {% if mark %}
+                                                <input id="{{ mark.id }}" type="text" value="{{ mark.diem }}" class="old-mark">
+                                            {% else %}
+                                                <input type="text" value="">
+                                            {% endif %}
+                                        </td>
+                                    {% endwith %}
+                                {% endwith %}
+                            {% endwith %}
+                        {% endfor %}
+                    {% endfor %}
+                    {% if not total_column %}
+                    <td class="1.0-0">
+                        <input type="text">
+                    </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -6,6 +6,7 @@ import random
 import string
 from datetime import date, datetime
 from recaptcha.client import captcha
+from django.db.models import Count
 from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
@@ -483,6 +484,7 @@ class MarkView(RestfulView, BaseTeacherView):
 
     def _post_create(self, *args, **kwargs):
         cl_id = kwargs['class_id']
+        print self.request.POST
         student_id = kwargs['student_id']
         try:
             cl = self.teacher.class_set.get(id=cl_id)
@@ -498,9 +500,9 @@ class MarkView(RestfulView, BaseTeacherView):
             mark = create_form.save(cl, student)
             return {'message': u'Bạn vừa thêm thành công điểm',
                     'success': True,
-                    'student': student,
-                    'class' : cl,
-                    'mark' : mark,
+                    'student': student.id,
+                    'class' : cl.id,
+                    'mark' : mark.id,
                     'mark_modify': self.reverse('mark_view',
                         kwargs={'class_id': cl.id,
                                 'student_id': student.id,
@@ -583,9 +585,9 @@ class MarkView(RestfulView, BaseTeacherView):
             mark = modify_form.save(cl, student)
             return {'message': u'Bạn vừa cập nhật thành công điểm',
                     'success': True,
-                    'student': student,
-                    'class' : cl,
-                    'mark' : mark,
+                    'student': student.id,
+                    'class' : cl.id,
+                    'mark' : mark.id,
                     'mark_modify': self.reverse('mark_view',
                         kwargs={'class_id': cl.id,
                                 'student_id': student.id,
@@ -631,3 +633,71 @@ class MarkView(RestfulView, BaseTeacherView):
         mark.delete()
         return {'success': True,
                 'message': u'Bạn đã xóa điểm %s' % mark}
+
+class ClassMarkView(RestfulView, BaseTeacherView):
+    request_type = ['view','modify']
+
+    class HSForm(forms.Form):
+        hs = forms.FloatField(label='Hệ số')
+
+    def _get_view(self, *args, **kwargs):
+        self.template_name = os.path.join('teacher', 'mark.html')
+        cl = kwargs['cleaned_params']['class']
+        students = cl.students()
+        marks = cl.mark_set.all()
+        hs_list = []
+        std_mark = {}
+        marks_set = {}
+        hs_number_max = {}
+        for mark in marks:
+            if mark.hs not in hs_list:
+                hs_list.append(mark.hs)
+        for student in students:
+            std_mark[student.id] = marks.filter(student_id = student.id)
+            marks_set[student.id] = {}
+        for hs in hs_list:
+            hs_number_max[hs] = 1
+        for hs in hs_list:
+            for student in students:
+                temp = std_mark[student.id].filter(hs = hs)
+                marks_set[student.id][hs] = []
+                for m in temp:
+                    marks_set[student.id][hs].append(m)
+                count = temp.count()
+                if count > hs_number_max[hs]:
+                    hs_number_max[hs] = count
+        total_column = 0
+        for hs in hs_number_max:
+            total_column += hs_number_max[hs]
+        add_column_form = ClassMarkView.HSForm()
+        return {'class': cl,
+                'students': students,
+                'hs_number_max':hs_number_max,
+                'total_column':total_column,
+                'marks_set':marks_set,
+                'add_column_form':add_column_form}
+
+    def _post_modify(self, *args, **kwargs):
+        cl_id = kwargs['class_id']
+        data = self.request.POST.copy()
+        marks_id = data['id_list'].split('-')
+        try:
+            cl = self.teacher.class_set.get(id=cl_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Lớp học không tồn tại'}
+        form = ClassMarkView.HSForm(data)
+        if form.is_valid():
+            marks = cl.mark_set.filter(id__in = marks_id)
+            for mark in marks:
+                mark.hs = data['hs']
+                mark.save()
+            return {'success': True,
+                    'message': u'Đã sửa xong hệ số'}
+        else:
+            error = {}
+            for k, v in form.errors.items():
+                error[form[k].auto_id] = form.error_class.as_text(v)
+            return {'success': False,
+                    'error': error,
+                    'message': u'Có lỗi ở dữ liệu nhập vào'}
