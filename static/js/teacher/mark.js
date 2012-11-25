@@ -63,7 +63,7 @@ $(document).ready(function(){
         $(this).hide();
         return false;
     });
-    $("td > input").change(function(){
+    $("tbody").delegate("td > input","change",function(){
         var std_info = $(this).parent().parent().attr('id').split('-');
         var student_id = std_info[1];
         var cl = $(this).parent().attr('class');
@@ -132,7 +132,7 @@ $(document).ready(function(){
         }
         $.ajax(args);
     });
-    $("th > input").change(function(){
+    $("thead").delegate("th > input","change",function(){
         var hs = $(this).val();
         var old_class = $(this).parent().attr('class');
         var new_cl = new_class(hs);

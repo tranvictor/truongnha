@@ -56,7 +56,11 @@
                 <th rowspan="2">STT</th>
                 <th rowspan="2">Họ</th>
                 <th rowspan="2">Tên</th>
-                <th colspan="{{ total_column }}" id="hs-thread">Hệ số</th>
+                {% if total_column %}
+                    <th colspan="{{ total_column }}" id="hs-thread">Hệ số</th>
+                {% else %}
+                    <th colspan="1" id="hs-thread">Hệ số</th>
+                {% endif %}
             </tr>
             <tr id="hs-row">
                 {% for k,v in hs_number_max.items %}
@@ -67,7 +71,7 @@
                     {% endfor %}
                 {% endfor %}
                 {% if not total_column %}
-                    <th><input type="text" value="1.0" disabled="disabled"></th>
+                    <th class="1dot0-0"><input type="text" value="1.0" disabled="disabled"></th>
                 {% endif %}
             </tr>
             </thead>
@@ -95,7 +99,7 @@
                         {% endfor %}
                     {% endfor %}
                     {% if not total_column %}
-                    <td class="1.0-0">
+                    <td class="1dot0-0">
                         <input type="text">
                     </td>
                     {% endif %}
