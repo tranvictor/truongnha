@@ -35,15 +35,7 @@ def unsign(string):
         else: result += string[i]
     return result
 
-def invert(string):
-    eles = string.split(' ')
-    eles.reverse()
-    return ' '.join([i if i else '' for i in eles])
-
 def vncmp(left, right, col):
-    if col == 'last_name':
-        left = invert(left)
-        right = invert(right)
     unsign_left = unsign(left)
     unsign_right = unsign(right)
     result = unicodecmp(unsign_left, unsign_right)
