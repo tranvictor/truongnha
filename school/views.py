@@ -331,7 +331,7 @@ def organize_students(request, class_id, type='0'):
         student_list = _class.students()
         student_list = multikeysort(student_list,
                 ['real_first_name', 'family_name', 'middle_name', 'nick_name'])
-    if type == '2':
+    elif type == '2':
         student_list = _class.students()
         student_list = multikeysort(student_list,
                 ['real_first_name', 'middle_name', 'family_name', 'nick_name'])
