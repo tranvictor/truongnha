@@ -372,6 +372,34 @@ class BasicPersonInfo(models.Model):
     def full_name(self):
         return ' '.join([self.last_name, self.first_name])
 
+    # if first_name: Vu A, Vu B, Vu C -> real_first_name: Vu
+    def real_first_name(self):
+        l = []
+        for i in self.first_name.split(' '):
+            if i: l.append(i)
+        return l[0]
+
+    # if first_name: Vu A, Vu B, Vu C -> nick_name: A, B, C 
+    def nick_name(self):
+        l = []
+        for i in self.first_name.split(' '):
+            if i: l.append(i)
+        return l[1:]
+    
+    def family_name(self):
+        l = []
+        for i in self.last_name.split(' '):
+            if i: l.append(i)
+        if not l: return ' '
+        else: return l[0]
+
+    def middle_name(self):
+        l = []
+        for i in self.last_name.split(' '):
+            if i: l.append(i)
+        if not l: return ' '
+        else: return ' '.join(l[1:])
+    
     #This method return a short name to present a person's name
     #eg: Tran Huy Vu -> TH Vu
     def short_name(self):
