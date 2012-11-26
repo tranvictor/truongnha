@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # -*- coding: utf-8 -*-
 
+from itertools import chain
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader
 from django.core.urlresolvers import reverse
@@ -10,15 +11,18 @@ import time
 from school.models import Block, Class, Pupil, Year
 from school.templateExcel import LASTNAME_WIDTH, STT_WIDTH, FIRSTNAME_WIDTH, BIRTHDAY_WIDTH, h40, printHeader, printCongHoa, h4, last_name1, h82, first_name1
 from school.utils import in_school, get_position, get_current_year
+from namesorting import multikeysort
 
 from xlwt import Workbook
 
 def getClassList(selectedYear):
-    blockList = Block.objects.filter(school_id=selectedYear.school_id).order_by("number")
+    blockList = Block.objects.filter(school_id=selectedYear.school_id)\
+            .order_by("number")
     numberBlock = len(blockList)
     maxLength = 0
     for b in blockList:
-        aClassList = Class.objects.filter(block_id=b, year_id=selectedYear).order_by("id")
+        aClassList = Class.objects.filter(block_id=b, year_id=selectedYear)\
+                .order_by("name")
         if maxLength < len(aClassList):
             maxLength = len(aClassList)
     classList = [0] * numberBlock * maxLength
@@ -26,11 +30,12 @@ def getClassList(selectedYear):
     i = 0
     for b in blockList:
         j = 0
-        aClassList = Class.objects.filter(block_id=b, year_id=selectedYear).order_by("id")
+        aClassList = Class.objects.filter(block_id=b,
+                year_id=selectedYear).order_by("name")
         for c in aClassList:
             classList[j * numberBlock + i] = c
-            aPupilList = Pupil.objects.filter(classes=c.id, attend__is_member=True).order_by('index', 'first_name',
-                'last_name', 'birthday').distinct()
+            aPupilList = Pupil.objects.filter(classes=c.id,
+                    attend__is_member=True).order_by('index').distinct()
             pupilList[j * numberBlock + i] = aPupilList
             j += 1
         i += 1
@@ -109,7 +114,7 @@ def exportToExcel(pupilList, exceltionalPupil, classifiedType, s, name, date, ti
         if classifiedType == '3':
             pupilList1 = pupilList
         else:
-            pupilList1 = pupilList.filter(class_id__block_id=b)
+            pupilList1 = pupilList[b.number]
 
         for p in pupilList1:
             if not p.id in exceltionalPupil:
@@ -154,7 +159,6 @@ def createListExam(request):
         return HttpResponseRedirect('/school')
 
     blockList, classList, pupilList1, numberBlock = getClassList(selectedYear)
-    print request
     if request.method == 'POST':
         name = request.POST["name"]
         date = request.POST["date"]
@@ -163,34 +167,51 @@ def createListExam(request):
         maxPupil = int(request.POST["maxPupil"])
         classifiedType = request.POST["classifiedType"]
 
-        print classifiedType
-        classSet = []
+        classSetId = []
+        classSet= []
         for c in classList:
             if c != 0:
                 if request.POST.get(unicode(c.id)):
-                    classSet.append(c.id)
+                    classSetId.append(c.id)
+                    classSet.append(c)
         exceptionalPupil = []
         for xx in request.POST:
             xx = xx.split('_')
             if xx[0] == "pp":
                 exceptionalPupil.append(int(xx[1]))
 
-        print exceptionalPupil
-
         if  classifiedType == "1":
-            pupilList = Pupil.objects.filter(classes__in=classSet, attend__is_member=True).order_by(
-                'classes__block_id__number', 'first_name', 'last_name', 'birthday').distinct()
+            pupilList = {}
+            for grade in blockList:
+                pupilList[grade.number] = multikeysort(grade.students(
+                    class_set=classSetId),['real_first_name', 'middle_name',
+                        'family_name', 'nick_name'])
+
         elif  classifiedType == "2":
-            pupilList = Pupil.objects.filter(classes__in=classSet, attend__is_member=True).order_by(
-                'classes__block_id__number', 'classes', 'first_name', 'last_name', 'birthday').distinct()
+            pupilList = {}
+            classes = {}
+            for cl in classSet:
+                classes[cl] = multikeysort(cl.students(),
+                        ['real_first_name', 'middle_name', 'family_name',
+                            'nick_name'])
+            for cl in sorted(classes.items(), key=lambda key: key[0].name):
+                grade = cl[0].block_id.number
+                if grade in pupilList: pupilList[grade].append(cl[1])
+                else: pupilList[grade] = [cl[1]]
+            for grade in pupilList.items():
+                pupilList[grade[0]] = list(chain(*grade[1]))
+
         elif  classifiedType == "3":
-            pupilList = Pupil.objects.filter(classes__in=classSet, attend__is_member=True).order_by('first_name',
-                'last_name', 'birthday').distinct()
+            pupilList = Pupil.objects.filter(classes__in=classSet,
+                    attend__is_member=True).distinct()
+            pupilList = multikeysort(pupilList, ['real_first_name',
+                'middle_name', 'family_name', 'nick_name'])
 
         book = Workbook(encoding='utf-8')
         s = book.add_sheet("danh sach thi", True)
-        exportToExcel(pupilList, exceptionalPupil, classifiedType, s, name, date, timeExam, subject, maxPupil,
-            selectedYear.school_id)
+        exportToExcel(pupilList, exceptionalPupil, classifiedType,
+                s, name, date, timeExam, subject, maxPupil,
+                selectedYear.school_id)
 
         response = HttpResponse(mimetype='application/ms-excel')
         response['Content-Disposition'] = u'attachment; filename=%s.xls' % "danhSachThi"
@@ -207,7 +228,5 @@ def createListExam(request):
                                  "classList": classList,
                                  "blockList": blockList,
                                  "numberBlock": numberBlock,
-                                 "pupilList": pupilList1,
-                                 }
-    )
+                                 "pupilList": pupilList1,})
     return HttpResponse(t.render(c))

@@ -248,6 +248,15 @@ class Block(models.Model):
         verbose_name = "Khối"
         verbose_name_plural = "Khối"
 
+    def students(self, class_set=None):
+        if class_set:
+            return Pupil.objects.filter(classes__block_id=self,
+                attend__is_member=True,
+                attend___class__in=class_set,
+                attend__leave_time=None).distinct()
+        return Pupil.objects.filter(classes__block_id=self,
+                attend__is_member=True, attend__leave_time=None).distinct()
+
     def __unicode__(self):
         return str(self.number)
 
