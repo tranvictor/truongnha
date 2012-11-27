@@ -105,6 +105,7 @@ class Organization(models.Model):
                                     choices=SCHOOL_ACTION_STATUS)
     school_type = models.CharField(u'Loại trường', max_length=30, blank=True,
                                     choices=SCHOOL_TYPES)
+    balance = models.FloatField(u'Tài khoản', default=50)
     #--------------------------------------------------------------------------
     upper_organization = models.ForeignKey('self', blank=True, null=True,
                                             verbose_name='Trực thuộc')
