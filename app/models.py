@@ -292,7 +292,7 @@ class UserProfile(models.Model):
                                 blank=True) #để gửi tin nhắn.
     notes = models.CharField('Ghi chú', max_length=255, blank=True)
     username_change = models.IntegerField(default=0)
-    balance = models.FloatField(u'Tài khoản', default=15)
+    balance = models.FloatField(u'Tài khoản', default=50)
 
     def isSchool(self):
         if self.position =='GIAM_DOC_SO' or self.position=='TRUONG_PHONG':
@@ -302,7 +302,8 @@ class UserProfile(models.Model):
 
     #TODO: check the balance
     def is_allowed_sms(self):
-        return True
+        if self.balance >= 1: return True
+        else: return False
 
     def __unicode__(self):
         return self.user.__unicode__()

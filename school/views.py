@@ -28,6 +28,7 @@ from school.utils import get_current_year, get_school, get_permission,\
         get_current_term, move_student, get_position, in_school,\
         inClass, get_teacher, to_date, get_lower_bound, get_upper_bound,\
         to_en1, add_subject, make_default_password, queryset_to_dict
+from namesorting import multikeysort
 from sms.utils import send_email, sendSMS
 from school.helptools import sync_tkb_db
 import settings
@@ -325,17 +326,22 @@ def change_index(request, target, class_id=None):
 def organize_students(request, class_id, type='0'):
     student_list = None
     _class = None
-    try:
-        _class = Class.objects.get(id=int(class_id))
-        if type == '1':
-            student_list = _class.pupil_set.order_by('first_name', 'last_name')
-        else:
-            student_list = _class.pupil_set.order_by('index')
-    except Exception as e:
-        print e
+    _class = Class.objects.get(id=int(class_id))
+    if type == '1':
+        student_list = _class.students()
+        student_list = multikeysort(student_list,
+                ['real_first_name', 'family_name', 'middle_name', 'nick_name'])
+    elif type == '2':
+        student_list = _class.students()
+        student_list = multikeysort(student_list,
+                ['real_first_name', 'middle_name', 'family_name', 'nick_name'])
+    else:
+        student_list = _class.student_set.filter(attend__is_member=True)\
+                .order_by('index').distinct()
     #if not gvcn(request, _class): return HttpResponseRedirect(reverse('school_index'))
     context = RequestContext(request)
-    return render_to_response(ORGANIZE_STUDENTS, {'student_list': student_list, 'class': _class},
+    return render_to_response(ORGANIZE_STUDENTS,
+            {'student_list': student_list, 'class': _class},
                               context_instance=context)
 
 

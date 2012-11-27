@@ -23,8 +23,12 @@
             //divList.css('height', numberOfLi * hs - margin);
             // done configuration.
 
-            $("#sort_alphabet").click(function () {
+            $("#sort_alphabet_1").click(function () {
                 document.location.replace('{% url orgamize_student class.id "1" %}');
+            });
+
+            $("#sort_alphabet_2").click(function () {
+                document.location.replace('{% url orgamize_student class.id "2" %}');
             });
 
             $("#cancel_list_sorting").click(function () {
@@ -35,7 +39,30 @@
     </script>
 
     <div id="submenu" class="btn-toolbar">
-        <input type="button" class="btn" id="sort_alphabet" value="Sắp xếp theo ABC"/>
+        <div class="btn-group">
+            <a id="sort-list-menu" class="btn dropdown-toggle "
+                data-toggle="dropdown" href="#"
+                title="Sắp xếp theo thứ tự ABC">
+                <span class="icon-reorder"></span>
+                Sắp xếp ABC
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a id="sort_alphabet_1"
+                        title=" Sắp xếp tên->họ->tên đệm"
+                        href="#">
+                        Tên <i class="icon-arrow-right"></i> Họ <i class="icon-arrow-right"></i> Tên đệm
+                    </a>
+                </li>
+                <li>
+                    <a id="sort_alphabet_2"
+                        title=" Sắp xếp tên->họ->tên đệm"
+                        href="#">
+                        Tên <i class="icon-arrow-right"></i> Tên đệm <i class="icon-arrow-right"></i> Họ
+                    </a>
+                </li>
+            </ul>
+        </div>
         <input type="button" class="btn" id="save" value="Lưu thứ tự"/>
         <input type="button" class="btn" id="cancel_list_sorting" title="Trở về thứ tự ban đầu"
                value="Hủy sắp xếp"/>

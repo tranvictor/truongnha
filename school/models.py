@@ -248,6 +248,15 @@ class Block(models.Model):
         verbose_name = "Khối"
         verbose_name_plural = "Khối"
 
+    def students(self, class_set=None):
+        if class_set:
+            return Pupil.objects.filter(classes__block_id=self,
+                attend__is_member=True,
+                attend___class__in=class_set,
+                attend__leave_time=None).distinct()
+        return Pupil.objects.filter(classes__block_id=self,
+                attend__is_member=True, attend__leave_time=None).distinct()
+
     def __unicode__(self):
         return str(self.number)
 
@@ -372,6 +381,34 @@ class BasicPersonInfo(models.Model):
     def full_name(self):
         return ' '.join([self.last_name, self.first_name])
 
+    # if first_name: Vu A, Vu B, Vu C -> real_first_name: Vu
+    def real_first_name(self):
+        l = []
+        for i in self.first_name.split(' '):
+            if i: l.append(i)
+        return l[0]
+
+    # if first_name: Vu A, Vu B, Vu C -> nick_name: A, B, C 
+    def nick_name(self):
+        l = []
+        for i in self.first_name.split(' '):
+            if i: l.append(i)
+        return l[1:]
+    
+    def family_name(self):
+        l = []
+        for i in self.last_name.split(' '):
+            if i: l.append(i)
+        if not l: return ' '
+        else: return l[0]
+
+    def middle_name(self):
+        l = []
+        for i in self.last_name.split(' '):
+            if i: l.append(i)
+        if not l: return ' '
+        else: return ' '.join(l[1:])
+    
     #This method return a short name to present a person's name
     #eg: Tran Huy Vu -> TH Vu
     def short_name(self):
@@ -625,18 +662,20 @@ class Class(models.Model):
             result[sid] = tk if sid in result else [tk]
         return result, sts
 
+    def convert_diemdanh(self,x):
+        if x == 'P':
+            return 'Phep'
+        elif x == 'K':
+            return 'KPhep'
+        elif x == 'M':
+            return 'Muon'
+
         #this method return queryset of unsent diemđanh in current weeek
     def _diem_danh_in_week(self, term, student_query=None):
         if student_query: sts = student_query
         else: sts =self.students()
-#        day = date.today()
-#        week_start = day - timedelta(day.weekday())
-#        week_list = []
-#        for i in range(6):
-#            week_list.append(week_start)
-#            week_start += timedelta(1)
-#        dd_list = DiemDanh.objects.filter(student_id__in = sts, time__in=week_list, sent=False)
-        dd_list = DiemDanh.objects.filter(student_id__in = sts, sent=False)
+        loai = ['P','K','M']
+        dd_list = DiemDanh.objects.filter(student_id__in = sts, sent=False, loai__in = loai)
         return dd_list
 
     def _generate_diemdanh_summary(self, term, student_query=None):
@@ -664,8 +703,9 @@ class Class(models.Model):
             if kq_dd[std]['P'] or kq_dd[std]['K'] or kq_dd[std]['M']:
                 info[std] = 'Diem danh: '
                 for loai in kq_dd[std]:
+                    print loai
                     if kq_dd[std][loai]:
-                        info[std] += loai + ':'
+                        info[std] += self.convert_diemdanh(loai) + ':'
                         for t in kq_dd[std][loai]:
                             info[std] += t + ','
                         info[std] = info[std][:-1]

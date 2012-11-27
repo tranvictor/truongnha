@@ -79,10 +79,10 @@
 {#            };#}
 {##}
 {#            $("#sendSMS").click(sendSMS);#}
-{#            var add_attribute = function(){#}
-{#                var value = $(this).val();#}
-{#                $(this).attr("loai",value);#}
-{#            };#}
+            var add_attribute = function(){
+                var value = $(this).val();
+                $(this).attr("loai",value);
+            };
             $("input[name=loai]").each(add_attribute);
 
             $("input[name=loai]").on('keyup', function (event) {
