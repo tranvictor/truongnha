@@ -1332,7 +1332,13 @@ def timetableTeacher(request):
         if not cl.year_id.id == year.id:
             continue
         for d in range(2, 8):
-            tkbs = cl.tkb_set.get(day= d)
+            try:
+                tkbs = cl.tkb_set.get(day= d)
+            except ObjectDoesNotExist:
+                tkbs = TKB()
+                tkbs.day = d
+                tkbs.class_id = cl
+                tkbs.save()
             nums = tkbs.get_numbers(sub)
             if not len(nums): continue
             for num in nums:
