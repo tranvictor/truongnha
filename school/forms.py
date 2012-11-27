@@ -20,7 +20,7 @@ class BlockForm(forms.ModelForm):
 class TeacherForm(forms.ModelForm):
     class Meta:
         model = Teacher
-        exclude = ('school_id', 'user_id', 'index')
+        exclude = ('school_id', 'user_id', 'index', 'balance')
         widgets = {
             'birthday' : DateInput(attrs = {'class':'datepicker input-small'}),
             'sms_phone': TextInput(attrs={'class':'input-medium'}),
@@ -113,7 +113,7 @@ class TeacherTTCBForm(forms.ModelForm):
     class Meta:
         model = Teacher
         fields = ('cmt','ngay_cap','noi_cap','ngay_vao_doan',
-                'ngay_vao_dang','muc_luong','hs_luong','bhxh')
+                'ngay_vao_dang','muc_luong','hs_luong','bhxh', 'balance')
         widgets = {
             'ngay_vao_doan' : DateInput(attrs={'class': 'datepicker'}),
             'ngay_vao_dang' : DateInput(attrs={'class': 'datepicker'})

@@ -344,7 +344,6 @@ def teachers(request):
                         raise e
             if pos > 3:
                 if request.POST['request_type'] == u'add':
-                    print request.POST
                     if request.POST['first_name'].strip():
                         name = request.POST['first_name'].split()
                         last_name = ' '.join(name[:len(name) - 1])
