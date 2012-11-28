@@ -385,16 +385,16 @@ def feedback(request):
                 user_name = 'name: ' + unicode(request.POST['username'])
                 email = 'email: ' + unicode(request.POST['userEmail'])
                 content = 'content: ' + unicode(request.POST['content'])
+                time = 'time: ' + unicode(date.today())
                 if 'subject' in request.POST:
                     subject= unicode(request.POST['subject'])
                 else: subject = u'[www.truongnha.com] Users\' feedback'
-                message = '\n'.join([url, user_name, email, content])
+                message = '\n'.join([url, user_name, email, content, time])
                 Feedback.objects.create(
                     content = content,
                     title = url,
                     email = email,
                     fullname = user)
-                print message
                 send_email(subject, message, None,
                         [ 'vu.tran54@gmail.com',
                             'truonganhhoang@gmail.com',
@@ -420,21 +420,20 @@ def feedback(request):
                 user_phone = 'phone: ' + unicode(phone)
                 school = 'school: ' + unicode(get_school(request))
                 content = request.POST['content']
+                time = 'time: ' + unicode(date.today())
                 subject = u'[www.truongnha.com] Users\' feedback'
                 message = '\n'.join([url, user_name, user_email,
-                    user_phone, school, content])
+                    user_phone, school, content, time])
                 Feedback.objects.create(
                     content = content,
                     title = url,
                     email = school,
                     fullname = user
                 )
-                print message
                 send_email(subject, message, '',
                         ['vu.tran54@gmail.com',
                             'truonganhhoang@gmail.com',
-                            'luulethe@gmail.com',
-                            'testEmail@truongnha.com'])
+                            'luulethe@gmail.com'])
                 return HttpResponse(simplejson.dumps({'success': True}),
                         mimetype='json')
         else:
