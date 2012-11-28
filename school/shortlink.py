@@ -36,6 +36,6 @@ def xlCaNamTheoLop(request):
     cl = get_current_class(request)
     return HttpResponseRedirect(reverse('xl_ca_nam_theo_lop',args=[cl.id,1]))
 
-def sendSMSResult(request):
-    cl = get_current_class(request)
-    return HttpResponseRedirect(reverse('send_sms_result',args=[cl.id]))
+#def sendSMSResult(request):
+#    cl = get_current_class(request)
+#    return HttpResponseRedirect(reverse('send_sms_result',args=[cl.id]))
