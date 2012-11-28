@@ -196,6 +196,8 @@ class sms(models.Model):
                     try:
                         result = self._send_Viettel_sms()
                         connect_failed = False
+                        print 'connected to viettel, requested'
+                        print connect_failed
                     except Exception as e:
                         school._atomic_increase_bl()
                         raise e
@@ -212,7 +214,10 @@ class sms(models.Model):
                     self.save()
                     return result
                 else:
-                    if not connect_failed: school._atomic_increase_bl()
+                    if not connect_failed:
+                        print 'connected_failed should be False'
+                        print 'Going to increase'
+                        school._atomic_increase_bl()
                     raise Exception('%s-SendFailed' % result)
             else:
                 self.failed_reason = 'BalanceNotEnough'

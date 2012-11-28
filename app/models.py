@@ -136,8 +136,9 @@ class Organization(models.Model):
             return ''
 
     def _atomic_increase_bl(self):
-        Organization.objects.select_for_update().get(id=self.id)\
+        Organization.objects.select_for_update().filter(id=self.id)\
                 .update(balance=F('balance') + 1)
+        print 'increase'
 
     @transaction.commit_on_success
     def _atomic_decrease_bl(self):
@@ -145,6 +146,7 @@ class Organization(models.Model):
         if temp.balance > 0:
             temp.balance -= 1
             temp.save()
+            print 'decrease'
             return True
         else: return False
 
