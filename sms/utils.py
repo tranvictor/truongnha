@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from models import sms, check_phone_number 
+from datetime import date
 import settings
 import os
 from django.core import mail
@@ -149,11 +150,17 @@ def send_sms_summary_mark(student, content, marks, dds, user,
         if school:
             if school.id in [42, 44]: raise Exception('NotAllowedSMS')
             if cl:
-                sms_cont = to_ascii(u'Truong %s thong bao:\nEm %s lop %s co %s' % (
-                    unicode(school), student.short_name(), cl, content))
+                sms_cont = to_ascii(
+                        u'Truong %s thong bao:\nEm %s lop %s co %s\nTinh den ngay %s'\
+                                % (unicode(school), student.short_name(),
+                                    cl, content,
+                                    unicode(date.today().strftime('%d\%m'))))
             else:
-                sms_cont = to_ascii(u'Truong %s thong bao:\nEm %s co %s' % (
-                    unicode(school), student.short_name(), content))
+                sms_cont = to_ascii(
+                        u'Truong %s thong bao:\nEm %s co %s\nTinh den ngay %s'\
+                                % (unicode(school), student.short_name(),
+                                    content,
+                                    unicode(date.today().strftime('%d\%m'))))
         else:
             raise Exception('SchoolIsNone')
 

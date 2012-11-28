@@ -236,15 +236,18 @@ def sms_summary(request, class_id=None):
             'message': message,
             'success': success}, mimetype='json'))
     students = cl.students()
-    info_list, marks = cl._generate_mark_summary(term, student_query=students)
-    dd_info_list, dd_list = cl._generate_diemdanh_summary(term, student_query=students)
+    info_list, marks = cl._generate_mark_summary(term,
+            student_query=students)
+    dd_info_list, dd_list = cl._generate_diemdanh_summary(term,
+            student_query=students)
     if request.method == 'POST' and request.is_ajax():
         ids = request.POST['students'].split('-')
         ids = [int(id) for id in ids if id]
         number = 0
         for st in students:
             if (st.sms_phone and st.id in ids
-                and (info_list[st.id] != u'Không có điểm mới.' or dd_info_list[st.id] != '')):
+                and (info_list[st.id] != u'Không có điểm mới.'
+                    or dd_info_list[st.id] != '')):
                 try:
                     content = info_list[st.id] + ' ' + dd_info_list[st.id]
                     send_sms_summary_mark(st,
