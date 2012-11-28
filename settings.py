@@ -48,9 +48,9 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'currentdb17',
-            'USER': 'root',
-            'PASSWORD':'',
+            'NAME': 'freeschool',
+            'USER': 'admin',
+            'PASSWORD':'freeschool',
             'OPTIONS': { 'init_command': 'SET storage_engine=INNODB',},
         },
     }
@@ -214,6 +214,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
 #'django.contrib.staticfiles',
 #    'django.contrib.messages',
+    'django_admin_bootstrapped',
     'django.contrib.admin',
     'crumbs', #requires django-crumbs
     'app',

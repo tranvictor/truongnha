@@ -14,3 +14,4 @@ django-coverage
 django-celery
 coverage
 mysql-python
+django_admin_bootstrapped
