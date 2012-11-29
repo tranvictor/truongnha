@@ -176,6 +176,16 @@ def viewClassDetail(request, class_id):
                     number_of_blank = 0
                     number_of_failed = 0
                     number_of_email_sent = 0
+                    number_of_student = len(students)
+                    if school.balance < number_of_student:
+                         data = simplejson.dumps({
+                            'number_of_sent': 0,
+                            'number_of_blank': 0,
+                            'number_of_failed': number_of_student,
+                            'number_of_email_sent': 0,
+                            'message': u'Tài khoản trường không đủ gửi %d tin nhắn'\
+                                    % number_of_student})
+                         return HttpResponse(data, mimetype='json')
                     for student in students:
                         if student.sms_phone:
                             try:
