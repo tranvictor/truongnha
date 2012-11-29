@@ -20,7 +20,7 @@ class BlockForm(forms.ModelForm):
 class TeacherForm(forms.ModelForm):
     class Meta:
         model = Teacher
-        exclude = ('school_id', 'user_id', 'index')
+        exclude = ('school_id', 'user_id', 'index', 'balance')
         widgets = {
             'birthday' : DateInput(attrs = {'class':'datepicker input-small'}),
             'sms_phone': TextInput(attrs={'class':'input-medium'}),

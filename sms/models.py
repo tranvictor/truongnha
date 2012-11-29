@@ -96,6 +96,7 @@ class SMSEmailTask(Task):
             sms.failed_reason = unicode(exc)
             sms.save()
             
+            print kwargs
             subject = kwargs['subject']
             message = kwargs['message']
             from_addr = kwargs['from_addr']

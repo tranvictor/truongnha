@@ -305,6 +305,17 @@ def teachers(request):
                         number_of_blank = 0
                         number_of_failed = 0
                         number_of_email_sent = 0
+                        number_of_teacher = len(teachers)
+                        if school.balance < number_of_teacher:
+                            data = simplejson.dumps({
+                                'number_of_sent': 0,
+                                'number_of_blank': 0,
+                                'number_of_failed': number_of_teacher,
+                                'number_of_email_sent': 0,
+                                'message': u'Tài khoản trường không đủ gửi %d tin nhắn'\
+                                    % number_of_teacher})
+                            return HttpResponse(data, mimetype='json')
+
                         for teacher in teachers:
                             if teacher.sms_phone:
                                 try:
@@ -314,9 +325,9 @@ def teachers(request):
                                             user,
                                             teacher.user_id,
                                             True,
-                                            school,
-                                            u'Trường Nhà thông báo',
-                                            content,
+                                            school=school,
+                                            subject=u'Trường Nhà thông báo',
+                                            message=content,
                                             to_addr=[teacher.email])
                                     number_of_sent += 1
                                 except Exception:
@@ -598,7 +609,7 @@ def editTeacherDetail(request, teacher_id):
         data = request.POST.copy()
         data['first_name'] = data['first_name'].strip()
         data['last_name'] = data['last_name'].strip()
-        form = TeacherForm(teacher.school_id_id,data,instance=teacher)
+        form = TeacherForm(teacher.school_id_id, data, instance=teacher)
         message = u'Đã lưu'
         if request.method == 'POST':
             first_name = ''

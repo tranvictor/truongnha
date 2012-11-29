@@ -308,7 +308,11 @@ $(document).ready(function() {
                     teacher_list:teacherList},
                 datatype:"json",
                 success: function(json) {
-                    $("#notify").showNotification("Sẽ gửi " + json.number_of_sent + " tin nhắn trong chậm nhất 1h");
+                    if (json.message){
+                        $("#notify").showNotification(json.message);
+                    } else if (json.number_of_sent){
+                        $("#notify").showNotification("Sẽ gửi " + json.number_of_sent + " tin nhắn trong chậm nhất 1h.");
+                    }
                     $("#smsProgressbar").hide();
                     if (json.number_of_blank != '0' || json.number_of_failed != '0' || json.number_of_email_sent != '0') {
                         var html = "<ul>";
