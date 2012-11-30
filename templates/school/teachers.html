@@ -135,51 +135,52 @@
 
     <div class="span9" id="teacher-list-div">
     <div class="btn-toolbar">
-        {% if pos >= 3 %}
-            <button id="textSms" class="btn btn-warning"
-                    title="Nhắn tin đến những giáo viên đã chọn">
-                <i class="icon-envelope icon-white"></i>
-                Nhắn tin
+        <div class="btn-group">
+            <button id="activateAccount" class="btn"
+                title="Mở cho tài khoản giáo viên được sử dụng. Các giáo viên không sử dụng cần khóa lại để đảm bảo an toàn thông tin hơn.">
+                <i class="icon-key"></i>
+                Mở và gửi tài khoản
             </button>
-        {% endif %}
+            <button id="deactivateAccount" class="btn">
+                <i class="icon-lock"></i>
+                Khóa tài khoản
+            </button>
+        </div>
+
 
         {% if pos > 3 %}
             <div class="btn-group pull-right">
-                <div class="btn-group">
-                    <button id="activateAccount" class="btn"
-                            title="Mở cho tài khoản giáo viên được sử dụng. Các giáo viên không sử dụng cần khóa lại để đảm bảo an toàn thông tin hơn.">
-                        <i class="icon-key"></i>
-                        Mở và gửi tài khoản
-                    </button>
-                    <button id="deactivateAccount" class="btn">
-                        <i class="icon-lock"></i>
-                        Khóa tài khoản
-                    </button>
-                </div>
+                {% if pos >= 3 %}
+                <button id="textSms" class="btn btn-warning"
+                    title="Nhắn tin đến những giáo viên đã chọn">
+                    <i class="icon-envelope icon-white"></i>
+                    Nhắn tin
+                </button>
+                {% endif %}
                 <div class="btn-group">
                     <a id="teacher-list-menu" class="btn dropdown-toggle" data-toggle="dropdown" href="#"
-                       title="Quản lý danh sách giáo viên">
+                        title="Quản lý danh sách giáo viên">
                         {#                    Chỉnh#}
                         <span class="icon-reorder"></span>
                     </a>
                     <ul class="dropdown-menu pull-right" style="text-align: left;">
                         <li>
-                            <a title="Nhập danh sách giáo viên từ file Excel"
-                               href="#upload_modal"
-                               data-toggle="modal"
-                               id="import">
-                                <i class="icon-upload-alt"></i>
-                                Nhập từ Excel </a>
+                        <a title="Nhập danh sách giáo viên từ file Excel"
+                            href="#upload_modal"
+                            data-toggle="modal"
+                            id="import">
+                            <i class="icon-upload-alt"></i>
+                            Nhập từ Excel </a>
                         </li>
                         <li>
-                            <a title="Xuất danh sách giáo viên ra file Excel"
-                               href="{% url teacher_generate 'all' %}"
-                               id="export">
-                                <i class="icon-download-alt"></i>
-                                Xuất ra Excel </a>
+                        <a title="Xuất danh sách giáo viên ra file Excel"
+                            href="{% url teacher_generate 'all' %}"
+                            id="export">
+                            <i class="icon-download-alt"></i>
+                            Xuất ra Excel </a>
                         </li>
                         <li>
-                            <a title="Thêm giáo viên"
+                        <a title="Thêm giáo viên"
                                href="#add-teacher-div"
                                class="add_teacher_button"
                                id="add-teacher">
