@@ -15,7 +15,7 @@ from school.class_functions import dd
 from school.models import Class, Pupil, Term, Subject, DiemDanh, TBNam, TKB,\
     KhenThuong, KiLuat, Mark, TKMon
 from school.utils import get_position, get_school, is_teacher,\
-    get_current_term, get_current_year
+    get_current_term, get_current_year, to_en1
 from api.utils import getMarkForAStudent
 from school.forms import MarkForm
 from decorators import need_login, operating_permission, school_function
@@ -49,6 +49,7 @@ class ApiLogin(View):
                 user = None
                 if user_position == 1:
                     user = {
+                        'user_id':request.user.id,
                         'type': user_position,
                         'last_name': request.user.last_name,
                         'first_name': request.user.first_name,
@@ -59,6 +60,7 @@ class ApiLogin(View):
                     }
                 elif user_position in [2, 3]:
                     user = {
+                        'user_id':request.user.id,
                         'type': user_position,
                         'last_name': request.user.last_name,
                         'first_name': request.user.first_name,
@@ -493,38 +495,46 @@ class hanhkiem(View):
 class Schedule(View):
     @need_login
     def get(self, request):
-        try:
-            year = get_current_year(request)
-            classList = year.class_set.all().order_by('name')
-            table = {}
-            for d in range(2, 8):
-                table[d] = []
-            for cl in classList:
-                for d in range(2, 8):
-                    tmp = None
-                    try:
-                        tmp = cl.tkb_set.get(day=d)
-                    except Exception as e:
-                        tmp = TKB()
-                        tmp.day = d
-                        tmp.class_id = cl
-                        tmp.save()
-                    for field in range(1, 11):
-                        sub = getattr(tmp, 'period_' + str(field))
-                        if not sub: continue
-                        new_dict = {'class': cl.name, 'subject': sub.name, 'time': field}
-                        table[d].append(new_dict)
-                    if tmp.chaoco:
-                        new_dict = {'class': cl.name, 'subject': u'Chào cờ', 'time': tmp.chaoco}
-                        table[d].append(new_dict)
-                    if tmp.sinhhoat:
-                        new_dict = {'class': cl.name, 'subject': u'Sinh hoạt', 'time': tmp.sinhhoat}
-                        table[d].append(new_dict)
-            return HttpResponse(simplejson.dumps(table), mimetype='json')
-        except Exception as e:
-            print e
-            return Response(status.HTTP_403_FORBIDDEN)
+        current_year = get_current_year(request)
+        tc = request.user.teacher
+        subjects = Subject.objects.filter(teacher_id=tc,class_id__year_id=current_year)
 
+        table = [0] * 8
+
+        for day in range(2,8) :
+            temp = [0]*11
+            for i in range(11):
+                temp[i] = []
+            table[day] = temp
+
+        for day in range(2,8):
+            print table[day]
+        for s in subjects:
+            cl  = s.class_id
+            schedules = cl.tkb_set.all().order_by("day")
+            print len(schedules)
+            for sch in schedules:
+                print sch.day
+                for time in range(1,11):
+                    sub = getattr(sch, 'period_' + str(time))
+                    if s == sub :
+                        table[sch.day][time].append(sub)
+        for day in range(2,8):
+            print table[day]
+        result = []
+        for day in range(2,8) :
+            aday = []
+            for time in range(1,10):
+                for x in table[day][time]:
+                    a_period = {}
+                    a_period['time'] = time
+                    a_period['subject'] = x.name
+                    aday.append(a_period)
+            result.append(aday)
+        #return Response(status=status.HTTP_200_OK, content=list)
+        return HttpResponse(simplejson.dumps(result), mimetype='json')
+
+        #for
 
 class StudentProfile(View):
     @need_login
@@ -693,8 +703,8 @@ class MarkForASubject(View):
             adict.update({"mark": temp_arr})
             list.append(adict)
             #print list
-        return Response(status=status.HTTP_200_OK, content=list)
-        #return HttpResponse(simplejson.dumps(list), mimetype='json')
+        #return Response(status=status.HTTP_200_OK, content=list)
+        return HttpResponse(simplejson.dumps(list), mimetype='json')
 
 
     @need_login
