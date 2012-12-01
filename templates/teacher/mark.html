@@ -66,12 +66,14 @@
                 {% for k,v in hs_number_max.items %}
                     {% for i in v|times %}
                         <th class="{{ k|make_class }}-{{ forloop.counter0 }}">
-                            <input type="text" value="{{ k }}" disabled="disabled">
+                            <input type="text" value="{{ k }}" disabled="disabled"
+                                   name="heso" data-heso="{{ k }}">
                         </th>
                     {% endfor %}
                 {% endfor %}
                 {% if not total_column %}
-                    <th class="1dot0-0"><input type="text" value="1.0" disabled="disabled"></th>
+                    <th class="1dot0-0"><input type="text" value="1.0" disabled="disabled"
+                                               name="heso" data-heso=""></th>
                 {% endif %}
             </tr>
             </thead>
@@ -88,9 +90,10 @@
                                     {% with std_mark_hs|get_list_value:forloop.counter0 as mark%}
                                         <td class="{{ k|make_class }}-{{ forloop.counter0 }}">
                                             {% if mark %}
-                                                <input id="{{ mark.id }}" type="text" value="{{ mark.diem }}" class="old-mark">
+                                                <input id="{{ mark.id }}" type="text" value="{{ mark.diem }}"
+                                                       class="old-mark" name="diem" data-diem="{{ mark.diem }}">
                                             {% else %}
-                                                <input type="text" value="">
+                                                <input type="text" value="" name="diem" data-diem="">
                                             {% endif %}
                                         </td>
                                     {% endwith %}

@@ -14,13 +14,78 @@ $(document).ready(function(){
             }
         }
         return cookieValue;
-    };
+    }
     function new_class(hs){
         var cl = hs + '-' + big_value;
         big_value = big_value - 1;
         cl = String(cl);
         cl = cl.replace('.','dot');
         return cl;
+    }
+    function acceptDigits(val)
+    {
+        var exp = /[^((\d).,)]/g;
+        val=val.replace(exp,'');
+
+        var exp1 = /[,]/g;
+        val=val.replace(exp1,'.');
+        if(isNaN(val)) return '';
+        var countDot=0;
+        for(var i=0;i<val.length;i++)
+            if (val.charAt(i)==".")
+                countDot++;
+
+        if (countDot>1)
+            val=val.substring(0,value.length-1);
+
+        if (val.length>4)
+            val=val.substring(0,4);
+
+        var number=parseFloat(val);
+        if ((10<number ) && (number<100))
+        {
+            var temp=number/10;
+            val=temp.toString();
+        }
+        if (number>=100)
+            val=val.substring(0,2);
+        if ((val.length==2) && (val[0]=='0'))
+        {
+            var temp = number / 10;
+            val = temp.toString();
+        }
+        return val;
+    }
+    function key_up_diem(event) {
+        var $this;
+        var cellIndex;
+        if (event.keyCode == 37) {
+            $this = $(this).parents("tr");
+            cellIndex = $(this).parent("td").index() - 1;
+            $this.children().eq(cellIndex).find("input").focus();
+            return false;
+        }
+        if (event.keyCode == 38) {
+            $this = $(this).parent("td");
+            cellIndex = $this.index();
+            $this.closest('tr').prev().children().eq(cellIndex).find("input").focus();
+            return false;
+        }
+        if (event.keyCode == 39) {
+            $this = $(this).parents("tr");
+            cellIndex = $(this).parent("td").index() + 1;
+            $this.children().eq(cellIndex).find("input").focus();
+            return false;
+        }
+        if (event.keyCode == 40 || event.keyCode == 13) {
+            $this = $(this).parent("td");
+            cellIndex = $this.index();
+            $this.closest('tr').next().children().eq(cellIndex).find("input").focus();
+            return false;
+        }
+        var val = $(this).val();
+        val = acceptDigits(val);
+        $(this).val(val);
     }
     $("#btn-add-mark").click(function(){
         $("#add-column-modal").modal("show");
@@ -63,15 +128,19 @@ $(document).ready(function(){
         $(this).hide();
         return false;
     });
-    $("tbody").delegate("td > input","change",function(){
+    $("tbody").delegate("td > input","blur",function(){
         var std_info = $(this).parent().parent().attr('id').split('-');
         var student_id = std_info[1];
         var cl = $(this).parent().attr('class');
         var selected = 'th.' + cl + '> input';
         var hs = $(selected).val();
         var value = $(this).val();
+        var old_value = $(this).attr('data-diem');
         var csrf = getCookie("csrftoken");
         var $input = $(this);
+        var tem1 = parseFloat(old_value);
+        var tem2 = parseFloat(value);
+        if((tem1 == tem2 )||(isNaN(tem1)&&isNaN(tem2))) return false;
         if ($(this).hasClass('old-mark')){
             var mark_id = $(this).attr('id');
             if (value == ''){
@@ -90,6 +159,7 @@ $(document).ready(function(){
                     success: function(json){
                         if(json.success){
                             $input.removeClass('old-mark');
+                            $input.attr('data-diem',value);
                         }
                     }
                 };
@@ -106,7 +176,12 @@ $(document).ready(function(){
                         'hs':hs,
                         'csrfmiddlewaretoken':csrf
                     },
-                    datatype:"json"
+                    datatype:"json",
+                    success: function(json){
+                        if(json.success){
+                            $input.attr('data-diem',value);
+                        }
+                    }
                 };
             }
         }
@@ -126,19 +201,24 @@ $(document).ready(function(){
                     if(json.success){
                         $input.addClass('old-mark');
                         $input.attr("id",json.mark);
+                        $input.attr('data-diem',value);
                     }
                 }
             };
         }
         $.ajax(args);
     });
-    $("thead").delegate("th > input","change",function(){
+    $("thead").delegate("th > input","blur",function(){
         var hs = $(this).val();
+        var old_hs = $(this).attr('data-heso');
         var old_class = $(this).parent().attr('class');
         var new_cl = new_class(hs);
         var selected = "td." + old_class;
         var id_list = "";
         var csrf = getCookie("csrftoken");
+        var tem1 = parseFloat(hs);
+        var tem2 = parseFloat(old_hs);
+        if((tem1 == tem2 )||(isNaN(tem1)&&isNaN(tem2))) return false;
         $(selected).each(function(){
             var id = $("> input",this).attr('id');
             console.log(id);
@@ -167,5 +247,26 @@ $(document).ready(function(){
             }
         };
         $.ajax(args);
+    });
+    $("input").focus(function(){
+        $(this).select();
+        return false;
+    });
+    $("input[name=diem]").on('keyup',key_up_diem );
+    $("input[name=heso]").on('keyup', function (event) {
+        var $this;
+        var cellIndex;
+        if (event.keyCode == 37) {
+            $this = $(this).parents("tr");
+            cellIndex = $(this).parent("th").index() - 1;
+            $this.children().eq(cellIndex).find("input").focus();
+            return false;
+        }
+        if (event.keyCode == 39) {
+            $this = $(this).parents("tr");
+            cellIndex = $(this).parent("th").index() + 1;
+            $this.children().eq(cellIndex).find("input").focus();
+            return false;
+        }
     });
 });
