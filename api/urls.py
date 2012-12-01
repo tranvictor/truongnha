@@ -2,7 +2,7 @@ __author__ = 'vutran'
 
 from django.conf.urls import patterns, url
 from views import ApiLogin, ApiLogout, Attendance, SchoolSetting, ApiGetStudentList
-from views import SmsStatus, SmsSummary, hanhkiem, Schedule, StudentProfile, MarkForASubject, MarkForAStudent
+from views import SmsStatus, SmsSummary, hanhkiem, StudentProfile, MarkForASubject, MarkForAStudent, ScheduleForStudent, ScheduleForTeacher
 
 urlpatterns = patterns('',
     url(r'login/$', ApiLogin.as_view(), name='api_login'),
@@ -19,7 +19,8 @@ urlpatterns = patterns('',
     url(r'hanhkiem/$', hanhkiem.as_view(), name='api_post_hanhkiem'),
     url(r'hanhkiem/(?P<class_id>\w+)/$',
         hanhkiem.as_view(), name='api_get_hanhkiem'),
-    url(r'schedule/$', Schedule.as_view(), name='api_get_schedule'),
+    url(r'scheduleForStudent/$', ScheduleForStudent.as_view(), name='api_get_schedule_for_student'),
+    url(r'scheduleForTeacher/$', ScheduleForTeacher.as_view(), name='api_get_schedule_for_teacher'),
     url(r'profile/(?P<student_id>\w+)/$', StudentProfile.as_view(), name='api_get_student_profile'),
 
     url(r'markForASubject/$', MarkForASubject.as_view(), name='api_post_mark_for_a_subject'),

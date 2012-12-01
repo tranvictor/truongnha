@@ -15,7 +15,7 @@ from school.class_functions import dd
 from school.models import Class, Pupil, Term, Subject, DiemDanh, TBNam, TKB,\
     KhenThuong, KiLuat, Mark, TKMon
 from school.utils import get_position, get_school, is_teacher,\
-    get_current_term, get_current_year, to_en1
+    get_current_term, get_current_year, to_en1, get_student
 from api.utils import getMarkForAStudent
 from school.forms import MarkForm
 from decorators import need_login, operating_permission, school_function
@@ -49,18 +49,18 @@ class ApiLogin(View):
                 user = None
                 if user_position == 1:
                     user = {
-                        'user_id':request.user.id,
+                        'user_id': request.user.id,
                         'type': user_position,
                         'last_name': request.user.last_name,
                         'first_name': request.user.first_name,
                         'class': request.user.pupil.class_id.name,
                         'school': get_school(request).name,
                         'birth': request.user.pupil.birthday,
-                        'studentId':request.user.pupil.id,
-                    }
+                        'studentId': request.user.pupil.id,
+                        }
                 elif user_position in [2, 3]:
                     user = {
-                        'user_id':request.user.id,
+                        'user_id': request.user.id,
                         'type': user_position,
                         'last_name': request.user.last_name,
                         'first_name': request.user.first_name,
@@ -79,7 +79,7 @@ class ApiLogin(View):
             except Exception as e:
                 print e
                 raise e
-            if user_position == 1 :
+            if user_position == 1:
                 #TODO: return necessary information for students
                 #return Response(status=status.HTTP_404_NOT_FOUND)
                 #term_id = get_current_term(request, except_summer=True).id
@@ -492,49 +492,75 @@ class hanhkiem(View):
             return Response(status.HTTP_403_FORBIDDEN)
 
 
-class Schedule(View):
+class ScheduleForTeacher(View):
     @need_login
     def get(self, request):
         current_year = get_current_year(request)
-        tc = request.user.teacher
-        subjects = Subject.objects.filter(teacher_id=tc,class_id__year_id=current_year)
+        tc = get_teacher(request)
+        subjects = Subject.objects.filter(teacher_id=tc, class_id__year_id=current_year)
 
         table = [0] * 8
 
-        for day in range(2,8) :
-            temp = [0]*11
+        for day in range(2, 8):
+            temp = [0] * 11
             for i in range(11):
                 temp[i] = []
             table[day] = temp
 
-        for day in range(2,8):
+        for day in range(2, 8):
             print table[day]
         for s in subjects:
-            cl  = s.class_id
+            cl = s.class_id
             schedules = cl.tkb_set.all().order_by("day")
             print len(schedules)
             for sch in schedules:
                 print sch.day
-                for time in range(1,11):
+                for time in range(1, 11):
                     sub = getattr(sch, 'period_' + str(time))
-                    if s == sub :
+                    if s == sub:
                         table[sch.day][time].append(sub)
-        for day in range(2,8):
+        for day in range(2, 8):
             print table[day]
         result = []
-        for day in range(2,8) :
+        for day in range(2, 8):
             aday = []
-            for time in range(1,10):
+            for time in range(1, 10):
                 for x in table[day][time]:
                     a_period = {}
                     a_period['time'] = time
                     a_period['subject'] = x.name
                     aday.append(a_period)
             result.append(aday)
-        #return Response(status=status.HTTP_200_OK, content=list)
+            #return Response(status=status.HTTP_200_OK, content=list)
         return HttpResponse(simplejson.dumps(result), mimetype='json')
 
-        #for
+
+class ScheduleForStudent(View):
+    @need_login
+    def get(self, request):
+        current_year = get_current_year(request)
+        pupil = get_student(request)
+        cl = pupil.current_class()
+        schedules = cl.tkb_set.all().order_by("day")
+        result = [ ]
+        for s in schedules:
+            aday = []
+            for time in range(1, 10):
+                sub = getattr(s, 'period_' + str(time))
+                if sub != None:
+                    a_period = {}
+                    a_period['time'] = time
+                    a_period['subject'] = sub.name
+                    teacher = sub.teacher_id
+                    if teacher != None:
+                        a_period['teacher'] = teacher.last_name+' '+teacher.first_name
+                    else:
+                        a_period['teacher'] = ''
+                    aday.append(a_period)
+            result.append(aday)
+            #return Response(status=status.HTTP_200_OK, content=list)
+        return HttpResponse(simplejson.dumps(result), mimetype='json')
+
 
 class StudentProfile(View):
     @need_login
