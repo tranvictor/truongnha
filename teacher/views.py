@@ -18,7 +18,7 @@ from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ObjectDoesNotExist
 import validations
 from teacher.models import Person, Teacher, Register, Class,\
-        Attend, Student, Mark
+        Attend, Student, Mark, Note
 from sms.utils import send_email
 from teacher.base import BaseTeacherView, RestfulView
 import settings
@@ -276,6 +276,7 @@ class RegisterView(TemplateView):
                 settings.CAPTCHA_PRIVATE_KEY,
                 request.META['REMOTE_ADDR']
             )
+
         if not (settings.IS_TESTING or captchar_check.is_valid):
             message = u'2 từ bạn điền không đúng'
             success = False
@@ -293,11 +294,12 @@ class RegisterView(TemplateView):
             data['activation_key'] = activation_key
             register_form = RegisterView.form(data=data)
             if register_form.is_valid():
-                new_register = register_form.save(commit=False)
-                new_register.activation_key = activation_key
-                new_register.save()
-
-
+                try:
+                    new_register = register_form.save(commit=False)
+                    new_register.activation_key = activation_key
+                    new_register.save()
+                except Exception as e:
+                    print e
                 message = u'Bạn đã đăng ký thành công. \
                         Vui lòng kiểm tra email để kích hoạt tài khoản.'
                 site = request.get_host()
@@ -702,3 +704,193 @@ class ClassMarkView(RestfulView, BaseTeacherView):
             return {'success': False,
                     'error': error,
                     'message': u'Có lỗi ở dữ liệu nhập vào'}
+class NoteView(RestfulView, BaseTeacherView):
+    request_type = ['modify', 'create', 'remove']
+
+    class NoteForm(forms.ModelForm):
+    #        def __init__(self, *args, **kwargs):
+    #            super(NoteView.NoteForm, self).__init__(*args, **kwargs)
+        def save(self, cl, student, commit=True, *args, **kwargs):
+            note = super(NoteView.NoteForm, self).save(commit=False,
+                *args, **kwargs)
+            note.class_id = cl
+            note.student_id = student
+            if commit:
+                note.save()
+            return note
+        class Meta:
+            model = Note
+            exclude = ('created', 'modified', 'class_id', 'student_id')
+
+    def _get_create(self, *args, **kwargs):
+        self.template_name = os.path.join('teacher', 'note_create.html')
+        cl_id = kwargs['class_id']
+        student_id = kwargs['student_id']
+        cl = self.teacher.class_set.get(id=cl_id)
+        student = Student.objects.get(id = student_id)
+        if cl.id == student.current_class().id:
+            create_form = self.NoteForm()
+            print create_form
+            return {'form': create_form,
+                    'class' : cl,
+                    'success' : True,
+                    'student' : student,
+                    'create_url': self.reverse('note_create',
+                        kwargs={'class_id': kwargs['class_id'],
+                                'student_id': kwargs['student_id'],
+                                'request_type': 'create'})}
+        else:
+            return {'success': False,
+                    'message': u'Học sinh không nằm trong lớp'}
+
+    def _post_create(self, *args, **kwargs):
+        cl_id = kwargs['class_id']
+        print self.request.POST
+        student_id = kwargs['student_id']
+        try:
+            cl = self.teacher.class_set.get(id=cl_id)
+            student = Student.objects.get(id = student_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Lớp hoặc học sinh không tồn tại'}
+        if cl.id != student.current_class().id:
+            return {'success': False,
+                    'message': u'Học sinh không nằm trong lớp'}
+        create_form = self.NoteForm(self.request.POST.copy())
+        if create_form.is_valid():
+            note = create_form.save(cl, student)
+            return {'message': u'Bạn vừa thêm thành công nhận xét',
+                    'success': True,
+                    'student': student.id,
+                    'class' : cl.id,
+                    'note' : note.id,
+                    'note_modify': self.reverse('note_view',
+                        kwargs={'class_id': cl.id,
+                                'student_id': student.id,
+                                'note_id':note.id,
+                                'request_type': 'modify'}),
+
+                    'note_remove': self.reverse('note_view',
+                        kwargs={'class_id': cl.id,
+                                'student_id': student.id,
+                                'note_id':note.id,
+                                'request_type': 'remove'})}
+        else:
+            error = {}
+            for k, v in create_form.errors.items():
+                error[create_form[k].auto_id] = create_form.error_class.as_text(v)
+            return {'success': False,
+                    'error': error,
+                    'message': u'Có lỗi ở dữ liệu nhập vào'}
+    def _get_modify(self, *args, **kwargs):
+        self.template_name = os.path.join('teacher', 'note_create.html')
+        cl_id = kwargs['class_id']
+        student_id = kwargs['student_id']
+        note_id = kwargs['note_id']
+        try:
+            cl = self.teacher.class_set.get(id=cl_id)
+            student = Student.objects.get(id = student_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Lớp hoặc học sinh không tồn tại'}
+        if cl.id != student.current_class().id:
+            return {'success': False,
+                    'message': u'Học sinh không nằm trong lớp'}
+        try:
+            note = student.note_set.get(id = note_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Nhận xét không tồn tại'}
+
+        if note.class_id.id != int(cl_id):
+            return {'success': False,
+                    'message': u'Nhận xét không nằm trong lớp'}
+
+        create_form = self.NoteForm(instance=note)
+        return {'form': create_form,
+                'class' : cl,
+                'success' : True,
+                'student' : student,
+                'create_url': self.reverse('note_create',
+                    kwargs={'class_id': kwargs['class_id'],
+                            'student_id': kwargs['student_id'],
+                            'request_type': 'create'})}
+
+    def _post_modify(self, *args, **kwargs):
+        self.template_name = os.path.join('teacher', 'note_create.html')
+        cl_id = kwargs['class_id']
+        student_id = kwargs['student_id']
+        note_id = kwargs['note_id']
+        try:
+            cl = self.teacher.class_set.get(id=cl_id)
+            student = Student.objects.get(id = student_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Lớp hoặc học sinh không tồn tại'}
+        if cl.id != student.current_class().id:
+            return {'success': False,
+                    'message': u'Học sinh không nằm trong lớp'}
+        try:
+            note = student.note_set.get(id = note_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Nhận xét không tồn tại'}
+
+        if note.class_id.id != int(cl_id):
+            return {'success': False,
+                    'message': u'Nhận xét không nằm trong lớp'}
+
+        modify_form = self.NoteForm(self.request.POST.copy(),
+            instance=note)
+        if modify_form.is_valid():
+            note = modify_form.save(cl, student)
+            return {'message': u'Bạn vừa cập nhật thành công nhận xét',
+                    'success': True,
+                    'student': student.id,
+                    'class' : cl.id,
+                    'note' : note.id,
+                    'note_modify': self.reverse('note_view',
+                        kwargs={'class_id': cl.id,
+                                'student_id': student.id,
+                                'note_id':note.id,
+                                'request_type': 'modify'}),
+
+                    'note_remove': self.reverse('note_view',
+                        kwargs={'class_id': cl.id,
+                                'student_id': student.id,
+                                'note_id':note.id,
+                                'request_type': 'remove'})}
+        else:
+            error = {}
+            for k, v in modify_form.errors.items():
+                error[modify_form[k].auto_id] = modify_form.error_class.as_text(v)
+            return {'success': False,
+                    'error': error,
+                    'message': u'Có lỗi ở dữ liệu nhập vào'}
+
+    def _post_remove(self, *args, **kwargs):
+        self.template_name = os.path.join('teacher', 'note_create.html')
+        cl_id = kwargs['class_id']
+        student_id = kwargs['student_id']
+        note_id = kwargs['note_id']
+        try:
+            cl = self.teacher.class_set.get(id=cl_id)
+            student = Student.objects.get(id = student_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Lớp hoặc học sinh không tồn tại'}
+        if cl.id != student.current_class().id:
+            return {'success': False,
+                    'message': u'Học sinh không nằm trong lớp'}
+        try:
+            note = student.note_set.get(id = note_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Nhận xét không tồn tại'}
+
+        if note.class_id.id != int(cl_id):
+            return {'success': False,
+                    'message': u'Nhận xét không nằm trong lớp'}
+        note.delete()
+        return {'success': True,
+                'message': u'Bạn đã xóa nhận xét %s' % note}
