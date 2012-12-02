@@ -77,13 +77,14 @@
                                 $(this).parents("td").children("p").replaceWith("<p>{{ s.teacher_id|default_if_none:".." }}</p>");
                             }
                         {% endfor %}
+
                         var query2 = '[id="' + old_subject + '"]';
                         if (old_subject != "None") {
                             number_of_periods[old_subject]--;
                             $(query2).text(number_of_periods[old_subject]);
                         }
 
-                        var query = '"[id="' + sub + '"]';
+                        var query = '[id="' + sub + '"]';
                         if (sub != "None") {
                             number_of_periods[sub]++;
                             $(query).text(number_of_periods[sub]);
@@ -94,7 +95,7 @@
                         }
 
                         var period = $(this).attr('name');
-                        var data = { day:day, sub:val, request_type:period}
+                        var data = { day:day, sub:val, request_type:period};
                         var arg = { type:"POST",
                             url:"",
                             data:data,
