@@ -15,19 +15,18 @@
 {% block css %}
     <style type="text/css">
         #teachers-nav {
-            font-size: 1.4em;
+            font-size: 1.3em;
         }
 
         #teachers-nav ul {
             padding: 0;
-            margin-right: 0;
+            margin-left: .8em;
         }
 
         #teachers-nav li {
             list-style: none;
             font-size: .9em;
-            padding: .3em 0 .3em 0;
-            /*margin-left: -.2em;*/
+            padding: .25em 0 .25em 0;
             width: 100%;
         }
 
@@ -55,7 +54,7 @@
         </div>
         <ul class="nav-list">
             <li id="team-all" class="active">
-                <a href="#">Tất cả</a>
+                <a href="#"><strong>Tất cả</strong></a>
                 {% if pos > 3 %}
                     <div class="pull-right">
                         <a title="Thêm tổ"
@@ -67,7 +66,9 @@
                     </div>
                 {% endif %}
             </li>
-            <li>
+        </ul>
+{#    <ul>#}
+{#            <li>#}
                 <ul class="nav-list">
                     {% for t in team_list %}
                         <li id="team.{{ t.id }}" data-toggle="{{ t.name }}" class="team">
@@ -129,8 +130,8 @@
                         </li>
                     {% endfor %}
                 </ul>
-            </li>
-        </ul>
+{#            </li>#}
+{#        </ul>#}
     </div>
 
     <div class="span9" id="teacher-list-div">
