@@ -22,8 +22,7 @@ $(document).ready(function(){
         cl = cl.replace('.','dot');
         return cl;
     }
-    function acceptDigits(val)
-    {
+    function acceptDigits(val){
         var exp = /[^((\d).,)]/g;
         val=val.replace(exp,'');
 
@@ -87,8 +86,10 @@ $(document).ready(function(){
         val = acceptDigits(val);
         $(this).val(val);
     }
+    console.log($('#add-column-model'));
     $("#btn-add-mark").click(function(){
         $("#add-column-modal").modal("show");
+        return false;
     });
     $("#add-column-modal").on("hide",function(){
         clear_bootstrap_error();
