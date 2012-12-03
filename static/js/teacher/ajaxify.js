@@ -13,8 +13,7 @@
     $(document).ready(function(){
         var rootUrl = History.getRootUrl();
         var $content = $('#inner-content');
-        console.log(rootUrl);
-        console.log($content);
+        var contentNode = $content.get(0);
         // This function ajaxifies for <a> element
         $.fn.ajaxify = function(){
             $this = $(this);
@@ -22,8 +21,6 @@
                 var $this = $(this);
                 var url = $this.attr('href');
                 var title = $this.attr('title');
-                console.log(url);
-                console.log(title);
                 // Enable this continue if cmd or ctr button are hit
                 // if ( event.which == 2 || event.metaKey ) { return true; }
 
@@ -43,14 +40,17 @@
 				.replace(/<\/(html|head|body|title|meta|script)\>/gi,
                         '</div>');
 
-			return result;
+			return '<div id="wrapper">' + result + '</div>';
 		};
+
+        var divToScript = function(html){
+            var result = String(html).replace('div', 'script');
+            return result;
+        }
 
         $body = $(document.body);
         $body.ajaxify();
-        console.log($body);
         $window.bind('statechange', function(){
-            console.log('statechange is fired');
             var state = History.getState();
             var url = state.url;
             var relativeUrl = url.replace(rootUrl, '');
@@ -62,12 +62,7 @@
                 url: url,
                 global: false,
                 success: function(res, textStatus, jqXHR){
-                    console.log('succeeded');
-                    console.log(res.content);
-                    loadedContent = $(headerToDiv(res.content))[0];
-                    $loadedContent = $(loadedContent);
-                    console.log($loadedContent);
-                    console.log(loadedContent);
+                    $loadedContent = $($(headerToDiv(res.content))[0]);
                     // Fetch the scripts
 					$scripts = $loadedContent.find('.document-script');
 					if ( $scripts.length ){
@@ -75,8 +70,9 @@
 					}
 
 					// Fetch the content
-                    contentHtml = $loadedContent.html();
-					if ( !contentHtml){
+                    $innerContent = $loadedContent.find('#inner-content');
+                    contentHtml = $($innerContent).html();
+					if (!contentHtml){
 						document.location.href = url;
 						return false;
 					}
@@ -86,12 +82,15 @@
                             .ajaxify()
                             .css('opacity', 100).show();
                     applyListener();
-                    /* you could fade in here if you'd like */
                     // Add the scripts
 					$scripts.each(function(){
 						var $script = $(this);
                         var scriptText = $script.text();
+                        var src = $script.attr('src');
+                        var type = $script.attr('type');
                         var scriptNode = document.createElement('script');
+                        if (src) scriptNode.setAttribute('src', src);
+                        if (type) scriptNode.setAttribute('type', type);
 						scriptNode.appendChild(document.createTextNode(scriptText));
 						contentNode.appendChild(scriptNode);
 					});
