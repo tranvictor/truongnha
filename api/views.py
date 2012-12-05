@@ -781,3 +781,31 @@ class GetListTerm(View):
                 list.append(a_term)
         return HttpResponse(simplejson.dumps(list), mimetype='json')
 
+class GetAttendanceForStudent(View):
+    @need_login
+    def get(self, request,all=None,day=None,month=None,year=None,day1=None,month1=None,year1=None):
+        student = get_student(request)
+        if all == 'allTerm':
+            current_term = get_current_term(request)
+            attendaces = DiemDanh.objects.filter(student_id=student,term_id=current_term).order_by("time")
+        elif all == 'allYear':
+            current_year = get_current_year(request)
+            term1 = Term.objects.get(year_id=current_year,number=1)
+            term2 = Term.objects.get(year_id=current_year,number=2)
+            attendaces = DiemDanh.objects.filter(student_id=student,term_id__in=[term1.id,term2.id]).order_by("time")
+        elif all != None:
+            raise Exception("Don't have request")
+        else:
+            first_day = datetime.datetime(int(year), int(month), int(day))
+            second_day = datetime.datetime(int(year1), int(month1), int(day1))
+            attendaces = DiemDanh.objects.filter(student_id=student,time__range=(first_day,second_day)).order_by("time")
+        result = []
+        for att in attendaces:
+            a_att = {}
+            a_att['time'] = att.time.strftime("%d/%m/%Y")
+            a_att['type'] = att.loai
+            a_att['sent'] = att.sent
+            result.append(a_att)
+
+        return HttpResponse(simplejson.dumps(result), mimetype='json')
+
