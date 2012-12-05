@@ -25,3 +25,10 @@ def about(request):
 def get_absolute_url(self):
         return 'profiles_profile_detail', (), { 'username': self.user.username }
 get_absolute_url = models.permalink(get_absolute_url)
+
+def help(request, page = None):
+    if not page:
+        return render_to_response("help/help.html", context_instance=RequestContext(request))
+    else:
+        template_page = "help/" + str(page).replace("_", "-") + '.html'
+        return render_to_response(template_page, context_instance=RequestContext(request))
