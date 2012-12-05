@@ -637,7 +637,7 @@ class MarkForASubject(View):
     #@need_login
     #@school_function
     #@operating_permission(['HIEU_PHO', 'HIEU_TRUONG', 'GIAO_VIEN'])
-    def get1(self, request, subject_id, term_id):
+    def get(self, request, subject_id, term_id):
         selected_subject = Subject.objects.get(id=subject_id)
         selected_term = Term.objects.get(id=term_id)
         time_to_edit = int(selected_term.year_id.school_id.get_setting('lock_time')) * 60
@@ -749,7 +749,7 @@ class MarkForASubject(View):
 
 
     @need_login
-    def get(self, request):
+    def post(self, request):
         tt1 = time.time()
         data = request.POST['data']
         #data = '[{"first_name": "\u00c1nh", "last_name": "\u0110\u1eb7ng Ng\u1ecdc", "id": 602038, "mark": [{"e": 1, "s": 0, "m": "5", "n": 1}, {"e": 1, "s": 0, "m": "6", "n": 2}, {"e": 1, "s": 0, "m": "6", "n": 3}, {"e": 1, "s": 0, "m": "2", "n": 4}, {"e": 1, "s": 0, "m": "9", "n": 9}]}]'
