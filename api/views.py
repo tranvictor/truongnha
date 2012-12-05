@@ -20,10 +20,11 @@ from api.utils import getMarkForAStudent
 from school.forms import MarkForm
 from decorators import need_login, operating_permission, school_function
 import simplejson
+import time
 import datetime
 import re
 from school.templateExcel import  MAX_COL, CHECKED_DATE, normalize
-
+from school.viewMark import update_mark
 class ApiLogin(View):
     """
     A basic view, that can be handle GET and POST requests.
@@ -492,6 +493,7 @@ class hanhkiem(View):
         else:
             return Response(status.HTTP_403_FORBIDDEN)
 
+
 def get_schedule_for_teacher(request):
     current_year = get_current_year(request)
     tc = get_teacher(request)
@@ -528,8 +530,9 @@ def get_schedule_for_teacher(request):
                 a_period['subject'] = x.name
                 a_period['class'] = x.class_id.name
                 aday.append(a_period)
-        result[day]= aday
+        result[day] = aday
     return result
+
 
 def get_schedule_for_student(request):
     current_year = get_current_year(request)
@@ -538,7 +541,7 @@ def get_schedule_for_student(request):
     schedules = cl.tkb_set.all().order_by("day")
     result = {}
 
-    for (i,s) in enumerate(schedules):
+    for (i, s) in enumerate(schedules):
         aday = []
         for time in range(1, 10):
             sub = getattr(s, 'period_' + str(time))
@@ -552,8 +555,9 @@ def get_schedule_for_student(request):
                 else:
                     a_period['teacher'] = ''
                 aday.append(a_period)
-        result[i+2] = aday
+        result[i + 2] = aday
     return result
+
 
 class Schedule(View):
     @need_login
@@ -562,13 +566,14 @@ class Schedule(View):
             result = get_schedule_for_student(request)
         elif get_position(request) == 3:
             result = get_schedule_for_teacher(request)
-        #return Response(status=status.HTTP_200_OK, content=list)
+            #return Response(status=status.HTTP_200_OK, content=list)
         return HttpResponse(simplejson.dumps(result), mimetype='json')
+
 
 class ScheduleForStudent(View):
     @need_login
     def get(self, request):
-            #return Response(status=status.HTTP_200_OK, content=list)
+    #return Response(status=status.HTTP_200_OK, content=list)
         return HttpResponse(simplejson.dumps(result), mimetype='json')
 
 
@@ -632,7 +637,7 @@ class MarkForASubject(View):
     #@need_login
     #@school_function
     #@operating_permission(['HIEU_PHO', 'HIEU_TRUONG', 'GIAO_VIEN'])
-    def get(self, request, subject_id, term_id):
+    def get1(self, request, subject_id, term_id):
         selected_subject = Subject.objects.get(id=subject_id)
         selected_term = Term.objects.get(id=term_id)
         time_to_edit = int(selected_term.year_id.school_id.get_setting('lock_time')) * 60
@@ -744,10 +749,31 @@ class MarkForASubject(View):
 
 
     @need_login
-    @operating_permission(['HIEU_PHO', 'HIEU_TRUONG', 'GIAO_VIEN'])
-    def post(self, request):
-        pass
+    def get(self, request):
+        tt1 = time.time()
+        data = request.POST['data']
+        #data = '[{"first_name": "\u00c1nh", "last_name": "\u0110\u1eb7ng Ng\u1ecdc", "id": 602038, "mark": [{"e": 1, "s": 0, "m": "5", "n": 1}, {"e": 1, "s": 0, "m": "6", "n": 2}, {"e": 1, "s": 0, "m": "6", "n": 3}, {"e": 1, "s": 0, "m": "2", "n": 4}, {"e": 1, "s": 0, "m": "9", "n": 9}]}]'
+        data = eval(data)
+        teacher = get_teacher(request)
+        position = 3
+        user = request.user
+        time_history = 60
+        for p in data:
+            mark_id = p['id']
+            selected_mark = Mark.objects.get(id=mark_id)
+            subject = selected_mark.subject_id
 
+            temp = str(mark_id) + ':'
+            number_str = ''
+            mark_str = ''
+            marks = p['mark']
+            for m in marks:
+                number_str += str(m['n']) + '*'
+                mark_str += str(m['m']) + '*'
+            temp += number_str + ':' + mark_str
+            update_mark(temp,subject.primary,subject.nx,user,time_history,position,None,teacher)
+        tt2 = time.time()
+        print tt2-tt1
 
 class MarkForAStudent(View):
     @need_login
@@ -781,24 +807,26 @@ class GetListTerm(View):
                 list.append(a_term)
         return HttpResponse(simplejson.dumps(list), mimetype='json')
 
+
 class GetAttendanceForStudent(View):
     @need_login
-    def get(self, request,all=None,day=None,month=None,year=None,day1=None,month1=None,year1=None):
+    def get(self, request, all=None, day=None, month=None, year=None, day1=None, month1=None, year1=None):
         student = get_student(request)
         if all == 'allTerm':
             current_term = get_current_term(request)
-            attendaces = DiemDanh.objects.filter(student_id=student,term_id=current_term).order_by("time")
+            attendaces = DiemDanh.objects.filter(student_id=student, term_id=current_term).order_by("time")
         elif all == 'allYear':
             current_year = get_current_year(request)
-            term1 = Term.objects.get(year_id=current_year,number=1)
-            term2 = Term.objects.get(year_id=current_year,number=2)
-            attendaces = DiemDanh.objects.filter(student_id=student,term_id__in=[term1.id,term2.id]).order_by("time")
+            term1 = Term.objects.get(year_id=current_year, number=1)
+            term2 = Term.objects.get(year_id=current_year, number=2)
+            attendaces = DiemDanh.objects.filter(student_id=student, term_id__in=[term1.id, term2.id]).order_by("time")
         elif all != None:
-            raise Exception("Don't have request")
+            raise Exception("Page not found")
         else:
             first_day = datetime.datetime(int(year), int(month), int(day))
             second_day = datetime.datetime(int(year1), int(month1), int(day1))
-            attendaces = DiemDanh.objects.filter(student_id=student,time__range=(first_day,second_day)).order_by("time")
+            attendaces = DiemDanh.objects.filter(student_id=student, time__range=(first_day, second_day)).order_by(
+                "time")
         result = []
         for att in attendaces:
             a_att = {}

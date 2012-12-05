@@ -1499,7 +1499,7 @@ class TBNam(models.Model):
         else: return u"Chưa xét"
 
     def get_hk_term2(self):
-        if self.term2: return self.convertHk(self.term2)
+        if self.term2: return self.convertHk(self.termterm2)
         else: return u"Chưa xét"
 
     def get_list_month(self):
