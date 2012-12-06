@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Các trường trong hệ thống' %}
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript" src="/static/js/template_js/manage_school.js?{{ VERSION }}"></script>
+{% endblock %}
+
+{% block content %}
+    {#    <h2>Danh sách đăng ký tài khoản khách hàng</h2>#}
+    {% if schools %}
+        <div id="submenu" class="btn-toolbar">
+            <button id="showActivated" class="btn"
+                    title="Ẩn/Hiện những trường đã bị vô hiệu">Ẩn các trường đã khóa
+            </button>
+
+            <button id="ActivateSelected" class="btn btn-primary"
+                    title="Kích hoạt các trường đang bị hô hiệu">Kích hoạt
+            </button>
+
+            <button id="DeactivateSelected" class="btn btn-primary"
+                    title="Khóa các trường đã chọn">Khóa
+            </button>
+
+{#            <button id="delSelected" class="btn btn-danger"#}
+{#                    title="Xóa chọn">Xóa#}
+{#            </button>#}
+        </div>
+        <table class="table" id="schoolTable">
+            <thead>
+            <tr>
+                <th title="Chọn tất cả" style="text-align: center;">
+                    <input type="checkbox" id="checkbox_all" class="schoolCheckbox"/>
+                </th>
+                <th style="text-align: center">STT</th>
+                <th style="text-align: center">
+                        Tên trường
+                </th>
+                <th >Trạng thái</th>
+
+                <th>
+                    <a href="{% url manage_school sort_by_balance sort_by_status %}">
+                    Kì học
+                    </a>
+                </th>
+                <th style="text-align: center">Cấp</th>
+                <th style="text-align: center">Hiệu trưởng</th>
+                <th>Số điện thoại</th>
+                <th>Email</th>
+                <th>Địa chỉ</th>
+
+                <th>
+                    <a href="{% url manage_school sort_by_balance sort_by_status %}">
+                        Tài khoản
+                    </a>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for school in schools %}
+                <tr class="{{ school.id }} school">
+                    <td style="text-align: center; padding-left: 4px;">
+                        <input type="checkbox" id="checkbox_{{school.id}}" class="schoolCheckbox"/>
+                    </td>
+                    <td style="text-align: center">{{ forloop.counter }}</td>
+                    <td style="padding-left: 8px;">{{ school.name }}</td>
+                    <td style="text-align: center;" class="status">{{ school.get_organization_status_display }}</td>
+                    <td style="text-align: center;">{{ school.get_status_display }}</td>
+                    <td style="text-align: center;">{{ school.get_school_level_display }}</td>
+                    <td style="padding-left: 8px;">{{ school.manager_name }}</td>
+                    <td style="padding-left: 8px;">{{ school.email }}</td>
+                    <td style="padding-left: 8px;">{{ school.phone }}</td>
+                    <td style="padding-left: 8px;">{{ school.address }}</td>
+                    <td style="padding-left: 8px;">{{ school.balance }}</td>
+                </tr>
+
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Không có đăng ký nào</p>
+    {% endif %}
+
+{% endblock %}

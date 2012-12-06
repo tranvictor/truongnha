@@ -31,6 +31,12 @@ urlpatterns = patterns('',
         name="manage_register"),
     url(r'^manageRegister/(?P<sort_by_date>\w+)/(?P<sort_by_status>\w+)/$',
         app_views.manage_register, name="manage_register"),
+    url(r'^manageSchool/$', app_views.manage_school,
+        name='manage_school'),
+    url(r'^manageSchool/(?P<sort_by_balance>\w+)/$', app_views.manage_school,
+        name="manage_school"),
+    url(r'^manageSchool/(?P<sort_by_balance>\w+)/(?P<sort_by_status>\w+)/$',
+        app_views.manage_school, name="manage_school"),
 
 
     # Uncomment the next line to enable the admin:

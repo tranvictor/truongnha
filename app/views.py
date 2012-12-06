@@ -27,12 +27,13 @@ from app.models import SUBJECT_CHOICES as SUBJECT, UserProfile, RegisterForm,\
         KHOI_CHOICES, TINH_CHOICES, Organization, Register, ChangePasswordForm,\
         AuthenticationForm, IP, Feedback, SystemLesson, FeedbackForm, selectForm
 from school.models import log_action
-from school.utils import make_username, make_default_password, get_school, get_profile_form
+from school.utils import make_username, make_default_password, get_school, get_profile_form, to_en1
 import settings
 from sms.utils import send_email, sendSMS
 
 REGISTER = os.path.join('app', 'register.html')
 MANAGE_REGISTER = os.path.join('app', 'manage_register.html')
+MANAGE_SCHOOL = os.path.join('app', 'manage_school.html')
 
 
 class SchoolAdminAddForm(forms.Form):
@@ -344,6 +345,7 @@ def login(request, template_name='app/login.html',
             if api_called: return HttpResponse(status=200)
             return HttpResponseRedirect(redirect_to)
         else:
+            print error, error_type
             error = form._errors
             error_type = form.errors_type
             try:
@@ -554,3 +556,143 @@ def create_profile(request, form_class=None, success_url=None,
     return render_to_response(template_name,
                               { 'form': form },
                               context_instance=RequestContext(request))
+
+@need_login
+@operating_permission(['SUPER_USER'])
+def manage_school(request, sort_by_balance=0, sort_by_status=0):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect(reverse('school_index'))
+    if request.method == 'POST':
+        if request.is_ajax():
+            request_type = request.POST['request_type']
+#            if request_type == 'del':
+#                ids = request.POST['data'].split('-')
+#                try:
+#                    for id in ids:
+#                        if id:
+#                            school = Organization.objects.get(id=int(id))
+#                            school.delete()
+#                    message = u'Xóa thành công.'
+#                    success = True
+#                    data = simplejson.dumps({
+#                        'message': message,
+#                        'success': success
+#                    })
+#                    return HttpResponse(data, mimetype='json')
+#                except Exception as e:
+#                    print e
+#                    message = u'Không thể xóa trường đã chọn.'
+#                    success = False
+#                    data = simplejson.dumps({
+#                        'message': message,
+#                        'success': success
+#                    })
+#                    return HttpResponse(data, mimetype='json')
+            if request_type == 'activate_school':
+                ids = request.POST['data'].split('-')
+                try:
+                    account_info = ''
+                    for id in ids:
+                        if id:
+                            school = Organization.objects.get(id=int(id))
+                            if school.organization_status == 2:
+                                school.organization_status = 1
+                                school.save()
+                                #notify users about their account via email
+                                if school.phone:
+                                    try:
+                                        sms_msg = 'Trương ' + unicode(to_en1(school.name)) + ' da duoc kich hoat lai tai tai truongnha.com:\n\
+                                                Cam on da su dung he thong!'
+                                        sendSMS(school.phone, sms_msg, request.user)
+                                    except Exception as e:
+                                        print e
+                                        pass
+                                if school.email:
+                                    try:
+                                        send_email(u'Tài khoản Trường Nhà',
+                                            u'Trường ' + unicode(school.name) + u' đã được kích hoạt lại tại truongnha.com.\n Cám ơn đã sử dụng hệ thống.',
+                                            to_addr=[school.email])
+                                    except Exception as e:
+                                        print e
+                                        pass
+                                account_info += str(id)
+
+                    message = u'Kích hoạt các trường thành công.'
+                    success = True
+                    data = simplejson.dumps({
+                        'message': message,
+                        'schools': account_info,
+                        'success': success
+                    })
+                    return HttpResponse(data, mimetype='json')
+                except Exception as e:
+                    print e
+                    message = u'Kích hoạt các trường không thành công.'
+                    success = False
+                    data = simplejson.dumps({
+                        'message': message,
+                        'success': success
+                    })
+                    return HttpResponse(data, mimetype='json')
+            elif request_type == 'deactivate_school':
+                ids = request.POST['data'].split('-')
+                try:
+                    account_info = ''
+                    for id in ids:
+                        if id:
+                            school = Organization.objects.get(id=int(id))
+                            if school.organization_status == 1:
+                                school.organization_status = 2
+                                school.save()
+                                #notify users about their account via email
+                                if school.phone:
+                                    try:
+                                        sms_msg = 'Trương ' + unicode(to_en1(school.name)) + ' da bi ngung hoat dong tam thoi tai truongnha.com:\n\
+                                                Vui long lien he voi BQT de kich hoat tro lai!'
+                                        sendSMS(school.phone, sms_msg, request.user)
+                                    except Exception as e:
+                                        print e
+                                        pass
+                                if school.email:
+                                    try:
+                                        send_email(u'Tài khoản Trường Nhà',
+                                            u'Trường ' + unicode(school.name) + u' đã bị ngưng hoạt động tạm thời tại truongnha.com.\n Vui lòng liên hệ với Ban Quản Trị để được kích hoạt trở lại.',
+                                            to_addr=[school.email])
+                                    except Exception as e:
+                                        print e
+                                        pass
+                                account_info += str(id)
+
+                    message = u'Khóa các trường thành công.'
+                    success = True
+                    data = simplejson.dumps({
+                        'message': message,
+                        'schools': account_info,
+                        'success': success
+                    })
+                    return HttpResponse(data, mimetype='json')
+                except Exception as e:
+                    print e
+                    message = u'Khóa các trường không thành công.'
+                    success = False
+                    data = simplejson.dumps({
+                        'message': message,
+                        'success': success
+                    })
+                    return HttpResponse(data, mimetype='json')
+            else:
+                raise Exception("BadRequest")
+    sign = ['','-']
+    sign_balance = sign[int(sort_by_balance)]
+    sign_status = sign[int(sort_by_status)]
+
+    schools = Organization.objects.filter(level='T').order_by(sign_balance+'balance',
+        sign_status+'status')
+    sort_by_balance = 1 - int(sort_by_balance)
+    sort_by_status = 1 - int(sort_by_status)
+    context = RequestContext(request)
+    return render_to_response(MANAGE_SCHOOL, {
+        'schools': schools,
+        'sort_by_balance': sort_by_balance,
+        'sort_by_status': sort_by_status },
+        context_instance=context)

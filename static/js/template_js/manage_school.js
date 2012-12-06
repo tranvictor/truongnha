@@ -1,6 +1,6 @@
 $(document).ready(function(){
     $(".accountInfo").hide();
-    $("#tableFunction").css('width', $("#registerTable").css('width'));
+    $("#schoolTable").css('width', $("#schoolTable").css('width'));
     var select = function() {
         if (!$(this).hasClass('thread') && !$(this).hasClass('form') && !$(this).hasClass('function')) {
             var id = $(this).attr('class').split(' ')[0];
@@ -9,7 +9,7 @@ $(document).ready(function(){
             if ($(this).hasClass('selected')) {
                 $(this).removeClass('selected');
                 $(checkboxid).prop("checked", false);
-                var n = $("input.registerCheckbox:checked").length;
+                var n = $("input.schoolCheckbox:checked").length;
                 if (n == 1 || n==0) {
                     $(checkboxall).prop("checked", false);
                 }
@@ -20,13 +20,13 @@ $(document).ready(function(){
             }
         }
     };
-    $("tr.register").each(function() {
+    $("tr.school").each(function() {
         $(this).click(select);
     });
     $("#checkbox_all").click(function() {
         var checkboxall = '#checkbox_all';
         if ($(checkboxall).is(':checked')) {
-            $("tr.register").each(function() {
+            $("tr.school").each(function() {
                 var id = $(this).attr('class').split(' ')[0];
                 var checkboxid = '#checkbox_' + id;
                 if (!$(this).hasClass('selected'))
@@ -34,7 +34,7 @@ $(document).ready(function(){
             });
         }
         else {
-            $("tr.register").each(function() {
+            $("tr.school").each(function() {
                 var id = $(this).attr('class').split(' ')[0];
                 var checkboxid = '#checkbox_' + id;
                 if ($(this).hasClass('selected'))
@@ -45,10 +45,10 @@ $(document).ready(function(){
 
     var delSelected = function() {
         if (!$("#checkbox_all").is(':checked')) {
-            alert("Bạn chưa chọn đăng ký nào để xóa");
+            alert("Bạn chưa chọn trường nào để xóa");
             return false;
         }
-        var answer = confirm('Bạn có muốn xóa những đăng ký đã chọn không?');
+        var answer = confirm('Bạn có muốn xóa những trường đã chọn không?');
         if (!answer) return false;
         var data = '';
         $(".selected").each(function() {
@@ -75,46 +75,67 @@ $(document).ready(function(){
         return false;
     };
     $("#delSelected").click(delSelected);
-    $("#createSelected").click(function(){
+    $("#ActivateSelected").click(function(){
          if (!$("#checkbox_all").is(':checked')) {
-            alert("Bạn chưa chọn đăng ký nào để tạo tài khoản");
+            alert("Bạn chưa chọn trường nào để kích hoạt");
             return false;
         }
         var data = '';
         $(".selected").each(function() {
             data = data + $(this).attr('class').split(' ')[0] + '-';
         });
-        $("#notify").text("Đang tạo tài khoản...");
+        $("#notify").text("Đang kích hoạt các trường...");
         $("#notify").show();
         var arg = { type:"POST",
             url:"",
             global: false,
-            data: {data:data, request_type:'create_acc'},
+            data: {data:data, request_type:'activate_school'},
             datatype:"json",
             success: function(json) {
                 if (json.success){
                     $("#notify").showNotification(json.message);
-                    var accounts = json.account_info;
-                    accounts = accounts.split(',');
-                    for ( var i=0; i< accounts.length; i++){
-                        account = accounts[i];
-                        if ( account != ""){
-                            var id = account.split('-')[0];
-                            var username = account.split('-')[1];
-                            var password = account.split('-')[2];
-                            var theTr = $("."+id);
-                            if (theTr.find('td.username').length){
-                                theTr.find('td.username').text(username);
-                                theTr.find('td.password').text(username);
-                            } else {
-                                theTr.append('<td class="username" style="padding-left: 4px;">'+username+'</td>');
-                                theTr.append('<td class="password" style="padding-left: 4px;">'+password+'</td>');
-                            }
-                            theTr.find('td.status').text("Đã cấp");
+                    var schools = json.schools;
+                    schools = schools.split(',');
+                    for ( var i=0; i< schools.length; i++){
+                        var id = schools[i];
+                        var theTr = $("."+id);
+                        theTr.find('td.status').text("Đã kích hoạt");
                         }
+                } else {
+                    $("#notify").showNotification(json.message);
+                }
+            }
+        };
+        $.ajax(arg);
+        return false;
+    });
+    //deactivate
+    $("#DeactivateSelected").click(function(){
+        if (!$("#checkbox_all").is(':checked')) {
+            alert("Bạn chưa chọn trường nào để khóa");
+            return false;
+        }
+        var data = '';
+        $(".selected").each(function() {
+            data = data + $(this).attr('class').split(' ')[0] + '-';
+        });
+        $("#notify").text("Đang khóa các trường...");
+        $("#notify").show();
+        var arg = { type:"POST",
+            url:"",
+            global: false,
+            data: {data:data, request_type:'deactivate_school'},
+            datatype:"json",
+            success: function(json) {
+                if (json.success){
+                    $("#notify").showNotification(json.message);
+                    var schools = json.schools;
+                    schools = schools.split(',');
+                    for ( var i=0; i< schools.length; i++){
+                        var id = schools[i];
+                        var theTr = $("."+id);
+                        theTr.find('td.status').text("Đã khóa");
                     }
-                    $(".accountInfo").show();
-                    $("#tableFunction").css('width', $("#registerTable").css('width'));
                 } else {
                     $("#notify").showNotification(json.message);
                 }
@@ -124,33 +145,32 @@ $(document).ready(function(){
         return false;
     });
 
-    // show registered
-    $("#showRegistered").click(function(){
-        if ($(this).text() == "Ẩn đăng ký đã cấp"){
+    // show Activated
+    $("#showActivated").click(function(){
+        if ($(this).text() == "Ẩn các trường đã khóa"){
             $(".status").each(function(){
-                if ($(this).text() == "Đã cấp"){
+                if ($(this).text() == "Đã khóa"){
                     $(this).parent().hide();
                 }
             });
-            $(this).text("Hiện đăng ký đã cấp");
-            var numberOfUnregistered = 0;
+            $(this).text("Hiện các trường đã khóa");
+            var numberOfActivated = 0;
             $(".status").each(function(){
-                if ($(this).text() == "Chưa cấp") numberOfUnregistered ++;
+                if ($(this).text() == "Đã kích hoạt") numberOfActivated ++;
             });
-            if (!numberOfUnregistered){
+            if (!numberOfActivated){
                 $("thead").hide();
-                jQuery('<p id="noRegisterLeft">Không có đăng ký nào chưa cấp tài khoản.</p>').insertAfter($('#registerTable'));
+                jQuery('<p id="noSchoolLeft">Không có trường nào đang được kích hoạt.</p>').insertAfter($('#schoolTable'));
             }
         }else {
-            $("#noRegisterLeft").remove();
+            $("#noSchoolLeft").remove();
             $("thead").show();
             $(".status").each(function(){
-                if ($(this).text() == "Đã cấp"){
+                if ($(this).text() == "Đã khóa"){
                     $(this).parent().show();
                 }
             });
-            $(this).text("Ẩn đăng ký đã cấp");
-
+            $(this).text("Ẩn các trường đã khóa");
         }
     })
 

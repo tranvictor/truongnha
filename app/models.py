@@ -20,7 +20,8 @@ SCHOOL_SETTING_FOLDER = settings.SCHOOL_SETTING_FOLDER
 ORGANIZATION_LEVEL_CHOICES = (('T', u'Trường'),
                               ('P', u'Phòng'),
                               ('S', u'Sở'))
-
+ORGANIZATION_STATUS_CHOICES = ((1, u'Đã kích hoạt'),
+                                (2, u'Đã khóa'))
 POSITION_CHOICE = (('HOC_SINH', u'Học sinh'),
                     ('GIAO_VU', u'Giáo vụ'),
                     ('GIAO_VIEN', u'Giáo viên'),
@@ -99,7 +100,9 @@ class Organization(models.Model):
                        u'Học kỳ II', u'Học kỳ hè']
     name = models.CharField(u'Tên tổ chức', max_length=100)
     level = models.CharField(u"cấp", max_length=2,
-                                choices=ORGANIZATION_LEVEL_CHOICES) 
+                                choices=ORGANIZATION_LEVEL_CHOICES)
+    organization_status = models.SmallIntegerField(max_length=3, default= 1,
+        choices=ORGANIZATION_STATUS_CHOICES)
     #------- those attributes is used for School only -------------------------
     school_level = models.CharField(u"Khối học", max_length=6, blank=True,
                                     null=True, choices=KHOI_CHOICES)
@@ -456,6 +459,15 @@ class AuthenticationForm(forms.Form):
                 elif not self.user_cache.is_active:
                     self.errors_type = 'deactivated'
                     raise forms.ValidationError("Tài khoản này đang bị khóa. Hãy liên hệ quản trị hệ thống.")
+                else:
+                    try:
+                        profile =  self.user_cache.get_profile()
+                        if profile.organization.organization_status == 2:
+                            self.errors_type = 'organization deactivated'
+                            raise forms.ValidationError(u"Trường " + unicode(profile.organization.name) + u" đang bị khóa. Hãy liên hệ quản trị hệ thống.")
+                    except ObjectDoesNotExist:
+                        pass
+
         self.check_for_test_cookie()
 
     def check_for_test_cookie(self):
