@@ -132,6 +132,20 @@ def manage_register(request, sort_by_date=0, sort_by_status=0):
                     for id in ids:
                         if id:
                             reg = Register.objects.get(id=int(id))
+                            if reg.status == 'CHUA_CAP':
+                                if reg.register_phone:
+                                    sms_msg = 'Dang ki truong %s tai truongnha.com khong duoc chap nhan!' % (to_en1(unicode(reg.school_name)))
+                                    try:
+                                        sendSMS(reg.register_phone, sms_msg, request.user)
+                                    except Exception:
+                                        pass
+                                send_email(u'Từ chối đăng kí tại Trường Nhà',
+                                    u'Cảm ơn bạn đã đăng ký để sử dụng dịch ' +
+                                    u'vụ Trường Nhà.\nSau khi xác minh lại thông tin mà bạn cung cấp, ' +
+                                    u'chúng tôi từ chối cung cấp dịch vụ cho Trường ' +
+                                    unicode(reg.school_name) +
+                                    u'.\n Vui lòng liên hệ với Ban Quản Trị để biết thêm chi tiết.',
+                                    to_addr=[reg.register_email])
                             reg.delete()
                     message = u'Xóa thành công'
                     success = True
@@ -241,6 +255,36 @@ def manage_register(request, sort_by_date=0, sort_by_status=0):
                         'message': message,
                         'success': success
                     })
+                    return HttpResponse(data, mimetype='json')
+            elif request.POST[u'request_type'] == u'send_email':
+                try:
+                    content = request.POST[u'content'].strip()
+                    register_list = request.POST[u'register_list']
+                    register_list = register_list.split("-")
+                    sts = []
+                    for register in register_list:
+                        if register:
+                            sts.append(int(register))
+                    registers = Register.objects.filter(id__in=sts)
+                    for reg in registers:
+                        if reg.register_phone:
+                            sms_msg = to_en1(unicode(content))
+                            try:
+                                sendSMS(reg.register_phone, sms_msg, request.user)
+                            except Exception:
+                                pass
+                        send_email(u'Thông báo từ Trường Nhà', unicode(content), to_addr=[reg.register_email])
+                    data = simplejson.dumps({
+                        'success': True,
+                        'message': u'Gửi thông báo thành công.',
+                        })
+                    return HttpResponse(data, mimetype='json')
+                except Exception as e:
+                    print e
+                    data = simplejson.dumps({
+                        'success': False,
+                        'message': u'Có lỗi khi gửi thông báo.',
+                        })
                     return HttpResponse(data, mimetype='json')
             else:
                 raise Exception("BadRequest")
