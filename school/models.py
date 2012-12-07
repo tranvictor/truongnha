@@ -262,8 +262,7 @@ class Block(models.Model):
 
 
 class Team(models.Model):
-    name = models.CharField("Tổ",
-        max_length=30)
+    name = models.CharField("Tổ", max_length=30)
     school_id = models.ForeignKey(Organization, verbose_name="Trường(*)")
 
     class Meta:

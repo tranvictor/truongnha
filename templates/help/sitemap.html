@@ -22,46 +22,31 @@
         <div class="span4">
             <h2>Quản lý trường</h2>
             <ul>
+                <li><a href="/school/sms-summary">Liên lạc</a>
+                    <ul>
+                        <li><a href="/school/teachers">Tổng hợp và nhắn tin (SMS, email)</a></li>
+                        <li><a href="/school/teachers">Xem các tin đã nhắn</a></li>
+                    </ul>
+                </li>
+
                 <li><a href="/school/teachers">Giáo viên</a>
                     <ul>
                         <li><a href="/school/teachers">Nhắn tin </a></li>
-                        <li><a href="/school/teachers">Kích hoạt tài khoản</a></li>
-                        <li><a href="/school/teachers">Khóa tài khoản </a></li>
+                        <li><a href="/school/teachers">Mở/Khóa tài khoản </a></li>
                         <li><a href="/school/teachers">Chỉnh danh sách</a>
                             <ul>
                                 <li><a href="/school/teachers">Nhập từ Excel</a></li>
                                 <li><a href="/school/teachers">Xuất ra Excel </a></li>
                                 <li><a href="/school/teachers">Thêm/Xóa/Sửa</a></li>
+                                <li><a href="/school/teachers">Phân tổ/nhóm</a></li>
                             </ul>
                         </li>
-                        <li><a href="">Thêm/Xóa/Phân giáo viên theo tổ, nhóm</a></li>
+                        <li><a href="/school/teachers">Thêm/Xóa tổ, nhóm</a></li>
                     </ul>
                 </li>
-                <li><a href="/school/report">Báo cáo</a>
-                    <ul>
-                        <li><a href="/school/printMarkBook">Sổ gọi tên và ghi điểm</a></li>
-                        <li><a href="/school/printMarkForClass">Phiếu báo điểm</a></li>
-                        <li><a href="/school/excelClassList">Danh sách học sinh theo lớp</a></li>
-                        <li><a href="/school/generate_teacher/all/">Danh sách giáo viên</a></li>
-                        <li><a href="/school/count1">Học lực, hạnh kiểm, danh hiệu</a></li>
-                        <li><a href="/school/count2/1/1">Thống kê điểm trung bình</a></li>
-                        <li><a href="/school/count2/2/1">Thống kê điểm cuối kì</a></li>
-                        <li><a href="/school/printDanhHieu">Danh hiệu</a></li>
-                        <li><a href="/school/printNoPass">Không lên lớp, thi lại, rèn luyện thêm</a></li>
-                        <li><a href="/school/countSMS">Thống kê tin nhắn SMS</a></li>
-                    </ul>
-                </li>
-
-            </ul>
-        </div>
-
-        <div class="span4">
-            <h2>Quản lý trường</h2>
-            <ul>
                 <li><a href="/school/finish">Chuyển kỳ</a>
                     <ul>
-                        <li><a href="/school/finish/1">Chuyển sang học kỳ tiếp theo</a></li>
-                        <li><a href="/school/finish/2">Quay lại học kỳ trước</a></li>
+                        <li><a href="/school/finish">Chuyển sang học kỳ tiếp/trước</a></li>
                         <li><a href="/school/setup/">Thiết lập năm học mới</a></li>
                     </ul>
                 </li>
@@ -78,10 +63,38 @@
                         <li><a href="/school/manage_school_agenda/">Xuất ra Excel </a></li>
                     </ul>
                 </li>
+            </ul>
+        </div>
 
-                <li><a href="/school/createListExam">Kỳ thi</a></li>
+        <div class="span4">
+            <h2>Quản lý trường</h2>
+
+            <ul>
+                <li><a href="/school/report">Báo cáo</a>
+                    <ul>
+                        <li><a href="/school/report/printMarkBook">Sổ gọi tên và ghi điểm</a></li>
+                        <li><a href="/school/report/printMarkForClass">Phiếu báo điểm</a></li>
+                        <li><a href="/school/report/excelClassList">Danh sách học sinh theo lớp</a></li>
+                        <li><a href="/school/generate_teacher/all/">Danh sách giáo viên</a></li>
+                        <li><a href="/school/generate_teacher/all/">Danh sách giáo viên chủ nhiệm</a></li>
+
+                        <li><a href="/school/report/count1">Học lực, hạnh kiểm, danh hiệu</a></li>
+                        <li><a href="/school/report/count2/1/1">Thống kê điểm trung bình</a></li>
+                        <li><a href="/school/report/count2/2/1">Thống kê điểm cuối kì</a></li>
+                        <li><a href="/school/report/printDanhHieu">Danh hiệu</a></li>
+                        <li><a href="/school/report/printNoPass/1">Không lên lớp</a></li>
+                        <li><a href="/school/report/printNoPass/2">Thi lại</a></li>
+                        <li><a href="/school/report/printNoPass/3">Rèn luyện thêm</a></li>
+                        <li><a href="/school/report/histotyMark">Báo cáo sửa điểm</a></li>
+                    </ul>
+                </li>
+
+
+                <li><a href="/school/createListExam">Tạo kỳ thi</a></li>
                 <li><a href="/school/info/">Thiết lập</a></li>
-                <li><a href="#">Sơ đồ</a>, <a href="/help">Hướng dẫn</a>, <a href="/about">Liên hệ</a></li>
+                <li><a href="#">Sơ đồ</a></li>
+                <li><a href="/help">Hướng dẫn</a> </li>
+                <li><a href="/about">Liên hệ</a></li>
             </ul>
         </div>
 
@@ -93,22 +106,23 @@
                 <li><a href="/school/viewClassDetail">Lớp học</a>
                     <ul>
                         <li><a href="/school/diemdanh">Điểm danh</a></li>
-                        <li><a href="/school/markTable">Điểm </a></li>
+                        <li><a href="/school/markTable">Điểm</a></li>
                         <li><a href="/school/hanhkiem">Hạnh kiểm </a></li>
                         <li><a href="/school/subjectPerClass">Môn học </a></li>
                         <li><a href="/school/timeTable">Lịch học </a></li>
                         <li><a href="/school/xepLoaiHlTheoLop">Tổng kết </a></li>
                         <li><a href="/school/xlCaNamTheoLop">Xếp loại </a></li>
-                        <li><a href="/school/sendSMSResult">Nhắn tin học tập </a></li>
+{#                        <li><a href="/school/sendSMSResult">Nhắn tin học tập </a></li>#}
                         <li><a href="/school/viewClassDetail">Nhắn tin </a></li>
                         <li><a href="/school/viewClassDetail">Danh sách học sinh</a>
                             <ul>
-                                <li><a href="/school/students/organize">Sắp xếp</a></li>
+                                <li><a href="/school/viewClassDetail">Sắp xếp</a></li>
                                 <li><a href="/school/viewClassDetail">Nhập từ Excel</a></li>
                                 <li><a href="/school/viewClassDetail">Xuất ra Excel </a></li>
                                 <li><a href="/school/viewClassDetail">Thêm/Xóa/Sửa</a></li>
                             </ul>
                         </li>
+                        <li><a href="/school/viewClassDetail">Mở/khóa tài khoản</a>
                         <li><a href="/school/viewClassDetail"
                                title="Sau khi kích chuột vào tên học sinh trong danh sách lớp">
                             Hồ sơ học sinh </a>

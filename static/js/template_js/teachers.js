@@ -79,6 +79,10 @@ $(document).ready(function() {
             $("#notify").showNotification('Tên còn trống', 2000);
             return false;
         }
+        if (name.length > 30){
+            $("#notify").showNotification('Tên quá dài', 2000);
+            return false;
+        }
         var $parentDiv = $('#rename-team-modal');
         var id = $parentDiv.attr('data-toggle');
         var request_type = $parentDiv.attr('request-type');

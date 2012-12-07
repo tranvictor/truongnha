@@ -1339,7 +1339,6 @@ def timetableTeacher(request):
                 tkbs.day = d
                 tkbs.class_id = cl
                 tkbs.save()
-
             nums = tkbs.get_numbers(sub)
             if not len(nums): continue
             for num in nums:

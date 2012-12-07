@@ -1430,92 +1430,92 @@ def getContentSendSMSResult(class_id, termNumber):
     return list
 
 
-@need_login
-def sendSMSResult(request, class_id, termNumber=None):
-    t1 = time.time()
-    user = request.user
-
-    selectedClass = Class.objects.get(id__exact=class_id)
-
-    try:
-        if in_school(request, selectedClass.year_id.school_id) == False:
-            return HttpResponseRedirect('/school')
-    except Exception as e:
-        return HttpResponseRedirect(reverse('index'))
-
-    ok = False
-    position = get_position(request)
-    if position == 4: ok = True
-    #kiem tra xem giao vien nay co phai chu nhiem lop nay khong
-    if position == 3:
-        if selectedClass.teacher_id != None:
-            if selectedClass.teacher_id.user_id.id == request.user.id:
-                ok = True
-
-    if (not ok):
-        return HttpResponseRedirect('/school')
-    if termNumber == None:
-        currentTerm = get_current_term(request)
-        termNumber = currentTerm.number
-
-    message = None
-    selectedYear = selectedClass.year_id
-
-    yearString = str(selectedYear.time) + "-" + str(selectedYear.time + 1)
-    # neu la hk1 hoac hk2
-    termNumber = int(termNumber)
-    list = getContentSendSMSResult(class_id, termNumber)
-    if request.method == "POST":
-        data = request.POST[u'data']
-        datas = data.split('-')
-        successString = ''
-        numberSent = 0
-        numberSuccess = 0
-        i = 1
-        for p, c, tb in list:
-            if str(i) in datas:
-                smsString = u'Tong ket '
-                if termNumber == 1:
-                    termString = u'hoc ky I nam hoc '
-                elif termNumber == 2:
-                    termString = u'hoc ky II nam hoc '
-                else:
-                    termString = u'ca nam nam hoc '
-                smsString += termString + yearString
-                smsString += ' cua hs ' + to_en1(p.last_name) + ' ' + to_en1(p.first_name) + ' nhu sau:'
-
-                smsString += c
-                numberSent += 1
-                if p.sms_phone:
-                    sent = ''
-
-                    try:
-                        sent = sendSMS(p.sms_phone, smsString, user)
-                    except Exception as e:
-                        pass
-                    if sent == '1':
-                        numberSuccess += 1
-                        successString += str(i) + '-'
-                        tb.sent = True
-                        tb.save()
-            i += 1
-
-        message = "ok111111111111"
-        result = 'Đã gửi thành công ' + str(numberSuccess) + '/' + str(numberSent)
-        data = simplejson.dumps({'successString': successString,
-                                 'result': result})
-        return HttpResponse(data, mimetype='json')
-
-    t = loader.get_template(os.path.join('school', 'send_sms_result.html'))
-
-    t2 = time.time()
-    print (t2 - t1)
-    c = RequestContext(request, {"message": message,
-                                 "list": list,
-                                 "selectedClass": selectedClass,
-                                 "termNumber": termNumber,
-                                 #"classList" :classList,
-    }
-    )
-
-    return HttpResponse(t.render(c))
+#@need_login
+#def sendSMSResult(request, class_id, termNumber=None):
+#    t1 = time.time()
+#    user = request.user
+#
+#    selectedClass = Class.objects.get(id__exact=class_id)
+#
+#    try:
+#        if in_school(request, selectedClass.year_id.school_id) == False:
+#            return HttpResponseRedirect('/school')
+#    except Exception as e:
+#        return HttpResponseRedirect(reverse('index'))
+#
+#    ok = False
+#    position = get_position(request)
+#    if position == 4: ok = True
+#    #kiem tra xem giao vien nay co phai chu nhiem lop nay khong
+#    if position == 3:
+#        if selectedClass.teacher_id != None:
+#            if selectedClass.teacher_id.user_id.id == request.user.id:
+#                ok = True
+#
+#    if (not ok):
+#        return HttpResponseRedirect('/school')
+#    if termNumber == None:
+#        currentTerm = get_current_term(request)
+#        termNumber = currentTerm.number
+#
+#    message = None
+#    selectedYear = selectedClass.year_id
+#
+#    yearString = str(selectedYear.time) + "-" + str(selectedYear.time + 1)
+#    # neu la hk1 hoac hk2
+#    termNumber = int(termNumber)
+#    list = getContentSendSMSResult(class_id, termNumber)
+#    if request.method == "POST":
+#        data = request.POST[u'data']
+#        datas = data.split('-')
+#        successString = ''
+#        numberSent = 0
+#        numberSuccess = 0
+#        i = 1
+#        for p, c, tb in list:
+#            if str(i) in datas:
+#                smsString = u'Tong ket '
+#                if termNumber == 1:
+#                    termString = u'hoc ky I nam hoc '
+#                elif termNumber == 2:
+#                    termString = u'hoc ky II nam hoc '
+#                else:
+#                    termString = u'ca nam nam hoc '
+#                smsString += termString + yearString
+#                smsString += ' cua hs ' + to_en1(p.last_name) + ' ' + to_en1(p.first_name) + ' nhu sau:'
+#
+#                smsString += c
+#                numberSent += 1
+#                if p.sms_phone:
+#                    sent = ''
+#
+#                    try:
+#                        sent = sendSMS(p.sms_phone, smsString, user)
+#                    except Exception as e:
+#                        pass
+#                    if sent == '1':
+#                        numberSuccess += 1
+#                        successString += str(i) + '-'
+#                        tb.sent = True
+#                        tb.save()
+#            i += 1
+#
+#        message = "ok111111111111"
+#        result = 'Đã gửi thành công ' + str(numberSuccess) + '/' + str(numberSent)
+#        data = simplejson.dumps({'successString': successString,
+#                                 'result': result})
+#        return HttpResponse(data, mimetype='json')
+#
+#    t = loader.get_template(os.path.join('school', 'send_sms_result.html'))
+#
+#    t2 = time.time()
+#    print (t2 - t1)
+#    c = RequestContext(request, {"message": message,
+#                                 "list": list,
+#                                 "selectedClass": selectedClass,
+#                                 "termNumber": termNumber,
+#                                 #"classList" :classList,
+#    }
+#    )
+#
+#    return HttpResponse(t.render(c))
