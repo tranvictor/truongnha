@@ -50,7 +50,7 @@ else:
         'default': {
             'ENGINE': 'django.db.backends.mysql',
             'NAME': 'freeschool',
-            'USER': 'admin',
+            'USER': 'root',
             'PASSWORD':'freeschool',
             'OPTIONS': { 'init_command': 'SET storage_engine=INNODB',},
         },
