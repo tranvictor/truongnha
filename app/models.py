@@ -4,6 +4,8 @@ import os
 import codecs
 from datetime import date
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import F
+from django.db import transaction
 from recaptcha.client import captcha
 from django.db import models
 from django import forms
@@ -105,6 +107,7 @@ class Organization(models.Model):
                                     choices=SCHOOL_ACTION_STATUS)
     school_type = models.CharField(u'Loại trường', max_length=30, blank=True,
                                     choices=SCHOOL_TYPES)
+    balance = models.FloatField(u'Tài khoản', default=50)
     #--------------------------------------------------------------------------
     upper_organization = models.ForeignKey('self', blank=True, null=True,
                                             verbose_name='Trực thuộc')
@@ -132,12 +135,29 @@ class Organization(models.Model):
         else:
             return ''
 
+    def _atomic_increase_bl(self):
+        Organization.objects.select_for_update().filter(id=self.id)\
+                .update(balance=F('balance') + 1)
+        print 'increase'
+
+    @transaction.commit_on_success
+    def _atomic_decrease_bl(self):
+        temp = Organization.objects.select_for_update().get(id=self.id)
+        if temp.balance > 0:
+            temp.balance -= 1
+            temp.save()
+            print 'decrease'
+            return True
+        else: return False
+
     #TODO: check quota for school
     def is_allowed_sms(self):
-        if self.id in settings.SCHOOL_ALLOWED_SMS:
-            return True
-        else:
-            return False
+        bl = self._atomic_decrease_bl()
+        return bl
+        #if self.id in settings.SCHOOL_ALLOWED_SMS:
+        #    return True
+        #else:
+        #    return False
 
     def get_active_students(self):
         return self.pupil_set.filter(unc_class_id=None,

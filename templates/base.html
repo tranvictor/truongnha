@@ -127,7 +127,6 @@
                             <small class="hidden-phone hidden-tablet">({{ user.username }})</small>
                         </span>
                     </a>
-
                     <a id="logout" href="{% url django.contrib.auth.views.logout %}"
                        title="Thoát ra, kết thúc phiên làm việc. BẠN PHẢI ĐĂNG XUẤT NẾU ĐĂNG NHẬP TRÊN CÁC MÁY TÍNH DÙNG CHUNG ĐỂ TRÁNH NGƯỜI KHÁC THAY ĐỔI DỮ LIỆU.">
                         <i class="icon-signout"></i>
@@ -168,6 +167,7 @@
         <div class="pull-right">
             {% if user.is_authenticated %}
                 <a class="hidden-phone dimmed" id="feedback" href="#feedbackWindow" title="Gửi góp ý, bình luận, thông báo lỗi.."><i class="icon-comment-alt"></i></a> &nbsp;
+
 
                 <a id="logo" href="{% url index %}" title="Dịch vụ phần mềm quản lý trường học">
                     <span class="logo-truong">Trường</span><span class="logo-nha">Nhà</span>

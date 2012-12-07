@@ -147,10 +147,16 @@
             </button>
         </div>
 
-
         {% if pos > 3 %}
             <div class="btn-group pull-right">
                 {% if pos >= 3 %}
+                <div class="btn-group">
+                    <span class="btn btn-danger"
+                        title="Tài khoản cả trường còn {{user.userprofile.organization.balance|floatformat:"0" }} tin nhắn" >
+                        Tài khoản trường: {{ user.userprofile.organization.balance|floatformat:"0" }}
+                    </span>
+                </div>
+
                 <button id="textSms" class="btn btn-warning"
                     title="Nhắn tin đến những giáo viên đã chọn">
                     <i class="icon-envelope icon-white"></i>

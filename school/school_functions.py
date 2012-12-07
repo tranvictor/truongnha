@@ -243,29 +243,34 @@ def sms_summary(request, class_id=None):
     if request.method == 'POST' and request.is_ajax():
         ids = request.POST['students'].split('-')
         ids = [int(id) for id in ids if id]
-        number = 0
-        for st in students:
-            if (st.sms_phone and st.id in ids
-                and (info_list[st.id] != u'Không có điểm mới.'
-                    or dd_info_list[st.id] != '')):
-                try:
-                    content = info_list[st.id] + ' ' + dd_info_list[st.id]
-                    send_sms_summary_mark(st,
-                            content,
-                            marks[st.id],
-                            dd_list[st.id],
-                            request.user,
-                            cl=cl,
-                            school=school)
-                    number += 1
-                except Exception as e:
-                    print e
-                    pass
-        message = '<li>%d tin nhắn sẽ được gửi trong chậm nhất 1h</li>'\
-                % (number)
-        if len(ids) > number:
-            message += '<li>%d học sinh không có thông tin mới để gửi hoặc không có số điện\
-                thoại</li>' % (len(ids) - number)
+        number_of_student = len(ids)
+        if school.balance < number_of_student:
+            message = u'Tài khoản của trường không đủ để thực hiện %d tin nhắn'\
+                    % number_of_student
+        else:
+            number = 0
+            for st in students:
+                if (st.sms_phone and st.id in ids
+                    and (info_list[st.id] != u'Không có điểm mới.'
+                        or dd_info_list[st.id] != '')):
+                    try:
+                        content = info_list[st.id] + ' ' + dd_info_list[st.id]
+                        send_sms_summary_mark(st,
+                                content,
+                                marks[st.id],
+                                dd_list[st.id],
+                                request.user,
+                                cl=cl,
+                                school=school)
+                        number += 1
+                    except Exception as e:
+                        print e
+                        pass
+            message = '<li>%d tin nhắn sẽ được gửi trong chậm nhất 1h</li>'\
+                    % (number)
+            if len(ids) > number:
+                message += '<li>%d học sinh không có thông tin mới để gửi hoặc không có số điện\
+                    thoại</li>' % (len(ids) - number)
         return HttpResponse(simplejson.dumps({
             'message': message,
             'success': True}), mimetype='json')
@@ -308,6 +313,17 @@ def teachers(request):
                         number_of_blank = 0
                         number_of_failed = 0
                         number_of_email_sent = 0
+                        number_of_teacher = len(teachers)
+                        if school.balance < number_of_teacher:
+                            data = simplejson.dumps({
+                                'number_of_sent': 0,
+                                'number_of_blank': 0,
+                                'number_of_failed': number_of_teacher,
+                                'number_of_email_sent': 0,
+                                'message': u'Tài khoản trường không đủ gửi %d tin nhắn'\
+                                    % number_of_teacher})
+                            return HttpResponse(data, mimetype='json')
+
                         for teacher in teachers:
                             if teacher.sms_phone:
                                 try:
@@ -317,9 +333,9 @@ def teachers(request):
                                             user,
                                             teacher.user_id,
                                             True,
-                                            school,
-                                            u'Trường Nhà thông báo',
-                                            content,
+                                            school=school,
+                                            subject=u'Trường Nhà thông báo',
+                                            message=content,
                                             to_addr=[teacher.email])
                                     number_of_sent += 1
                                 except Exception:
@@ -600,7 +616,7 @@ def editTeacherDetail(request, teacher_id):
         data = request.POST.copy()
         data['first_name'] = data['first_name'].strip()
         data['last_name'] = data['last_name'].strip()
-        form = TeacherForm(teacher.school_id_id,data,instance=teacher)
+        form = TeacherForm(teacher.school_id_id, data, instance=teacher)
         message = u'Đã lưu'
         if request.method == 'POST':
             first_name = ''

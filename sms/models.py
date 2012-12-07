@@ -70,8 +70,8 @@ REASON_DICT = {
         '500': u'Lỗi hệ thống',
         '21': u'Số điện thoại không hợp lệ',
         '25': u'Tài khoản trường bạn không đủ để thực hiện tin nhắn',
-        '26': u'Lỗi ở cổng nhắn tin'
-        }
+        '26': u'Lỗi ở cổng nhắn tin',
+        'BalanceNotEnough': u'Tài khoản trường không đủ để thực hiện nhắn tin'}
 
 # This task will recover sms when failure occurs
 class SMSTask(Task):
@@ -96,6 +96,7 @@ class SMSEmailTask(Task):
             sms.failed_reason = unicode(exc)
             sms.save()
             
+            print kwargs
             subject = kwargs['subject']
             message = kwargs['message']
             from_addr = kwargs['from_addr']
@@ -189,20 +190,35 @@ class sms(models.Model):
             raise Exception("InvalidPhoneNumber")
         
     def _send_sms(self, school=None):
-        if school and school.is_allowed_sms(): #school.id in [11, 10]:
-            if self.sender.userprofile.is_allowed_sms():
+        if school:
+            if school.is_allowed_sms(): #school.id in [11, 10]:
+                connect_failed = True
                 if get_tsp(self.phone) == 'VIETTEL':
-                    result = self._send_Viettel_sms()
+                    try:
+                        result = self._send_Viettel_sms()
+                        connect_failed = False
+                        print 'connected to viettel, requested'
+                        print connect_failed
+                    except Exception as e:
+                        school._atomic_increase_bl()
+                        raise e
                 else:
-                    result = self._send_iNET_sms()
+                    try:
+                        result = self._send_iNET_sms()
+                        connect_failed = False
+                    except Exception as e:
+                        school._atomic_increase_bl()
+                        raise e
                 if result == '1':
                     self.recent = False
                     self.success = True
                     self.save()
-                    self.sender.userprofile.balance -=1 
-                    self.sender.save()
                     return result
                 else:
+                    if not connect_failed:
+                        print 'connected_failed should be False'
+                        print 'Going to increase'
+                        school._atomic_increase_bl()
                     raise Exception('%s-SendFailed' % result)
             else:
                 self.failed_reason = 'BalanceNotEnough'

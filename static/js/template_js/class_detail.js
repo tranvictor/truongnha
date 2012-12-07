@@ -250,9 +250,15 @@ $(document).ready(function() {
                     student_list:studentList},
                 datatype:"json",
                 success: function(json) {
-                    $("#notify").showNotification("Sẽ gửi " + json.number_of_sent + " tin nhắn trong chậm nhất 1h.");
+                    if (json.message){
+                        $("#notify").showNotification(json.message);
+                    } else if (json.number_of_sent){
+                        $("#notify").showNotification("Sẽ gửi " + json.number_of_sent + " tin nhắn trong chậm nhất 1h.");
+                    }
                     $("#smsProgressbar").hide();
-                    if (json.number_of_blank != '0' || json.number_of_failed != '0' || json.number_of_email_sent != '0') {
+                    if (json.number_of_blank != '0'
+                            || json.number_of_failed != '0'
+                            || json.number_of_email_sent != '0') {
                         var html = "<ul>";
                         if (parseInt(json.number_of_blank) > 0)
                             html += "<li>" + json.number_of_blank + " học sinh không có số điện thoại.</li>";
