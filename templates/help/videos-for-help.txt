@@ -5,17 +5,21 @@ http://www.youtube.com/playlist?list=PLuNGr6xiwkabACXeCfKRlYSSST37VV8ZR&feature=
 	-v1 Nhập dữ liệu đầu năm học
 	http://www.youtube.com/watch?v=4HtMwI6Ejkk
 	-v2 Nhập điểm
-	http://www.youtube.com/watch?v=AcgXRqRdygg
+	http://www.youtube.com/watch?v=8t5DuQQIiiI&feature=plcp
+    http://www.youtube.com/embed/8t5DuQQIiiI?feature=player_detailpage
 	-v3 Tổng kết
 	http://www.youtube.com/watch?v=FqKNUDGVHKI
 	-v4 Hạnh kiểm
-	http://www.youtube.com/watch?v=BOkwzyR2hvI
+	http://www.youtube.com/watch?v=kwNXE5_qG8E&feature=plcp
+	http://www.youtube.com/embed/kwNXE5_qG8E?feature=player_detailpage
 	-v5 Báo cáo
 	http://www.youtube.com/watch?v=vtnqezBasq4
 	-v6 Điểm danh
-	http://www.youtube.com/watch?v=9UsT54yRtB0
+	http://www.youtube.com/watch?v=k3PqG3EsEdo&feature=plcp
+	http://www.youtube.com/embed/k3PqG3EsEdo?feature=player_detailpage
 	-v7 Môn học
-	http://www.youtube.com/watch?v=5ZCjyfvDBGA
+	http://www.youtube.com/watch?v=QOUIz7w4i-s&feature=plcp
+	http://www.youtube.com/embed/QOUIz7w4i-s?feature=player_detailpage
 	-v8 Nhập điểm thi lại
 	http://www.youtube.com/watch?v=i_f0pKmhZmQ
 	-v9 Nhập điểm rèn luyện thêm trong hè
@@ -31,7 +35,8 @@ http://www.youtube.com/playlist?list=PLuNGr6xiwkabACXeCfKRlYSSST37VV8ZR&feature=
 	-v14 Thông tin tài khoản
 	http://www.youtube.com/watch?v=M6mb1cr1lsE
 	-v15 Nhắn tin liên lạc
-	http://www.youtube.com/watch?v=jGYB5gFn3sA
+	http://www.youtube.com/watch?v=OvhEWRzErmE&feature=plcp
+	http://www.youtube.com/embed/OvhEWRzErmE?feature=player_detailpage
 	-v16 kì thi
 	http://www.youtube.com/watch?v=JxOVxSJwTn4
 	-v17 Phân lớp đầu năm học
@@ -44,17 +49,24 @@ playlist:
 http://www.youtube.com/playlist?list=PLuNGr6xiwkab6RsKk3Bt7l1TbHwUKau1C&feature=view_all
 
 	-v19 Điểm cho giáo viên
-	http://www.youtube.com/watch?v=mAg3F9CKijA
+	http://www.youtube.com/watch?v=952nen0Jh1Q&feature=plcp
+	http://www.youtube.com/embed/952nen0Jh1Q?feature=player_detailpage
 	-v20 Quản lý lớp chủ nhiệm
-	http://www.youtube.com/watch?v=qrP68COcPa0
+	http://www.youtube.com/watch?v=svFcUhsSsaY&feature=plcp
+	http://www.youtube.com/embed/svFcUhsSsaY?feature=player_detailpage
 	-v21 Nhắn tin cho các giáo viên khác
-	http://www.youtube.com/watch?v=Ha_fX4d_R_c
+	http://www.youtube.com/watch?v=itNBJUHdeWs&feature=plcp
+	http://www.youtube.com/embed/itNBJUHdeWs?feature=player_detailpage
 	-v22 Lịch giảng dạy của giáo viên
-	http://www.youtube.com/watch?v=Pxo30d_XEP0
+	http://www.youtube.com/watch?v=OybhwAS-IOc&feature=plcp
+	http://www.youtube.com/embed/OybhwAS-IOc?feature=player_detailpage
 	-v23 Xem thông tin học sinh các lớp khác
+	http://www.youtube.com/watch?v=XZyjKxwhX64&feature=plcp
+	http://www.youtube.com/embed/XZyjKxwhX64?feature=player_detailpage
 	http://www.youtube.com/watch?v=hr5G9tJwOxY
 	-v24 Thông tin tài khoản giáo viên
-	http://www.youtube.com/watch?v=ap3ZwzGPVoY
+	http://www.youtube.com/watch?v=i0bLed6oZPU&feature=plcp
+	http://www.youtube.com/embed/i0bLed6oZPU?feature=player_detailpage
 	-v25 Nhập hạnh kiểm từ tài khoản giáo viên
 	http://www.youtube.com/watch?v=5_r3uLS24bc
 	-v26 Nhập điểm danh từ tài khoản giáo viên

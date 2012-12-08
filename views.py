@@ -4,9 +4,9 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.db import models
 import os
+from link_help import  *
 OVER_SCHOOL = ['GIAM_DOC_SO', 'TRUONG_PHONG']
 ABOUT = os.path.join('about.html')
-
 def index(request):
     if not request.user.is_authenticated():
         return render_to_response("index.html", context_instance=RequestContext(request)) 
@@ -31,4 +31,7 @@ def help(request, page = None):
         return render_to_response("help/help.html", context_instance=RequestContext(request))
     else:
         template_page = "help/" + str(page).replace("_", "-") + '.html'
-        return render_to_response(template_page, context_instance=RequestContext(request))
+        page1 = str(page).replace("-", "_")
+        print page1
+        return render_to_response(template_page,{'video_link':eval(page1)},
+            context_instance=RequestContext(request))
