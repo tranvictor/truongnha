@@ -6,6 +6,7 @@
  */
 
 $(document).ready(function() {
+    var oldName = '';
 
     $("#notify").ajaxSuccess(function(event, request, settings, json) {
         var $this = $(this);
@@ -73,6 +74,7 @@ $(document).ready(function() {
         $("#rename-team-modal").modal('hide');
         return false;
     });
+    
     $("#rename-team-form").bind('submit',function(){
         var name = $('#rename-team-input').val().replace(/^\s+|\s+$/g, '');
         if (name == ''){
@@ -84,6 +86,10 @@ $(document).ready(function() {
             return false;
         }
         var $parentDiv = $('#rename-team-modal');
+        if (name == oldName){
+            $parentDiv.modal('hide');
+            return false;
+        }
         var id = $parentDiv.attr('data-toggle');
         var request_type = $parentDiv.attr('request-type');
         var association = $parentDiv.attr('association').replace('.', '\\\\.');
@@ -360,7 +366,8 @@ $(document).ready(function() {
             .attr('association', '#'+$(this).attr('association'));
         $('#modal-header').html('Sửa tên tổ');
         $('#input-label').html('Tên mới:');
-        $('#rename-team-input').val($('#'+$(this).attr('association')).text());
+        oldName = $('#'+$(this).attr('association')).text();
+        $('#rename-team-input').val(oldName);
         $('#rename-team-submit').val('Đổi tên');
         $('#rename-team-modal').modal('show');
     });
@@ -370,7 +377,8 @@ $(document).ready(function() {
             .attr('association', '#'+$(this).attr('association'));
         $('#modal-header').html('Sửa tên nhóm');
         $('#input-label').html('Tên mới:');
-        $('#rename-team-input').val($('#'+$(this).attr('association')).text());
+        oldName = $('#'+$(this).attr('association')).text();
+        $('#rename-team-input').val(oldName);
         $('#rename-team-submit').val('Đổi tên');
         $('#rename-team-modal').modal('show');
     });

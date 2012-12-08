@@ -420,7 +420,8 @@ class GroupForm(forms.ModelForm):
         if 'school' in kw:
             school = kw.pop('school')
         super(GroupForm,self).__init__(*args, **kw)
-        self.fields['team_id'] = forms.ModelChoiceField(queryset=school.team_set, label=u'Tổ')
+        self.fields['team_id'] = forms.ModelChoiceField(queryset=school.team_set,
+                label=u'Tổ')
 
 
 class DiemDanhForm(forms.ModelForm):
