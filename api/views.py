@@ -95,6 +95,8 @@ class ApiLogin(View):
                     classes = []
                     for subject in teaching_subjects:
                         temp = {
+                            'subject_id':subject.id,
+                            'is_comment':subject.nx,
                             'classId': subject.class_id.id,
                             'className': subject.class_id.name,
                             'subject': subject.name,
@@ -637,15 +639,25 @@ class MarkForASubject(View):
     #@need_login
     #@school_function
     #@operating_permission(['HIEU_PHO', 'HIEU_TRUONG', 'GIAO_VIEN'])
-    def get(self, request, subject_id, term_id):
+    def get(self, request, subject_id, term_number=None):
         selected_subject = Subject.objects.get(id=subject_id)
-        selected_term = Term.objects.get(id=term_id)
+        year = selected_subject.class_id.year_id
+        current_year = get_current_year(request)
+        if term_number == None :
+            if year != current_year:
+                selected_term = Term.objects.get(year_id=year,number=2)
+            else:
+                selected_term = get_current_term(request,True)
+
+        else:
+            selected_term = Term.objects.get(year_id=year,number=term_number)
+
         time_to_edit = int(selected_term.year_id.school_id.get_setting('lock_time')) * 60
         now = datetime.datetime.now()
         time_now = int((now - CHECKED_DATE).total_seconds() / 60)
         print time_to_edit
         list = []
-        marks = Mark.objects.filter(term_id=term_id, subject_id=subject_id, current=True).order_by(
+        marks = Mark.objects.filter(term_id=selected_term.id, subject_id=subject_id, current=True).order_by(
             'student_id__index', 'student_id__first_name', 'student_id__last_name', 'student_id__birthday')
         if selected_term.number == 2:
             before_term = Term.objects.get(year_id=selected_term.year_id, number=1).id
@@ -782,6 +794,7 @@ class MarkForAStudent(View):
     def get(self, request, student_id, term_id=None):
         if term_id == None:
             term_id = get_current_term(request, except_summer=True).id
+            print get_current_term(request, except_summer=True).number
         list = getMarkForAStudent(student_id, term_id)
         #return Response(status=status.HTTP_200_OK, content=list)
         return HttpResponse(simplejson.dumps(list), mimetype='json')
