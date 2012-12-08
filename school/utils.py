@@ -285,8 +285,8 @@ def move_student(school, student, new_class):
 #                     "HanhKiem", "TKMon", "TBHocKy", "TBNam"
 
 @transaction.commit_manually
-def add_student(student=None, index=0, start_year=None , year=None,
-                 _class=None, term=None, school=None, school_join_date=None):
+def add_student(student=None, index=0, start_year=None, year=None,
+                _class=None, term=None, school=None, school_join_date=None):
     if not ( student and start_year and term and school ):
         raise Exception("Phải có giá trị cho các trường: Student,Start_Year,Term,School.")
     if 'fullname' in student:
@@ -917,7 +917,7 @@ def get_startyear(request, time):
 def get_current_term(request, except_summer=False):
     school = get_school(request)
     try:
-        if not except_summer:
+        if (not except_summer) or (school.status < 3):
             return school.year_set.latest('time').term_set.get(number=school.status)
         else:
             return school.year_set.latest('time').term_set.get(number=2)

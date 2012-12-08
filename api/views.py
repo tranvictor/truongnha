@@ -651,7 +651,6 @@ class MarkForASubject(View):
                 selected_term = get_current_term(request, True)
         else:
             selected_term = Term.objects.get(year_id=year, number=term_number)
-
         time_to_edit = int(selected_term.year_id.school_id.get_setting('lock_time')) * 60
         now = datetime.datetime.now()
         time_now = int((now - CHECKED_DATE).total_seconds() / 60)
@@ -730,15 +729,20 @@ class MarkForASubject(View):
                     temp_arr.append(a_mark)
 
             if m.tb != None:
-                a_mark = {
-                    'n': 3 * MAX_COL + 3,
-                    'm': m.tb
-                }
+                if selected_term.number == 2:
+                    a_mark = {
+                        'n': 3 * MAX_COL + 3,
+                        'm': m.tb
+                    }
+                else:
+                    a_mark = {
+                        'n': 3 * MAX_COL + 2,
+                        'm': m.tb
+                    }
                 if arr_sent[3 * MAX_COL + 2] == '1':
                     a_mark['s'] = 1
                 else:
                     a_mark['s'] = 0
-
                 if (time_now - int(arr_time[3 * MAX_COL + 2]) > time_to_edit):
                     a_mark['e'] = 0
                 else:
