@@ -3,7 +3,7 @@ __author__ = 'vutran'
 from django.conf.urls import patterns, url
 from views import ApiLogin, ApiLogout, Attendance, SchoolSetting, ApiGetStudentList
 from views import SmsStatus, SmsSummary, hanhkiem, StudentProfile, MarkForASubject, MarkForAStudent, Schedule
-from views import GetListTerm, GetAttendanceForStudent
+from views import GetListTerm, GetAttendanceForStudent, GetSubjectOfHomeroomTeacher
 
 urlpatterns = patterns('',
     url(r'login/$', ApiLogin.as_view(), name='api_login'),
@@ -35,8 +35,12 @@ urlpatterns = patterns('',
     url(r'markForAStudent/(?P<student_id>\w+)$',
         MarkForAStudent.as_view(), name='api_get_mark_for_a_student'),
     url(r'getListTerm$', GetListTerm.as_view(), name='api_get_list_term'),
-    url(r'getAttendanceForStudent/(?P<day>\d+)/(?P<month>\d+)/(?P<year>\d+)/(?P<day1>\d+)/(?P<month1>\d+)/(?P<year1>\d+)$'
+    url(
+        r'getAttendanceForStudent/(?P<day>\d+)/(?P<month>\d+)/(?P<year>\d+)/(?P<day1>\d+)/(?P<month1>\d+)/(?P<year1>\d+)$'
         , GetAttendanceForStudent.as_view(), name='api_get_attendance_for_student'),
     url(r'getAttendanceForStudent/(?P<all>[\w\-]*)$'
         , GetAttendanceForStudent.as_view(), name='api_get_attendance_for_student'),
+
+    url(r'getSubjectOfHomeroomTeacher$'
+        , GetSubjectOfHomeroomTeacher.as_view(), name='api_get_subject_homeroom_teacher'),
 )
