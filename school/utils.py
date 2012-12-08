@@ -27,11 +27,9 @@ def to_date(value):
         if int(v[2]) < 1900:
             raise Exception("PharseDateException")
         result = root_dt.date(int(v[2]), int(v[1]), int(v[0]))
-    except Exception as e:
-        print e
+    except Exception:
         raise Exception("PharseDateException")
     return result
-
 
 #noinspection PyUnusedLocal
 def to_en(string):

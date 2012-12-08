@@ -405,8 +405,10 @@ class KiLuatForm(forms.ModelForm):
             if value < student.school_join_date or value > date.today():
                 raise ValidationError(u'Ngày nằm ngoài khoảng cho phép. Ngày hợp lệ tính từ ngày học sinh nhập trường đến ngày hiện tại')
         super(KiLuatForm, self).__init__(*args, **kw)
-        self.fields['time'] = forms.DateField(required=False, label=u'Ngày', initial=date.today(),
-            validators=[validate_ktkl_date], widget=forms.DateInput(attrs={'class':'datepicker'}))
+        self.fields['time'] = forms.DateField(required=False,
+                label=u'Ngày', initial=date.today(),
+                validators=[validate_ktkl_date],
+                widget=forms.DateInput(attrs={'class':'datepicker'}))
 
 class TeamForm(forms.ModelForm):
     class Meta:
@@ -428,7 +430,7 @@ class DiemDanhForm(forms.ModelForm):
     class Meta:
         model = DiemDanh
         widgets = {
-            'time' : DateInput(attrs = {'class':'datepicker'})
+            'time' : DateInput(attrs={'class':'datepicker'})
         }
 
 class DDForm(forms.ModelForm):
@@ -436,7 +438,7 @@ class DDForm(forms.ModelForm):
         model = DiemDanh
     def __init__(self,*args,**kw):
         super(DDForm,self).__init__(*args, **kw)
-        self.fields['loai'] = forms.CharField(max_length=1,required=False)
+        self.fields['loai'] = forms.CharField(max_length=1, required=False)
 
 class NDiemDanhForm(forms.Form):
     loai = forms.ChoiceField(choices=DIEM_DANH_TYPE)
@@ -454,34 +456,37 @@ class MarkForm(forms.ModelForm):
         model = Mark
         
 class DateForm(forms.Form):
-    date = forms.DateField(label = '',
-                           widget = DateInput(attrs = {'class':'datepicker'}),
-                           initial = datetime.date.today())
+    date = forms.DateField(label='',
+            widget=DateInput(attrs={'class': 'datepicker'}),
+            initial=datetime.date.today())
 
         
 class DateAndClassForm(forms.Form):
-    class_id = forms.ModelChoiceField(queryset = Class)
-    date = forms.DateField(label = u'ngày',
-                           widget = DateInput(attrs = {'class':'datepicker'}),
-                           initial= datetime.date.today)
+    class_id = forms.ModelChoiceField(queryset=Class)
+    date = forms.DateField(label=u'ngày',
+            widget=DateInput(attrs={'class': 'datepicker'}),
+            initial=datetime.date.today)
     
     def __init__(self, year_id, *args, **kwargs):
         super(DateAndClassForm, self).__init__(*args, **kwargs)
-        self.fields['class_id'] = forms.ModelChoiceField(queryset = Class.objects.filter(year_id = year_id).order_by('name'),
-                                                         label = u'Lớp', empty_label=None)
+        self.fields['class_id'] = forms.ModelChoiceField(
+                queryset=Class.objects.filter(year_id=year_id).order_by('name'),
+                label=u'Lớp', empty_label=None)
     
 class UploadImportFileForm(forms.Form):
     def __init__(self, * args, ** kwargs):
         class_list = kwargs.pop('class_list')
         super(UploadImportFileForm, self).__init__(*args, ** kwargs)
-        self.fields['the_class'] = forms.ChoiceField(label=u'Nhập vào lớp:', choices=class_list, required=False)
+        self.fields['the_class'] = forms.ChoiceField(label=u'Nhập vào lớp:',
+                choices=class_list, required=False)
         self.fields['import_file'] = forms.FileField(label=u'Chọn file Excel:')
         
 class ManualAddingForm(forms.Form):
     def __init__(self, * args, ** kwargs):
         class_list = kwargs.pop('class_list')
         super(ManualAddingForm, self).__init__(*args, ** kwargs)
-        self.fields['the_class'] = forms.ChoiceField(label=u'Nhập vào lớp:', choices=class_list, required=False)
+        self.fields['the_class'] = forms.ChoiceField(label=u'Nhập vào lớp:',
+                choices=class_list, required=False)
         
 class ClassifyForm(forms.Form):
     def __init__(self, * args, ** kwargs):
@@ -493,7 +498,8 @@ class ClassifyForm(forms.Form):
             label += u'[' + str(student.birthday.day ) \
                           + '-' + str(student.birthday.month) \
                           + '-' + str(student.birthday.year)+']'
-            self.fields[str(student.id)] = forms.ChoiceField(label = label, choices=classes, required=False)
+            self.fields[str(student.id)] = forms.ChoiceField(
+                    label=label, choices=classes, required=False)
 CONTENT_TYPES = ['application/vnd.ms-excel']            
 
 #class uploadFileExcel(forms.Form):
@@ -535,8 +541,10 @@ class smsFromExcelForm(forms.Form):
             return file     
 
 class UsernameChangeForm(forms.Form):
-    new_username = forms.RegexField(label=u"Tài khoản mới", max_length=30, regex=r'^[\w.@+-]+$')
-    password = forms.CharField(label=u'Mật khẩu', widget=forms.PasswordInput)
+    new_username = forms.RegexField(label=u"Tài khoản mới",
+            max_length=30, regex=r'^[\w.@+-]+$')
+    password = forms.CharField(label=u'Mật khẩu',
+            widget=forms.PasswordInput)
 
     def __init__(self, user, *args, **kwargs):
         self.user = user
@@ -571,26 +579,45 @@ class TKBForm(forms.ModelForm):
         #field = ['class_id', 'day', 'period_1', 'period_2', 'period_3', 'period_4', 'period_5']
     def __init__(self, class_id, *args, **kwargs):
         super(TKBForm,self).__init__(*args, **kwargs)
-        self.fields['period_1'] = forms.ModelChoiceField(required = False, queryset = Subject.objects.filter(class_id = class_id), label=u'Tiết 1')
-        self.fields['period_2'] = forms.ModelChoiceField(required = False, queryset = Subject.objects.filter(class_id = class_id), label=u'Tiết 2')
-        self.fields['period_3'] = forms.ModelChoiceField(required = False, queryset = Subject.objects.filter(class_id = class_id), label=u'Tiết 3')
-        self.fields['period_4'] = forms.ModelChoiceField(required = False, queryset = Subject.objects.filter(class_id = class_id), label=u'Tiết 4')
-        self.fields['period_5'] = forms.ModelChoiceField(required = False, queryset = Subject.objects.filter(class_id = class_id), label=u'Tiết 5')
-        self.fields['period_6'] = forms.ModelChoiceField(required = False, queryset = Subject.objects.filter(class_id = class_id), label=u'Tiết 6')
-        self.fields['period_7'] = forms.ModelChoiceField(required = False, queryset = Subject.objects.filter(class_id = class_id), label=u'Tiết 7')
-        self.fields['period_8'] = forms.ModelChoiceField(required = False, queryset = Subject.objects.filter(class_id = class_id), label=u'Tiết 8')
-        self.fields['period_9'] = forms.ModelChoiceField(required = False, queryset = Subject.objects.filter(class_id = class_id), label=u'Tiết 9')
-        self.fields['period_10'] = forms.ModelChoiceField(required = False, queryset = Subject.objects.filter(class_id = class_id), label=u'Tiết 10')
+        self.fields['period_1'] = forms.ModelChoiceField(required=False,
+                queryset=Subject.objects.filter(class_id=class_id),
+                label=u'Tiết 1')
+        self.fields['period_2'] = forms.ModelChoiceField(required=False,
+                queryset=Subject.objects.filter(class_id=class_id),
+                label=u'Tiết 2')
+        self.fields['period_3'] = forms.ModelChoiceField(required=False,
+                queryset=Subject.objects.filter(class_id=class_id),
+                label=u'Tiết 3')
+        self.fields['period_4'] = forms.ModelChoiceField(required=False,
+                queryset=Subject.objects.filter(class_id=class_id),
+                label=u'Tiết 4')
+        self.fields['period_5'] = forms.ModelChoiceField(required=False,
+                queryset=Subject.objects.filter(class_id=class_id),
+                label=u'Tiết 5')
+        self.fields['period_6'] = forms.ModelChoiceField(required=False,
+                queryset=Subject.objects.filter(class_id=class_id),
+                label=u'Tiết 6')
+        self.fields['period_7'] = forms.ModelChoiceField(required=False,
+                queryset=Subject.objects.filter(class_id=class_id),
+                label=u'Tiết 7')
+        self.fields['period_8'] = forms.ModelChoiceField(required=False,
+                queryset=Subject.objects.filter(class_id=class_id),
+                label=u'Tiết 8')
+        self.fields['period_9'] = forms.ModelChoiceField(required=False,
+                queryset=Subject.objects.filter(class_id=class_id),
+                label=u'Tiết 9')
+        self.fields['period_10'] = forms.ModelChoiceField(required=False,
+                queryset=Subject.objects.filter(class_id=class_id),
+                label=u'Tiết 10')
 
 class LessonForm(forms.ModelForm):
     class Meta:
         model = Lesson
         exclude = ('index', 'subject_id')
         widgets = {
-            'ngay_day' : DateInput(attrs = {'class':'datepicker'}),
-            'title': forms.Textarea(attrs = {'cols': 50, 'rows': 2}),
-            'note': forms.Textarea(attrs = {'cols': 100, 'rows': 2})
-        }
+            'ngay_day' : DateInput(attrs={'class': 'datepicker'}),
+            'title': forms.Textarea(attrs={'cols': 50, 'rows': 2}),
+            'note': forms.Textarea(attrs={'cols': 100, 'rows': 2})}
 
 
 class SelectSchoolLessonForm2(forms.Form):
