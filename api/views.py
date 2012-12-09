@@ -11,14 +11,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from app.views import login
 from sms.models import sms
 from school.class_functions import dd
-from school.models import Class, Pupil, Term, Subject, DiemDanh, TKB,\
+from school.models import Class, Pupil, Term, Subject, DiemDanh,\
     KhenThuong, KiLuat, Mark, TKMon
 from school.utils import get_position, get_school, is_teacher,\
-<<<<<<< HEAD
-    get_current_term, get_current_year, to_date
-=======
-    get_current_term, get_current_year, to_en1, get_student, get_teacher
->>>>>>> master
+        get_current_term, get_current_year, get_student, get_teacher
 from api.utils import getMarkForAStudent
 from school.forms import MarkForm
 from decorators import need_login, operating_permission, school_function
@@ -26,14 +22,8 @@ import simplejson
 import time
 import datetime
 import re
-<<<<<<< HEAD
-from django.views.decorators.csrf import csrf_exempt
-from djangorestframework.response import ErrorResponse
 from school.templateExcel import  MAX_COL, CHECKED_DATE
-=======
-from school.templateExcel import  MAX_COL, CHECKED_DATE, normalize
 from school.viewMark import update_mark
->>>>>>> master
 
 class ApiLogin(View):
     """

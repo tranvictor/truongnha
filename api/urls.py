@@ -2,13 +2,9 @@ __author__ = 'vutran'
 
 from django.conf.urls import patterns, url
 from views import ApiLogin, ApiLogout, Attendance, SchoolSetting, ApiGetStudentList
-<<<<<<< HEAD
-from views import SmsStatus, SmsSummary, hanhkiem, Schedule, StudentProfile,\
-        MarkForASubject, MarkForAStudent, FailedSms
-=======
-from views import SmsStatus, SmsSummary, hanhkiem, StudentProfile, MarkForASubject, MarkForAStudent, Schedule
+from views import SmsStatus, SmsSummary, hanhkiem, StudentProfile,\
+        MarkForASubject, MarkForAStudent, Schedule, FailedSms
 from views import GetListTerm, GetAttendanceForStudent, GetSubjectOfHomeroomTeacher
->>>>>>> master
 
 urlpatterns = patterns('',
     url(r'login/$', ApiLogin.as_view(), name='api_login'),
@@ -28,22 +24,12 @@ urlpatterns = patterns('',
     url(r'hanhkiem/(?P<class_id>\w+)/$',
         hanhkiem.as_view(), name='api_get_hanhkiem'),
     url(r'schedule/$', Schedule.as_view(), name='api_get_schedule'),
-<<<<<<< HEAD
     url(r'profile/(?P<student_id>\w+)/$', StudentProfile.as_view(),
         name='api_get_student_profile'),
 
     url(r'markForASubject/$', MarkForASubject.as_view(),
         name='api_post_mark_for_a_subject'),
     url(r'markForASubject/(?P<subject_id>\w+)/(?P<term_id>\w+)$',
-=======
-    #url(r'schedule/$', ScheduleForTeacher.as_view(), name='api_get_schedule_for_teacher'),
-    url(r'profile/(?P<student_id>\w+)/$', StudentProfile.as_view(), name='api_get_student_profile'),
-
-    url(r'markForASubject/$', MarkForASubject.as_view(), name='api_post_mark_for_a_subject'),
-    url(r'markForASubject/(?P<subject_id>\w+)/(?P<term_number>\w+)$',
-        MarkForASubject.as_view(), name='api_get_mark_for_a_subject'),
-    url(r'markForASubject/(?P<subject_id>\w+)$',
->>>>>>> master
         MarkForASubject.as_view(), name='api_get_mark_for_a_subject'),
 
     url(r'markForAStudent/(?P<student_id>\w+)/(?P<term_id>\w+)$',
