@@ -87,8 +87,13 @@
                                     {% if error_type == 'wrong_demo_account' %}
                                         <b>Tài khoản dùng thử chưa được tạo. Bạn vui lòng thử vào lúc khác.</b>
                                     {% else %}
-                                        <b>Tên tài khoản hoặc mật khẩu không đúng.</b>
+                                        {% if error_type == 'organization deactivated' %}
+                                            <b>Trường này đang bị khóa tạm thời. Vui lòng liên hệ với Ban Quản Trị để kích hoạt</b>
+                                        {% else %}
+                                            <b>Tên tài khoản hoặc mật khẩu không đúng.</b>
+                                        {% endif %}
                                     {% endif %}
+
                                 {% endif %}
                             {% endif %}
                         </div>

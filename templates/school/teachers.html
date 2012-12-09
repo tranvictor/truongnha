@@ -15,19 +15,18 @@
 {% block css %}
     <style type="text/css">
         #teachers-nav {
-            font-size: 1.4em;
+            font-size: 1.3em;
         }
 
         #teachers-nav ul {
             padding: 0;
-            margin-right: 0;
+            margin-left: .8em;
         }
 
         #teachers-nav li {
             list-style: none;
             font-size: .9em;
-            padding: .3em 0 .3em 0;
-            /*margin-left: -.2em;*/
+            padding: .25em 0 .25em 0;
             width: 100%;
         }
 
@@ -55,7 +54,7 @@
         </div>
         <ul class="nav-list">
             <li id="team-all" class="active">
-                <a href="#">Tất cả</a>
+                <a href="#"><strong>Tất cả</strong></a>
                 {% if pos > 3 %}
                     <div class="pull-right">
                         <a title="Thêm tổ"
@@ -67,7 +66,9 @@
                     </div>
                 {% endif %}
             </li>
-            <li>
+        </ul>
+{#    <ul>#}
+{#            <li>#}
                 <ul class="nav-list">
                     {% for t in team_list %}
                         <li id="team.{{ t.id }}" data-toggle="{{ t.name }}" class="team">
@@ -129,8 +130,8 @@
                         </li>
                     {% endfor %}
                 </ul>
-            </li>
-        </ul>
+{#            </li>#}
+{#        </ul>#}
     </div>
 
     <div class="span9" id="teacher-list-div">
@@ -442,31 +443,16 @@
             </div>
             <div class="modal-body">
                 <!-- The file upload form used as target for the file upload widget -->
-                <form id="fileupload" action="" method="POST" enctype="multipart/form-data">
+                <form id="fileupload" action="#" method="POST" enctype="multipart/form-data">
                     <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
-                    <div class="row fileupload-buttonbar">
+                    <div class="fileupload-buttonbar">
                         <div class="span5">
                             <!-- The fileinput-button span is used to style the file input field as button -->
-                            <span class="btn btn-success fileinput-button">
-                                <i class="icon-plus icon-white"></i>
-                                <span>Chọn files...</span>
-                                <input type="file" name="files[]" multiple>
-                            </span>
-                            <!--
-                            <button type="submit" class="btn btn-primary start">
-                                <i class="icon-upload icon-white"></i>
-                                <span>Tải tất cả</span>
-                            </button>
-                            <button type="reset" class="btn btn-warning cancel">
-                                <i class="icon-ban-circle icon-white"></i>
-                                <span>Dừng lại</span>
-                            </button>
-                            <button type="button" class="btn btn-danger delete">
-                                <i class="icon-trash icon-white"></i>
-                                <span>Xóa</span>
-                            </button>
-                            <input type="checkbox" class="toggle">
-                            -->
+                        <span class="btn btn-success fileinput-button">
+                            <i class="icon-plus icon-white"></i>
+                            <span>Chọn files...</span>
+                            <input type="file" name="files[]" multiple>
+                        </span>
                         </div>
                         <div class="span3">
                             <!-- The global progress bar -->
@@ -492,6 +478,9 @@
                     <p>
                         Chú ý: Phải dùng file Excel theo <a href="{{ STATIC_URL }}template_files/teacher_template.xls">mẫu
                         này</a>.
+                    </p>
+                    <p>
+                        Nếu bạn gặp trục trặc khi nhập dữ liệu từ file Excel, bạn có thể gửi file cho chúng tôi đến email: support@truongnha.com và chỉ ra tên lớp trong email. Chúng tôi sẽ hỗ trợ nhập file cho bạn.
                     </p>
                 </div>
             </div>

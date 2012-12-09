@@ -71,6 +71,14 @@
                     </ol>
                 {% endif %}
             {% endblock %}
+			
+			{% block video %}
+				<div >
+					<iframe width="100%" height="600"
+							src="{{video_link}}"
+							frameborder="0" allowfullscreen></iframe>
+				</div>				
+			{% endblock %}
         </div>
     </div>
 {% endblock %}

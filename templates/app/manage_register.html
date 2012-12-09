@@ -21,9 +21,20 @@
             <button id="createSelected" class="btn btn-primary"
                     title="Tạo tài khoản cho những đăng ký đã chọn">Tạo tài khoản
             </button>
+
             <button id="delSelected" class="btn btn-danger"
-                    title="Xóa chọn">Xóa
+                    title="Xóa những đăng ký đã chọn và gửi thông báo với những đăng ký chưa cấp">Xóa
             </button>
+
+            <div class="pull-right">
+                <div class="btn-group">
+                        <button id="textSms" class="btn btn-warning"
+                                title="Gửi thông báo đến những đăng kí đã chọn">
+                            <i class="icon-envelope"></i>
+                            Gửi thông báo
+                        </button>
+                </div>
+            </div>
         </div>
         <table class="table" id="registerTable">
             <thead>
@@ -78,5 +89,59 @@
     {% else %}
         <p>Không có đăng ký nào</p>
     {% endif %}
+    <div id="smsWindow" class="popup-windows">
+        <section>
+            <table class="table table-condensed no-border">
+                <tr>
+                    <th class="from tr">Người gửi</th>
+                    <td>
+                        {{ user.last_name }} {{ user.first_name }} ({{ user }})
+                    </td>
+                </tr>
+                <tr>
+                    <th class="to tr">Người nhận</th>
+                    <td>
+                        <button id="showChosenRegister">Chưa chọn đăng ký nào</button>
+                    </td>
+                </tr>
 
+                <tr>
+                    <th>Nội dung</th>
+                    <td>
+                        <textarea class="smsContext item popupTextarea"
+                                  id="smsContent"
+                                  rows="4"
+                                  style="width: 250px; max-width: 250px; height: 100px;"></textarea>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th></th>
+                    <td>
+                        <button id="send" class="btn btn-danger"
+                                data-loading-text="Đang gửi..."
+                                disabled="disabled">
+                            <i class="icon-envelope"></i>
+                            Gửi thông báo
+                        </button>
+                        <button id="smsClose" class="btn">Thôi</button>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th></th>
+                    <td>
+                        <div class="progress progress-striped active"
+                             id="smsProgressbar" style="display: none;">
+                            <div class="bar"
+                                 style="width: 90%;"></div>
+                        </div>
+                        <div class="alert alert-error" id="smsErrorDetail"
+                             style="display: none;">
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </section>
+    </div>
 {% endblock %}

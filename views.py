@@ -4,9 +4,9 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.db import models
 import os
+from link_help import  *
 OVER_SCHOOL = ['GIAM_DOC_SO', 'TRUONG_PHONG']
 ABOUT = os.path.join('about.html')
-
 def index(request):
     if not request.user.is_authenticated():
         return render_to_response("index.html", context_instance=RequestContext(request)) 
@@ -25,3 +25,13 @@ def about(request):
 def get_absolute_url(self):
         return 'profiles_profile_detail', (), { 'username': self.user.username }
 get_absolute_url = models.permalink(get_absolute_url)
+
+def help(request, page = None):
+    if not page:
+        return render_to_response("help/help.html", context_instance=RequestContext(request))
+    else:
+        template_page = "help/" + str(page).replace("_", "-") + '.html'
+        page1 = str(page).replace("-", "_")
+        print page1
+        return render_to_response(template_page,{'video_link':eval(page1)},
+            context_instance=RequestContext(request))

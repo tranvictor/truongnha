@@ -486,16 +486,22 @@ def toDigit(x):
         return float(x)
 
 
-def update(s, primary, isComment, user, time_history):
+def update_mark(s, primary, isComment, user, time_history,position,school,teacher):
     strings = s.split(':')
     idMark = int(strings[0])
     setOfNumber = strings[1].split('*')
     setOfValue = strings[2].split('*')
     length = len(setOfNumber)
-
     timeNow = datetime.datetime.now()
 
     m = Mark.objects.get(id=idMark)
+    if position == 3:
+        if m.subject_id.teacher_id != teacher:
+            raise Exception(" Don't have permission")
+    elif position == 4:
+        if m.term_id.year_id.school_id != school:
+            raise Exception(" Don't have permission")
+
     arrMark = m.toArrayMark()
     arrTime = m.toArrayTime()
     for i in range(length - 1):
@@ -629,36 +635,33 @@ def update(s, primary, isComment, user, time_history):
 @transaction.commit_on_success
 @need_login
 def saveMark(request):
-    t1 = time.time()
+    #t1 = time.time()
     message = 'hello'
     if request.method == 'POST':
         str = request.POST['data']
         strs = str.split('/')
-        print str
         position = get_position(request)
         user = request.user
+        school = None
+        teacher = None
+
         if   position == 4:
-        #            idTeacher= int(strs[1])
-        #            teacher= Teacher.objects.get(id=idTeacher)
-        #            if not in_school(request,teacher.school_id):
-        #                return
-            pass
+            school = user.userprofile.organization
         elif position == 3:
-            idTeacher = int(strs[1])
-            teacher = Teacher.objects.get(id=idTeacher)
-            if request.user.id != teacher.user_id.id: return
+            teacher = user.teacher
         else: return
+
         length = len(strs)
         primary = int(strs[2])
         isComment = strs[3] == "true"
         time_history = 60
         for i in range(4, length):
-            update(strs[i], primary, isComment, user,time_history)
+            update_mark(strs[i], primary, isComment, user,time_history,position,school,teacher)
 
         message = strs[0]
         data = simplejson.dumps({'message': message})
-        t2 = time.time()
-        print (t2 - t1)
+        #t2 = time.time()
+        #print (t2 - t1)
 
     return HttpResponse(data, mimetype='json')
 

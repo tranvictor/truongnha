@@ -14,16 +14,26 @@ from school.class_functions import dd
 from school.models import Class, Pupil, Term, Subject, DiemDanh, TKB,\
     KhenThuong, KiLuat, Mark, TKMon
 from school.utils import get_position, get_school, is_teacher,\
+<<<<<<< HEAD
     get_current_term, get_current_year, to_date
+=======
+    get_current_term, get_current_year, to_en1, get_student, get_teacher
+>>>>>>> master
 from api.utils import getMarkForAStudent
 from school.forms import MarkForm
 from decorators import need_login, operating_permission, school_function
 import simplejson
+import time
 import datetime
 import re
+<<<<<<< HEAD
 from django.views.decorators.csrf import csrf_exempt
 from djangorestframework.response import ErrorResponse
 from school.templateExcel import  MAX_COL, CHECKED_DATE
+=======
+from school.templateExcel import  MAX_COL, CHECKED_DATE, normalize
+from school.viewMark import update_mark
+>>>>>>> master
 
 class ApiLogin(View):
     """
@@ -50,21 +60,24 @@ class ApiLogin(View):
                 user = None
                 if user_position == 1:
                     user = {
+                        'userId': request.user.id,
                         'type': user_position,
-                        'last_name': request.user.last_name,
-                        'first_name': request.user.first_name,
+                        'lastName': request.user.last_name,
+                        'firstName': request.user.first_name,
                         'class': request.user.pupil.class_id.name,
                         'school': get_school(request).name,
                         'birth': request.user.pupil.birthday,
-                        'studentId':request.user.pupil.id,
-                    }
+                        'studentId': request.user.pupil.id,
+                        }
                 elif user_position in [2, 3]:
                     user = {
+                        'userId': request.user.id,
                         'type': user_position,
-                        'last_name': request.user.last_name,
-                        'first_name': request.user.first_name,
+                        'lastName': request.user.last_name,
+                        'firstName': request.user.first_name,
                         'school': get_school(request).name,
-                        'birth': request.user.teacher.birthday
+                        'birth': request.user.teacher.birthday,
+                        'teacherId': request.user.teacher.id
                     }
                     homeroom_class = request.user.teacher.current_homeroom_class()
                     if homeroom_class:
@@ -78,7 +91,7 @@ class ApiLogin(View):
             except Exception as e:
                 print e
                 raise e
-            if user_position == 1 :
+            if user_position == 1:
                 #TODO: return necessary information for students
                 #return Response(status=status.HTTP_404_NOT_FOUND)
                 #term_id = get_current_term(request, except_summer=True).id
@@ -92,6 +105,8 @@ class ApiLogin(View):
                     classes = []
                     for subject in teaching_subjects:
                         temp = {
+                            'subjectId': subject.id,
+                            'isComment': subject.nx,
                             'classId': subject.class_id.id,
                             'className': subject.class_id.name,
                             'subject': subject.name,
@@ -202,12 +217,12 @@ class Attendance(View):
                     break
             s = {
                 'id': student.id,
-                'firstname': student.first_name,
-                'lastname': student.last_name,
+                'firstName': student.first_name,
+                'lastName': student.last_name,
                 'DOB': student.birthday,
                 'sex': student.sex,
                 'phone': student.phone,
-                'sms_phone': student.sms_phone,
+                'smsPhone': student.sms_phone,
                 'email': student.email,
                 'status': sta}
             list.append(s)
@@ -272,7 +287,7 @@ class GetSubject(View):
                 'nx': s.nx,
                 'primary': s.primary,
                 'index': s.index,
-                'number_lession': s.number_lession,
+                'numberLession': s.number_lession,
                 'teacher': s.teacher_id.full_name()})
         return Response(status=status.HTTP_200_OK, content=result)
 
@@ -468,7 +483,7 @@ class SmsSummary(View):
         term = get_current_term(request)
         info_list, students, subjects = cl._generate_mark_summary(term)
         result = {
-            'info_list': info_list,
+            'infoList': info_list,
             'students': students}
         return Response(status.HTTP_200_OK, content=result)
 
@@ -490,12 +505,12 @@ class hanhkiem(View):
             hanhkiem = student.tbnam_set.get(year_id__exact=year.id)
             s = {
                 'id': student.id,
-                'firstname': student.first_name,
-                'lastname': student.last_name,
+                'firstName': student.first_name,
+                'lastName': student.last_name,
                 'DOB': student.birthday,
                 'sex': student.sex,
                 'phone': student.phone,
-                'sms_phone': student.sms_phone,
+                'smsPhone': student.sms_phone,
                 'email': student.email,
                 }
             FieldList = ['hk_thang_9', 'hk_thang_10', 'hk_thang_11', 'hk_thang_12', 'hk_thang_1', 'hk_thang_2',
@@ -560,40 +575,87 @@ class hanhkiem(View):
             return Response(status.HTTP_403_FORBIDDEN)
 
 
+def get_schedule_for_teacher(request):
+    current_year = get_current_year(request)
+    tc = get_teacher(request)
+    subjects = Subject.objects.filter(teacher_id=tc, class_id__year_id=current_year)
+    table = [0] * 8
+
+    for day in range(2, 8):
+        temp = [0] * 11
+        for i in range(11):
+            temp[i] = []
+        table[day] = temp
+
+    for day in range(2, 8):
+        print table[day]
+    for s in subjects:
+        cl = s.class_id
+        schedules = cl.tkb_set.all().order_by("day")
+        print len(schedules)
+        for sch in schedules:
+            print sch.day
+            for time in range(1, 11):
+                sub = getattr(sch, 'period_' + str(time))
+                if s == sub:
+                    table[sch.day][time].append(sub)
+    for day in range(2, 8):
+        print table[day]
+    result = {}
+    for day in range(2, 8):
+        aday = []
+        for time in range(1, 10):
+            for x in table[day][time]:
+                a_period = {}
+                a_period['time'] = time
+                a_period['subject'] = x.name
+                a_period['class'] = x.class_id.name
+                aday.append(a_period)
+        result[day] = aday
+    return result
+
+
+def get_schedule_for_student(request):
+    current_year = get_current_year(request)
+    pupil = get_student(request)
+    cl = pupil.current_class()
+    schedules = cl.tkb_set.all().order_by("day")
+    result = {}
+
+    for (i, s) in enumerate(schedules):
+        aday = []
+        for time in range(1, 10):
+            sub = getattr(s, 'period_' + str(time))
+            if sub != None:
+                a_period = {}
+                a_period['time'] = time
+                a_period['subject'] = sub.name
+                teacher = sub.teacher_id
+                if teacher != None:
+                    a_period['teacher'] = teacher.last_name + ' ' + teacher.first_name
+                else:
+                    a_period['teacher'] = ''
+                aday.append(a_period)
+        result[i + 2] = aday
+    return result
+
+
 class Schedule(View):
     @need_login
     def get(self, request):
-        try:
-            year = get_current_year(request)
-            classList = year.class_set.all().order_by('name')
-            table = {}
-            for d in range(2, 8):
-                table[d] = []
-            for cl in classList:
-                for d in range(2, 8):
-                    tmp = None
-                    try:
-                        tmp = cl.tkb_set.get(day=d)
-                    except Exception as e:
-                        tmp = TKB()
-                        tmp.day = d
-                        tmp.class_id = cl
-                        tmp.save()
-                    for field in range(1, 11):
-                        sub = getattr(tmp, 'period_' + str(field))
-                        if not sub: continue
-                        new_dict = {'class': cl.name, 'subject': sub.name, 'time': field}
-                        table[d].append(new_dict)
-                    if tmp.chaoco:
-                        new_dict = {'class': cl.name, 'subject': u'Chào cờ', 'time': tmp.chaoco}
-                        table[d].append(new_dict)
-                    if tmp.sinhhoat:
-                        new_dict = {'class': cl.name, 'subject': u'Sinh hoạt', 'time': tmp.sinhhoat}
-                        table[d].append(new_dict)
-            return HttpResponse(simplejson.dumps(table), mimetype='json')
-        except Exception as e:
-            print e
-            return Response(status.HTTP_403_FORBIDDEN)
+        if get_position(request) == 1:
+            result = get_schedule_for_student(request)
+        elif get_position(request) == 3:
+            result = get_schedule_for_teacher(request)
+            #return Response(status=status.HTTP_200_OK, content=list)
+        return HttpResponse(simplejson.dumps(result), mimetype='json')
+
+
+class ScheduleForStudent(View):
+    @need_login
+    def get(self, request):
+    #return Response(status=status.HTTP_200_OK, content=list)
+        return HttpResponse(simplejson.dumps(result), mimetype='json')
 
 
 class StudentProfile(View):
@@ -653,18 +715,26 @@ class StudentProfile(View):
 
 
 class MarkForASubject(View):
-    #@need_login
+    @need_login
     #@school_function
     #@operating_permission(['HIEU_PHO', 'HIEU_TRUONG', 'GIAO_VIEN'])
-    def get(self, request, subject_id, term_id):
+    def get(self, request, subject_id, term_number=None):
         selected_subject = Subject.objects.get(id=subject_id)
-        selected_term = Term.objects.get(id=term_id)
+        year = selected_subject.class_id.year_id
+        current_year = get_current_year(request)
+        if term_number == None:
+            if year != current_year:
+                selected_term = Term.objects.get(year_id=year, number=2)
+            else:
+                selected_term = get_current_term(request, True)
+        else:
+            selected_term = Term.objects.get(year_id=year, number=term_number)
         time_to_edit = int(selected_term.year_id.school_id.get_setting('lock_time')) * 60
         now = datetime.datetime.now()
         time_now = int((now - CHECKED_DATE).total_seconds() / 60)
         print time_to_edit
         list = []
-        marks = Mark.objects.filter(term_id=term_id, subject_id=subject_id, current=True).order_by(
+        marks = Mark.objects.filter(term_id=selected_term.id, subject_id=subject_id, current=True).order_by(
             'student_id__index', 'student_id__first_name', 'student_id__last_name', 'student_id__birthday')
         if selected_term.number == 2:
             before_term = Term.objects.get(year_id=selected_term.year_id, number=1).id
@@ -676,10 +746,11 @@ class MarkForASubject(View):
             temp = len(term1s)
             temp = len(tbnams)
         for (t, m) in enumerate(marks):
-            adict = {}
-            adict.update({"id": int(m.id)})
-            adict.update({"last_name": m.student_id.last_name})
-            adict.update({"first_name": m.student_id.first_name})
+            adict = {
+                "id": int(m.id),
+                "lastName": m.student_id.last_name,
+                "firstName": m.student_id.first_name
+            }
 
             arr_mark = m.toArrayMark()
             arr_time = m.toArrayTime()
@@ -687,90 +758,122 @@ class MarkForASubject(View):
             temp_arr = []
             for (i, a) in enumerate(arr_mark):
                 if a != '':
-                    a_mark = {}
-                    a_mark.update({'n': i})
-                    a_mark.update({'m': a})
+                    a_mark = {
+                        'n': i,
+                        'm': a
+                    }
                     if arr_sent[i] == '1':
-                        a_mark.update({'s': 1})
+                        a_mark['s'] = 1
                     else:
-                        a_mark.update({'s': 0})
+                        a_mark['s'] = 0
                     if (time_now - int(arr_time[i]) > time_to_edit):
-                        a_mark.update({'e': 0})
+                        a_mark['e'] = 0
                     else:
-                        a_mark.update({'e': 1})
+                        a_mark['e'] = 1
 
                     temp_arr.append(a_mark)
 
             if m.ck != None:
-                a_mark = {}
-                a_mark.update({'n': 3 * MAX_COL + 1})
-                a_mark.update({'m': m.ck})
+                a_mark = {
+                    'n': 3 * MAX_COL + 1,
+                    'm': m.ck
+                }
 
                 if arr_sent[3 * MAX_COL + 1] == '1':
-                    a_mark.update({'s': 1})
+                    a_mark['s'] = 1
                 else:
-                    a_mark.update({'s': 0})
+                    a_mark['s'] = 0
 
                 if (time_now - int(arr_time[3 * MAX_COL + 1]) > time_to_edit):
-                    a_mark.update({'e': 0})
+                    a_mark['e'] = 0
                 else:
-                    a_mark.update({'e': 1})
+                    a_mark['e'] = 1
 
                 temp_arr.append(a_mark)
 
             if selected_term.number == 2:
                 if term1s[t].tb != None:
-                    a_mark = {}
-                    a_mark.update({'n': 3 * MAX_COL + 2})
-                    a_mark.update({'m': term1s[t].tb})
+                    a_mark = {
+                        'n': 3 * MAX_COL + 2,
+                        'm': term1s[t].tb
+                    }
                     arr_sent1 = term1s[t].to_array_sent()
                     if arr_sent1[3 * MAX_COL + 2] == '1':
-                        a_mark.update({'s': 1})
+                        a_mark['s'] = 1
                     else:
-                        a_mark.update({'s': 0})
+                        a_mark['s'] = 0
 
-                    a_mark.update({'e': 0})
+                    a_mark['e'] = 0
                     temp_arr.append(a_mark)
 
             if m.tb != None:
-                a_mark = {}
-                a_mark.update({'n': 3 * MAX_COL + 3})
-                a_mark.update({'m': m.tb})
+                if selected_term.number == 2:
+                    a_mark = {
+                        'n': 3 * MAX_COL + 3,
+                        'm': m.tb
+                    }
+                else:
+                    a_mark = {
+                        'n': 3 * MAX_COL + 2,
+                        'm': m.tb
+                    }
                 if arr_sent[3 * MAX_COL + 2] == '1':
-                    a_mark.update({'s': 1})
+                    a_mark['s'] = 1
                 else:
-                    a_mark.update({'s': 0})
-
+                    a_mark['s'] = 0
                 if (time_now - int(arr_time[3 * MAX_COL + 2]) > time_to_edit):
-                    a_mark.update({'e': 0})
+                    a_mark['e'] = 0
                 else:
-                    a_mark.update({'e': 1})
+                    a_mark['e'] = 1
 
                 temp_arr.append(a_mark)
 
             if selected_term.number == 2:
                 if tbnams[t].tb_nam != None:
-                    a_mark = {}
-                    a_mark.update({'n': 3 * MAX_COL + 4})
-                    a_mark.update({'m': tbnams[t].tb_nam})
+                    a_mark = {
+                        'n': 3 * MAX_COL + 4,
+                        'm': tbnams[t].tb_nam
+                    }
                     if tbnams[t].sent:
-                        a_mark.update({'s': 1})
+                        a_mark['s'] = 1
                     else:
-                        a_mark.update({'s': 0})
-                    a_mark.update({'e': 0})
+                        a_mark['s'] = 0
+                    a_mark['e'] = 0
                     temp_arr.append(a_mark)
 
-            adict.update({"mark": temp_arr})
+            adict["mark"] = temp_arr
             list.append(adict)
             #print list
-        return Response(status=status.HTTP_200_OK, content=list)
-        #return HttpResponse(simplejson.dumps(list), mimetype='json')
+        #return Response(status=status.HTTP_200_OK, content=list)
+        return HttpResponse(simplejson.dumps(list), mimetype='json')
 
 
     @need_login
-    @operating_permission(['HIEU_PHO', 'HIEU_TRUONG', 'GIAO_VIEN'])
     def post(self, request):
-        pass
+        tt1 = time.time()
+        data = request.POST['data']
+        #data = '[{"first_name": "\u00c1nh", "last_name": "\u0110\u1eb7ng Ng\u1ecdc", "id": 602038, "mark": [{"e": 1, "s": 0, "m": "5", "n": 1}, {"e": 1, "s": 0, "m": "6", "n": 2}, {"e": 1, "s": 0, "m": "6", "n": 3}, {"e": 1, "s": 0, "m": "2", "n": 4}, {"e": 1, "s": 0, "m": "9", "n": 9}]}]'
+        data = eval(data)
+        teacher = get_teacher(request)
+        position = 3
+        user = request.user
+        time_history = 60
+        for p in data:
+            mark_id = p['id']
+            selected_mark = Mark.objects.get(id=mark_id)
+            subject = selected_mark.subject_id
+
+            temp = str(mark_id) + ':'
+            number_str = ''
+            mark_str = ''
+            marks = p['mark']
+            for m in marks:
+                number_str += str(m['n']) + '*'
+                mark_str += str(m['m']) + '*'
+            temp += number_str + ':' + mark_str
+            update_mark(temp, subject.primary, subject.nx, user, time_history, position, None, teacher)
+        tt2 = time.time()
+        print tt2 - tt1
 
 
 class MarkForAStudent(View):
@@ -780,6 +883,7 @@ class MarkForAStudent(View):
     def get(self, request, student_id, term_id=None):
         if term_id == None:
             term_id = get_current_term(request, except_summer=True).id
+            print get_current_term(request, except_summer=True).number
         list = getMarkForAStudent(student_id, term_id)
         #return Response(status=status.HTTP_200_OK, content=list)
         return HttpResponse(simplejson.dumps(list), mimetype='json')
@@ -788,3 +892,73 @@ class MarkForAStudent(View):
     @operating_permission(['HIEU_PHO', 'HIEU_TRUONG', 'GIAO_VIEN'])
     def post(self, request):
         pass
+
+
+class GetListTerm(View):
+    @need_login
+    def get(self, request):
+        school = request.user.userprofile.organization
+        terms = Term.objects.filter(year_id__school_id=school).order_by("year_id__time", "number")
+        list = []
+        for term in terms:
+            if term.number != 3:
+                a_term = {}
+                a_term['termId'] = term.id
+                a_term['year'] = term.year_id.time
+                a_term['number'] = term.number
+                list.append(a_term)
+        return HttpResponse(simplejson.dumps(list), mimetype='json')
+
+
+class GetAttendanceForStudent(View):
+    @need_login
+    def get(self, request, all=None, day=None, month=None, year=None, day1=None, month1=None, year1=None):
+        student = get_student(request)
+        if all == 'allTerm':
+            current_term = get_current_term(request)
+            attendaces = DiemDanh.objects.filter(student_id=student, term_id=current_term).order_by("time")
+        elif all == 'allYear':
+            current_year = get_current_year(request)
+            term1 = Term.objects.get(year_id=current_year, number=1)
+            term2 = Term.objects.get(year_id=current_year, number=2)
+            attendaces = DiemDanh.objects.filter(student_id=student, term_id__in=[term1.id, term2.id]).order_by("time")
+        elif all != None:
+            raise Exception("Page not found")
+        else:
+            first_day = datetime.datetime(int(year), int(month), int(day))
+            second_day = datetime.datetime(int(year1), int(month1), int(day1))
+            attendaces = DiemDanh.objects.filter(student_id=student, time__range=(first_day, second_day)).order_by(
+                "time")
+        result = []
+        for att in attendaces:
+            a_att = {}
+            a_att['time'] = att.time.strftime("%d/%m/%Y")
+            a_att['type'] = att.loai
+            a_att['sent'] = att.sent
+            result.append(a_att)
+
+        return HttpResponse(simplejson.dumps(result), mimetype='json')
+
+
+class GetSubjectOfHomeroomTeacher(View):
+    @need_login
+    @operating_permission(['GIAO_VIEN'])
+
+    def get(self, request):
+        teacher = get_teacher(request)
+        homeroom_class = teacher.current_homeroom_class()
+        result = []
+        if homeroom_class != None:
+            subjects = Subject.objects.filter(class_id=homeroom_class)
+            for subject in subjects:
+                a_subject = {
+                    'subjectId': subject.id,
+                    'isComment': subject.nx,
+                    'classId': homeroom_class.id,
+                    'className': homeroom_class.name,
+                    'subject': subject.name,
+                    #'size': h.number_of_pupils(),
+                }
+                result.append(a_subject)
+        return HttpResponse(simplejson.dumps(result), mimetype='json')
+

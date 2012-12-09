@@ -1087,7 +1087,7 @@ def processFileTKB(request, file_name):
                 continue
         except Exception as e:
             print e
-            return {'error': u'File tải lên không phải file Excel'}
+            return {'error': u'File tải lên không phải file Excel'}, u'File tải lên không phải file Excel'
         sbj = cl.subject_set.all()
         cache = {}
         out_cache = []
@@ -1101,31 +1101,35 @@ def processFileTKB(request, file_name):
                 return {'error': u'File tải lên không phải file Excel'}
 
             r = start_row + 10 * (d - 2) + 1
-            for i in range(0, 10):
-                sb = None
-                subjectName = sheet.cell(r + i, c).value.strip()
-                sub_name =to_en1(subjectName).split('-')[0].strip().lower()
-                if sub_name in out_cache:
-                    continue
-                if sub_name in cache:
-                    sb = cache[sub_name]
-                elif sub_name != u'':
-                    for _sb in sbj:
-                        if match_subject(_sb, sub_name):
-                            sb = _sb
-                            cache[sub_name] = _sb
-                            break
-                setattr(t, 'period_' + str(i+1), sb)
-                if (subjectName != '') and (not sb):
-                    if sub_name == u'chao co':
-                        setattr(t, 'chaoco', i+1)
-                    elif sub_name == u'sinh hoat' or sub_name == u'sh':
-                        setattr(t, 'sinhhoat', i+1)
-                    else:
-                        message += u'<li>Không tồn tại môn ' + subjectName + u' trong lớp ' + sheet.cell(start_row,
-                        c).value.strip() + u'</li>'
-                        out_cache.append(sub_name)
-            t.save()
+            try:
+                for i in range(0, 10):
+                    sb = None
+                    subjectName = unicode(sheet.cell(r + i, c).value).strip()
+                    sub_name =to_en1(subjectName).split('-')[0].strip().lower()
+                    if sub_name in out_cache:
+                        continue
+                    if sub_name in cache:
+                        sb = cache[sub_name]
+                    elif sub_name != u'':
+                        for _sb in sbj:
+                            if match_subject(_sb, sub_name):
+                                sb = _sb
+                                cache[sub_name] = _sb
+                                break
+                    setattr(t, 'period_' + str(i+1), sb)
+                    if (subjectName != '') and (not sb):
+                        if sub_name == u'chao co':
+                            setattr(t, 'chaoco', i+1)
+                        elif sub_name == u'sinh hoat' or sub_name == u'sh':
+                            setattr(t, 'sinhhoat', i+1)
+                        else:
+                            message += u'<li>Không tồn tại môn ' + subjectName + u' trong lớp ' + sheet.cell(start_row,
+                            c).value.strip() + u'</li>'
+                            out_cache.append(sub_name)
+                t.save()
+            except Exception as e:
+                print e
+                return {'error': u'File tải lên không đúng cấu trúc'},  u'File tải lên không đúng cấu trúc'
 
     #get warning for duplications
     try:

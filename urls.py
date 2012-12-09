@@ -8,7 +8,6 @@ import teacher.views as teacher_views
 import school.urls as school_urls
 import api.urls as api_urls
 import teacher.urls as teacher_urls
-import help.urls as help_urls
 import views
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -32,6 +31,12 @@ urlpatterns = patterns('',
         name="manage_register"),
     url(r'^manageRegister/(?P<sort_by_date>\w+)/(?P<sort_by_status>\w+)/$',
         app_views.manage_register, name="manage_register"),
+    url(r'^manageSchool/$', app_views.manage_school,
+        name='manage_school'),
+    url(r'^manageSchool/(?P<sort_by_balance>\w+)/$', app_views.manage_school,
+        name="manage_school"),
+    url(r'^manageSchool/(?P<sort_by_balance>\w+)/(?P<sort_by_status>\w+)/$',
+        app_views.manage_school, name="manage_school"),
 
 
     # Uncomment the next line to enable the admin:
@@ -48,11 +53,11 @@ urlpatterns = patterns('',
     url(r'^api/', include(api_urls)),
 
     url(r'^about/$', views.about, name="about"),
+    url(r'help/(?P<page>[\w\-]*)$', views.help, name="help"),
 
 #    url(r'^profile/', 'views.get_absolute_url'),
 
     #url for help app
-    url(r'^help/', include(help_urls)),
 
     (r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
     (r'^(?P<path>robots.txt)$', serve, {'document_root': settings.STATIC_ROOT}),

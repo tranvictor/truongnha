@@ -2,6 +2,7 @@ $(document).ready(function(){
     $(".accountInfo").hide();
     $("#tableFunction").css('width', $("#registerTable").css('width'));
     var select = function() {
+        var numberOfSelected;
         if (!$(this).hasClass('thread') && !$(this).hasClass('form') && !$(this).hasClass('function')) {
             var id = $(this).attr('class').split(' ')[0];
             var checkboxid = '#checkbox_' + id;
@@ -13,10 +14,20 @@ $(document).ready(function(){
                 if (n == 1 || n==0) {
                     $(checkboxall).prop("checked", false);
                 }
+                numberOfSelected = $("tr.selected").length;
+                if (numberOfSelected == 0) {
+                    $("#showChosenRegister").html("Chưa chọn đăng ký nào");
+                    $("#send").attr('disabled', 'disabled');
+                } else {
+                    $("#showChosenRegister").html((numberOfSelected).toString() + " đăng ký");
+                }
             } else {
                 $(this).addClass('selected');
                 $(checkboxid).prop("checked", true);
                 $(checkboxall).prop("checked", true);
+                numberOfSelected = $("tr.selected").length;
+                $("#showChosenRegister").html((numberOfSelected).toString() + " đăng ký");
+                $("#send").removeAttr('disabled');
             }
         }
     };
@@ -138,12 +149,12 @@ $(document).ready(function(){
                 if ($(this).text() == "Chưa cấp") numberOfUnregistered ++;
             });
             if (!numberOfUnregistered){
-                $("tr.thread").hide();
-                jQuery('<p id="noRegisterLeft">Không có đăng ký nào chưa cấp tài khoản.</p>').insertAfter($('#tableFunction'));
+                $("thead").hide();
+                jQuery('<p id="noRegisterLeft">Không có đăng ký nào chưa cấp tài khoản.</p>').insertAfter($('#registerTable'));
             }
         }else {
             $("#noRegisterLeft").remove();
-            $("tr.thread").show();
+            $("thead").show();
             $(".status").each(function(){
                 if ($(this).text() == "Đã cấp"){
                     $(this).parent().show();
@@ -152,6 +163,89 @@ $(document).ready(function(){
             $(this).text("Ẩn đăng ký đã cấp");
 
         }
-    })
+    });
+
+    var $document = $(document);
+    var deselectAllRegister = function(){
+        var $trs = $('tr.register');
+        for ( var i = $trs.length; i--;){
+            var $tr = $($trs[i]);
+            if ($tr.hasClass('selected')){
+                $tr.removeClass('selected');
+                var id = $tr.attr('class').split(' ')[0];
+                $('#checkbox_' + id).prop("checked", false);
+            }
+        }
+        $('#checkbox_all').prop("checked", false);
+        $("#showChosenRegister").html("Chưa chọn đăng ký nào");
+        $("#send").attr('disabled', 'disabled');
+    };
+
+    $("#textSms").click(function() {
+        // setting up layout
+        if ($("#smsWindow").css('display') == 'none') {
+            var buttonOffsetTop = $(this).offset().top;
+            var contentWidth = parseInt($("#content").css('width'));
+            var smsWindow = $("#smsWindow");
+            var smsWindowWidth = parseInt(smsWindow.css('width'));
+            smsWindow.css('position', 'absolute')
+                .css('top', buttonOffsetTop + 30)
+                .css('left', contentWidth - smsWindowWidth )
+                .slideDown(400);
+        } else {
+            $("#smsWindow").slideUp(400);
+            deselectAllRegister();
+        }
+    });
+    $("#smsClose").click(function() {
+        $("#smsWindow").fadeOut(400);
+        deselectAllRegister();
+    });
+    $("#send").click(function() {
+        var content = $("#smsContent").val();
+        var registerList = "";
+        $("tr.selected").each(function() {
+            registerList += $(this).attr('class').split(" ")[0] + "-";
+        });
+        if (content.replace(/ /g, '') == '') {
+            $("#notify").showNotification("Nội dung còn trống");
+        } else {
+            //noinspection JSUnusedGlobalSymbols
+            var arg = { type:"POST",
+                url:"",
+                global: false,
+                data: { content:content,
+                    request_type:'send_email',
+                    register_list:registerList},
+                datatype:"json",
+                success: function(json) {
+                    if (json.message){
+                        $("#notify").showNotification(json.message);
+                    $("#smsProgressbar").hide();
+                    deselectAllRegister();
+                    $("#smsWindow").fadeOut(300);
+                    }
+                },
+                error: function() {
+                    $("#notify").showNotification("Gặp lỗi khi gửi tin nhắn");
+                    $("#smsProgressbar").hide();
+                }
+            };
+            $("#smsProgressbar").css('width', $("#smsContent").css('width'));
+            $("#smsProgressbar").show();
+            $.ajax(arg);
+        }
+
+        return false;
+    });
+
+    // key function
+    $document.keydown(function(e){
+        if (e.which == 27 && $("#smsWindow").css('display') != 'none'){
+            // press esc to close sms window
+            $("#smsWindow").fadeOut(400);
+            deselectAllRegister();
+        }
+    });
 
 });
