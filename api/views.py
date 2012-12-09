@@ -14,7 +14,8 @@ from school.class_functions import dd
 from school.models import Class, Pupil, Term, Subject, DiemDanh,\
     KhenThuong, KiLuat, Mark, TKMon
 from school.utils import get_position, get_school, is_teacher,\
-        get_current_term, get_current_year, get_student, get_teacher
+        get_current_term, get_current_year, get_student, get_teacher,\
+        to_date
 from api.utils import getMarkForAStudent
 from school.forms import MarkForm
 from decorators import need_login, operating_permission, school_function
