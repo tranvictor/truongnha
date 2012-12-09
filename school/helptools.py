@@ -24,6 +24,9 @@ TEST_TABLE = os.path.join('helptool','test_table.html')
 REALTIME = os.path.join('helptool','realtime_test.html')
 CONVERT_MARK= os.path.join('helptool','convert_mark.html')
 
+def fail_all_pending_sms():
+    sms.objects.filter(recent=True).update(recent=False)
+
 def _tsp_statistic(school=None):
     if school:
         teacher_phone = school.teacher_set.exclude(sms_phone='').values('sms_phone')

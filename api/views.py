@@ -21,6 +21,8 @@ from decorators import need_login, operating_permission, school_function
 import simplejson
 import datetime
 import re
+from django.views.decorators.csrf import csrf_exempt
+from djangorestframework.response import ErrorResponse
 from school.templateExcel import  MAX_COL, CHECKED_DATE
 
 class ApiLogin(View):
@@ -378,12 +380,12 @@ class SmsStatus(View):
 
 class FailedSms(View):
     re_post_format = re.compile('^(\d+\-(failed|ok)\*{1,2})+')
+
     @need_login
     @operating_permission(['SUPER_USER'])
     def get(self, request, from_date, limit=10):
         try:
             from_date = to_date(from_date)
-            print from_date
         except Exception:
             message = u'Ngày cần theo dạng dd-mm-yyyy'
             success = False
@@ -402,7 +404,6 @@ class FailedSms(View):
         for s in smses:
             s.recent = True
             s.save()
-        print result
         return HttpResponse(simplejson.dumps({
             'message': u'Nhận %d tin nhắn' % len(smses),
             'smses': result,
@@ -410,7 +411,7 @@ class FailedSms(View):
 
     @need_login
     @operating_permission(['SUPER_USER'])
-    def post(self, request, **kwargs):
+    def post(self, request, from_date=None):
         sms_list = request.POST['sms_list']
         sms_list += '*' # Stupid maker
         temp = FailedSms.re_post_format.match(sms_list)
@@ -421,7 +422,7 @@ class FailedSms(View):
                 'message': message,
                 'success': success}, mimetype='json'))
         else:
-            sms_list = sms_list.spilt('*')
+            sms_list = sms_list.split('*')
             number = 0
             for s in sms_list:
                 if s:
@@ -443,9 +444,9 @@ class FailedSms(View):
                         pass
             message = u'Đã cập nhật thành công %d tin nhắn ' % number
             success = True
-            HttpResponse(simplejson.dumps({
+            return HttpResponse(simplejson.dumps({
                 'message': message,
-                'success': success}, mimetype='json'))
+                'success': success}), mimetype='json')
 
 class SmsSummary(View):
     @need_login
