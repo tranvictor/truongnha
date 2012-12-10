@@ -114,7 +114,9 @@ def exportToExcel(pupilList, exceltionalPupil, classifiedType, s, name, date, ti
         if classifiedType == '3':
             pupilList1 = pupilList
         else:
-            pupilList1 = pupilList[b.number]
+            if b.number in pupilList:
+                pupilList1 = pupilList[b.number]
+            else: pupilList1 = []
 
         for p in pupilList1:
             if not p.id in exceltionalPupil:
