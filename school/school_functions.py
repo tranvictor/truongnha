@@ -614,8 +614,8 @@ def editTeacherDetail(request, teacher_id):
     pos = get_position(request)
     if request.is_ajax() and pos >= 3:
         data = request.POST.copy()
-        data['first_name'] = data['first_name'].strip()
-        data['last_name'] = data['last_name'].strip()
+        if 'first_name' in data: data['first_name'] = data['first_name'].strip()
+        if 'last_name' in data: data['last_name'] = data['last_name'].strip()
         form = TeacherForm(teacher.school_id_id, data, instance=teacher)
         message = u'Đã lưu'
         if request.method == 'POST':
