@@ -1,6 +1,7 @@
 from unittests import base_tests, school_unittests, mark_unittests
 from unittest import TestCase, TestSuite
 from app.tests import BasicWorkFlow
+from unittests.school_unittests import ExamTest
 import inspect
 import itertools
 import os

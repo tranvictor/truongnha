@@ -1540,3 +1540,65 @@ class MoveStudentTest3(MarkTest):
         self.assertEqual(mark.subject_id,subject)
         self.assertEqual(mark.diem,'1*2|3*9*8|6*7*8')
         self.assertEqual(mark.ck,9)
+
+class ExamTest(SchoolSetupTest):
+    def phase8_add_student(self):
+        if self.school_level == 2:
+            self.actual_grades = [6, 7, 8]
+        else:
+            self.actual_grades = [10, 11, 12]
+        self.label = ['A','B','C']
+        i = -1
+        for g in self.actual_grades:
+            i+=1
+            for l in self.label:
+                name = str(g)+' '+l
+                cl = self.year.class_set.get(name=name)
+                file_name = 'school/unittests/ds_hoc_sinh_'+ str(i) + str(l) + '.xls'
+                with open(file_name, 'rb') as input_file:
+                    res = self.client.post(
+                        reverse('student_import', args=[cl.id,'import']),
+                        {
+                            'name': 'import file',
+                            'files[]': [input_file]
+                        })
+                    self.assertEqual(res.status_code, 200)
+                    self.assertEqual(res['Content-Type'], 'json')
+                    content = simplejson.loads(res.content)
+                    content = content[0]
+                    self.assertEqual(content['number'], 40)
+                    self.assertEqual(content['number_ok'], 40)
+                    self.assertEqual(content['message'], u'Nhập dữ liệu thành công')
+                    self.assertEqual(content['student_confliction'], '')
+    def phase9_create_exam(self):
+        post_dict ={ u'classifiedType': 1,
+            u'name': u'Tess 1',
+            u'subject': u'',
+            u'date': u'',
+            u'time': u'',
+            u'maxPupil': u'25',
+            }
+        for g in self.actual_grades:
+            for label in self.label:
+                name = str(g)+' '+label
+                cl = self.year.class_set.get(name=name)
+                post_dict[cl.id] = u'on'
+        response = self.client.post(
+            reverse('create_list_exam'),post_dict,
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEquals(response['Content-Disposition'], u'attachment; filename=danhSachThi.xls')
+        post_dict['classifiedType'] = 2
+        response = self.client.post(
+            reverse('create_list_exam'),post_dict,
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEquals(response['Content-Disposition'], u'attachment; filename=danhSachThi.xls')
+        self.assertEqual(response.status_code, 200)
+        post_dict['classifiedType'] = 3
+        response = self.client.post(
+            reverse('create_list_exam'),post_dict,
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEquals(response['Content-Disposition'], u'attachment; filename=danhSachThi.xls')
+        self.assertEqual(response.status_code, 200)
