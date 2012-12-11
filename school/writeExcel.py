@@ -2514,3 +2514,49 @@ def countFinalMarkExcel(type, yearNumber, termNumber, subjectIndex, blockIndex, 
     response['Content-Disposition'] = u'attachment; filename=%s.xls' % name
     book.save(response)
     return response
+
+def generate_school_mark_count_report_excel(count_mark,classes,subject_name,subject_name_cl,term_num,year):
+    book = Workbook(encoding='utf-8')
+    s = book.add_sheet('SoLuongDiem',True)
+    printHeader(s, 0, 0, year.school_id, 9)
+    printCongHoa(s, 0, 10, 13)
+    s.col(0).width = PLACE_WIDTH
+    x = 4
+    y = 1
+    i = 3
+    s.write_merge(x,x+1,0,0,u'Lớp',h4)
+    for subject in subject_name:
+        s.write_merge(x,x,y,y+i,subject,h4)
+        s.write(x+1,y,'M',h4)
+        s.write(x+1,y+1,'15',h4)
+        s.write(x+1,y+2,'45',h4)
+        s.write(x+1,y+3,'CK',h4)
+        y += 4
+    x += 2
+    y = 1
+    for cl in classes:
+        s.write(x,0,cl.name,h4)
+        for subject in subject_name:
+            if subject in subject_name_cl[cl.id]:
+                subject_id = subject_name_cl[cl.id][subject]
+                s.write(x,y,count_mark[subject_id]['m'],h4)
+                s.write(x,y+1,count_mark[subject_id]['15'],h4)
+                s.write(x,y+2,count_mark[subject_id]['45'],h4)
+                s.write(x,y+3,count_mark[subject_id]['ck'],h4)
+            else:
+                s.write(x,y,0,h4)
+                s.write(x,y+1,0,h4)
+                s.write(x,y+2,0,h4)
+                s.write(x,y+3,0,h4)
+            y += 4
+        x += 1
+        y = 1
+    if int(term_num) < 3:
+        term = 'Ky' + str(term_num)
+    else:
+        term = 'CaNam'
+    name = u'ThongKeSoLuongDiem' + unicode(year) + term
+    response = HttpResponse(mimetype='application/ms-excel')
+    response['Content-Disposition'] = u'attachment; filename=%s.xls' % name
+    book.save(response)
+    return response
