@@ -340,22 +340,15 @@ class BasicPersonInfo(models.Model):
             sms_sent = False
             try:
                 subject = u'Kích hoạt tài khoản Trường Nhà'
-                message = u'''Tài khoản trường %s tại địa chỉ: \
-                        https://truongnha.com của bạn là:\n\
-                        Tên đăng nhập: %s\n Mật khẩu: %s\n\
-                        Xin cảm ơn.''' % (unicode(self.school_id),
-                        unicode(self.user_id.username),
-                        unicode(raw_password))
+                message = u'''Tài khoản trường %s tại địa chỉ: https://truongnha.com của bạn là:\nTên đăng nhập: %s\n Mật khẩu: %s\nXin cảm ơn.''' \
+                          % (unicode(self.school_id),unicode(self.user_id.username),unicode(raw_password))
                 send_email(subject, message, to_addr=[self.email])
                 email_sent = True
             except Exception as e:
                 print e
             try:
-                content = '''Tai khoan Truongnha.com:\n\
-                        Ten: %s\n\
-                        Mat khau: %s\n\
-                        Xin cam on.''' % (self.user_id.username,
-                                raw_password)
+                content = '''Tai khoan Truongnha.com:\nTen: %s\nMat khau: %s\nXin cam on.''' \
+                          % (self.user_id.username,raw_password)
                 sendSMS(self.sms_phone, content,
                         self.user_id, self.user_id,
                         save_to_db=False,
@@ -498,8 +491,8 @@ class Teacher(BasicPersonInfo):
         self.user_id.save()
         try:
             subject = u'Vô hiệu hóa tài khoản Trường Nhà'
-            message = u'Tài khoản tại dịch vụ Trường nhà (truongnha.com) đã bị vô hiệu hóa bởi nhân viên quản trị\
-            trường' + unicode(self.school_id) + u'\n' + u'\n' + u'Xin cảm ơn.'
+            message = u'Tài khoản tại dịch vụ Trường nhà (truongnha.com) đã bị vô hiệu hóa bởi nhân viên quản trị trường' +\
+                      unicode(self.school_id) + u'\n' + u'\n' + u'Xin cảm ơn.'
             send_email(subject, message, to_addr=[self.email])
         except Exception as e:
             print e

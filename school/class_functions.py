@@ -183,8 +183,7 @@ def viewClassDetail(request, class_id):
                             'number_of_blank': 0,
                             'number_of_failed': number_of_student,
                             'number_of_email_sent': 0,
-                            'message': u'Tài khoản trường không đủ gửi %d tin nhắn'\
-                                    % number_of_student})
+                            'message': u'Tài khoản trường không đủ gửi %d tin nhắn'% number_of_student})
                          return HttpResponse(data, mimetype='json')
                     for student in students:
                         if student.sms_phone:
@@ -281,8 +280,7 @@ def viewClassDetail(request, class_id):
                             school_join_date=school_join_date)
 
                     if not added:
-                            message = u'<li>Học sinh đã tồn tại ở lớp %s</li>'\
-                                    % student.current_class()
+                            message = u'<li>Học sinh đã tồn tại ở lớp %s</li>'% student.current_class()
                             data = simplejson.dumps({'message': message})
                             return HttpResponse(data, mimetype='json')
                     else:
