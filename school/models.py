@@ -493,6 +493,13 @@ class Teacher(BasicPersonInfo):
         else: subjects = Subject.objects.filter(teacher_id=self)
         return subjects
 
+    def current_teaching_subject(self):
+        year = Year.objects.filter(school_id=self.school_id).latest('time')
+        if not year: raise Exception("SchoolNotStarted")
+        return self.teaching_subject(year)
+
+
+
     def disable_account(self):
         self.user_id.is_active = False
         self.user_id.save()

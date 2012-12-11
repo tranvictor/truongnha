@@ -29,7 +29,9 @@ urlpatterns = patterns('',
 
     url(r'markForASubject/$', MarkForASubject.as_view(),
         name='api_post_mark_for_a_subject'),
-    url(r'markForASubject/(?P<subject_id>\w+)/(?P<term_id>\w+)$',
+    url(r'markForASubject/(?P<subject_id>\w+)/(?P<term_number>\w+)$',
+        MarkForASubject.as_view(), name='api_get_mark_for_a_subject'),
+    url(r'markForASubject/(?P<subject_id>\w+)$',
         MarkForASubject.as_view(), name='api_get_mark_for_a_subject'),
 
     url(r'markForAStudent/(?P<student_id>\w+)/(?P<term_id>\w+)$',
