@@ -1,6 +1,5 @@
 # coding: utf8
 __author__ = 'vutran'
-from django.core.serializers.json import DjangoJSONEncoder
 from djangorestframework.views import View
 from django.db import transaction
 from djangorestframework.response import Response
@@ -12,10 +11,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from app.views import login
 from sms.models import sms
 from school.class_functions import dd
-from school.models import Class, Pupil, Term, Subject, DiemDanh, TBNam, TKB,\
+from school.models import Class, Pupil, Term, Subject, DiemDanh,\
     KhenThuong, KiLuat, Mark, TKMon
 from school.utils import get_position, get_school, is_teacher,\
-    get_current_term, get_current_year, to_en1, get_student, get_teacher
+        get_current_term, get_current_year, get_student, get_teacher,\
+        to_date
 from api.utils import getMarkForAStudent
 from school.forms import MarkForm
 from decorators import need_login, operating_permission, school_function
@@ -23,7 +23,7 @@ import simplejson
 import time
 import datetime
 import re
-from school.templateExcel import  MAX_COL, CHECKED_DATE, normalize
+from school.templateExcel import  MAX_COL, CHECKED_DATE
 from school.viewMark import update_mark
 
 class ApiLogin(View):
@@ -384,6 +384,75 @@ class SmsStatus(View):
             result[s.id] = '%s-%s' % (s.recent, s.success)
         return Response(status.HTTP_200_OK, content=result)
 
+class FailedSms(View):
+    re_post_format = re.compile('^(\d+\-(failed|ok)\*{1,2})+')
+
+    @need_login
+    @operating_permission(['SUPER_USER'])
+    def get(self, request, from_date, limit=10):
+        try:
+            from_date = to_date(from_date)
+        except Exception:
+            message = u'Ngày cần theo dạng dd-mm-yyyy'
+            success = False
+            HttpResponse(simplejson.dumps({
+                'message': message,
+                'success': success}, mimetype='json'))
+        smses = sms.objects.filter(recent=False,
+                success=False,
+                created__gte=from_date)[:limit]
+        result = []
+        for s in smses:
+            result.append({
+                'id': s.id,
+                'phone': s.phone,
+                'content': s.content})
+        for s in smses:
+            s.recent = True
+            s.save()
+        return HttpResponse(simplejson.dumps({
+            'message': u'Nhận %d tin nhắn' % len(smses),
+            'smses': result,
+            'success': True}), mimetype='json')
+
+    @need_login
+    @operating_permission(['SUPER_USER'])
+    def post(self, request, from_date=None):
+        sms_list = request.POST['sms_list']
+        sms_list += '*' # Stupid maker
+        temp = FailedSms.re_post_format.match(sms_list)
+        if not temp:
+            message = u'Danh sách tin nhắn gửi lên không đúng'
+            success = False
+            HttpResponse(simplejson.dumps({
+                'message': message,
+                'success': success}, mimetype='json'))
+        else:
+            sms_list = sms_list.split('*')
+            number = 0
+            for s in sms_list:
+                if s:
+                    try:
+                        temp = s.split('-')
+                        s_id = temp[0]
+                        s_status = temp[1]
+                        the_sms = sms.objects.get(id=s_id)
+                        if s_status.lower() == 'ok':
+                            the_sms.recent = False
+                            the_sms.success = True
+                            the_sms.save()
+                        else:
+                            the_sms.recent = False
+                            the_sms.success = False
+                            the_sms.save()
+                        number += 1
+                    except Exception:
+                        pass
+            message = u'Đã cập nhật thành công %d tin nhắn ' % number
+            success = True
+            return HttpResponse(simplejson.dumps({
+                'message': message,
+                'success': success}), mimetype='json')
 
 class SmsSummary(View):
     @need_login
