@@ -341,7 +341,7 @@ class BasicPersonInfo(models.Model):
             try:
                 subject = u'Kích hoạt tài khoản Trường Nhà'
                 message = u'''Tài khoản trường %s tại địa chỉ: \
-                        https://www.truongnha.com của bạn là:\n\
+                        https://truongnha.com của bạn là:\n\
                         Tên đăng nhập: %s\n Mật khẩu: %s\n\
                         Xin cảm ơn.''' % (unicode(self.school_id),
                         unicode(self.user_id.username),
@@ -498,7 +498,7 @@ class Teacher(BasicPersonInfo):
         self.user_id.save()
         try:
             subject = u'Vô hiệu hóa tài khoản Trường Nhà'
-            message = u'Tài khoản tại dịch vụ Trường nhà (www.truongnha.com) đã bị vô hiệu hóa bởi nhân viên quản trị\
+            message = u'Tài khoản tại dịch vụ Trường nhà (truongnha.com) đã bị vô hiệu hóa bởi nhân viên quản trị\
             trường' + unicode(self.school_id) + u'\n' + u'\n' + u'Xin cảm ơn.'
             send_email(subject, message, to_addr=[self.email])
         except Exception as e:

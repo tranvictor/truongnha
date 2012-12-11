@@ -130,7 +130,7 @@ class Person(models.Model):
             try:
                 subject = u'Kích hoạt tài khoản Trường Nhà'
                 message = u'Tài khoản tại địa chỉ: \
-                        https://www.truongnha.com của bạn là:\n\
+                        https://truongnha.com của bạn là:\n\
                         Tên đăng nhập: %s\n Mật khẩu: %s\n\
                         Xin cảm ơn.' % (unicode(self.user.username),
                                 unicode(raw_password))

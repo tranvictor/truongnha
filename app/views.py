@@ -433,7 +433,7 @@ def feedback(request):
                 content = 'content: ' + unicode(request.POST['content'])
                 if 'subject' in request.POST:
                     subject= unicode(request.POST['subject'])
-                else: subject = u'[www.truongnha.com] Users\' feedback'
+                else: subject = u'[truongnha.com] Users\' feedback'
                 message = '\n'.join([url, user_name, email, content])
                 Feedback.objects.create(
                     content = content,
@@ -466,7 +466,7 @@ def feedback(request):
                 user_phone = 'phone: ' + unicode(phone)
                 school = 'school: ' + unicode(get_school(request))
                 content = request.POST['content']
-                subject = u'[www.truongnha.com] Users\' feedback'
+                subject = u'[truongnha.com] Users\' feedback'
                 message = '\n'.join([url, user_name, user_email,
                     user_phone, school, content])
                 Feedback.objects.create(
