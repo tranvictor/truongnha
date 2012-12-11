@@ -269,8 +269,8 @@ def sms_summary(request, class_id=None):
             message = '<li>%d tin nhắn sẽ được gửi trong chậm nhất 1h</li>'\
                     % (number)
             if len(ids) > number:
-                message += '<li>%d học sinh không có thông tin mới để gửi hoặc không có số điện\
-                    thoại</li>' % (len(ids) - number)
+                message += '<li>%d học sinh không có thông tin mới để gửi hoặc không có số điện thoại</li>'\
+                           % (len(ids) - number)
         return HttpResponse(simplejson.dumps({
             'message': message,
             'success': True}), mimetype='json')

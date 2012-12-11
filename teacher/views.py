@@ -149,8 +149,7 @@ class RegisterView(TemplateView):
             if register_form.is_valid():
                 teacher = register_form.save()
                 teacher.activate_account()
-                message = u'Bạn đã đăng ký thành công. \
-                        Tài khoản của bạn sẽ được gửi vào email sớm nhất có thể.'
+                message = u'Bạn đã đăng ký thành công. Tài khoản của bạn sẽ được gửi vào email sớm nhất có thể.'
                 success = True
                 if request.is_ajax():
                     response = simplejson.dumps({

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% if not user.userprofile.isSchool %}
+        {% add_crumb 'Báo cáo' 'department_report' %}
+        {% add_crumb request.session.school_name 'report' request.session.school_id  %}
+    {% else %}
+        {% add_crumb 'Báo cáo' 'report' %}
+    {% endif %}
+    {% add_crumb 'Số lượng điểm đã nhập' %}
+{% endblock %}
+{% load dictionary %}
+{% block content %}
+    <div class="btn-toolbar form-inline pagination-centered ">
+        <div class="btn-group" data-toggle="buttons-radio">
+            <a id="1" href="{% url count_mark year_id 1%}" class="btn"> Học kỳ I </a>
+            <a id="2" href="{% url count_mark year_id 2%}" class="btn"> Học kỳ II </a>
+            <a id="3" href="{% url count_mark year_id 3%}" class="btn"> Cả năm </a>
+        </div>
+
+        <a class='btn pull-right' href="{% url count_mark year_id term_num 1%}">Xuất ra Exel </a>
+    </div>
+    <table class="table grid table-bordered">
+        <thead>
+            <tr>
+                <th class="align-left" rowspan="2">Lớp</th>
+                {% for s in subject_name %}
+                    <th colspan="4">{{ s }}</th>
+                {% endfor %}
+            </tr>
+            <tr>
+                {% for s in subject_name %}
+                    <th>M</th>
+                    <th>15</th>
+                    <th>45</th>
+                    <th>CK</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for cl in classes %}
+                {% with subject_name_cl|get_value:cl.id as subject_list %}
+                <tr>
+                    <td nowrap class="align-left">{{ cl.name }}</td>
+                    {% for s in subject_name %}
+                        {% with subject_list|get_value:s as subject_id %}
+                            {% with count_mark|get_value:subject_id as marks %}
+                                <td>{{ marks|get_value:'m'|default_if_none:0 }}</td>
+                                <td>{{ marks|get_value:'15'|default_if_none:0 }}</td>
+                                <td>{{ marks|get_value:'45'|default_if_none:0 }}</td>
+                                <td>{{ marks|get_value:'ck'|default_if_none:0 }}</td>
+                            {% endwith %}
+                        {% endwith %}
+                    {% endfor %}
+                </tr>
+                {% endwith %}
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

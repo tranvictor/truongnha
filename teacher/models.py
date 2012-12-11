@@ -129,21 +129,13 @@ class Person(models.Model):
             sms_sent = False
             try:
                 subject = u'Kích hoạt tài khoản Trường Nhà'
-                message = u'Tài khoản tại địa chỉ: \
-                        https://www.truongnha.com của bạn là:\n\
-                        Tên đăng nhập: %s\n Mật khẩu: %s\n\
-                        Xin cảm ơn.' % (unicode(self.user.username),
-                                unicode(raw_password))
+                message = u'Tài khoản tại địa chỉ: https://truongnha.com của bạn là:\n Tên đăng nhập: %s\n Mật khẩu: %s\n Xin cảm ơn.' % (unicode(self.user.username),unicode(raw_password))
                 send_email(subject, message, to_addr=[self.email])
                 email_sent = True
             except Exception as e:
                 print e
             try:
-                content = 'Tai khoan Truongnha.com:\n\
-                        Ten: %s\n\
-                        Mat khau: %s\n\
-                        Xin cam on.' % (self.user.username,
-                                raw_password)
+                content = 'Tai khoan Truongnha.com:\nTen: %s\nMat khau: %s\nXin cam on.' % (self.user.username,raw_password)
                 sendSMS(self.sms_phone, content,
                         self.user, self.user,
                         save_to_db=False)

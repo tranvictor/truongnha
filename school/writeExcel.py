@@ -13,7 +13,7 @@ from school.templateExcel import h4, noneSubject, h5, h1, first_name1, s3, s2, s
     h6, h7, h2, m1, m2, m3, m4, m5, h3, h8, h9, d1, h10, h61, h71, LASTNAME_WIDTH, SIZE_PAGE_WIDTH, h82, normalize, d2,\
     d3, h81, h91, hh1, f5, f6, STT_WIDTH, FIRSTNAME_WIDTH, A4_WIDTH, printCongHoa, h40, h92, h74, f2, f4, f3, hh2,\
     BIRTHDAY_WIDTH, PLACE_WIDTH, SEX_WIDTH, DAN_TOC_WIDTH, UU_TIEN_WIDTH, A3_WIDTH, f1, f81, f8, f71, f7, f82, m6,\
-    m7, m8, m9, m10, printHeader, SIZE_PAGE_WIDTH1, s4, h72, h73, h41, MAX_VIEW, h8center
+    m7, m8, m9, m10, printHeader, SIZE_PAGE_WIDTH1, s4, h72, h73, h41, MAX_VIEW, h8center, d4
 from school.utils import get_current_term, in_school, get_position, get_level, to_en1, convertDanhHieu,\
     convertHkToVietnamese, convertHlToVietnamese
 from school.viewMark import  getDecodeMark, e
@@ -2510,6 +2510,55 @@ def countFinalMarkExcel(type, yearNumber, termNumber, subjectIndex, blockIndex, 
         term = 'CaNam'
     name = u'SGD_ThongKeDiemTrungBinh' + unicode(yearNumber) + term
 
+    response = HttpResponse(mimetype='application/ms-excel')
+    response['Content-Disposition'] = u'attachment; filename=%s.xls' % name
+    book.save(response)
+    return response
+
+def generate_school_mark_count_report_excel(count_mark,classes,subject_name,subject_name_cl,term_num,year):
+    book = Workbook(encoding='utf-8')
+    s = book.add_sheet('SoLuongDiem',True)
+    printHeader(s, 0, 0, year.school_id, 6)
+    printCongHoa(s, 0, 7, 10)
+    s.col(0).width = 2*STT_WIDTH
+    x = 4
+    y = 1
+    s.write_merge(x,x+1,0,0,u'Lớp',h4)
+    for subject in subject_name:
+        s.write_merge(x,x,y,y+3,subject,h4)
+        s.write(x+1,y,'M',h4)
+        s.write(x+1,y+1,'15',h4)
+        s.write(x+1,y+2,'45',h4)
+        s.write(x+1,y+3,'CK',h4)
+        s.col(y).width = d1
+        s.col(y+1).width = d1
+        s.col(y+2).width = d1
+        s.col(y+3).width = d1
+        y += 4
+    x += 2
+    y = 1
+    for cl in classes:
+        y = 1
+        s.write(x,0,cl.name,h4)
+        for subject in subject_name:
+            if subject in subject_name_cl[cl.id]:
+                subject_id = subject_name_cl[cl.id][subject]
+                s.write(x,y,count_mark[subject_id]['m'],h4)
+                s.write(x,y+1,count_mark[subject_id]['15'],h4)
+                s.write(x,y+2,count_mark[subject_id]['45'],h4)
+                s.write(x,y+3,count_mark[subject_id]['ck'],h4)
+            else:
+                s.write(x,y,0,h4)
+                s.write(x,y+1,0,h4)
+                s.write(x,y+2,0,h4)
+                s.write(x,y+3,0,h4)
+            y += 4
+        x += 1
+    if int(term_num) < 3:
+        term = 'Ky' + str(term_num)
+    else:
+        term = 'CaNam'
+    name = u'ThongKeSoLuongDiem' + unicode(year) + term
     response = HttpResponse(mimetype='application/ms-excel')
     response['Content-Disposition'] = u'attachment; filename=%s.xls' % name
     book.save(response)

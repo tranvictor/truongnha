@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render_to_response
 from django.template import RequestContext, loader
 from django.core.urlresolvers import reverse
 from app.models import Organization
@@ -11,7 +12,7 @@ from school.models import Year, Term, TBNam, TBHocKy, Class,\
 from school.utils import get_current_year, in_school, get_position,\
     get_level, get_current_term, get_school, queryset_to_dict
 from school.writeExcel import count1Excel, count2Excel,\
-    printDanhHieuExcel, printNoPassExcel
+    printDanhHieuExcel, printNoPassExcel, generate_school_mark_count_report_excel
 from decorators import need_login, school_function, operating_permission
 from sms.models import sms
 from templateExcel import normalize, MAX_COL
@@ -1391,4 +1392,74 @@ def history_mark_detail(request, subject_id, term_id=None):
             })
     tt2 = time.time()
     print "time.......................", (tt2 - tt1)
+    return HttpResponse(t.render(c))
+
+
+@need_login
+@school_function
+def generate_school_mark_count_report(request,year_id=None,term_num=None,is_excel=False):
+    school = get_school(request)
+    if year_id == None:
+        year = get_current_year(request)
+        year_id = year.id
+    else:
+        try:
+            year = school.year_set.get(id=year_id)
+        except:
+            return HttpResponseRedirect(reverse('index'))
+    print term_num
+    if term_num == None:
+        term = get_current_term(request)
+        term_id = [term.id]
+        term_num = term.number
+    elif term_num == '3':
+        terms = year.term_set.all()
+        term_id = [term.id for term in terms]
+    else:
+        try:
+            term = year.term_set.get(number=term_num)
+            term_id = [term.id]
+        except:
+            return HttpResponseRedirect(reverse('index'))
+    classes = year.class_set.order_by('name')
+    classes_id = [cl.id for cl in classes]
+    subjects = Subject.objects.filter(class_id__in=classes_id).order_by('class_id','index')
+    marks = Mark.objects.filter(term_id__in=term_id)
+    count_mark = {}
+    subject_name = []
+    subject_name_cl = {}
+    for cl in classes:
+        subject_name_cl[cl.id] = {}
+    for s in subjects:
+        if s.name not in subject_name:
+            subject_name.append(s.name)
+        count_mark[s.id] = {'m':0,'15':0,'45':0,'ck':0}
+        subject_name_cl[s.class_id_id][s.name] = s.id
+    for mark in marks:
+        mark_m = mark.diem.split('|')[0].split('*')
+        mark_15 = mark.diem.split('|')[1].split('*')
+        mark_45 = mark.diem.split('|')[2].split('*')
+        if mark.ck:
+            count_mark[mark.subject_id_id]['ck'] += 1
+        for m in mark_m:
+            if m != '':
+                count_mark[mark.subject_id_id]['m'] += 1
+        for m in mark_15:
+            if m != '':
+                count_mark[mark.subject_id_id]['15'] += 1
+        for m in mark_45:
+            if m != '':
+                count_mark[mark.subject_id_id]['45'] += 1
+    if is_excel:
+        return generate_school_mark_count_report_excel(count_mark,classes,subject_name,subject_name_cl,term_num,year)
+    t = loader.get_template(os.path.join('school','report','count_mark_by_subject.html'))
+    c = RequestContext(request,
+        {
+            'count_mark':count_mark,
+            'classes':classes,
+            'subject_name':subject_name,
+            'subject_name_cl':subject_name_cl,
+            'year_id':year_id,
+            'term_num':term_num,
+        })
     return HttpResponse(t.render(c))
