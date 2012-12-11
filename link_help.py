@@ -23,3 +23,4 @@ giaovien_thoikhoabieu = 'http://www.youtube.com/embed/OybhwAS-IOc?feature=player
 giaovien_taikhoan = 'http://www.youtube.com/embed/i0bLed6oZPU?feature=player_detailpage'
 giaovien_hanhkiem = 'http://www.youtube.com/embed/i3ghITLqIks?feature=player_detailpage'
 giaovien_diemdanh = 'http://www.youtube.com/embed/lXLW8eyIGdI?feature=player_detailpage'
+sitemap=''
