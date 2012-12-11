@@ -251,6 +251,7 @@ def sms_summary(request, class_id=None):
             number = 0
             for st in students:
                 if (st.sms_phone and st.id in ids
+                    and (st.id in info_list and st.id in dd_info_list)
                     and (info_list[st.id] != u'Không có điểm mới.'
                         or dd_info_list[st.id] != '')):
                     try:
