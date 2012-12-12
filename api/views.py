@@ -11,7 +11,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from app.views import login
 from sms.models import sms
 from school.class_functions import dd
-from school.models import Class, Pupil, Term, Subject, DiemDanh,\
+from school.models import Class, Pupil, Term, Subject, DiemDanh, TBNam, TKB, \
     KhenThuong, KiLuat, Mark, TKMon
 from school.utils import get_position, get_school, is_teacher,\
         get_current_term, get_current_year, get_student, get_teacher,\
@@ -57,7 +57,7 @@ class ApiLogin(View):
                         'firstName': request.user.first_name,
                         'class': request.user.pupil.class_id.name,
                         'school': get_school(request).name,
-                        'birth': request.user.pupil.birthday,
+                        'birth': request.user.pupil.birthday.strftime("%d/%m/%Y"),
                         'studentId': request.user.pupil.id,
                         }
                 elif user_position in [2, 3]:
@@ -67,7 +67,7 @@ class ApiLogin(View):
                         'lastName': request.user.last_name,
                         'firstName': request.user.first_name,
                         'school': get_school(request).name,
-                        'birth': request.user.teacher.birthday,
+                        'birth': request.user.teacher.birthday.strftime("%d/%m/%Y"),
                         'teacherId': request.user.teacher.id
                     }
                     homeroom_class = request.user.teacher.current_homeroom_class()
@@ -91,8 +91,8 @@ class ApiLogin(View):
                 pass
             elif user_position == 3:
                 try:
-                    teaching_subjects = request.user.teacher.teaching_subject()
-                    result['teaching_class'] = {}
+                    teaching_subjects = request.user.teacher. current_teaching_subject()
+                    result['teachingClass'] = {}
                     classes = []
                     for subject in teaching_subjects:
                         temp = {
@@ -120,7 +120,7 @@ class ApiLogin(View):
                             if homeroom_class.teacher_id:
                                 temp['homeTeacher'] = homeroom_class.teacher_id.full_name()
                             classes.append(temp)
-                    result['teaching_class'] = classes
+                    result['teachingClass'] = classes
 
                 except Exception as e:
                     print e
@@ -128,7 +128,8 @@ class ApiLogin(View):
             elif user_position > 3:
                 #TODO: return necessary information for school's admins
                 return Response(status=status.HTTP_404_NOT_FOUND)
-            return Response(status=status.HTTP_200_OK, content=result)
+            return HttpResponse(simplejson.dumps(result), mimetype='json')
+        #return Response(status=status.HTTP_200_OK, content=result)
         else:
             return Response(status.HTTP_401_UNAUTHORIZED)
 

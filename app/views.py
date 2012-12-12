@@ -434,7 +434,7 @@ def feedback(request):
                 time = 'time: ' + unicode(date.today())
                 if 'subject' in request.POST:
                     subject= unicode(request.POST['subject'])
-                else: subject = u'[www.truongnha.com] Users\' feedback'
+                else: subject = u'[truongnha.com] Users\' feedback'
                 message = '\n'.join([url, user_name, email, content, time])
                 Feedback.objects.create(
                     content = content,
@@ -467,7 +467,7 @@ def feedback(request):
                 school = 'school: ' + unicode(get_school(request))
                 content = request.POST['content']
                 time = 'time: ' + unicode(date.today())
-                subject = u'[www.truongnha.com] Users\' feedback'
+                subject = u'[truongnha.com] Users\' feedback'
                 message = '\n'.join([url, user_name, user_email,
                     user_phone, school, content, time])
                 Feedback.objects.create(

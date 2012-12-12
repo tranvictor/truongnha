@@ -105,6 +105,14 @@ urlpatterns = patterns('',
     url(
         r'countSMS/(?P<type>\w+)/(?P<day>\w+)/(?P<month>\w+)/(?P<year>\w+)/(?P<day1>\w+)/(?P<month1>\w+)/(?P<year1>\w+)$'
         , viewCount.countSMS, name="count_sms"),
+    url(r'countMarkBySubject$', viewCount.generate_school_mark_count_report
+        , name = "count_mark"),
+    url(r'countMarkBySubject/(?P<year_id>\w+)$', viewCount.generate_school_mark_count_report
+        , name = "count_mark"),
+    url(r'countMarkBySubject/(?P<year_id>\w+)/(?P<term_num>\w+)$', viewCount.generate_school_mark_count_report
+        , name = "count_mark"),
+    url(r'countMarkBySubject/(?P<year_id>\w+)/(?P<term_num>\w+)/(?P<is_excel>\w+)$', viewCount.generate_school_mark_count_report
+        , name = "count_mark"),
 
     url(r'printMarkBook$', writeExcel.printMarkBook, name="print_mark_book"),
     url(r'printMarkBook/(?P<class_id>\w+)$', writeExcel.printMarkBook, name="print_mark_book"),

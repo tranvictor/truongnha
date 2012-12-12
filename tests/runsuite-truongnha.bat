@@ -1,1 +1,1 @@
-java -jar selenium-server.jar -htmlSuite *firefox "http://www.truongnha.com/" %1/suite.html results_%1.html
+java -jar selenium-server.jar -htmlSuite *firefox "http://truongnha.com/" %1/suite.html results_%1.html
