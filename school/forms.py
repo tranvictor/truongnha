@@ -113,7 +113,7 @@ class TeacherTTCBForm(forms.ModelForm):
     class Meta:
         model = Teacher
         fields = ('cmt','ngay_cap','noi_cap','ngay_vao_doan',
-                'ngay_vao_dang','muc_luong','hs_luong','bhxh', 'balance')
+                'ngay_vao_dang','muc_luong','hs_luong','bhxh')
         widgets = {
             'ngay_vao_doan' : DateInput(attrs={'class': 'datepicker'}),
             'ngay_vao_dang' : DateInput(attrs={'class': 'datepicker'})

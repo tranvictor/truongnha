@@ -613,6 +613,7 @@ def editTeacherDetail(request, teacher_id):
     if not in_school(request, teacher.school_id):
         return HttpResponseNotAllowed()
     pos = get_position(request)
+    school = get_school(request)
     if request.is_ajax() and pos >= 3:
         data = request.POST.copy()
         if 'first_name' in data: data['first_name'] = data['first_name'].strip()
@@ -633,6 +634,18 @@ def editTeacherDetail(request, teacher_id):
             hs_luong = ''
             bhxh = ''
             if form.is_valid():
+                new_birthday = to_date(data['birthday'])
+                teacher_query = school.teacher_set.filter(
+                    first_name__exact=data['first_name'],
+                    last_name__exact=data['last_name'],
+                    birthday__exact=new_birthday).exclude(id__exact=teacher.id)
+                if len(teacher_query):
+                    message = u'Thông tin trùng với giáo viên khác trong hệ thống.'
+                    response = simplejson.dumps({
+                        'success': False,
+                        'message': message
+                    })
+                    return HttpResponse(response, mimetype='json')
                 form.save()
             else:
                 message = 'Có lỗi ở dữ liệu nhập vào'
