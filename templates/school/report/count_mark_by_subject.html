@@ -25,6 +25,7 @@
         <thead>
             <tr>
                 <th class="align-left" rowspan="2">Lớp</th>
+                <th class="align-left" rowspan="2">Sỹ số</th>
                 {% for s in subject_name %}
                     <th colspan="4">{{ s }}</th>
                 {% endfor %}
@@ -43,6 +44,7 @@
                 {% with subject_name_cl|get_value:cl.id as subject_list %}
                 <tr>
                     <td nowrap class="align-left">{{ cl.name }}</td>
+                    <td nowrap class="align-left">{{ number_dict|get_value:cl.id|default_if_none:"0" }}</td>
                     {% for s in subject_name %}
                         {% with subject_list|get_value:s as subject_id %}
                             {% with count_mark|get_value:subject_id as marks %}
