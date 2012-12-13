@@ -6,6 +6,12 @@
   {% add_crumb 'Thêm lớp học' %}
 {% endblock %}
 
+{% block js %}
+    <script type="text/javascript" src="/static/js/teacher/jquery.ajaxform.js?{{ VERSION }}"></script>
+    <script type="text/javascript" src="/static/js/teacher/create_class.js?{{ VERSION }}"></script>
+{% endblock %}
+
+
 {% block content %}
 <h2>Tạo lớp mới</h2>
 <form class="form-horizontal"
