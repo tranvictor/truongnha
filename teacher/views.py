@@ -66,6 +66,7 @@ class ClassView(RestfulView, BaseTeacherView):
             return {'message': u'Bạn vừa tạo thành công lớp học',
                     'success': True,
                     'class_name': cl.name,
+                    'class_note': cl.cl_note,
                     'class_url': self.reverse('class_view',
                         kwargs={'class_id': cl.id, 'request_type': 'view'}),
                     'class_modify': self.reverse('class_view',

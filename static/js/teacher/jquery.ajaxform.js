@@ -12,7 +12,20 @@
         return this.each(function(){
             var $this = $(this);
             var data = $this.data('ajaxForm');
-               // If the plugin hasn't been initialized yet
+            var getFunction = function(name, options){
+                if (options && name in options){
+                    var temp = options[name];
+                    if (typeof temp === 'function'){
+                        return temp;
+                    } else {
+                        $.error(name + ' option must be a function. ');
+                        return false;
+                    }
+                } else {
+                    return methods[name];
+                }
+            }
+            // If the plugin hasn't been initialized yet
             if (!data){
                 var url;
                 if (options && 'url' in options){
@@ -32,35 +45,16 @@
                         type = 'post';
                     }
                 }
-                var success;
-                if (options && 'success' in options){
-                    var temp = options['success'];
-                    if (typeof temp === 'function'){
-                        success = temp;
-                    } else {
-                        $.error( 'Sucess option must be a function. ');
-                        return false;
-                    }
-                } else {
-                    success = methods.success;
-                }
-                var error;
-                if (options && 'error' in options){
-                    var temp = options['error'];
-                    if (typeof temp === 'function'){
-                        error = temp;
-                    } else {
-                        $.error( 'Error option must be a function. ');
-                        return false;
-                    }
-                } else {
-                    error = methods.error;
-                }
+                var success = getFunction('success', options);
+                var error = getFunction('error', options);
+                var callback = getFunction('callback', options);
+                methods.callback = callback;
                 $(this).data('ajaxForm', {
                     target : $this,
                     url : url,
                     success : success,
-                    error : error
+                    error : error,
+                    callback : callback,
                 });
                 // bind post event
                 $this.bind('submit', function(){
@@ -97,19 +91,25 @@
         $('#notify').showNotification(json.message, 3000);
         if (json.success == false){
             add_bootstrap_error(json.error);
+        } else {
+            methods.callback.apply(this, [json]);
         }
         return false;
     };
 
+    var callback = function(json){};
+
     var error = function(json){
-        $('#notify').showNotification('Hệ thống gặp lỗi khi kết nối tới máy chủ', 3000);
+        $('#notify').showNotification('Hệ thống gặp lỗi khi kết nối tới máy chủ',
+                3000);
         return false;
     }
 
     var methods = {
         init : init,    
         error : error,
-        success : success
+        success : success,
+        callback : callback,
     };
 
     $.fn.ajaxForm = function( method ) {
