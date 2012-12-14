@@ -128,12 +128,10 @@ class ClassView(RestfulView, BaseTeacherView):
     def _get_view(self, *args, **kwargs):
         self.template_name = os.path.join('teacher', 'class_view.html')
         cl = kwargs['cleaned_params']['class']
-        csrf_token = get_token(self.request)
         students = cl.students()
         print students
         return {'cl': cl,
-                'students': students,
-                'csrf_token': csrf_token}
+                'students': students}
 
 
     def _get_export(self, *args, **kwargs):
@@ -148,8 +146,8 @@ class ClassView(RestfulView, BaseTeacherView):
                 notes_content[note.class_id.id] = note.note
         book = Workbook(encoding='utf-8')
         #renderring xls file
-        sheet = book.add_sheet(u'Danh sách h?c sinh')
-        sheet.write_merge(0, 1,3,6, u'DANH SÁCH H?C SINH L?P %s' % unicode(cl).upper(), h40)
+        sheet = book.add_sheet(u'Danh sách học sinh')
+        sheet.write_merge(0, 1,3,6, u'DANH SÁCH HỌC SINH LỚP %s' % unicode(cl).upper(), h40)
         sheet.row(0).height = 350
 
         sheet.col(0).width = 1500
@@ -166,15 +164,15 @@ class ClassView(RestfulView, BaseTeacherView):
         sheet.row(4).height = 350
 
         sheet.write(4, 0, 'STT',h4)
-        sheet.write(4, 1, 'H? và tên', h4)
+        sheet.write(4, 1, 'Họ và tên', h4)
         sheet.write(4, 2, 'Ngày sinh', h4)
-        sheet.write(4, 3, 'Gi?i tính',h4)
-        sheet.write(4, 4, 'Ch? ? hi?n t?i', h4)
-        sheet.write(4, 5, 'S? đi?n tho?i nh?n tin',h4)
-        sheet.write(4, 6, 'H? tên b?',h4)
-        sheet.write(4, 7, 'S? đi?n tho?i c?a b?',h4)
-        sheet.write(4, 8, 'H? tên m?',h4)
-        sheet.write(4, 9, 'S? đi?n tho?i c?a m?',h4)
+        sheet.write(4, 3, 'Giới tính',h4)
+        sheet.write(4, 4, 'Chỗ ở hiện tại', h4)
+        sheet.write(4, 5, 'Số điện thoại nhắn tin',h4)
+        sheet.write(4, 6, 'Họ tên bố',h4)
+        sheet.write(4, 7, 'Số điện thoại của bố',h4)
+        sheet.write(4, 8, 'Họ tên mẹ',h4)
+        sheet.write(4, 9, 'S? điện thoại của mẹ',h4)
         sheet.write(4, 10, 'Ghi chú', h4)
         row = 5
         for student in student_list:
@@ -203,7 +201,7 @@ class ClassView(RestfulView, BaseTeacherView):
 
     def _post_import(self, *args, **kwargs):
         try:
-            response = {'success': True, 'message': u'Có l?i ? d? li?u nh?p vào'}
+            response = {'success': True, 'message': u'Có lỗi ở dữ liệu nhập vào'}
             return HttpResponse(simplejson.dumps(response), mimetype='application/json')
         except Exception as e:
             print e
