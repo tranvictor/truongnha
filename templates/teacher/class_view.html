@@ -6,6 +6,17 @@
   {% add_crumb 'Thêm lớp học' %}
 {% endblock %}
 
+{% block css %}
+    <link href="/static/ajaxuploader/css/fileuploader.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript" src="/static/js/teacher/class_view.js?{{ VERSION }}"></script>
+    <script>
+        $(document).ready(function() {
+        });
+    </script>
+{% endblock %}
+
 {% block content %}
 <h2>Danh sách học sinh</h2>
 <div id="submenu" class="btn-toolbar">
@@ -36,6 +47,19 @@
         href="#">
         <i class="icon-minus"></i>
       </a>
+        <a id="import-student"
+           class="btn btn-primary ajaxify"
+           title="Tải danh sách học sinh từ file Excel"
+           href="">
+            <i class="icon-upload-alt"></i>
+        </a>
+
+        <a id="export-student"
+           class="btn btn-info ajaxify"
+           title="Tải danh sách học sinh từ file Excel"
+           href="{% url export_student user_teacher.id cl.id 'export' %}">
+            <i class="icon-download-alt"></i>
+        </a>
     </div>
   </div>
 </div>

@@ -22,6 +22,11 @@ from teacher.models import Person, Teacher, Register, Class,\
 from sms.utils import send_email
 from teacher.base import BaseTeacherView, RestfulView
 import settings
+import xlrd
+from xlrd.formula import cellname
+from xlwt.Workbook import Workbook
+from school.templateExcel import *
+from school.utils import to_en1
 
 class IndexView(BaseTeacherView):
     template_name = os.path.join('teacher', 'index.html')
@@ -31,12 +36,13 @@ class IndexView(BaseTeacherView):
     
 # The order RestfulView -> BaseTeacherView here is important
 class ClassView(RestfulView, BaseTeacherView):
-    request_type = ['view', 'create', 'remove', 'modify']
+    request_type = ['view', 'create', 'remove', 'modify', 'import', 'export']
+
 
     class ClassForm(forms.ModelForm):
         def __init__(self, *args, **kwargs):
             super(ClassView.ClassForm, self).__init__(*args, **kwargs)
-        
+
         def save(self, teacher, commit=True, *args, **kwargs):
             cl = super(ClassView.ClassForm, self).save(commit=False,
                     *args, **kwargs)
@@ -121,10 +127,86 @@ class ClassView(RestfulView, BaseTeacherView):
     def _get_view(self, *args, **kwargs):
         self.template_name = os.path.join('teacher', 'class_view.html')
         cl = kwargs['cleaned_params']['class']
+        csrf_token = get_token(self.request)
         students = cl.students()
         print students
         return {'cl': cl,
-                'students': students}
+                'students': students,
+                'csrf_token': csrf_token}
+
+
+    def _get_export(self, *args, **kwargs):
+        self.template_name = os.path.join('teacher', 'class_view.html')
+        cl = kwargs['cleaned_params']['class']
+        student_list = cl.students()
+        student_id = [student.id for student in student_list]
+        notes = Note.objects.filter(class_id__id = cl.id, student_id__id__in = student_id)
+        notes_content = {}
+        if len(notes):
+            for note in notes:
+                notes_content[note.class_id.id] = note.note
+        book = Workbook(encoding='utf-8')
+        #renderring xls file
+        sheet = book.add_sheet(u'Danh sách h?c sinh')
+        sheet.write_merge(0, 1,3,6, u'DANH SÁCH H?C SINH L?P %s' % unicode(cl).upper(), h40)
+        sheet.row(0).height = 350
+
+        sheet.col(0).width = 1500
+        sheet.col(1).width = 7000
+        sheet.col(2).width = 4500
+        sheet.col(3).width = 3000
+        sheet.col(4).width = 7000
+        sheet.col(5).width = 4500
+        sheet.col(6).width = 7000
+        sheet.col(7).width = 4500
+        sheet.col(8).width = 7000
+        sheet.col(9).width = 4500
+        sheet.col(10).width = 10000
+        sheet.row(4).height = 350
+
+        sheet.write(4, 0, 'STT',h4)
+        sheet.write(4, 1, 'H? và tên', h4)
+        sheet.write(4, 2, 'Ngày sinh', h4)
+        sheet.write(4, 3, 'Gi?i tính',h4)
+        sheet.write(4, 4, 'Ch? ? hi?n t?i', h4)
+        sheet.write(4, 5, 'S? đi?n tho?i nh?n tin',h4)
+        sheet.write(4, 6, 'H? tên b?',h4)
+        sheet.write(4, 7, 'S? đi?n tho?i c?a b?',h4)
+        sheet.write(4, 8, 'H? tên m?',h4)
+        sheet.write(4, 9, 'S? đi?n tho?i c?a m?',h4)
+        sheet.write(4, 10, 'Ghi chú', h4)
+        row = 5
+        for student in student_list:
+            sheet.row(row).height = 350
+            sheet.write(row, 0, row - 4, h7)
+            sheet.write(row, 1, student.last_name + ' ' + student.first_name, h7)
+            sheet.write(row, 2, student.birthday.strftime('%d/%m/%Y'), h7)
+            sheet.write(row, 3, student.sex, h7)
+            sheet.write(row, 4, student.current_address, h7)
+            sheet.write(row, 5, student.sms_phone, h7)
+            sheet.write(row, 6, student.father_name, h7)
+            sheet.write(row, 7, student.father_phone, h7)
+            sheet.write(row, 8, student.mother_name, h7)
+            sheet.write(row, 9, student.mother_phone, h7)
+            if student.id in notes_content:
+                sheet.write(row, 10, notes_content[student.id], h7)
+            else:
+                sheet.write(row, 10, "", h7)
+            row += 1
+        response = HttpResponse(mimetype='application/ms-excel')
+        strstr = to_en1(unicode(cl))
+        strstr1 = strstr.replace(' ', '_')
+        response['Content-Disposition'] = u'attachment; filename=ds_hoc_sinh_%s.xls' % strstr1
+        book.save(response)
+        return response
+
+    def _post_import(self, *args, **kwargs):
+        try:
+            response = {'success': True, 'message': u'Có l?i ? d? li?u nh?p vào'}
+            return HttpResponse(simplejson.dumps(response), mimetype='application/json')
+        except Exception as e:
+            print e
+
 
 class StudentView(RestfulView, BaseTeacherView):
     request_type = ['view', 'modify', 'create', 'remove']
