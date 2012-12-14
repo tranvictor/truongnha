@@ -68,6 +68,7 @@ $(document).ready(function() {
                 $("#notify").showNotification("Đã chuyển xong.");
                 $(".selected").remove();
                 $("#checkbox_all").prop("checked",false);
+                $("#move_modal").modal('hide');
             }
         };
         $.ajax(arg);
