@@ -215,6 +215,7 @@
         <tr>
             <th rowspan="2"> TT</th>
             <th rowspan="2"  colspan="2" class="align-left">Họ tên</th>
+            <th rowspan="2">Ngày sinh</th>
             {% for d in week_list %}
                 <th class="dd col{{ forloop.counter }}">
                     <input title="Chọn để nhắn tin điểm danh của tất cả học sinh"
@@ -235,6 +236,7 @@
                 <td> {{ forloop.counter }}</td>
                 <td class="align-left" >{{ p.last_name }}</td>
                 <td class="align-left" style="border-left: none;">{{ p.first_name }}</td>
+                <td class="align-left">{{ p.birthday|date:"SHORT_DATE_FORMAT" }}</td>
                 {% for d in week_list %}
                     <td class="dd col{{ forloop.counter }}">
                         {% with fl|get_value:p.id as ddl %}
