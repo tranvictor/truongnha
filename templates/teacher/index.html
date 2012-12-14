@@ -11,6 +11,7 @@
 {% for cl in classes %}
   <div class="row-fluid">
     <a class="span12 btn-success btn ajaxify"
+      id="class-{{cl.id}}"
       href="{% url class_view cl.teacher_id_id cl.id 'view' %}"
       title="Quản lý lớp {{cl}}">
       <h3>{{cl}}</h3>
