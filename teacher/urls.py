@@ -25,6 +25,8 @@ urlpatterns = patterns('',
 #            import_student, name='import_student'),
         url(r'class/(?P<class_id>\d+?)/student/(?P<request_type>import)$',
             ClassView.as_view(), name='import_student'),
+        url(r'class/(?P<class_id>\d+?)/student/(?P<request_type>update)$',
+            ClassView.as_view(), name='import_student'),
         url(r'class/(?P<class_id>\d+?)/student/(?P<request_type>export)$',
             ClassView.as_view(), name='export_student'),
 )
