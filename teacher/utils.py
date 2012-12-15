@@ -83,7 +83,6 @@ def add_many_students( student_list = None,
         raise Exception("Student,Class,CanNotBeNull")
     existing_student = []
     number_of_change = 0
-    unc_st_found = False
     for student in student_list:
         if 'fullname' in student:
             first_name, last_name = extract_fullname(student['fullname'])
@@ -108,6 +107,7 @@ def add_many_students( student_list = None,
             st = Student(first_name = first_name,
                 last_name = last_name,
                 birthday = birthday)
+            st.save()
             Attend.objects.create(
                 pupil=st, _class=_class,
                 attend_time=datetime.now(),

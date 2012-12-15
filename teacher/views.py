@@ -150,20 +150,13 @@ class ClassView(RestfulView, BaseTeacherView):
                 _class = cl,
                 force_update=True)
             if number_of_change:
-                data = simplejson.dumps(
-                    {'success': True,
-                     'message': u'Đã cập nhật %s học sinh.' % number_of_change})
+                data = {'success': True,
+                     'message': u'Đã cập nhật %s học sinh.' % number_of_change}
             else:
-                data = simplejson.dumps(
-                    {'success': True,
-                     'message': u'Thông tin không thay đổi'})
-            return HttpResponse(data, mimetype='json')
-            # AJAX Upload will pass the filename in the querystring if it is the "advanced" ajax upload
-        try:
-            file = self.request.FILES.get('files[]')
-        except KeyError:
-            return HttpResponseBadRequest("AJAX request not valid")
-            # not an ajax upload, so it was the "basic" iframe version with submission via form
+                data = {'success': True,
+                     'message': u'Thông tin không thay đổi'}
+            return data
+
 
     def _post_import(self, *args, **kwargs):
         cl = kwargs['cleaned_params']['class']
@@ -193,7 +186,10 @@ class ClassView(RestfulView, BaseTeacherView):
                      'process_message': process_file_message,
                      'error': u'File excel không đúng định dạng'}]
         else:
-            existing_student = add_many_students(student_list=result, _class=cl)
+            if result:
+                existing_student = add_many_students(student_list=result, _class=cl)
+            else:
+                existing_student = 0
             student_confliction = ''
             if existing_student:
                 student_confliction = u'Có %s học sinh không được nhập do đã tồn tại trong hệ thống' % len(existing_student)
@@ -206,8 +202,7 @@ class ClassView(RestfulView, BaseTeacherView):
                  'number': number,
                  'number_ok': number_ok - len(existing_student),
                  'message': u'Nhập dữ liệu thành công'}]
-
-        return HttpResponse(simplejson.dumps(data), mimetype='json')
+        return data
 
 
 class StudentView(RestfulView, BaseTeacherView):
