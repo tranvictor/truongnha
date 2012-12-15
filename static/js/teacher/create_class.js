@@ -5,9 +5,8 @@ $(document).ready(function () {
                     json.class_url + '" ' +
                    'id="class-' + json.class_id + '" ' +
                    'title="Quản lý lớp ' + json.class_name + '">' +
-                   '<h3>' + json.class_name + '</h3>' +
-                   '<p>Sĩ số: </p>' + 
-                   '<p>Ghi chú: ' + json.class_note + '</p>' + 
+                   '<h3 class="pull-left">' + json.class_name + '</h3>' +
+                   '<p title="Sĩ số" class="pull-right">0</p>' + 
                    '</a> </div>'
         var newClass = $(html);
         $('#menu-classes').prepend(newClass);

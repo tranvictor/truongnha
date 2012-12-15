@@ -14,9 +14,8 @@
       id="class-{{cl.id}}"
       href="{% url class_view cl.teacher_id_id cl.id 'view' %}"
       title="Quản lý lớp {{cl}}">
-      <h3>{{cl}}</h3>
-      <p>Sĩ số: {{cl.number_of_student}}</p>
-      <p>Ghi chú: {{cl.cl_note}}</p>
+      <h3 class="pull-left">{{cl}} </h3>
+      <p title="Sĩ số" class="pull-right">{{cl.number_of_students}}</p>
     </a>
   </div>
 {% endfor %}
