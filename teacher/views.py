@@ -32,7 +32,7 @@ class IndexView(BaseTeacherView):
     
 # The order RestfulView -> BaseTeacherView here is important
 class ClassView(RestfulView, BaseTeacherView):
-    request_type = ['view', 'create', 'remove', 'modify', 'import', 'export', 'update']
+    request_type = ['view', 'create', 'remove', 'modify', 'import', 'export', 'update', 'delete']
 
 
     class ClassForm(forms.ModelForm):
@@ -202,6 +202,31 @@ class ClassView(RestfulView, BaseTeacherView):
                  'number_ok': number_ok - len(existing_student),
                  'message': u'Nhập dữ liệu thành công'}]
         return data
+
+    #for delete students in class
+    #this method only disables (set leave time = now()) these students since they may have enrolled in other classes.
+    def _post_delete(self, *args, **kwargs):
+        cl = kwargs['cleaned_params']['class']
+        data = self.request.POST[u'data']
+        data = data.split('-')
+        try:
+            for e in data:
+                if e.strip():
+                    try:
+                        st = cl.student_set.get(id__exact=int(e), attend__is_member=True)
+                        attendance = Attend.objects.get(pupil__id=st.id, _class__id=cl.id, leave_time=None)
+                        if attendance:
+                            attendance.leave_time = datetime.now()
+                            attendance.is_member = False
+                            attendance.save()
+                    except ObjectDoesNotExist:
+                        raise Exception("Bad request")
+        except Exception as e:
+            print e
+        data = [{'success': True,
+                'message': u'Xóa học sinh thành công.'}]
+        return data
+
 
 
 class StudentView(RestfulView, BaseTeacherView):

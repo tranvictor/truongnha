@@ -97,12 +97,20 @@ def add_many_students( student_list = None,
 
         # count primary subjects
         if find:
-            if force_update:
-                st = find[0]
-            else:
-                existing_student.append(student)
-                st = find[0]
+            st = find[0]
+            attendance = Attend.objects.filter(pupil__id=st.id, _class__id=_class.id, leave_time=None)
+            #if already found a student then check for his attendance
+            if not attendance:
+                Attend.objects.create(
+                    pupil=st, _class=_class,
+                    attend_time=datetime.now(),
+                    leave_time=None)
                 continue
+
+            if not force_update:
+                existing_student.append(student)
+                continue
+
         else:    # the student does not exist
             st = Student.objects.create(first_name=first_name,
                     last_name=last_name,
