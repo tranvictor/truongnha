@@ -230,6 +230,11 @@ $(document).ready(function () {
         return false;
     });
 
+    var url = window.location.pathname; 
+    var re = RegExp('\/class\/[0-9]+\/');
+    var str = String(re.exec(url));
+    var class_id = String(RegExp('[0-9]+').exec(str));
+    var href = $('#class-' + class_id).addClass('active');
 
     $(window).scroll(function () {
         if ($(window).scrollTop() > 0) {
@@ -241,5 +246,6 @@ $(document).ready(function () {
             $(".fixed-top").css("top", $(".smartBannerIdentifier").offset);
         }
     });
+
 });
 

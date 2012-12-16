@@ -31,32 +31,50 @@
       </a>
     </div>
     <div class="btn-group">
-      <a id="add-student"
-        class="btn btn-primary ajaxify"
-        title="Thêm học sinh mới"
-        href="{% url student_create user_teacher.id cl.id 'create' %}">
-        <i class="icon-plus"></i>
+      <a id="student-list-menu" class="btn dropdown-toggle"
+          data-toggle="dropdown" herf="#"
+          title="Quản lý danh sách lớp">
+          <span class="icon-reorder"></span>
       </a>
-      <a id="delSelected"
-        class="btn btn-danger disabled"
-        title="Xóa những học sinh đang được chọn"
-        href="#">
-        <i class="icon-minus"></i>
-      </a>
-        <a id="import-student"
-           class="btn btn-primary"
-           title="Tải danh sách học sinh từ file Excel"
-           href="#upload_modal"
-           data-toggle="modal">
-            <i class="icon-upload-alt"></i>
-        </a>
-
-        <a id="export-student"
-           class="btn btn-info"
-           title="Tải danh sách học sinh từ file Excel"
-           href="{% url export_student user_teacher.id cl.id 'export' %}">
-            <i class="icon-download-alt"></i>
-        </a>
+      <ul class="dropdown-menu pull-right">
+          <li>
+          <a id="add-student"
+              class="ajaxify"
+              title="Thêm học sinh mới"
+              href="{% url student_create user_teacher.id cl.id 'create' %}">
+              <i class="icon-plus"></i>
+              Thêm học sinh
+          </a>
+          </li>
+          <li>
+          <a id="delSelected"
+              class="disabled"
+              title="Xóa những học sinh đang được chọn"
+              href="#">
+              <i class="icon-minus"></i>
+              Xóa học sinh
+          </a>
+          </li>
+          <li>
+          <a id="import-student"
+              class=""
+              title="Tải danh sách học sinh từ file Excel"
+              href="#upload_modal"
+              data-toggle="modal">
+              <i class="icon-upload-alt"></i>
+               Nhập từ Excel
+          </a>
+          </li>
+          <li>
+          <a id="export-student"
+              class=""
+              title="Tải danh sách học sinh từ file Excel"
+              href="{% url export_student user_teacher.id cl.id 'export' %}">
+              <i class="icon-download-alt"></i>
+               Xuất ra Excel
+          </a>
+          </li>
+      </ul>
     </div>
   </div>
 </div>

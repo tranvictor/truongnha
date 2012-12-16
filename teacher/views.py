@@ -6,9 +6,8 @@ import random
 import string
 from datetime import date, datetime
 from recaptcha.client import captcha
-from django.db.models import Count
 from django.views.generic import TemplateView
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
@@ -248,7 +247,9 @@ class StudentView(RestfulView, BaseTeacherView):
             st = create_form.save(cl)
             return {'message': u'Bạn vừa tạo thành công học sinh',
                     'success': True,
-                    'student': st,
+                    'student_first_name': st.first_name,
+                    'student_last_name': st.last_name,
+                    'student_birth_day': unicode(st.birthday),
                     'student_url': self.reverse('student_view',
                         kwargs={'class_id': cl.id,
                             'student_id': st.id,
@@ -287,7 +288,9 @@ class StudentView(RestfulView, BaseTeacherView):
             st = modify_form.save(cl)
             return {'message': u'Bạn vừa cập nhật thành công học sinh',
                     'success': True,
-                    'student': st,
+                    'student_first_name': st.first_name,
+                    'student_last_name': st.last_name,
+                    'student_birth_day': unicode(st.birthday),
                     'student_url': self.reverse('student_view',
                         kwargs={'class_id': cl.id,
                             'student_id': st.id,

@@ -77,7 +77,6 @@
     };
 
     var add_bootstrap_error = function(errs) {
-        console.log(errs);
         $.each(errs, function (key, val) {
             var id = "#" + key;
             var err_msg = '<span class="help-inline">' + val + '</span>';
@@ -87,7 +86,6 @@
     };
 
     var success = function(json){
-        console.log(json);
         $('#notify').showNotification(json.message, 3000);
         if (json.success == false){
             add_bootstrap_error(json.error);

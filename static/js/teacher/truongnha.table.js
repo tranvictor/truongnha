@@ -100,8 +100,6 @@
             return methods[method].apply( this,
                     Array.prototype.slice.call( arguments, 1 ));
         } else if ( typeof method === 'object' || ! method ) {
-            console.log('going to apply init');
-            console.log(this);
             return methods.init.apply( this, arguments );
         } else {
             $.error( 'Method ' +  method + ' does not exist on jQuery.tnTable' );

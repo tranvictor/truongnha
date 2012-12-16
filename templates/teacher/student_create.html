@@ -6,6 +6,12 @@
   {% add_crumb 'Thêm học sinh' %}
 {% endblock %}
 
+{% block js %}
+    <script type="text/javascript" src="/static/js/teacher/jquery.ajaxForm.js?{{ VERSION }}"></script>
+    <script type="text/javascript" src="/static/js/teacher/student-create.js?{{ VERSION }}"></script>
+    
+{% endblock %}
+
 {% block content %}
 <h2>Thêm học sinh</h2>
 <form class="form-horizontal"

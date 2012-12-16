@@ -61,7 +61,7 @@
             $.ajax({
                 url: url,
                 global: false,
-                success: function(res, textStatus, jqXHR){
+                success: function(res){
                     $loadedContent = $($(headerToDiv(res.content))[0]);
                     // Fetch the scripts
 					$scripts = $loadedContent.find('.document-script');
