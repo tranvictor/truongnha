@@ -176,9 +176,9 @@ def calculateOverallMarkTerm(class_id, termNumber):
     for s in subjectList:
         if s.hs == 3:  vtMonChuyen = i
 
-        if    s.name.lower().__contains__(u'toán'):
+        if s.type == u'Toán':
             vtMonToan = i
-        elif  s.name.lower().__contains__(u'văn'):
+        elif  s.type == u'Ngữ văn':
             vtMonVan = i
         if s.nx:
             checkComment[i] = 1

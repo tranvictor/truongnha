@@ -1309,12 +1309,12 @@ def dd(request, class_id, day, month, year, api_called=False, data=None):
                 diem_danh_data = data
             else:
                 diem_danh_data = request.POST['data']
-                print request.POST
             for part in diem_danh_data.split('%'):
                 if part.strip():
                     temp = part.split('-')
                     student = _class.pupil_set.get(id=temp[0])
-                    tkdd = student.tkdiemdanh_set.get(term_id=term_id)
+                    if term_id.number != 3:
+                        tkdd = student.tkdiemdanh_set.get(term_id=term_id)
                     loai = string.upper(temp[1])
                     time = to_date('-'.join(temp[2:]))
                     if loai not in [u'P',u'K',u'M',u'']:
@@ -1323,44 +1323,48 @@ def dd(request, class_id, day, month, year, api_called=False, data=None):
                         dd = DiemDanh.objects.get(student_id__exact=student.id,
                             time__exact=time,
                             term_id=term_id)
+                        if term_id.number != 3:
+                            if loai == u'':
+                                if dd.loai == u'M':
+                                    tkdd.muon -= 1
+                                elif dd.loai == u'P':
+                                    tkdd.co_phep -= 1
+                                elif dd.loai == u'K':
+                                    tkdd.khong_phep -= 1
+                                tkdd.tong_so = tkdd.co_phep + tkdd.khong_phep
+                                tkdd.save()
+                            else:
+                                if loai == u'P':
+                                    tkdd.co_phep +=1
+                                elif loai == u'K':
+                                    tkdd.khong_phep +=1
+                                elif loai == u'M':
+                                    tkdd.muon +=1
+                                if dd.loai == u'P':
+                                    tkdd.co_phep -= 1
+                                elif dd.loai == u'K':
+                                    tkdd.khong_phep -= 1
+                                elif dd.loai == u'M':
+                                    tkdd.muon -= 1
+                                tkdd.tong_so = tkdd.co_phep + tkdd.khong_phep
+                                tkdd.save()
                         if loai == u'':
-                            if dd.loai == u'M':
-                                tkdd.muon -= 1
-                            elif dd.loai == u'P':
-                                tkdd.co_phep -= 1
-                            elif dd.loai == u'K':
-                                tkdd.khong_phep -= 1
-                            tkdd.tong_so = tkdd.co_phep + tkdd.khong_phep
                             dd.delete()
-                            tkdd.save()
                         else:
-                            if loai == u'P':
-                                tkdd.co_phep +=1
-                            elif loai == u'K':
-                                tkdd.khong_phep +=1
-                            elif loai == u'M':
-                                tkdd.muon +=1
-                            if dd.loai == u'P':
-                                tkdd.co_phep -= 1
-                            elif dd.loai == u'K':
-                                tkdd.khong_phep -= 1
-                            elif dd.loai == u'M':
-                                tkdd.muon -= 1
-                            tkdd.tong_so = tkdd.co_phep + tkdd.khong_phep
                             dd.loai = loai
-                            tkdd.save()
                             dd.save()
                     except Exception:
                         dd = DiemDanh(student_id=student, time=time,
                                 loai=loai, term_id=term_id)
-                        if loai == u'M':
-                            tkdd.muon += 1
-                        elif loai == u'P':
-                            tkdd.co_phep += 1
-                        elif loai == u'K':
-                            tkdd.khong_phep += 1
-                        tkdd.tong_so = tkdd.co_phep + tkdd.khong_phep
-                        tkdd.save()
+                        if term_id.number != 3:
+                            if loai == u'M':
+                                tkdd.muon += 1
+                            elif loai == u'P':
+                                tkdd.co_phep += 1
+                            elif loai == u'K':
+                                tkdd.khong_phep += 1
+                            tkdd.tong_so = tkdd.co_phep + tkdd.khong_phep
+                            tkdd.save()
                         dd.save()
             return HttpResponse()
 #        elif request.POST['request_type'] == 'sms':

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from django.db.models import Count
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
@@ -1428,6 +1429,10 @@ def generate_school_mark_count_report(request,year_id=None,term_num=None,is_exce
     count_mark = {}
     subject_name = []
     subject_name_cl = {}
+    number_dict = {}
+    numbers = Attend.objects.filter(is_member=True,_class__in=classes_id)\
+            .values('_class').annotate(number=Count('_class'))
+    for n in numbers: number_dict[n['_class']] = n['number']
     for cl in classes:
         subject_name_cl[cl.id] = {}
     for s in subjects:
@@ -1461,5 +1466,6 @@ def generate_school_mark_count_report(request,year_id=None,term_num=None,is_exce
             'subject_name_cl':subject_name_cl,
             'year_id':year_id,
             'term_num':term_num,
+            'number_dict':number_dict,
         })
     return HttpResponse(t.render(c))
