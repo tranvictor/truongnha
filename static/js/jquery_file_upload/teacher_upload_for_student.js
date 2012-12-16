@@ -16,9 +16,6 @@
 
 $(function () {
     'use strict';
-    function isNumeric(input){
-        return (input - 0) == input && input.length > 0;
-    }
 
     var id = window.location.pathname.split('/');
     var i = 0, cl_id = 0, teacher_id = 0;
