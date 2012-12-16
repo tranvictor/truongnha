@@ -174,7 +174,7 @@ class ClassView(RestfulView, BaseTeacherView):
         filename = save_file(self.request.FILES.get('files[]'), self.request.session)
         result, process_file_message, number, number_ok = process_file(filename,
             "import_student")
-
+        print result, 'result'
         if 'error' in result:
             success = False
             message = result['error']

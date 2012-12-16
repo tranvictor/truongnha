@@ -14,4 +14,6 @@ $(document).ready(function () {
         $("#upload_modal").modal('hide');
         return false;
     });
+    console.log($('#student-table-div'));
+    $('#student-table-div').tnTable();
 });

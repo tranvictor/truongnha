@@ -9,11 +9,8 @@
 {% endblock %}
 
 {% block js %}
+    <script type="text/javascript" src="/static/js/teacher/truongnha.table.js?{{ VERSION }}"></script>
     <script type="text/javascript" src="/static/js/teacher/class_view.js?{{ VERSION }}"></script>
-    <script>
-        $(document).ready(function() {
-        });
-    </script>
 {% endblock %}
 
 {% block content %}
@@ -67,7 +64,7 @@
   <div id="student-table-div">
     <div id="after-post-alert"></div>
     {% if students %}
-    <table class="table table-hover fifth-row" id="student-table'">
+    <table class="table table-hover student-table fifth-row" id="class-table'">
       <thead>
         <tr>
           <th class="align-left" title="Tài khoản">
@@ -88,7 +85,8 @@
       </thead>
       <tbody>
         {% for ss in students %}
-        <tr class="{{ ss.id }} student"
+        <tr class="selectable"
+            data-id="{{ ss.id }}"
           style='-webkit-user-select: none; cursor:pointer;'>
           <td>
             <i class='icon-key' id='lock-{{ ss.id }}'></i>

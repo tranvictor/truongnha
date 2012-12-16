@@ -104,10 +104,9 @@ def add_many_students( student_list = None,
                 st = find[0]
                 continue
         else:    # the student does not exist
-            st = Student(first_name = first_name,
-                last_name = last_name,
-                birthday = birthday)
-            st.save()
+            st = Student(first_name=first_name,
+                    last_name=last_name,
+                    birthday=birthday)
             Attend.objects.create(
                 pupil=st, _class=_class,
                 attend_time=datetime.now(),
