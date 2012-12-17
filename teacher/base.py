@@ -123,7 +123,7 @@ class BaseTeacherView(TemplateView):
             # Going to validate student_id
             pass
             try:
-                st = cl.student_set.get(id=kwargs['student_id'])
+                st = cl.student_set.filter(id=kwargs['student_id'])[0]
                 cleaned_params['student'] = st
             except ObjectDoesNotExist:
                 return {'success': False,

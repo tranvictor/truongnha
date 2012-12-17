@@ -275,11 +275,11 @@ class StudentView(RestfulView, BaseTeacherView):
             .filter(pupil__last_name__exact=last_name)\
             .filter(pupil__birthday__exact=birthday)
             if find:
-                return {'success': False,
-                        'error': None,
-                        'message': u'Trùng thông tin với học sinh khác trong hệ thống'}
-
-            st = create_form.save(cl)
+                st = find[0].pupil
+                Attend.objects.create(pupil=st, _class=cl,\
+                attend_time=datetime.now(),leave_time=None)
+            else:
+                st = create_form.save(cl)
             return {'message': u'Bạn vừa tạo thành công học sinh',
                     'success': True,
                     'student_first_name': st.first_name,
