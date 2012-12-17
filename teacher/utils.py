@@ -91,34 +91,37 @@ def add_many_students( student_list = None,
             first_name = normalize(student['first_name'])
 
         birthday = student['birthday']
-        find = Student.objects.filter(first_name__exact = first_name)\
-        .filter(last_name__exact = last_name)\
-        .filter(birthday__exact = birthday)
+        try:
+            find = Attend.objects.filter(_class__teacher_id = _class.teacher_id, pupil__first_name__exact = first_name)\
+            .filter(pupil__last_name__exact = last_name)\
+            .filter(pupil__birthday__exact = birthday)
 
-        # count primary subjects
-        if find:
-            st = find[0]
-            attendance = Attend.objects.filter(pupil__id=st.id, _class__id=_class.id, leave_time=None)
-            #if already found a student then check for his attendance
-            if not attendance:
+            # count primary subjects
+            if find:
+                st = find[0].pupil
+                attendance = Attend.objects.filter(pupil__id=st.id, _class__id=_class.id, leave_time=None)
+                #if already found a student then check for his attendance
+                if not attendance:
+                    Attend.objects.create(
+                        pupil=st, _class=_class,
+                        attend_time=datetime.now(),
+                        leave_time=None)
+                    continue
+
+                if not force_update:
+                    existing_student.append(student)
+                    continue
+
+            else:    # the student does not exist
+                st = Student.objects.create(first_name=first_name,
+                        last_name=last_name,
+                        birthday=birthday)
                 Attend.objects.create(
                     pupil=st, _class=_class,
                     attend_time=datetime.now(),
                     leave_time=None)
-                continue
-
-            if not force_update:
-                existing_student.append(student)
-                continue
-
-        else:    # the student does not exist
-            st = Student.objects.create(first_name=first_name,
-                    last_name=last_name,
-                    birthday=birthday)
-            Attend.objects.create(
-                pupil=st, _class=_class,
-                attend_time=datetime.now(),
-                leave_time=None)
+        except Exception as e:
+            print e
 
         changed = False
         if 'sex' in student:
