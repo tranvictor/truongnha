@@ -259,7 +259,6 @@ class StudentView(RestfulView, BaseTeacherView):
     def _get_create(self, *args, **kwargs):
         self.template_name = os.path.join('teacher', 'student_create.html')
         create_form = self.StudentForm()
-        print create_form
         return {'form': create_form,
                 'create_url': self.reverse('student_create',
                     kwargs={'class_id': kwargs['class_id'],
@@ -269,6 +268,17 @@ class StudentView(RestfulView, BaseTeacherView):
         cl = kwargs['cleaned_params']['class']
         create_form = self.StudentForm(self.request.POST.copy())
         if create_form.is_valid():
+            birthday = create_form.cleaned_data['birthday']
+            first_name = create_form.cleaned_data['first_name']
+            last_name = create_form.cleaned_data['last_name']
+            find = Attend.objects.filter(_class__teacher_id=cl.teacher_id, pupil__first_name__exact=first_name)\
+            .filter(pupil__last_name__exact=last_name)\
+            .filter(pupil__birthday__exact=birthday)
+            if find:
+                return {'success': False,
+                        'error': None,
+                        'message': u'Trùng thông tin với học sinh khác trong hệ thống'}
+
             st = create_form.save(cl)
             return {'message': u'Bạn vừa tạo thành công học sinh',
                     'success': True,
@@ -310,6 +320,16 @@ class StudentView(RestfulView, BaseTeacherView):
         modify_form = self.StudentForm(self.request.POST.copy(),
                 instance=st)
         if modify_form.is_valid():
+            birthday = modify_form.cleaned_data['birthday']
+            first_name = modify_form.cleaned_data['first_name']
+            last_name = modify_form.cleaned_data['last_name']
+            find = Attend.objects.filter(_class__teacher_id=cl.teacher_id,\
+            pupil__first_name__exact=first_name).filter(pupil__last_name__exact=last_name)\
+            .filter(pupil__birthday__exact=birthday).exclude(pupil__id=st.id)
+            if find:
+                return {'success': False,
+                        'error': None,
+                        'message': u'Trùng thông tin với học sinh khác trong hệ thống'}
             st = modify_form.save(cl)
             return {'message': u'Bạn vừa cập nhật thành công học sinh',
                     'success': True,
