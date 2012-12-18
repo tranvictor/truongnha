@@ -323,16 +323,25 @@ class Attend(AbstractTeacherModel):
     def __unicode__(self):
         return unicode(self.pupil) + '_' + unicode(self._class)
 
+class HeSo(AbstractTeacherModel):
+    hs = models.FloatField("Hệ số",
+        validators=[validations.hs])
+    class_id = models.ForeignKey(Class, verbose_name="Lớp")
+
+    class Meta:
+        verbose_name = "Hệ số"
+        verbose_name_plural = "Hệ số"
+    def __unicode__(self):
+        return unicode("%s_%" % (self.class_id,self.hs))
+
 class Mark(AbstractTeacherModel):
     created = models.DateTimeField("Thời gian tạo", auto_now_add=True)
     modified = models.DateTimeField("Thời gian sửa", auto_now=True)
-    
     diem = models.FloatField("Điểm", null=True, blank=True,
             validators=[validations.mark])
-    hs = models.FloatField("Hệ số",
-            validators=[validations.hs])
     note = models.TextField("Ghi chú", blank=True)
 
+    hs_id = models.ForeignKey(HeSo, verbose_name="Hệ số")
     class_id = models.ForeignKey(Class, verbose_name="Lớp")
     student_id = models.ForeignKey(Student, verbose_name="Học sinh")
 

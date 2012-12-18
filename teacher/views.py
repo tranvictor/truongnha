@@ -17,7 +17,7 @@ from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ObjectDoesNotExist
 import validations
 from teacher.models import Person, Teacher, Register, Class,\
-        Attend, Student, Mark, Note
+        Attend, Student, Mark, Note, HeSo
 from sms.utils import send_email
 from teacher.base import BaseTeacherView, RestfulView
 import settings
@@ -573,30 +573,143 @@ class ForgetPasswordView(TemplateView):
                 'message': u'Có lỗi ở dữ liệu nhập vào'})
             return HttpResponse(response, mimetype='json')
 
+class HeSoView(RestfulView, BaseTeacherView):
+    request_type = ['modify', 'create', 'remove']
+
+    class HeSoForm(forms.ModelForm):
+        def save(self, cl, commit=True, *args, **kwargs):
+            hs = super(HeSoView.HeSoForm, self).save(commit=False,
+                *args, **kwargs)
+            hs.class_id = cl
+            if commit:
+                hs.save()
+            return hs
+        class Meta:
+            model = HeSo
+            exclude = ('class_id')
+
+    def _get_create(self, *args, **kwargs):
+        create_form = self.HeSoForm
+        self.template_name = os.path.join('teacher', 'heso_create.html')
+        return {'form': create_form,
+                'success' : True}
+
+    def _post_create(self, *args, **kwargs):
+        cl_id = kwargs['class_id']
+        create_form = self.HeSoForm(self.request.POST.copy())
+        try:
+            cl = self.teacher.class_set.get(id=cl_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Lớp không tồn tại'}
+        if create_form.is_valid():
+            hs = create_form.save(cl)
+            return {'message': u'Bạn vừa thêm thành công hệ số',
+                    'heso': hs.id,
+                    'success': True}
+        else:
+            error = {}
+            for k, v in create_form.errors.items():
+                error[create_form[k].auto_id] = create_form.error_class.as_text(v)
+            return {'success': False,
+                    'error': error,
+                    'message': u'Có lỗi ở dữ liệu nhập vào'}
+
+    def _get_modify(self, *args, **kwargs):
+        self.template_name = os.path.join('teacher', 'heso_create.html')
+        hs_id = kwargs['hs_id']
+        cl_id = kwargs['class_id']
+        cl = self.teacher.class_set.get(id=cl_id)
+        try:
+            hs = cl.heso_set.get(id = hs_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Hệ số không nằm trong lớp'}
+        create_form = self.HeSoForm(instance=hs)
+        return {'form': create_form,
+                'success' : True}
+
+    def _post_modify(self, *args, **kwargs):
+        self.template_name = os.path.join('teacher', 'heso_create.html')
+        hs_id = kwargs['hs_id']
+        cl_id = kwargs['class_id']
+        try:
+            cl = self.teacher.class_set.get(id=cl_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Lớp không tồn tại'}
+        try:
+            hs = cl.heso_set.get(id=hs_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Hệ số không nằm trong lớp'}
+
+        modify_form = self.HeSoForm(self.request.POST.copy(),
+            instance=hs)
+        if modify_form.is_valid():
+            hs = modify_form.save(cl)
+            return {'message': u'Bạn vừa cập nhật thành công điểm',
+                    'success': True,
+                    'class' : cl.id,
+                    'heso' : hs.id}
+        else:
+            error = {}
+            for k, v in modify_form.errors.items():
+                error[modify_form[k].auto_id] = modify_form.error_class.as_text(v)
+            return {'success': False,
+                    'error': error,
+                    'message': u'Có lỗi ở dữ liệu nhập vào'}
+
+    def _post_remove(self, *args, **kwargs):
+        self.template_name = os.path.join('teacher', 'heso_create.html')
+        cl_id = kwargs['class_id']
+        hs_id = kwargs['hs_id']
+        try:
+            cl = self.teacher.class_set.get(id=cl_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Lớp không tồn tại'}
+        try:
+            hs = cl.heso_set.get(id=hs_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Hệ số không tồn tại'}
+        hs.delete()
+        return {'success': True,
+                'message': u'Bạn đã xóa thành công hệ số'}
+
+
 class MarkView(RestfulView, BaseTeacherView):
     request_type = ['modify', 'create', 'remove']
 
     class MarkForm(forms.ModelForm):
-#        def __init__(self, *args, **kwargs):
-#            super(MarkView.MarkForm, self).__init__(*args, **kwargs)
-        def save(self, cl, student, commit=True, *args, **kwargs):
+    #        def __init__(self, *args, **kwargs):
+    #            super(MarkView.MarkForm, self).__init__(*args, **kwargs)
+        def save(self, cl, student, hs, commit=True, *args, **kwargs):
             mark = super(MarkView.MarkForm, self).save(commit=False,
                 *args, **kwargs)
             mark.class_id = cl
             mark.student_id = student
+            mark.hs_id = hs
             if commit:
                 mark.save()
             return mark
         class Meta:
             model = Mark
-            exclude = ('created', 'modified', 'class_id', 'student_id')
+            exclude = ('created', 'modified', 'class_id', 'student_id', 'hs_id')
 
     def _get_create(self, *args, **kwargs):
         self.template_name = os.path.join('teacher', 'mark_create.html')
         cl_id = kwargs['class_id']
         student_id = kwargs['student_id']
+        hs_id = kwargs['hs_id']
         cl = self.teacher.class_set.get(id=cl_id)
         student = Student.objects.get(id = student_id)
+        try:
+            hs = cl.heso_set.get(id=hs_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Hệ số không tồn tại'}
         if cl.id == student.current_class().id:
             create_form = self.MarkForm()
             print create_form
@@ -607,6 +720,7 @@ class MarkView(RestfulView, BaseTeacherView):
                     'create_url': self.reverse('mark_create',
                         kwargs={'class_id': kwargs['class_id'],
                                 'student_id': kwargs['student_id'],
+                                'hs_id': kwargs['hs_id'],
                                 'request_type': 'create'})}
         else:
             return {'success': False,
@@ -614,20 +728,25 @@ class MarkView(RestfulView, BaseTeacherView):
 
     def _post_create(self, *args, **kwargs):
         cl_id = kwargs['class_id']
-        print self.request.POST
         student_id = kwargs['student_id']
+        hs_id = kwargs['hs_id']
         try:
             cl = self.teacher.class_set.get(id=cl_id)
             student = Student.objects.get(id = student_id)
         except ObjectDoesNotExist:
             return {'success': False,
                     'message': u'Lớp hoặc học sinh không tồn tại'}
+        try:
+            hs = cl.heso_set.get(id=hs_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Hệ số không tồn tại'}
         if cl.id != student.current_class().id:
             return {'success': False,
                     'message': u'Học sinh không nằm trong lớp'}
         create_form = self.MarkForm(self.request.POST.copy())
         if create_form.is_valid():
-            mark = create_form.save(cl, student)
+            mark = create_form.save(cl, student, hs)
             return {'message': u'Bạn vừa thêm thành công điểm',
                     'success': True,
                     'student': student.id,
@@ -636,12 +755,14 @@ class MarkView(RestfulView, BaseTeacherView):
                     'mark_modify': self.reverse('mark_view',
                         kwargs={'class_id': cl.id,
                                 'student_id': student.id,
+                                'hs_id': kwargs['hs_id'],
                                 'mark_id':mark.id,
                                 'request_type': 'modify'}),
 
                     'mark_remove': self.reverse('mark_view',
                         kwargs={'class_id': cl.id,
                                 'student_id': student.id,
+                                'hs_id': kwargs['hs_id'],
                                 'mark_id':mark.id,
                                 'request_type': 'remove'})}
         else:
@@ -656,12 +777,18 @@ class MarkView(RestfulView, BaseTeacherView):
         cl_id = kwargs['class_id']
         student_id = kwargs['student_id']
         mark_id = kwargs['mark_id']
+        hs_id = kwargs['hs_id']
         try:
             cl = self.teacher.class_set.get(id=cl_id)
             student = Student.objects.get(id = student_id)
         except ObjectDoesNotExist:
             return {'success': False,
                     'message': u'Lớp hoặc học sinh không tồn tại'}
+        try:
+            hs = cl.heso_set.get(id=hs_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Hệ số không tồn tại'}
         if cl.id != student.current_class().id:
             return {'success': False,
                     'message': u'Học sinh không nằm trong lớp'}
@@ -683,6 +810,7 @@ class MarkView(RestfulView, BaseTeacherView):
                 'create_url': self.reverse('mark_create',
                     kwargs={'class_id': kwargs['class_id'],
                             'student_id': kwargs['student_id'],
+                            'hs_id': kwargs['hs_id'],
                             'request_type': 'create'})}
 
     def _post_modify(self, *args, **kwargs):
@@ -690,12 +818,18 @@ class MarkView(RestfulView, BaseTeacherView):
         cl_id = kwargs['class_id']
         student_id = kwargs['student_id']
         mark_id = kwargs['mark_id']
+        hs_id = kwargs['hs_id']
         try:
             cl = self.teacher.class_set.get(id=cl_id)
             student = Student.objects.get(id = student_id)
         except ObjectDoesNotExist:
             return {'success': False,
                     'message': u'Lớp hoặc học sinh không tồn tại'}
+        try:
+            hs = cl.heso_set.get(id=hs_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Hệ số không tồn tại'}
         if cl.id != student.current_class().id:
             return {'success': False,
                     'message': u'Học sinh không nằm trong lớp'}
@@ -712,7 +846,7 @@ class MarkView(RestfulView, BaseTeacherView):
         modify_form = self.MarkForm(self.request.POST.copy(),
             instance=mark)
         if modify_form.is_valid():
-            mark = modify_form.save(cl, student)
+            mark = modify_form.save(cl, student, hs)
             return {'message': u'Bạn vừa cập nhật thành công điểm',
                     'success': True,
                     'student': student.id,
@@ -721,12 +855,14 @@ class MarkView(RestfulView, BaseTeacherView):
                     'mark_modify': self.reverse('mark_view',
                         kwargs={'class_id': cl.id,
                                 'student_id': student.id,
+                                'hs_id': hs.id,
                                 'mark_id':mark.id,
                                 'request_type': 'modify'}),
 
                     'mark_remove': self.reverse('mark_view',
                         kwargs={'class_id': cl.id,
                                 'student_id': student.id,
+                                'hs_id': hs.id,
                                 'mark_id':mark.id,
                                 'request_type': 'remove'})}
         else:
@@ -742,6 +878,7 @@ class MarkView(RestfulView, BaseTeacherView):
         cl_id = kwargs['class_id']
         student_id = kwargs['student_id']
         mark_id = kwargs['mark_id']
+        hs_id = kwargs['hs_id']
         try:
             cl = self.teacher.class_set.get(id=cl_id)
             student = Student.objects.get(id = student_id)
@@ -751,6 +888,11 @@ class MarkView(RestfulView, BaseTeacherView):
         if cl.id != student.current_class().id:
             return {'success': False,
                     'message': u'Học sinh không nằm trong lớp'}
+        try:
+            cl.heso_set.get(id=hs_id)
+        except ObjectDoesNotExist:
+            return {'success': False,
+                    'message': u'Hệ số không tồn tại'}
         try:
             mark = student.mark_set.get(id = mark_id)
         except ObjectDoesNotExist:
@@ -764,6 +906,7 @@ class MarkView(RestfulView, BaseTeacherView):
         return {'success': True,
                 'message': u'Bạn đã xóa điểm %s' % mark}
 
+
 class ClassMarkView(RestfulView, BaseTeacherView):
     request_type = ['view','modify']
 
@@ -774,35 +917,19 @@ class ClassMarkView(RestfulView, BaseTeacherView):
         self.template_name = os.path.join('teacher', 'mark.html')
         cl = kwargs['cleaned_params']['class']
         students = cl.students()
+        he_so_list = cl.heso_set.all()
         marks = cl.mark_set.all()
-        hs_list = []
-        std_mark = {}
         marks_set = {}
-        hs_number_max = {}
-        for mark in marks:
-            if mark.hs not in hs_list:
-                hs_list.append(mark.hs)
         for student in students:
-            std_mark[student.id] = marks.filter(student_id = student.id)
             marks_set[student.id] = {}
-        for hs in hs_list:
-            hs_number_max[hs] = 1
-        for hs in hs_list:
-            for student in students:
-                temp = std_mark[student.id].filter(hs = hs)
-                marks_set[student.id][hs] = []
-                for m in temp:
-                    marks_set[student.id][hs].append(m)
-                count = temp.count()
-                if count > hs_number_max[hs]:
-                    hs_number_max[hs] = count
-        total_column = 0
-        for hs in hs_number_max:
-            total_column += hs_number_max[hs]
+        for m in marks:
+            marks_set[m.student_id_id][m.hs_id_id] = m
         add_column_form = ClassMarkView.HSForm()
+        total_column = len(he_so_list)
+        print total_column
         return {'class': cl,
                 'students': students,
-                'hs_number_max':hs_number_max,
+                'he_so_list': he_so_list,
                 'total_column':total_column,
                 'marks_set':marks_set,
                 'add_column_form':add_column_form}

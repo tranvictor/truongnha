@@ -51,7 +51,7 @@
 <div class="row-fluid">
     <div>
         <table class="table table-bordered table-hover grid-edit">
-            <thead>
+            <thead id="mark_head">
             <tr>
                 <th rowspan="2">STT</th>
                 <th rowspan="2">Họ</th>
@@ -61,51 +61,40 @@
                 {% else %}
                     <th colspan="1" id="hs-thread">Hệ số</th>
                 {% endif %}
+                <th rowspan="2" nowrap>Tổng kết</th>
             </tr>
             <tr id="hs-row">
-                {% for k,v in hs_number_max.items %}
-                    {% for i in v|times %}
-                        <th class="{{ k|make_class }}-{{ forloop.counter0 }}">
-                            <input type="text" value="{{ k }}" disabled="disabled"
-                                   name="heso" data-heso="{{ k }}">
-                        </th>
-                    {% endfor %}
+                {% for hs in he_so_list %}
+                    <th class="{{hs.id}}">
+                        <input type="text" value="{{ hs.hs }}" disabled="disabled"
+                               name="heso" data-heso="{{ hs.hs }}">
+                    </th>
                 {% endfor %}
-                {% if not total_column %}
-                    <th class="1dot0-0"><input type="text" value="1.0" disabled="disabled"
-                                               name="heso" data-heso=""></th>
-                {% endif %}
             </tr>
             </thead>
-            <tbody>
+            <tbody id="mark_body">
             {% for std in students %}
                 <tr id="{{ class.id }}-{{ std.id }}" class="student-mark">
                     <td>{{ forloop.counter }}</td>
-                    <td>{{ std.last_name }}</td>
-                    <td>{{ std.first_name }}</td>
-                    {% for k,v in hs_number_max.items %}
-                        {% for i in v|times %}
-                            {% with marks_set|get_dict_value:std.id as std_mark %}
-                                {% with std_mark|get_dict_value:k as std_mark_hs %}
-                                    {% with std_mark_hs|get_list_value:forloop.counter0 as mark%}
-                                        <td class="{{ k|make_class }}-{{ forloop.counter0 }}">
-                                            {% if mark %}
-                                                <input id="{{ mark.id }}" type="text" value="{{ mark.diem }}"
-                                                       class="old-mark" name="diem" data-diem="{{ mark.diem }}">
-                                            {% else %}
-                                                <input type="text" value="" name="diem" data-diem="">
-                                            {% endif %}
-                                        </td>
-                                    {% endwith %}
-                                {% endwith %}
+                    <td nowrap>{{ std.last_name }}</td>
+                    <td nowrap>{{ std.first_name }}</td>
+
+                    {% with marks_set|get_dict_value:std.id as std_mark %}
+                        {% for hs in he_so_list %}
+                            {% with std_mark|get_dict_value:hs.id as mark %}
+                                <td class="{{ hs.id }}">
+                                    {% if mark %}
+                                        <input id="{{ mark.id }}" type="text" value="{{ mark.diem }}"
+                                               class="old-mark" name="diem" data-diem="{{ mark.diem }}">
+                                    {% else %}
+                                        <input type="text" value="" name="diem" data-diem="">
+                                    {% endif %}
+                                </td>
                             {% endwith %}
                         {% endfor %}
-                    {% endfor %}
-                    {% if not total_column %}
-                    <td class="1dot0-0">
-                        <input type="text">
-                    </td>
-                    {% endif %}
+                    {% endwith %}
+
+                    <td></td>
                 </tr>
             {% endfor %}
             </tbody>

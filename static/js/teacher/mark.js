@@ -1,27 +1,5 @@
 $(document).ready(function(){
-    var big_value = 9999;
-    function getCookie(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie != "") {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = jQuery.trim(cookies[i]);
-                // Does this cookie string begin with the name we want?
-                if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-    function new_class(hs){
-        var cl = hs + '-' + big_value;
-        big_value = big_value - 1;
-        cl = String(cl);
-        cl = cl.replace('.','dot');
-        return cl;
-    }
+    var edit_hs = false;
     function acceptDigits(val){
         var exp = /[^((\d).,)]/g;
         val=val.replace(exp,'');
@@ -55,6 +33,14 @@ $(document).ready(function(){
         }
         return val;
     }
+    function acceptDigitsHs(val){
+        var exp = /[^((\d).,)]/g;
+        val=val.replace(exp,'');
+        var exp1 = /[,]/g;
+        val=val.replace(exp1,'.');
+        if(isNaN(val)) return '';
+        return val;
+    }
     function key_up_diem(event) {
         var $this;
         var cellIndex;
@@ -86,175 +72,7 @@ $(document).ready(function(){
         val = acceptDigits(val);
         $(this).val(val);
     }
-    console.log($('#add-column-model'));
-    $("#btn-add-mark").click(function(){
-        $("#add-column-modal").modal("show");
-        return false;
-    });
-    $("#add-column-modal").on("hide",function(){
-        clear_bootstrap_error();
-        $("#id_hs").val('');
-    });
-    $("#add-column-button").click(function(){
-        clear_bootstrap_error();
-        var value = $("#id_hs").val();
-        if (isNaN(value) || (value == '')){
-            var err = {'id_hs':'Hệ số phải là một số thực'};
-            add_bootstrap_error(err);
-        }
-        else{
-            var colspan = parseInt($("#hs-thread").attr("colspan"));
-            colspan = colspan + 1;
-            var cl = new_class(value);
-            $("#hs-thread").attr("colspan",colspan);
-            var th = '<th class="'+ cl +'"><input type="text" disabled="disabled" value=' + value + '></th>';
-            var td = '<td class="'+ cl +'"><input type="text" value=""></td>';
-            $("#hs-row").append(th);
-            $(".student-mark").append(td);
-            $("#add-column-modal").modal("hide");
-        }
-        return false;
-    });
-    $("#btn-edit-hs").click(function(){
-        $("td > input").attr("disabled","disabled");
-        $("th > input").attr("disabled",false);
-        $("#btn-edit-mark").show();
-        $(this).hide();
-        return false;
-    });
-    $("#btn-edit-mark").click(function(){
-        $("th > input").attr("disabled","disabled");
-        $("td > input").attr("disabled",false);
-        $("#btn-edit-hs").show();
-        $(this).hide();
-        return false;
-    });
-    $("tbody").delegate("td > input","blur",function(){
-        var std_info = $(this).parent().parent().attr('id').split('-');
-        var student_id = std_info[1];
-        var cl = $(this).parent().attr('class');
-        var selected = 'th.' + cl + '> input';
-        var hs = $(selected).val();
-        var value = $(this).val();
-        var old_value = $(this).attr('data-diem');
-        var csrf = getCookie("csrftoken");
-        var $input = $(this);
-        var tem1 = parseFloat(old_value);
-        var tem2 = parseFloat(value);
-        if((tem1 == tem2 )||(isNaN(tem1)&&isNaN(tem2))) return false;
-        if ($(this).hasClass('old-mark')){
-            var mark_id = $(this).attr('id');
-            if (value == ''){
-                var url = '/teacher/' + teacher_id + '/class/' + class_id +
-                    '/student/' + student_id + '/mark/' + mark_id+ '/remove';
-                var args = {
-                    type:'POST',
-                    'url':url,
-                    'global':false,
-                    'data':{
-                        'diem':value,
-                        'hs':hs,
-                        'csrfmiddlewaretoken':csrf
-                    },
-                    datatype:"json",
-                    success: function(json){
-                        if(json.success){
-                            $input.removeClass('old-mark');
-                            $input.attr('data-diem',value);
-                        }
-                    }
-                };
-            }
-            else{
-                var url = '/teacher/' + teacher_id + '/class/' + class_id +
-                    '/student/' + student_id + '/mark/' + mark_id+ '/modify';
-                var args = {
-                    type:'POST',
-                    'url':url,
-                    'global':false,
-                    'data':{
-                        'diem':value,
-                        'hs':hs,
-                        'csrfmiddlewaretoken':csrf
-                    },
-                    datatype:"json",
-                    success: function(json){
-                        if(json.success){
-                            $input.attr('data-diem',value);
-                        }
-                    }
-                };
-            }
-        }
-        else{
-            var url = '/teacher/' + teacher_id + '/class/' + class_id + '/student/' + student_id + '/mark/create';
-            var args = {
-                type:'POST',
-                'url':url,
-                'global':false,
-                'data':{
-                    'diem':value,
-                    'hs':hs,
-                    'csrfmiddlewaretoken':csrf
-                },
-                datatype:"json",
-                success: function(json){
-                    if(json.success){
-                        $input.addClass('old-mark');
-                        $input.attr("id",json.mark);
-                        $input.attr('data-diem',value);
-                    }
-                }
-            };
-        }
-        $.ajax(args);
-    });
-    $("thead").delegate("th > input","blur",function(){
-        var hs = $(this).val();
-        var old_hs = $(this).attr('data-heso');
-        var old_class = $(this).parent().attr('class');
-        var new_cl = new_class(hs);
-        var selected = "td." + old_class;
-        var id_list = "";
-        var csrf = getCookie("csrftoken");
-        var tem1 = parseFloat(hs);
-        var tem2 = parseFloat(old_hs);
-        if((tem1 == tem2 )||(isNaN(tem1)&&isNaN(tem2))) return false;
-        $(selected).each(function(){
-            var id = $("> input",this).attr('id');
-            console.log(id);
-            if (id){
-                id_list = id_list + id + "-";
-            }
-        });
-        id_list = id_list.substring(0, id_list.length - 1);
-        var url = '/teacher/' + teacher_id + '/class/' + class_id + '/mark/modify';
-        var args = {
-            type:'POST',
-            'url':url,
-            'global':false,
-            'data':{
-                'id_list':id_list,
-                'hs':hs,
-                'csrfmiddlewaretoken':csrf
-            },
-            datatype:"json",
-            success:function(json){
-                if(json.success){
-                    var select = '.' + old_class;
-                    $(select).addClass(new_cl);
-                    $(old_class).removeClass(old_class);
-                }
-            }
-        };
-        $.ajax(args);
-    });
-    $("input").focus(function(){
-        $(this).select();
-        return false;
-    });
-    $("input[name=diem]").on('keyup',key_up_diem );
-    $("input[name=heso]").on('keyup', function (event) {
+    function key_up_heso(event){
         var $this;
         var cellIndex;
         if (event.keyCode == 37) {
@@ -269,5 +87,213 @@ $(document).ready(function(){
             $this.children().eq(cellIndex).find("input").focus();
             return false;
         }
+        var val = $(this).val();
+        val = acceptDigitsHs(val);
+        $(this).val(val);
+    }
+    function add_he_so(){
+        clear_bootstrap_error();
+        var value = $("#id_hs").val();
+        var url = '/teacher/' + teacher_id + '/class/' + class_id + '/heso/create';
+        var args = {
+            type:'POST',
+            'url':url,
+            'global':false,
+            'data':{
+                'hs':value
+            },
+            datatype:"json",
+            success: function(json){
+                $("#notify").showNotification(json.message);
+                if(json.success){
+                    add_new_column(json.heso,value);
+                    $("#add-column-modal").modal("hide");
+                }
+                else{
+                    add_bootstrap_error(json.error);
+                }
+            }
+        }
+        $.ajax(args);
+        return false;
+    }
+    function edit_he_so() {
+        var value = $(this).val();
+        var old_value = $(this).attr('data-heso');
+        var cl = $(this).parent().attr('class');
+        var $input = $(this);
+        var tem1 = parseFloat(value);
+        var tem2 = parseFloat(old_value);
+        if ((tem1 == tem2 ) || (isNaN(tem1) && isNaN(tem2))) return false;
+        if (value == '') {
+            var i = confirm('Bạn có chắc chắn muốn xóa cột điểm này không?');
+            if (i){
+                var url = '/teacher/' + teacher_id + '/class/' + class_id +
+                    '/heso/' + cl + '/remove';
+                var args = {
+                    type:'POST',
+                    'url':url,
+                    'global':false,
+                    'data':{},
+                    datatype:"json",
+                    success:function (json) {
+                        $("#notify").showNotification(json.message);
+                        if (json.success) {
+                            var selected = '.' + cl;
+                            $(selected).remove();
+                        }
+                    }
+                };
+            }
+            else{
+                $(this).val(old_value);
+                return false;
+            }
+        }
+        else {
+            var url = '/teacher/' + teacher_id + '/class/' + class_id +
+                '/heso/' + cl + '/modify';
+            var args = {
+                type:'POST',
+                'url':url,
+                'global':false,
+                'data':{
+                    'hs':value
+                },
+                datatype:"json",
+                success:function (json) {
+                    if (json.success) {
+                        $("#notify").showNotification('Đã lưu.');
+                        $input.attr('data-heso', value);
+                    }
+                    else $("#notify").showNotification(json.message);
+                }
+            };
+        }
+        $.ajax(args);
+    }
+    function edit_mark(){
+        var std_info = $(this).parent().parent().attr('id').split('-');
+        var student_id = std_info[1];
+        var cl = $(this).parent().attr('class');
+        var value = $(this).val();
+        var old_value = $(this).attr('data-diem');
+        var $input = $(this);
+        var tem1 = parseFloat(old_value);
+        var tem2 = parseFloat(value);
+        if((tem1 == tem2 )||(isNaN(tem1)&&isNaN(tem2))) return false;
+        if ($(this).hasClass('old-mark')){
+            var mark_id = $(this).attr('id');
+            if (value == ''){
+                var url = '/teacher/' + teacher_id + '/class/' + class_id +
+                    '/student/' + student_id + '/heso/' + cl +
+                    '/mark/' + mark_id + '/remove';
+                var args = {
+                    type:'POST',
+                    'url':url,
+                    'global':false,
+                    'data':{},
+                    datatype:"json",
+                    success: function(json){
+                        if(json.success){
+                            $("#notify").showNotification('Đã lưu');
+                            $input.removeClass('old-mark');
+                            $input.attr('data-diem',value);
+                        }
+                        else $("#notify").showNotification(json.message);
+                    }
+                };
+            }
+            else{
+                var url = '/teacher/' + teacher_id + '/class/' + class_id +
+                    '/student/' + student_id  + '/heso/' + cl +
+                    '/mark/' + mark_id+ '/modify';
+                var args = {
+                    type:'POST',
+                    'url':url,
+                    'global':false,
+                    'data':{
+                        'diem':value
+                    },
+                    datatype:"json",
+                    success: function(json){
+                        if(json.success){
+                            $("#notify").showNotification('Đã lưu');
+                            $input.attr('data-diem',value);
+                        }
+                        else $("#notify").showNotification(json.message);
+                    }
+                };
+            }
+        }
+        else{
+            var url = '/teacher/' + teacher_id + '/class/' + class_id +
+                '/student/' + student_id  + '/heso/' + cl + '/mark/create';
+            var args = {
+                type:'POST',
+                'url':url,
+                'global':false,
+                'data':{
+                    'diem':value
+                },
+                datatype:"json",
+                success: function(json){
+                    if(json.success){
+                        $("#notify").showNotification('Đã lưu');
+                        $input.addClass('old-mark');
+                        $input.attr("id",json.mark);
+                        $input.attr('data-diem',value);
+                    }
+                    else $("#notify").showNotification(json.message);
+                }
+            };
+        }
+        $.ajax(args);
+    }
+    function add_new_column(hs_id, value){
+        var colspan = parseInt($("#hs-thread").attr("colspan"));
+        colspan = colspan + 1;
+        $("#hs-thread").attr("colspan",colspan);
+        if (edit_hs){
+            var th = '<th class="'+ hs_id +'"><input type="text" name="heso" value="' +
+                value + '" data-heso="'+ value + '"></th>';
+            var td = '<td class="'+ hs_id +'"><input type="text" name="diem" disabled="disabled" value=""></td>';
+        }
+        else{
+            var th = '<th class="'+ hs_id +'"><input type="text" disabled="disabled" name="heso" value="' +
+                value + '" data-heso="'+ value + '"></th>';
+            var td = '<td class="'+ hs_id +'"><input type="text" name="diem" value=""></td>';
+        }
+        $("#hs-row").append(th);
+        $(".student-mark").append(td);
+    }
+    $("#btn-add-mark").click(function (){
+        $("#add-column-modal").modal("show");
+        return false;
     });
+    $("#add-column-modal").on("hide",function (){
+        clear_bootstrap_error();
+        $("#id_hs").val('');
+    });
+    $("#add-column-button").click(add_he_so);
+    $("#btn-edit-hs").click(function (){
+        edit_hs = true;
+        $("td > input").attr("disabled","disabled");
+        $("th > input").attr("disabled",false);
+        $("#btn-edit-mark").show();
+        $(this).hide();
+        return false;
+    });
+    $("#btn-edit-mark").click(function (){
+        edit_hs = false;
+        $("th > input").attr("disabled","disabled");
+        $("td > input").attr("disabled",false);
+        $("#btn-edit-hs").show();
+        $(this).hide();
+        return false;
+    });
+    $("#mark_body").delegate("td > input", "blur", edit_mark);
+    $("#mark_head").delegate("th > input", "blur", edit_he_so);
+    $("#mark_body").delegate("input[name=diem]", "keyup", key_up_diem);
+    $("#mark_head").delegate("input[name=heso]", "keyup", key_up_heso);
 });
