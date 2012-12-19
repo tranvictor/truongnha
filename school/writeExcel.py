@@ -981,7 +981,7 @@ def exportMark(request, term_id, subject_id, colMieng=4, col15Phut=4, colMotTiet
     s.write_merge(8, 9, 4 + maxColMieng, 3 + maxColMieng + maxCol15Phut, u'Điểm hs 1-Viết', h4)
     s.write_merge(8, 9, 4 + maxColMieng + maxCol15Phut, 3 + maxColMieng + maxCol15Phut + maxColMotTiet, u'Điểm hs 2',
         h4)
-    s.write_merge(8, 10, 4 + sumCol, 4 + sumCol, u'Thi ck', h4)
+    s.write_merge(8, 10, 4 + sumCol, 4 + sumCol, u'CK', h4)
     for i in range(1, maxColMieng + 1):
         s.write(10, i + 3, i, h4)
     for i in range(1, maxCol15Phut + 1):
