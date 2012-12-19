@@ -199,8 +199,8 @@ def importMark(request, term_id, subject_id, checkDiff=1):
                 pass
 
             for i in range(x, s.nrows):
-                lastName = s.cell(i, y + 1).value
-                firstName = s.cell(i, y + 2).value
+                lastName = unicode(s.cell(i, y + 1).value)
+                firstName = unicode(s.cell(i, y + 2).value)
                 birthday = s.cell(i, y + 3).value
 
                 #p=pupilList.filter()
@@ -248,8 +248,8 @@ def importMark(request, term_id, subject_id, checkDiff=1):
 
                 if (editMarkMessage != ''): break
                 if not ok:
-                    absentMessage += '<tr>' + u'<td>' + lastName + ' ' + firstName + u'</td>' + u'<td>' + unicode(
-                        birthday) + u'</td>' + '</tr>'
+                    absentMessage += '<tr>' + u'<td>' + lastName + ' ' + firstName + u'</td>' + u'<td>' + \
+                                     unicode(birthday) + u'</td>' + '</tr>'
                 else:
                     numberOk += 1
 

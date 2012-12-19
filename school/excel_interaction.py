@@ -472,362 +472,366 @@ def save_file(import_file, session):
 
 def process_file(file_name, task):
     message = u'<ul>'
-    if task == "import_student":
-        student_list = []
-        filepath = os.path.join(settings.TEMP_FILE_LOCATION, file_name)
-        if not os.path.isfile(filepath):
-            raise NameError, "%s is not a valid filename" % file_name
-        try:
-            book = xlrd.open_workbook(filepath)
-            sheet = book.sheet_by_index(0)
-        except Exception as e:
-            print e
-            return {'error': u'File tải lên không phải file Excel'}
-
-        start_row = -1
-        for c in range(0, sheet.ncols):
-            flag = False
-            for r in range(0, sheet.nrows):
-                if unicode(sheet.cell_value(r, c)).lower() == u'họ và tên':
-                    start_row = r
-                    flag = True
-                    break
-            if flag: break
-            #CHUA BIEN LUAN TRUONG HOP: start_row = -1, ko co cot ten: Mã học sinh
-        if start_row == -1:
-            return ({'error': u'File tải lên phải có cột "Họ và Tên".'},
-                    u'File tải lên phải có cột "Họ và Tên".', 0, 0)
-            # start_row != 0
-        c_ten = -1
-        c_ngay_sinh = -1
-        c_gioi_tinh = -1
-        c_noi_sinh = -1
-        c_dan_toc = -1
-        c_cho_o_ht = -1
-        c_ten_bo = -1
-        c_ten_me = -1
-        c_so_dt_bo = -1
-        c_so_dt_me = -1
-        c_nguyen_vong = -1
-        c_so_dt_nt = -1
-        number = 0
-        number_ok = 0
-        for c in range(0, sheet.ncols):
-            value = sheet.cell_value(start_row, c)
-            if unicode(value).lower() == u'họ và tên':
-                c_ten = c
-            elif value == u'Ngày sinh':
-                c_ngay_sinh = c
-            elif value == u'Giới tính':
-                c_gioi_tinh = c
-            elif value == u'Nơi sinh':
-                c_noi_sinh = c
-            elif value == u'Dân tộc':
-                c_dan_toc = c
-            elif value == u'Chỗ ở hiện tại':
-                c_cho_o_ht = c
-            elif value == u'Họ tên bố':
-                c_ten_bo = c
-            elif value == u'Số điện thoại của bố':
-                c_so_dt_bo = c
-            elif value == u'Họ tên mẹ':
-                c_ten_me = c
-            elif value == u'Số điện thoại của mẹ':
-                c_so_dt_me = c
-            elif value == u'Ban đăng ký':
-                c_nguyen_vong = c
-            elif value == u'Số nhắn tin' or value == u'Số điện thoại nhắn tin':
-                c_so_dt_nt = c
-        for r in range(start_row + 1, sheet.nrows):
-            gt = 'Nam'
-            dan_toc = u'Kinh'
-            noi_sinh = ''
-            cho_o_ht = ''
-            ten_bo = ''
-            dt_bo = ''
-            ten_me = ''
-            dt_me = ''
-            ban_dk = u'CB'
-            sms_phone = ''
-            name = sheet.cell(r, c_ten).value.strip()
-            temp = []
-            for i in name.split(' '): 
-                if i: temp.append(i)
-            name = ' '.join(temp)
-            if not name.strip():
-                message += u'<li>Ô ' + unicode(cellname(r, c_ten)) + u':Trống. </li>'
-                continue
-            number += 1
-            birthday = sheet.cell(r, c_ngay_sinh).value
-            if not birthday:
-                message += u'<li>Ô ' + unicode(
-                    cellname(r, c_ngay_sinh)) + u':Trống. Học sinh: ' + name + u' không đủ thông tin.</li>'
-                continue
-            if c_gioi_tinh > -1:
-                gt = sheet.cell(r, c_gioi_tinh).value.strip().capitalize()
-                if not gt in [u'Nam', u'Nữ']: gt = 'Nam'
-            if c_noi_sinh > -1:
-                noi_sinh = sheet.cell(r, c_noi_sinh).value.strip()
-            if c_dan_toc > -1:
-                dan_toc = sheet.cell(r, c_dan_toc).value.strip()
-                if not dan_toc.strip(): dan_toc = 'Kinh'
-            if c_cho_o_ht > -1:
-                cho_o_ht = sheet.cell(r, c_cho_o_ht).value.strip()
-            if c_ten_bo > -1:
-                ten_bo = normalize(sheet.cell(r, c_ten_bo).value)
-            if c_so_dt_bo > -1:
-                dt_bo = sheet.cell(r, c_so_dt_bo).value
-                if dt_bo and (type(dt_bo)!= unicode or type(dt_bo)!=str):
-                    dt_bo = unicode(int(dt_bo)).strip()
-                if dt_bo and dt_bo[0] != '0' and dt_bo[0] != '+' and not dt_bo.startswith('84'): dt_bo = '0' + dt_bo
-            if c_ten_me > -1:
-                ten_me = normalize(sheet.cell(r, c_ten_me).value)
-            if c_so_dt_me > -1:
-                dt_me = sheet.cell(r, c_so_dt_me).value
-                if dt_me and (type(dt_me)!= unicode or type(dt_me)!=str):
-                    dt_me = unicode(int(dt_me)).strip()
-                if dt_me and dt_me[0] != '0' and dt_me[0] != '+' and not dt_me.startswith('84'): dt_me = '0' + dt_me
-            if c_nguyen_vong > -1:
-                ban_dk = sheet.cell(r, c_nguyen_vong).value.strip()
-                if not ban_dk.strip(): ban_dk = 'CB'
-
-            if c_so_dt_nt > -1:
-                sms_phone = sheet.cell(r, c_so_dt_nt).value
-                if type(sms_phone)!= unicode and type(sms_phone)!=str:
-                    sms_phone = unicode(int(sms_phone)).strip()
-                if sms_phone and sms_phone[0] != '0' and sms_phone[0] != '+' and not sms_phone.startswith('84'): sms_phone = '0' + sms_phone
-                if sms_phone:
-                    try:
-                        validate_phone(sms_phone)
-                    except Exception as e:
-                        message += u'<li>Ô ' + unicode(
-                            cellname(r, c_ngay_sinh)) + u':   Số điện thoại không hợp lệ ' + u'</li>'
-                        sms_phone = ''
-                        print e
+    try:
+        if task == "import_student":
+            student_list = []
+            filepath = os.path.join(settings.TEMP_FILE_LOCATION, file_name)
+            if not os.path.isfile(filepath):
+                raise NameError, "%s is not a valid filename" % file_name
             try:
-                if isinstance(birthday, unicode) or isinstance(birthday, str):
-                    birthday = to_date(birthday)
-                else:
-                    date_value = xlrd.xldate_as_tuple(sheet.cell(r, c_ngay_sinh).value, book.datemode)
-                    birthday = date(*date_value[:3])
+                book = xlrd.open_workbook(filepath)
+                sheet = book.sheet_by_index(0)
             except Exception as e:
                 print e
-                message += u'<li>Ô ' + unicode(
-                    cellname(r, c_ngay_sinh)) + u':Không đúng định dạng "ngày/tháng/năm" ' + u'</li>'
-                continue
-            data = {'fullname': name,
-                    'birthday': birthday,
-                    'sex': gt,
-                    'dan_toc': dan_toc,
-                    'birth_place': noi_sinh,
-                    'current_address': cho_o_ht,
-                    'father_name': ten_bo,
-                    'father_phone': dt_bo,
-                    'mother_name': ten_me,
-                    'mother_phone': dt_me,
-                    'ban_dk': ban_dk,
-                    'sms_phone': sms_phone}
-            student_list.append(data)
-            number_ok += 1
-        message += u'</ul>'
-        return student_list, message, number, number_ok
-    elif task == u"import_teacher":
-        teacher_list = {}
-        filepath = os.path.join(settings.TEMP_FILE_LOCATION, file_name)
-        if not os.path.isfile(filepath):
-            raise NameError, "%s is not a valid filename" % file_name
-        try:
-            book = xlrd.open_workbook(filepath)
-            sheet = book.sheet_by_index(0)
-        except Exception as e:
-            print e
-            return {'error': u'File tải lên không phải file Excel'}
+                return {'error': u'File tải lên không phải file Excel'}
 
-        start_row = -1
-        for c in range(0, sheet.ncols):
-            flag = False
-            for r in range(0, sheet.nrows):
-                if sheet.cell_value(r, c) in [u'Họ và Tên', u'Họ Tên', u'Tên']:
-                    start_row = r
-                    flag = True
-                    break
-            if flag: break
-            #CHUA BIEN LUAN TRUONG HOP: start_row = -1, ko co cot ten: Mã học sinh
-        if start_row == -1:
-            return ({'error': u'File tải lên phải có cột "Họ và Tên".'},
-                    u'File tải lên phải có cột "Họ và Tên".', 0, 0)
-            # start_row != 0
-        c_ten = -1
-        c_ngay_sinh = -1
-        c_gioi_tinh = -1
-        c_que_quan = -1
-        c_dan_toc = -1
-        c_cho_o_ht = -1
-        c_to = -1
-        c_nhom = -1
-        c_chuyen_mon = -1
-        c_phone = -1
-        c_email = -1
-        c_pccm = -1
-        c_cn = -1
+            start_row = -1
+            for c in range(0, sheet.ncols):
+                flag = False
+                for r in range(0, sheet.nrows):
+                    if unicode(sheet.cell_value(r, c)).lower() == u'họ và tên':
+                        start_row = r
+                        flag = True
+                        break
+                if flag: break
+                #CHUA BIEN LUAN TRUONG HOP: start_row = -1, ko co cot ten: Mã học sinh
+            if start_row == -1:
+                return ({'error': u'File tải lên phải có cột "Họ và Tên".'},
+                        u'File tải lên phải có cột "Họ và Tên".', 0, 0)
+                # start_row != 0
+            c_ten = -1
+            c_ngay_sinh = -1
+            c_gioi_tinh = -1
+            c_noi_sinh = -1
+            c_dan_toc = -1
+            c_cho_o_ht = -1
+            c_ten_bo = -1
+            c_ten_me = -1
+            c_so_dt_bo = -1
+            c_so_dt_me = -1
+            c_nguyen_vong = -1
+            c_so_dt_nt = -1
+            number = 0
+            number_ok = 0
+            for c in range(0, sheet.ncols):
+                value = sheet.cell_value(start_row, c)
+                if unicode(value).lower() == u'họ và tên':
+                    c_ten = c
+                elif value == u'Ngày sinh':
+                    c_ngay_sinh = c
+                elif value == u'Giới tính':
+                    c_gioi_tinh = c
+                elif value == u'Nơi sinh':
+                    c_noi_sinh = c
+                elif value == u'Dân tộc':
+                    c_dan_toc = c
+                elif value == u'Chỗ ở hiện tại':
+                    c_cho_o_ht = c
+                elif value == u'Họ tên bố':
+                    c_ten_bo = c
+                elif value == u'Số điện thoại của bố':
+                    c_so_dt_bo = c
+                elif value == u'Họ tên mẹ':
+                    c_ten_me = c
+                elif value == u'Số điện thoại của mẹ':
+                    c_so_dt_me = c
+                elif value == u'Ban đăng ký':
+                    c_nguyen_vong = c
+                elif value == u'Số nhắn tin' or value == u'Số điện thoại nhắn tin':
+                    c_so_dt_nt = c
+            for r in range(start_row + 1, sheet.nrows):
+                gt = 'Nam'
+                dan_toc = u'Kinh'
+                noi_sinh = ''
+                cho_o_ht = ''
+                ten_bo = ''
+                dt_bo = ''
+                ten_me = ''
+                dt_me = ''
+                ban_dk = u'CB'
+                sms_phone = ''
+                name = unicode(sheet.cell(r, c_ten).value).strip()
+                temp = []
+                for i in name.split(' '):
+                    if i: temp.append(i)
+                name = ' '.join(temp)
+                if not name.strip():
+                    message += u'<li>Ô ' + unicode(cellname(r, c_ten)) + u':Trống. </li>'
+                    continue
+                number += 1
+                birthday = sheet.cell(r, c_ngay_sinh).value
+                if not birthday:
+                    message += u'<li>Ô ' + unicode(
+                        cellname(r, c_ngay_sinh)) + u':Trống. Học sinh: ' + name + u' không đủ thông tin.</li>'
+                    continue
+                if c_gioi_tinh > -1:
+                    gt = unicode(sheet.cell(r, c_gioi_tinh).value).strip().capitalize()
+                    if not gt in [u'Nam', u'Nữ']: gt = 'Nam'
+                if c_noi_sinh > -1:
+                    noi_sinh = unicode(sheet.cell(r, c_noi_sinh).value).strip()
+                if c_dan_toc > -1:
+                    dan_toc = unicode(sheet.cell(r, c_dan_toc).value).strip()
+                    if not dan_toc.strip(): dan_toc = 'Kinh'
+                if c_cho_o_ht > -1:
+                    cho_o_ht = sheet.cell(r, c_cho_o_ht).value.strip()
+                if c_ten_bo > -1:
+                    ten_bo = normalize(unicode(sheet.cell(r, c_ten_bo).value))
+                if c_so_dt_bo > -1:
+                    dt_bo = sheet.cell(r, c_so_dt_bo).value
+                    if dt_bo and (type(dt_bo)!= unicode or type(dt_bo)!=str):
+                        dt_bo = unicode(int(dt_bo)).strip()
+                    if dt_bo and dt_bo[0] != '0' and dt_bo[0] != '+' and not dt_bo.startswith('84'): dt_bo = '0' + dt_bo
+                if c_ten_me > -1:
+                    ten_me = normalize(unicode(sheet.cell(r, c_ten_me).value))
+                if c_so_dt_me > -1:
+                    dt_me = sheet.cell(r, c_so_dt_me).value
+                    if dt_me and (type(dt_me)!= unicode or type(dt_me)!=str):
+                        dt_me = unicode(int(dt_me)).strip()
+                    if dt_me and dt_me[0] != '0' and dt_me[0] != '+' and not dt_me.startswith('84'): dt_me = '0' + dt_me
+                if c_nguyen_vong > -1:
+                    ban_dk = unicode(sheet.cell(r, c_nguyen_vong).value).strip()
+                    if not ban_dk.strip(): ban_dk = 'CB'
 
-        number = 0
-        number_ok = 0
-        for c in range(0, sheet.ncols):
-            value = sheet.cell_value(start_row, c)
-            if value == u'Họ và Tên':
-                c_ten = c
-            elif value == u'Ngày sinh':
-                c_ngay_sinh = c
-            elif value == u'Giới tính':
-                c_gioi_tinh = c
-            elif value == u'Quê quán':
-                c_que_quan = c
-            elif value == u'Dân tộc':
-                c_dan_toc = c
-            elif value == u'Chỗ ở hiện tại':
-                c_cho_o_ht = c
-            elif value == u'Tổ':
-                c_to = c
-            elif value == u'Nhóm':
-                c_nhom = c
-            elif value in [u'Dạy môn', u'Chuyên môn']:
-                c_chuyen_mon = c
-            elif value in [u'Số điện thoại', u'Điện thoại']:
-                c_phone = c
-            elif value == u'Lớp chủ nhiệm':
-                c_cn = c
-            elif value == u'Phân công chuyên môn':
-                c_pccm = c
-            elif value == u'Email':
-                c_email = c
-        start_row += 1
-        #Search for class columns
-        c_classes = {}
-        re_class = re.compile('(?P<grade>6|7|8|9|10|11|12)\s*(?P<label>.+)',
-                flags=re.U)
-        if c_pccm != -1:
-            for c in range(c_pccm, sheet.ncols):
-                value = sheet.cell_value(start_row, c) 
-                temp = re_class.match(value)
-                if not temp: message += u'<li>Ô %s: Tên lớp không đúng.</li>' \
-                                        % unicode(cellname(start_row, c))
-                else:
-                    cl_n = ' '.join(temp.groups()) 
-                    if cl_n in c_classes:
-                        message += u'<li>2 Ô %s và %s: Trùng nhau' \
-                                    % (unicode(cellname(start_row,c)),
-                                       unicode(cellname(start_row, c_classes[cl_n])))
-                    else:
-                        c_classes[cl_n] = c
-        for r in range(start_row + 1, sheet.nrows):
-            gt = ''
-            dan_toc = ''
-            que_quan = ''
-            cho_o_ht = ''
-            to = ''
-            nhom = ''
-            chuyen_mon = ''
-            phone = ''
-            email = ''
-            lop_cn = ''
-            lop_cmon = []
-            name = normalize(sheet.cell(r, c_ten).value)
-            if not name.strip():
-                message += u'<li>Ô ' + unicode(cellname(r, c_ten)) + u':Trống. </li>'
-                continue
-            number += 1
-            birthday = sheet.cell(r, c_ngay_sinh).value
-            if not birthday:
-                message += u'<li>Ô ' + unicode(cellname(r, c_ngay_sinh)) + u':Trống. </li>'
-                birthday = None
-            if c_gioi_tinh > -1:
-                gt = sheet.cell(r, c_gioi_tinh).value.strip().capitalize()
-                if not gt in [u'Nam', u'Nữ']: gt = 'Nam'
-            if c_que_quan > -1:
-                que_quan = sheet.cell(r, c_que_quan).value.strip()
-            if c_dan_toc > -1:
-                dan_toc = sheet.cell(r, c_dan_toc).value.strip()
-                if not dan_toc.strip(): dan_toc = 'Kinh'
-            if c_cho_o_ht > -1:
-                cho_o_ht = sheet.cell(r, c_cho_o_ht).value.strip()
-            if c_to > -1:
-                to = sheet.cell(r, c_to).value.strip()
-            if c_nhom > -1:
-                nhom = sheet.cell(r, c_nhom).value.strip()
-            if c_chuyen_mon > -1:
-                chuyen_mon = sheet.cell(r, c_chuyen_mon).value.strip()
-                if chuyen_mon.strip():
-                    if to_en(chuyen_mon) not in SUBJECT_LIST_ASCII:
+                if c_so_dt_nt > -1:
+                    sms_phone = sheet.cell(r, c_so_dt_nt).value
+                    if type(sms_phone)!= unicode and type(sms_phone)!=str:
+                        sms_phone = unicode(int(sms_phone)).strip()
+                    if sms_phone and sms_phone[0] != '0' and sms_phone[0] != '+' and not sms_phone.startswith('84'): sms_phone = '0' + sms_phone
+                    if sms_phone:
                         try:
-                            chuyen_mon = to_subject_name(chuyen_mon)
-                        except Exception:
-                            chuyen_mon = ''
-            if c_phone > -1:
-                phone = sheet.cell(r, c_phone).value
-                if type(phone) != unicode and type(phone) != str:
-                    phone = unicode(int(phone)).strip()
-                if phone and phone[0] != '0' and phone[0] != '+':
-                    phone = '0' + phone
-            if c_email > -1:
-                email = sheet.cell(r, c_email).value
-                if email:
-                    try:
-                        validate_email(unicode(email))
-                    except ValidationError:
-                        message += u'<li>Ô %s:%s: email không tồn tại' %\
-                            (unicode(cellname(r, c_email)), email)
-                        email = ''
-            if birthday:
+                            validate_phone(sms_phone)
+                        except Exception as e:
+                            message += u'<li>Ô ' + unicode(
+                                cellname(r, c_ngay_sinh)) + u':   Số điện thoại không hợp lệ ' + u'</li>'
+                            sms_phone = ''
+                            print e
                 try:
-                    if type(birthday) == unicode or type(birthday) == str:
+                    if isinstance(birthday, unicode) or isinstance(birthday, str):
                         birthday = to_date(birthday)
                     else:
-                        date_value = xlrd.xldate_as_tuple(
-                                sheet.cell(r, c_ngay_sinh).value,
-                                book.datemode)
+                        date_value = xlrd.xldate_as_tuple(sheet.cell(r, c_ngay_sinh).value, book.datemode)
                         birthday = date(*date_value[:3])
                 except Exception as e:
                     print e
-                    message += u'<li>Ô ' + unicode( cellname(r, c_ngay_sinh)) \
-                            + u':Không đúng định dạng "ngày/tháng/năm" ' + u'</li>'
+                    message += u'<li>Ô ' + unicode(
+                        cellname(r, c_ngay_sinh)) + u':Không đúng định dạng "ngày/tháng/năm" ' + u'</li>'
                     continue
-            if c_cn:
-                lop_cn = sheet.cell(r, c_cn).value
-                if not re_class.match(lop_cn): lop_cn = ''
-                else:
-                    lop_cn = ' '.join(re_class.match(lop_cn).groups())
-
-            if chuyen_mon:
-                for ele in c_classes.iteritems():
-                    cl_n = ele[0]
-                    c = int(ele[1])
-                    value = sheet.cell(r, c).value
-                    if unicode(value).strip():
-                        lop_cmon.append('-'.join([cl_n, chuyen_mon]))
-             
-            data = {'fullname': name,
-                    'birthday': birthday,
-                    'sex': gt,
-                    'dan_toc': dan_toc,
-                    'home_town': que_quan,
-                    'current_address': cho_o_ht,
-                    'team': to,
-                    'group': nhom,
-                    'major': chuyen_mon,
-                    'sms_phone': phone,
-                    'email': email,
-                    'lop_cn': lop_cn,
-                    'lop_cmon': lop_cmon}
-            identifier = name + '-' + unicode(birthday)
-            if identifier in teacher_list:
-                teacher_list[identifier]['lop_cmon'].extend(lop_cmon)
-            else:
-                teacher_list[identifier] = data
+                data = {'fullname': name,
+                        'birthday': birthday,
+                        'sex': gt,
+                        'dan_toc': dan_toc,
+                        'birth_place': noi_sinh,
+                        'current_address': cho_o_ht,
+                        'father_name': ten_bo,
+                        'father_phone': dt_bo,
+                        'mother_name': ten_me,
+                        'mother_phone': dt_me,
+                        'ban_dk': ban_dk,
+                        'sms_phone': sms_phone}
+                student_list.append(data)
                 number_ok += 1
-        message += u'</ul>'
-        return teacher_list, message, number, number_ok
-    return None
+            message += u'</ul>'
+            return student_list, message, number, number_ok
+        elif task == u"import_teacher":
+            teacher_list = {}
+            filepath = os.path.join(settings.TEMP_FILE_LOCATION, file_name)
+            if not os.path.isfile(filepath):
+                raise NameError, "%s is not a valid filename" % file_name
+            try:
+                book = xlrd.open_workbook(filepath)
+                sheet = book.sheet_by_index(0)
+            except Exception as e:
+                print e
+                return {'error': u'File tải lên không phải file Excel'}
+
+            start_row = -1
+            for c in range(0, sheet.ncols):
+                flag = False
+                for r in range(0, sheet.nrows):
+                    if sheet.cell_value(r, c) in [u'Họ và Tên', u'Họ Tên', u'Tên']:
+                        start_row = r
+                        flag = True
+                        break
+                if flag: break
+                #CHUA BIEN LUAN TRUONG HOP: start_row = -1, ko co cot ten: Mã học sinh
+            if start_row == -1:
+                return ({'error': u'File tải lên phải có cột "Họ và Tên".'},
+                        u'File tải lên phải có cột "Họ và Tên".', 0, 0)
+                # start_row != 0
+            c_ten = -1
+            c_ngay_sinh = -1
+            c_gioi_tinh = -1
+            c_que_quan = -1
+            c_dan_toc = -1
+            c_cho_o_ht = -1
+            c_to = -1
+            c_nhom = -1
+            c_chuyen_mon = -1
+            c_phone = -1
+            c_email = -1
+            c_pccm = -1
+            c_cn = -1
+
+            number = 0
+            number_ok = 0
+            for c in range(0, sheet.ncols):
+                value = sheet.cell_value(start_row, c)
+                if value == u'Họ và Tên':
+                    c_ten = c
+                elif value == u'Ngày sinh':
+                    c_ngay_sinh = c
+                elif value == u'Giới tính':
+                    c_gioi_tinh = c
+                elif value == u'Quê quán':
+                    c_que_quan = c
+                elif value == u'Dân tộc':
+                    c_dan_toc = c
+                elif value == u'Chỗ ở hiện tại':
+                    c_cho_o_ht = c
+                elif value == u'Tổ':
+                    c_to = c
+                elif value == u'Nhóm':
+                    c_nhom = c
+                elif value in [u'Dạy môn', u'Chuyên môn']:
+                    c_chuyen_mon = c
+                elif value in [u'Số điện thoại', u'Điện thoại']:
+                    c_phone = c
+                elif value == u'Lớp chủ nhiệm':
+                    c_cn = c
+                elif value == u'Phân công chuyên môn':
+                    c_pccm = c
+                elif value == u'Email':
+                    c_email = c
+            start_row += 1
+            #Search for class columns
+            c_classes = {}
+            re_class = re.compile('(?P<grade>6|7|8|9|10|11|12)\s*(?P<label>.+)',
+                    flags=re.U)
+            if c_pccm != -1:
+                for c in range(c_pccm, sheet.ncols):
+                    value = sheet.cell_value(start_row, c)
+                    temp = re_class.match(value)
+                    if not temp: message += u'<li>Ô %s: Tên lớp không đúng.</li>' \
+                                            % unicode(cellname(start_row, c))
+                    else:
+                        cl_n = ' '.join(temp.groups())
+                        if cl_n in c_classes:
+                            message += u'<li>2 Ô %s và %s: Trùng nhau' \
+                                        % (unicode(cellname(start_row,c)),
+                                           unicode(cellname(start_row, c_classes[cl_n])))
+                        else:
+                            c_classes[cl_n] = c
+            for r in range(start_row + 1, sheet.nrows):
+                gt = ''
+                dan_toc = ''
+                que_quan = ''
+                cho_o_ht = ''
+                to = ''
+                nhom = ''
+                chuyen_mon = ''
+                phone = ''
+                email = ''
+                lop_cn = ''
+                lop_cmon = []
+                name = normalize(unicode(sheet.cell(r, c_ten).value))
+                if not name.strip():
+                    message += u'<li>Ô ' + unicode(cellname(r, c_ten)) + u':Trống. </li>'
+                    continue
+                number += 1
+                birthday = sheet.cell(r, c_ngay_sinh).value
+                if not birthday:
+                    message += u'<li>Ô ' + unicode(cellname(r, c_ngay_sinh)) + u':Trống. </li>'
+                    birthday = None
+                if c_gioi_tinh > -1:
+                    gt = unicode(sheet.cell(r, c_gioi_tinh).value).strip().capitalize()
+                    if not gt in [u'Nam', u'Nữ']: gt = 'Nam'
+                if c_que_quan > -1:
+                    que_quan = sheet.cell(r, c_que_quan).value.strip()
+                if c_dan_toc > -1:
+                    dan_toc = sheet.cell(r, c_dan_toc).value.strip()
+                    if not dan_toc.strip(): dan_toc = 'Kinh'
+                if c_cho_o_ht > -1:
+                    cho_o_ht = sheet.cell(r, c_cho_o_ht).value.strip()
+                if c_to > -1:
+                    to = sheet.cell(r, c_to).value.strip()
+                if c_nhom > -1:
+                    nhom = sheet.cell(r, c_nhom).value.strip()
+                if c_chuyen_mon > -1:
+                    chuyen_mon = sheet.cell(r, c_chuyen_mon).value.strip()
+                    if chuyen_mon.strip():
+                        if to_en(chuyen_mon) not in SUBJECT_LIST_ASCII:
+                            try:
+                                chuyen_mon = to_subject_name(chuyen_mon)
+                            except Exception:
+                                chuyen_mon = ''
+                if c_phone > -1:
+                    phone = sheet.cell(r, c_phone).value
+                    if type(phone) != unicode and type(phone) != str:
+                        phone = unicode(int(phone)).strip()
+                    if phone and phone[0] != '0' and phone[0] != '+':
+                        phone = '0' + phone
+                if c_email > -1:
+                    email = sheet.cell(r, c_email).value
+                    if email:
+                        try:
+                            validate_email(unicode(email))
+                        except ValidationError:
+                            message += u'<li>Ô %s:%s: email không tồn tại' %\
+                                (unicode(cellname(r, c_email)), email)
+                            email = ''
+                if birthday:
+                    try:
+                        if type(birthday) == unicode or type(birthday) == str:
+                            birthday = to_date(birthday)
+                        else:
+                            date_value = xlrd.xldate_as_tuple(
+                                    sheet.cell(r, c_ngay_sinh).value,
+                                    book.datemode)
+                            birthday = date(*date_value[:3])
+                    except Exception as e:
+                        print e
+                        message += u'<li>Ô ' + unicode( cellname(r, c_ngay_sinh)) \
+                                + u':Không đúng định dạng "ngày/tháng/năm" ' + u'</li>'
+                        continue
+                if c_cn:
+                    lop_cn = sheet.cell(r, c_cn).value
+                    if not re_class.match(lop_cn): lop_cn = ''
+                    else:
+                        lop_cn = ' '.join(re_class.match(lop_cn).groups())
+
+                if chuyen_mon:
+                    for ele in c_classes.iteritems():
+                        cl_n = ele[0]
+                        c = int(ele[1])
+                        value = sheet.cell(r, c).value
+                        if unicode(value).strip():
+                            lop_cmon.append('-'.join([cl_n, chuyen_mon]))
+
+                data = {'fullname': name,
+                        'birthday': birthday,
+                        'sex': gt,
+                        'dan_toc': dan_toc,
+                        'home_town': que_quan,
+                        'current_address': cho_o_ht,
+                        'team': to,
+                        'group': nhom,
+                        'major': chuyen_mon,
+                        'sms_phone': phone,
+                        'email': email,
+                        'lop_cn': lop_cn,
+                        'lop_cmon': lop_cmon}
+                identifier = name + '-' + unicode(birthday)
+                if identifier in teacher_list:
+                    teacher_list[identifier]['lop_cmon'].extend(lop_cmon)
+                else:
+                    teacher_list[identifier] = data
+                    number_ok += 1
+            message += u'</ul>'
+            return teacher_list, message, number, number_ok
+    except Exception as e:
+        print e
+        return ({'error': u'File tải lên không đúng cấu trúc.'},
+            u'File tải lên không đúng cấu trúc.', 0, 0)
 
 #noinspection PyUnusedLocal
 def processFileAgenda(request, subject_id, file_name):
@@ -878,11 +882,11 @@ def processFileAgenda(request, subject_id, file_name):
                 print ie
                 message += u'<ul>Tiết trống hoặc không đúng ở ô (' + str(r) + ', 1).</ul>'
                 continue
-            title = sheet.cell_value(r, 1).strip()
+            title = unicode(sheet.cell_value(r, 1)).strip()
             if not title:
                 message += u'<ul>Tiêu đề ở tiết thứ ' + str(index) + u' bị trống</ul>'
                 continue
-            note = sheet.cell_value(r, 2).strip()
+            note = unicode(sheet.cell_value(r, 2)).strip()
         except Exception as e:
             print str(e)
             return {'error': u'File tải lên không phải file Excel'}, message
@@ -966,11 +970,11 @@ def processFileSystemAgenda(request, subject, grade, term, file_name, request_ty
                 message += u'<ul>Tiết trống hoặc không đúng ở ô (' + str(r) + u', 1).</ul>'
                 continue
 
-            title = sheet.cell_value(r, 1).strip()
+            title = unicode(sheet.cell_value(r, 1)).strip()
             if not title:
                 message += u'<ul>Tiêu đề ở tiết thứ ' + str(index) + u' bị trống</ul>'
                 continue
-            note = sheet.cell_value(r, 2).strip()
+            note = unicode(sheet.cell_value(r, 2)).strip()
 
         except Exception as e:
             print str(e)
@@ -1768,9 +1772,9 @@ def process_file_hanh_kiem(request, file_name, class_id):
 
     for r in range(start_row+1, sheet.nrows):
         try:
-            p_last_name = sheet.cell_value(r, 1).strip()
-            p_first_name = sheet.cell_value(r, 2).strip()
-            if len(p_last_name.strip()) == 0 and len(p_first_name.strip()) == 0:
+            p_last_name = unicode(sheet.cell_value(r, 1)).strip()
+            p_first_name = unicode(sheet.cell_value(r, 2)).strip()
+            if len(p_last_name) == 0 and len(p_first_name) == 0:
                 message += u'<ul>Họ và tên ở hàng thứ ' + str(r) + u' bị trống</ul>'
                 continue
 
@@ -1785,7 +1789,7 @@ def process_file_hanh_kiem(request, file_name, class_id):
             attr_list = {4: 'hk_thang_9', 5: 'hk_thang_10', 6: 'hk_thang_11', 7: 'hk_thang_12', 8: 'hk_thang_1', 9: 'hk_thang_2', 10: 'hk_thang_3', 11: 'hk_thang_4', 12: 'hk_thang_5', 13: 'term1', 14: 'term2', 15: 'year'}
 
             for num, attr in attr_list.iteritems():
-                    val = sheet.cell_value(r, num).strip().upper()
+                    val = unicode(sheet.cell_value(r, num)).strip().upper()
                     if val in [u'', u'T', u'K', u'TB', u'Y']:
                         setattr(TK, attr, val)
                     else:
@@ -1794,7 +1798,7 @@ def process_file_hanh_kiem(request, file_name, class_id):
             TK.save()
         except Exception as e:
             print str(e)
-            return {'error': u'File tải lên không phải file Excel'}, message
+            return {'error': u'File tải lên không đúng cấu trúc'}, message
 
 
     message += u'</ul>'
