@@ -21,17 +21,8 @@
                     {{ message }}
                 </div>
             {% endif %}
-            <div class="alert alert-warning">
-                <h3>Chú ý</h3>
-
-                <p>Đăng ký này sẽ giúp bạn có tài khoản để sử dụng dịch vụ phần mềm
-                <a href="{%url views.index %}">Trường Nhà</a>. Sau khi bạn điền thông tin và ấn nút <strong>đăng ký</strong>, thông tin tài khoản sẽ được gửi về bằng email hoặc số điện thoại bạn đã khai báo. 
-                    Nếu bạn đã có tài khoản, hãy đăng nhập <a href="{%url app.views.login  %}">tại đây.</a></p>
-
-                <p>Cảm ơn bạn đã lựa chọn dịch vụ của chúng tôi.</p>
-            </div>
             <form class="well form-horizontal" action="" id="registerForm" method="post">{% csrf_token %}
-                <legend>Đăng ký sử dụng cho giáo viên</legend>
+                <legend>Đăng ký sử dụng</legend>
                 {{ register_form|bootstrap }}
                 <div class="control-group">
                     <label class="control-label" for="captcha-form">&nbsp;</label>
@@ -48,15 +39,17 @@
                     <a class="btn btn-warning" href={% url teacher_forget_password %}>Quên mật khẩu</a>
                 </div>
             </form>
-        </div>
-        <div class="span6 alert alert-info">
-            <h3>Qui trình nghiệp vụ ban đầu</h3>
 
-            <p>Sơ đồ dưới đây là tóm tắt qui trình nghiệp vụ ban đầu. Sau khi bạn đăng nhập sẽ có trợ giúp hướng dẫn sử
-                dụng chi tiết hơn. Phần mềm được thiế kế đơn giản, rất dễ sử dụng, và cho phép nhập dữ liệu từ Excel để
-                đơn giản quá trính khởi tạo dữ liệu ban đầu.</p>
-            <img src="/static/images/process.png">
         </div>
+        <div class="span6 alert alert-warning">
+            <h3>Chú ý</h3>
 
+            <p>Đăng ký này sẽ giúp bạn có tài khoản để sử dụng dịch vụ phần mềm
+                <a href="{% url views.index %}">Trường Nhà</a>. Sau khi bạn điền thông tin và ấn nút <strong>đăng
+                    ký</strong>, thông tin tài khoản sẽ được gửi về email bạn đã khai báo.
+                Nếu bạn đã có tài khoản, hãy đăng nhập <a href="{% url app.views.login %}">tại đây.</a></p>
+
+{#            <p>Cảm ơn bạn đã lựa chọn dịch vụ của <chún></chún>g tôi.</p>#}
+        </div>
     </div>
 {% endblock %}

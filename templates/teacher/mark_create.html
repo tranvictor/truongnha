@@ -3,7 +3,7 @@
 {% block breadcrumb %}
     {{ block.super }}
     {% load breadcrumb_tags %}
-    {% add_crumb class  %}
+    {% add_crumb class "{% url class_create user_teacher.id 'create' %}" %}
     {% add_crumb student %}
     {% add_crumb 'Thêm điểm' %}
 {% endblock %}

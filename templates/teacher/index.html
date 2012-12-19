@@ -1,34 +1,37 @@
 {% extends "teacher/base-teacher.html" %}
+
 {% block breadcrumb %}
-  {{ block.super }}
-  {% load breadcrumb_tags %}
-  {% add_crumb 'Trang chủ' %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Trang chủ' '/' %}
 {% endblock %}
 
 {% block menu %}
-<h2>Các lớp</h2>
-<div id="menu-classes">
-{% for cl in classes %}
-  <div class="row-fluid">
-    <a class="span12 btn-success btn ajaxify"
-      id="class-{{cl.id}}"
-      href="{% url class_view cl.teacher_id_id cl.id 'view' %}"
-      title="Quản lý lớp {{cl}}">
-      <h3 class="pull-left">{{cl}} </h3>
-      <p title="Sĩ số" class="pull-right">{{cl.number_of_students}}</p>
-    </a>
-  </div>
-{% endfor %}
-</div>
-  <div class="row-fluid">
-    <a class="span12 btn-success btn ajaxify" 
-      href="{% url class_create user_teacher.id 'create' %}"
-      title="Quản lý lớp {{cl}}">
-      <h3>Thêm lớp mới</h3>
-    </a>
-  </div>
+    <h2>Các lớp</h2>
+    <div id="menu-classes">
+        {% for cl in classes %}
+            <div class="row-fluid">
+                <a class="span12 btn-success btn ajaxify"
+                   id="class-{{ cl.id }}"
+                   href="{% url class_view cl.teacher_id_id cl.id 'view' %}"
+                   title="Quản lý lớp {{ cl }}">
+                    <h3 class="pull-left">{{ cl }} </h3>
+
+                    <p title="Sĩ số" class="pull-right">{{ cl.number_of_students }}</p>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="row-fluid">
+        <a class="btn ajaxify btn-warning"
+           href="{% url class_create user_teacher.id 'create' %}"
+           title="Thêm lớp học mới">
+            <i class="icon-plus"></i> Thêm lớp mới
+        </a>
+    </div>
 {% endblock %}
 
 {% block content %}
-<h2>DASHBOARD</h2>
+
 {% endblock %}
