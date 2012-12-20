@@ -52,7 +52,7 @@ class ClassView(RestfulView, BaseTeacherView):
 
         class Meta:
             model = Class
-            exclude = ('index', 'created', 'teacher_id')
+            exclude = ('index', 'created', 'teacher_id', 'closed')
 
     def _get_create(self, *args, **kwargs):
         self.template_name = os.path.join('teacher', 'class_create.html')
@@ -62,6 +62,7 @@ class ClassView(RestfulView, BaseTeacherView):
                     kwargs={'request_type': 'create'})}
 
     def _post_create(self, *args, **kwargs):
+        print 'aaaaa'
         create_form = self.ClassForm(self.request.POST.copy())
         if create_form.is_valid():
             cl = create_form.save(self.teacher)
@@ -85,10 +86,11 @@ class ClassView(RestfulView, BaseTeacherView):
                     'message': u'Có lỗi ở dữ liệu nhập vào'}
     
     def _get_modify(self, *args, **kwargs):
-        self.template_name = os.path.join('teacher', 'class_create.html')
+        self.template_name = os.path.join('teacher', 'class_modify.html')
         cl = kwargs['cleaned_params']['class']
         modify_form = self.ClassForm(instance=cl)
         return {'form': modify_form,
+                'cl_id': cl.id,
                 'modify_url': self.reverse('class_view',
                     kwargs={'class_id': cl.id, 'request_type': 'modify'})}
 
@@ -100,7 +102,8 @@ class ClassView(RestfulView, BaseTeacherView):
             cl = modify_form.save(self.teacher)
             return {'message': u'Bạn vừa cập nhật thành công lớp học',
                     'success': True,
-                    'class_name': cl.name,
+                    'cl_id': cl.id,
+                    'cl_note': cl.cl_note,
                     'class_url': self.reverse('class_view',
                         kwargs={'class_id': cl.id, 'request_type': 'view'}),
                     'class_modify': self.reverse('class_view',
@@ -115,9 +118,17 @@ class ClassView(RestfulView, BaseTeacherView):
                     'error': error,
                     'message': u'Có lỗi ở dữ liệu nhập vào'}
 
-    def _post_remove(self, *args, **kwargs):
+    def _get_remove(self, *args, **kwargs):
+        self.template_name = os.path.join('teacher', 'index.html')
         cl = kwargs['cleaned_params']['class']
-        cl.delete()
+        cl.closed = datetime.now()
+        cl.save()
+        attendances = cl.attend_set.filter(leave_time__isnull= True)
+        for attendance in attendances:
+            attendance.leave_time = datetime.now()
+            attendance.is_member = True
+            attendance.save()
+
         return {'success': True,
                 'message': u'Bạn đã xóa lớp %s' % cl.name}
 
@@ -260,6 +271,7 @@ class StudentView(RestfulView, BaseTeacherView):
         self.template_name = os.path.join('teacher', 'student_create.html')
         create_form = self.StudentForm()
         return {'form': create_form,
+                'cl_id': kwargs['cleaned_params']['class'].id,
                 'create_url': self.reverse('student_create',
                     kwargs={'class_id': kwargs['class_id'],
                         'request_type': 'create'})}
@@ -281,6 +293,8 @@ class StudentView(RestfulView, BaseTeacherView):
             else:
                 st = create_form.save(cl)
             return {'message': u'Bạn vừa tạo thành công học sinh',
+                    'class_url': self.reverse('class_view',
+                        kwargs={'class_id': cl.id, 'request_type': 'view'}),
                     'success': True,
                     'student_first_name': st.first_name,
                     'student_last_name': st.last_name,
@@ -310,6 +324,7 @@ class StudentView(RestfulView, BaseTeacherView):
         st = kwargs['cleaned_params']['student']
         create_form = self.StudentForm(instance=st)
         return {'form': create_form,
+                'cl_id': kwargs['cleaned_params']['class'].id,
                 'create_url': self.reverse('student_create',
                     kwargs={'class_id': kwargs['class_id'],
                         'request_type': 'create'})}
@@ -333,6 +348,8 @@ class StudentView(RestfulView, BaseTeacherView):
             st = modify_form.save(cl)
             return {'message': u'Bạn vừa cập nhật thành công học sinh',
                     'success': True,
+                    'class_url': self.reverse('class_view',
+                        kwargs={'class_id': cl.id, 'request_type': 'view'}),
                     'student_first_name': st.first_name,
                     'student_last_name': st.last_name,
                     'student_birth_day': unicode(st.birthday),

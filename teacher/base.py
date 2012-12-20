@@ -74,7 +74,7 @@ class BaseTeacherView(TemplateView):
 
     def _menu(self, *args, **kwargs):
         # This method return objects attached to menu
-        classes = self.teacher.class_set.order_by('-created')
+        classes = self.teacher.class_set.filter(closed__isnull=True).order_by('-created')
         return {'classes': classes,
                 'user_teacher': self.teacher}
 

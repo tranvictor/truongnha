@@ -201,6 +201,7 @@ class Class(AbstractTeacherModel):
     cl_note = models.TextField("Ghi chú", blank=True)
     teacher_id = models.ForeignKey(Teacher, verbose_name="Giáo viên",
             null=True, blank=True)
+    closed = models.DateTimeField("Thời gian kết thúc", null=True)
 
     def teacher(self):
         if self.teacher_id:

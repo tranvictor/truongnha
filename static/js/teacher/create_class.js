@@ -10,6 +10,7 @@ $(document).ready(function () {
                    '</a> </div>'
         var newClass = $(html);
         $('#menu-classes').prepend(newClass);
+        window.location = json.class_url;
     };
     $("#createClassForm").ajaxForm({
         'callback': callback});

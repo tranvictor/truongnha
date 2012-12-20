@@ -55,4 +55,8 @@ $(document).ready(function () {
         return false;
     };
     $("#delSelected").click(delSelected);
+
+    $("#remove-class").click(function(){
+        if (!confirm("Bạn có chắc chắn muốn xóa ko?")) return false;
+    });
 });

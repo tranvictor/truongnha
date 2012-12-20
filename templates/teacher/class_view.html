@@ -29,6 +29,7 @@
                     <i class="icon-envelope"></i>
                     Nhắn tin
                 </a>
+
             </div>
             <div class="btn-group">
                 <a id="student-list-menu" class="btn dropdown-toggle"
@@ -72,6 +73,33 @@
                            href="{% url export_student user_teacher.id cl.id 'export' %}">
                             <i class="icon-download-alt"></i>
                             Xuất ra Excel
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="btn-group">
+                <a id="class-list-menu" class="btn dropdown-toggle"
+                   data-toggle="dropdown" herf="#"
+                   title="Quản lý thông tin lớp">
+                    <span class="icon-wrench"></span>
+                </a>
+                <ul class="dropdown-menu pull-right">
+                    <li>
+                        <a id="modify-class"
+                           class="ajaxify"
+                           title="Sửa thông tin lớp"
+                           href="{% url class_view user_teacher.id cl.id 'modify' %}">
+                            <i class="icon-edit"></i>
+                            Thông tin lớp
+                        </a>
+                    </li>
+                    <li>
+                        <a id="remove-class"
+                           class="ajaxify"
+                           title="Đóng lớp"
+                           href="{% url class_view user_teacher.id cl.id 'remove' %}">
+                            <i class="icon-remove"></i>
+                            Đóng lớp
                         </a>
                     </li>
                 </ul>

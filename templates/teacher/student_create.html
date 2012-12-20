@@ -7,9 +7,16 @@
 {% endblock %}
 
 {% block js %}
-    <script type="text/javascript" src="/static/js/teacher/jquery.ajaxForm.js?{{ VERSION }}"></script>
+    <script type="text/javascript" src="/static/js/teacher/jquery.ajaxform.js?{{ VERSION }}"></script>
     <script type="text/javascript" src="/static/js/teacher/student-create.js?{{ VERSION }}"></script>
-    
+    <script>
+        $(document).ready(function () {
+            $("#back").click(function(){
+                window.location = "{% url class_view user_teacher.id cl_id "view"%}";
+                return false;
+            });
+        });
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -19,7 +26,7 @@
   {{ form|bootstrap }}
   <div class="form-actions">
     <button class="btn btn-primary" id="sendRegister">Lưu</button>
-    <button class="btn">Hủy</button>
+    <button class="btn" id="back">Hủy</button>
   </div>
 </form>
 {% endblock %}

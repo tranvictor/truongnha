@@ -9,6 +9,14 @@
 {% block js %}
     <script type="text/javascript" src="/static/js/teacher/jquery.ajaxform.js?{{ VERSION }}"></script>
     <script type="text/javascript" src="/static/js/teacher/create_class.js?{{ VERSION }}"></script>
+    <script>
+        $(document).ready(function () {
+            $("#back").click(function(){
+                window.location = "{% url teacher_index user_teacher.id %}";
+                return false;
+            });
+        });
+    </script>
 {% endblock %}
 
 
@@ -19,7 +27,7 @@
   {{ form|bootstrap }}
   <div class="form-actions">
     <button class="btn btn-primary" id="sendClass">Lưu</button>
-    <button class="btn">Hủy</button>
+    <button class="btn" id="back">Hủy</button>
   </div>
 </form>
 {% endblock %}
