@@ -166,7 +166,10 @@ def createListExam(request):
         date = request.POST["date"]
         timeExam = request.POST["time"]
         subject = request.POST["subject"]
-        maxPupil = int(request.POST["maxPupil"])
+        try:
+            maxPupil = int(request.POST["maxPupil"])
+        except Exception:
+            maxPupil = 25
         classifiedType = request.POST["classifiedType"]
 
         classSetId = []

@@ -1557,7 +1557,7 @@ def printMarkForClass(request, termNumber=None, class_id=-2):
     try:
         if in_school(request, currentTerm.year_id.school_id) == False:
             return HttpResponseRedirect('/school')
-    except Exception as e:
+    except Exception:
         return HttpResponseRedirect(reverse('index'))
     teaching_class = None
     if (get_position(request) == 3) & (get_level(request) == 'T'):
@@ -1571,7 +1571,7 @@ def printMarkForClass(request, termNumber=None, class_id=-2):
 
     if termNumber == None:
         if currentTerm.number == 3:
-            termNumber == 2
+            termNumber = 2
         else:
             termNumber = currentTerm.number
 
