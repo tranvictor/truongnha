@@ -578,16 +578,23 @@ def process_file(file_name, task):
                     ten_bo = normalize(unicode(sheet.cell(r, c_ten_bo).value))
                 if c_so_dt_bo > -1:
                     dt_bo = sheet.cell(r, c_so_dt_bo).value
-                    if dt_bo and (type(dt_bo)!= unicode or type(dt_bo)!=str):
+                    if dt_bo and (type(dt_bo)!= unicode and type(dt_bo)!=str):
                         dt_bo = unicode(int(dt_bo)).strip()
-                    if dt_bo and dt_bo[0] != '0' and dt_bo[0] != '+' and not dt_bo.startswith('84'): dt_bo = '0' + dt_bo
+                    if (dt_bo and dt_bo[0] != '0' and dt_bo[0] != '+'
+                            and not dt_bo.startswith('84')):
+                        dt_bo = '0' + dt_bo
+                    dt_bo = dt_bo.replace(' ', '')
+
                 if c_ten_me > -1:
                     ten_me = normalize(unicode(sheet.cell(r, c_ten_me).value))
                 if c_so_dt_me > -1:
                     dt_me = sheet.cell(r, c_so_dt_me).value
-                    if dt_me and (type(dt_me)!= unicode or type(dt_me)!=str):
+                    if dt_me and (type(dt_me)!= unicode and type(dt_me)!=str):
                         dt_me = unicode(int(dt_me)).strip()
-                    if dt_me and dt_me[0] != '0' and dt_me[0] != '+' and not dt_me.startswith('84'): dt_me = '0' + dt_me
+                    if (dt_me and dt_me[0] != '0' and dt_me[0] != '+'
+                            and not dt_me.startswith('84')):
+                        dt_me = '0' + dt_me
+                    dt_me = dt_me.replace(' ', '')
                 if c_nguyen_vong > -1:
                     ban_dk = unicode(sheet.cell(r, c_nguyen_vong).value).strip()
                     if not ban_dk.strip(): ban_dk = 'CB'
@@ -596,20 +603,24 @@ def process_file(file_name, task):
                     sms_phone = sheet.cell(r, c_so_dt_nt).value
                     if type(sms_phone)!= unicode and type(sms_phone)!=str:
                         sms_phone = unicode(int(sms_phone)).strip()
-                    if sms_phone and sms_phone[0] != '0' and sms_phone[0] != '+' and not sms_phone.startswith('84'): sms_phone = '0' + sms_phone
+                    if (sms_phone and sms_phone[0] != '0' and sms_phone[0] != '+'
+                            and not sms_phone.startswith('84')):
+                        sms_phone = '0' + sms_phone
+                    sms_phone = sms_phone.replace(' ', '')
                     if sms_phone:
                         try:
                             validate_phone(sms_phone)
                         except Exception as e:
                             message += u'<li>Ô ' + unicode(
-                                cellname(r, c_ngay_sinh)) + u':   Số điện thoại không hợp lệ ' + u'</li>'
+                                cellname(r, c_so_dt_nt)) + u':   Số điện thoại không hợp lệ ' + u'</li>'
                             sms_phone = ''
                             print e
                 try:
                     if isinstance(birthday, unicode) or isinstance(birthday, str):
                         birthday = to_date(birthday)
                     else:
-                        date_value = xlrd.xldate_as_tuple(sheet.cell(r, c_ngay_sinh).value, book.datemode)
+                        date_value = xlrd.xldate_as_tuple(
+                                sheet.cell(r, c_ngay_sinh).value, book.datemode)
                         birthday = date(*date_value[:3])
                 except Exception as e:
                     print e
@@ -770,6 +781,7 @@ def process_file(file_name, task):
                         phone = unicode(int(phone)).strip()
                     if phone and phone[0] != '0' and phone[0] != '+':
                         phone = '0' + phone
+                    phone = phone.replace(' ', '')
                 if c_email > -1:
                     email = sheet.cell(r, c_email).value
                     if email:
@@ -1764,7 +1776,6 @@ def process_file_hanh_kiem(request, file_name, class_id):
     except Exception as e:
         print e
         return {'error': u'File tải lên không phải file Excel'}, u'File tải lên không phải file Excel'
-    print '22222'
     if start_col == -1:
         return {'error': u'File tải lên phải có cột "STT".'}, u'File tải lên phải có cột "STT".'
     cl = Class.objects.get(id=class_id)
