@@ -67,18 +67,18 @@ def register(request):
         message = ''
         # test new brance
         if request.method == 'POST':
-            if not ('recaptcha_challenge_field' in request.POST
-                    and 'recaptcha_response_field' in request.POST):
-                success = False
-                message = u'Bạn đăng kí thiếu captcha'
-                if request.is_ajax():
-                    response = simplejson.dumps({
-                        'success': success,
-                        'message': message
-                    })
-                    return HttpResponse(response, mimetype='json')
-
             if not settings.IS_TESTING:
+                if not ('recaptcha_challenge_field' in request.POST
+                    and 'recaptcha_response_field' in request.POST):
+                    success = False
+                    message = u'Bạn đăng kí thiếu captcha'
+                    if request.is_ajax():
+                        response = simplejson.dumps({
+                            'success': success,
+                            'message': message
+                        })
+                        return HttpResponse(response, mimetype='json')
+
                 captchar_check = captcha.submit(
                     request.POST['recaptcha_challenge_field'],
                     request.POST['recaptcha_response_field'],
