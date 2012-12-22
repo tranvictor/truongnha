@@ -974,7 +974,7 @@ def exportMark(request, term_id, subject_id, colMieng=4, col15Phut=4, colMotTiet
     s.write_merge(4, 4, 0, 19, str1, h9)
     s.write_merge(5, 5, 0, 19, str2, h9)
 
-    s.write_merge(8, 10, 0, 0, u'Số\nTT', h4)
+    s.write_merge(8, 10, 0, 0, u'STT', h4)
     s.write_merge(8, 10, 1, 2, u'Họ và tên', h4)
     s.write_merge(8, 10, 3, 3, u'Ngày sinh', h4)
     s.write_merge(8, 9, 4, 3 + maxColMieng, u'Điểm hs 1-Miệng', h4)

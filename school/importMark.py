@@ -54,7 +54,10 @@ def validate(s, isNx):
 
 
 def getNumberCol(s):
-    x = 10
+    x = 0
+    while s.cell(x, 0).value != u'STT':
+        x = x + 1
+    x += 2
     y = 4
     colMieng = 0
     col15Phut = 0
@@ -182,7 +185,17 @@ def importMark(request, term_id, subject_id, checkDiff=1):
         book = xlrd.open_workbook(filepath)
         s = book.sheet_by_index(0)
         validateMessage = validate(s, selectedSubject.nx)
-        colMieng, col15Phut, colMotTiet = getNumberCol(s)
+        try:
+            colMieng, col15Phut, colMotTiet = getNumberCol(s)
+        except Exception as e:
+            print e
+            file = request.FILES.values()[0]
+            data=[{
+                'message': u'File vừa nhập sai cấu trúc.',
+                'success': False,
+                'name': file.name,
+                'url': reverse('user_upload', args=[filename])}]
+            return HttpResponse(simplejson.dumps(data))
         isNx = selectedSubject.nx
         if validateMessage == '':
             markList = Mark.objects.filter(subject_id=subject_id, term_id=term_id, current=True).order_by(
@@ -285,6 +298,7 @@ def importMark(request, term_id, subject_id, checkDiff=1):
              'checkDiff': checkDiff,
              'message': message,
              'name': file.name,
+             'success': True,
              'url': reverse('user_upload', args=[filename]),
              }]
     #print (t2-t1)
