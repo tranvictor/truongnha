@@ -463,7 +463,7 @@ def export_school_agenda(request, subject, grade, term):
 def save_file(import_file, session):
     import_file_name = import_file.name
     session_key = session.session_key
-    save_file_name = session_key + import_file_name
+    save_file_name = session_key + to_en1(import_file_name)
     saved_file = open(os.path.join(settings.TEMP_FILE_LOCATION, save_file_name), 'wb+')
     for chunk in import_file.chunks():
         saved_file.write(chunk)
