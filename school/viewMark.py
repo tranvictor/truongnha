@@ -387,11 +387,11 @@ def markForAStudent(request, class_id, student_id, term_id=None):
     if position == 4: ok = True
     #kiem tra xem giao vien nay co phai chu nhiem lop nay khong
     if position == 3:
-        if get_level(request) == 'S':
-            ok = True
-        elif selectedClass.teacher_id != None:
-            if selectedClass.teacher_id.user_id.id == request.user.id:
-                ok = True
+        #if get_level(request) == 'S':
+        ok = True
+        #elif selectedClass.teacher_id != None:
+        #    if selectedClass.teacher_id.user_id.id == request.user.id:
+        #        ok = True
 
     if request.user.id == student.user_id.id: ok = True
     if (not ok):
