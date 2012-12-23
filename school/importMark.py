@@ -54,7 +54,10 @@ def validate(s, isNx):
 
 
 def getNumberCol(s):
-    x = 10
+    x = 0
+    while (s.cell(x, 0).value != u'STT') & (s.cell(x, 0).value != u'Số\nTT') :
+        x = x + 1
+    x += 2
     y = 4
     colMieng = 0
     col15Phut = 0
@@ -139,14 +142,13 @@ def excelToArray(s, x, y, colMieng, col15Phut, colMotTiet, arrMark, arrTime, tim
 @need_login
 def importMark(request, term_id, subject_id, checkDiff=1):
     print request.session.session_key
-    user = request.user
     selectedSubject = Subject.objects.get(id=subject_id)
-
+    school = selectedSubject.class_id.year_id.school_id
     try:
-        if in_school(request, selectedSubject.class_id.year_id.school_id) == False:
-            return HttpResponseRedirect('/school')
+        if not in_school(request, school):
+            return HttpResponseRedirect(reverse('index'))
 
-    except Exception as e:
+    except Exception:
         return HttpResponseRedirect(reverse('index'))
 
     position = get_position(request)
@@ -154,9 +156,9 @@ def importMark(request, term_id, subject_id, checkDiff=1):
         pass
     elif position == 3:
         if (selectedSubject.teacher_id.id != request.user.teacher.id):
-            return HttpResponseRedirect('/school')
+            return HttpResponseRedirect(reverse('index'))
     else:
-        return HttpResponseRedirect('/school')
+        return HttpResponseRedirect(reverse('index'))
     t1 = time.time()
     absentMessage = ''
     editMarkMessage = ''
@@ -173,7 +175,7 @@ def importMark(request, term_id, subject_id, checkDiff=1):
         data = simplejson.dumps({'message': message})
         return HttpResponse(data, mimetype='json')
 
-    timeToEdit = int(selectedSubject.class_id.year_id.school_id.get_setting('lock_time')) * 60
+    timeToEdit = int(school.get_setting('lock_time')) * 60
     timeNow = int((datetime.datetime.now() - CHECKED_DATE).total_seconds() / 60)
     selectedTerm = Term.objects.get(id=term_id)
     if request.method == 'POST':
@@ -182,16 +184,34 @@ def importMark(request, term_id, subject_id, checkDiff=1):
         book = xlrd.open_workbook(filepath)
         s = book.sheet_by_index(0)
         validateMessage = validate(s, selectedSubject.nx)
-        colMieng, col15Phut, colMotTiet = getNumberCol(s)
+        try:
+            colMieng, col15Phut, colMotTiet = getNumberCol(s)
+        except Exception as e:
+            print e
+            file = request.FILES.values()[0]
+            data=[{
+                'message': u'File vừa nhập sai cấu trúc.',
+                'success': False,
+                'name': file.name,
+                'url': reverse('user_upload', args=[filename])}]
+            return HttpResponse(simplejson.dumps(data))
         isNx = selectedSubject.nx
         if validateMessage == '':
-            markList = Mark.objects.filter(subject_id=subject_id, term_id=term_id, current=True).order_by(
-                'student_id__index', 'student_id__first_name', 'student_id__last_name', 'student_id__birthday')
-            pupilList = Pupil.objects.filter(classes=selectedSubject.class_id, attend__is_member=True).order_by('index',
-                'first_name', 'last_name', 'birthday').distinct()
+            markList = Mark.objects.filter(subject_id=subject_id, term_id=term_id,
+                    current=True).order_by('student_id__index',
+                            'student_id__first_name',
+                            'student_id__last_name',
+                            'student_id__birthday')
+            pupilList = Pupil.objects.filter(classes=selectedSubject.class_id,
+                    attend__is_member=True).order_by('index',
+                            'first_name', 'last_name',
+                            'birthday').distinct()
             if (isNx & (selectedTerm.number == 2)):
-                tkMonList = TKMon.objects.filter(subject_id=subject_id, current=True).order_by('student_id__index',
-                    'student_id__first_name', 'student_id__last_name', 'student_id__birthday')
+                tkMonList = TKMon.objects.filter(subject_id=subject_id,
+                        current=True).order_by('student_id__index',
+                                'student_id__first_name',
+                                'student_id__last_name',
+                                'student_id__birthday')
             x = 11
             y = 0
             list = zip(pupilList, markList)
@@ -199,8 +219,8 @@ def importMark(request, term_id, subject_id, checkDiff=1):
                 pass
 
             for i in range(x, s.nrows):
-                lastName = s.cell(i, y + 1).value
-                firstName = s.cell(i, y + 2).value
+                lastName = unicode(s.cell(i, y + 1).value)
+                firstName = unicode(s.cell(i, y + 2).value)
                 birthday = s.cell(i, y + 3).value
 
                 #p=pupilList.filter()
@@ -285,6 +305,7 @@ def importMark(request, term_id, subject_id, checkDiff=1):
              'checkDiff': checkDiff,
              'message': message,
              'name': file.name,
+             'success': True,
              'url': reverse('user_upload', args=[filename]),
              }]
     #print (t2-t1)
