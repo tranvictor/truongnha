@@ -568,9 +568,11 @@ def add_many_students( student_list=None,
             number_subject = 0
             if _class:
                 number_subject += _class.subject_set.filter(primary=0).count()
-            TBNam.objects.get_or_create(student_id=st,
-                number_subject=number_subject,
-                year_id=year)
+            tbnam, created = TBNam.objects.get_or_create(student_id=st,
+                    year_id=year)
+            if created:
+                tbnam.number_subject = number_subject
+                tbnam.save()
 
             if _class:
                 subjects = _class.subject_set.all()
