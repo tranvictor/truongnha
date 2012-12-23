@@ -1202,7 +1202,7 @@ def student_import( request, class_id, request_type='' ):
             else:
                 data = simplejson.dumps(
                         {'success': True,
-                        'message': u'Thông tin không thay đổi'})
+                        'message': u'Thông tin không thay đổi.'})
             return HttpResponse(data, mimetype='json')
             # AJAX Upload will pass the filename in the querystring if it is the "advanced" ajax upload
         try:

@@ -547,7 +547,7 @@ class ImportStudentTest(SchoolSetupTest):
             self.assertEqual(res['Content-Type'], 'json')
             content = simplejson.loads(res.content)
             self.assertEqual(content['success'], True)
-            self.assertEqual(content['message'], u'Thông tin không thay đổi')
+            self.assertEqual(content['message'], u'Thông tin không thay đổi.')
 
 class TimetableTest(SchoolSetupTest):
     def phase8_enter_class_timetable(self):
@@ -1587,8 +1587,8 @@ class ExamTest(SchoolSetupTest):
                     self.assertEqual(res['Content-Type'], 'json')
                     content = simplejson.loads(res.content)
                     content = content[0]
-                    self.assertEqual(content['number'], 40)
-                    self.assertEqual(content['number_ok'], 40)
+                    self.assertEqual(content['number'], 10)
+                    self.assertEqual(content['number_ok'], 10)
                     self.assertEqual(content['message'], u'Nhập dữ liệu thành công')
                     self.assertEqual(content['student_confliction'], '')
 
@@ -1696,3 +1696,137 @@ class ExamTest(SchoolSetupTest):
         self.assertEquals(response['Content-Disposition'],
                 u'attachment; filename=danhSachThi.xls')
         self.assertEqual(response.status_code, 200)
+
+class ImportTest(SchoolSetupTest):
+    def phase8_add_student(self):
+        if self.school_level == 2:
+            self.actual_grades = [6]
+        else:
+            self.actual_grades = [10]
+        self.label = ['A','B']
+        i = 0
+        for l in self.label:
+            name = str(self.actual_grades[0])+' '+l
+            cl = self.year.class_set.get(name=name)
+            file_name = 'school/unittests/ds_hoc_sinh_'+ str(i) + str(l) + '.xls'
+            with open(file_name, 'rb') as input_file:
+                res = self.client.post(
+                    reverse('student_import', args=[cl.id,'import']),
+                    {
+                        'name': 'import file',
+                        'files[]': [input_file]
+                    })
+                self.assertEqual(res.status_code, 200)
+                self.assertEqual(res['Content-Type'], 'json')
+                content = simplejson.loads(res.content)
+                content = content[0]
+                self.assertEqual(content['number'], 10)
+                self.assertEqual(content['number_ok'], 10)
+                self.assertEqual(content['message'], u'Nhập dữ liệu thành công')
+                self.assertEqual(content['student_confliction'], '')
+
+    def phase9_class_modify(self):
+        name = str(self.actual_grades[0])+' A'
+        cl = self.year.class_set.get(name=name)
+        sub = cl.subject_set.get(name = u'GDCD')
+        response = self.client.post(
+            reverse('subject_per_class',args=[cl.id]),
+            {
+                'request_type': u'xoa',
+                'id' : sub.id,
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'json')
+        name = str(self.actual_grades[0])+' B'
+        cl = self.year.class_set.get(name=name)
+        response = self.client.post(
+            reverse('subject_per_class',args=[cl.id]),
+            {
+                'request_type': u'add',
+                'name': u'Mĩ thuật test',
+                'hs' : u'1',
+                'teacher_id' : u'',
+                'number_lesson': u'1',
+                'nx' : u'on',
+                'primary' : u'0',
+                'type' : u'Tự chọn',
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'json')
+    def phase_10_import_student_different_class(self):
+        name = str(self.actual_grades[0])+' A'
+        cl = self.year.class_set.get(name=name)
+        file_name = 'school/unittests/ds_hoc_sinh_'+ str(self.actual_grades[0]) + 'B.xls'
+        with open(file_name, 'rb') as input_file:
+            res = self.client.post(
+                reverse('student_import', args=[cl.id,'import']),
+                {
+                    'name': 'import file',
+                    'files[]': [input_file]
+                })
+            self.assertEqual(res.status_code, 200)
+            self.assertEqual(res['Content-Type'], 'json')
+            content = simplejson.loads(res.content)
+            self.assertEqual(content['number_ok'], 0)
+            self.assertEqual(content['exist_student_out_class'], 10)
+            self.assertEqual(content['exist_student_in_class'], 10)
+            res = self.client.post(
+                reverse('student_import', args=[cl.id,'update']),
+                {
+                })
+            self.assertEqual(res.status_code, 500)
+    def phase_11_import_student_same_class(self):
+        name = str(self.actual_grades[0])+' B'
+        cl = self.year.class_set.get(name=name)
+        file_name = 'school/unittests/ds_hoc_sinh_'+ str(self.actual_grades[0]) + 'B.xls'
+        with open(file_name, 'rb') as input_file:
+            res = self.client.post(
+                reverse('student_import', args=[cl.id,'import']),
+                {
+                    'name': 'import file',
+                    'files[]': [input_file]
+                })
+            self.assertEqual(res.status_code, 200)
+            self.assertEqual(res['Content-Type'], 'json')
+            content = simplejson.loads(res.content)
+            self.assertEqual(content['number_ok'], 0)
+            self.assertEqual(content['exist_student_out_class'], 0)
+            self.assertEqual(content['exist_student_in_class'], 10)
+            res = self.client.post(
+                reverse('student_import', args=[cl.id,'update']),
+                {
+                })
+            self.assertEqual(res.status_code, 200)
+            self.assertEqual(res['Content-Type'], 'json')
+            content = simplejson.loads(res.content)
+            self.assertEqual(content['message'], u'Thông tin không thay đổi.')
+
+    def phase_12_import_student_mix_class(self):
+        name = str(self.actual_grades[0])+' B'
+        cl = self.year.class_set.get(name=name)
+        file_name = 'school/unittests/ds_hoc_sinh_mix.xls'
+        with open(file_name, 'rb') as input_file:
+            res = self.client.post(
+                reverse('student_import', args=[cl.id,'import']),
+                {
+                    'name': 'import file',
+                    'files[]': [input_file]
+                })
+            self.assertEqual(res.status_code, 200)
+            self.assertEqual(res['Content-Type'], 'json')
+            content = simplejson.loads(res.content)
+            self.assertEqual(content['number_ok'], 5)
+            self.assertEqual(content['exist_student_out_class'], 5)
+            self.assertEqual(content['exist_student_in_class'], 5)
+            res = self.client.post(
+                reverse('student_import', args=[cl.id,'update']),
+                {
+                })
+            self.assertEqual(res.status_code, 200)
+            self.assertEqual(res['Content-Type'], 'json')
+            content = simplejson.loads(res.content)
+            self.assertEqual(content['message'], u'Đã cập nhật 1 học sinh.')
