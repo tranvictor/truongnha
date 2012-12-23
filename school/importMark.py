@@ -55,7 +55,7 @@ def validate(s, isNx):
 
 def getNumberCol(s):
     x = 0
-    while s.cell(x, 0).value != u'STT':
+    while (s.cell(x, 0).value != u'STT') & (s.cell(x, 0).value != u'Số\nTT') :
         x = x + 1
     x += 2
     y = 4
