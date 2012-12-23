@@ -24,6 +24,41 @@ TEST_TABLE = os.path.join('helptool','test_table.html')
 REALTIME = os.path.join('helptool','realtime_test.html')
 CONVERT_MARK= os.path.join('helptool','convert_mark.html')
 
+
+def check_tbnam():
+    schools = Organization.objects.filter(level='T')
+    for school in schools:
+        years = school.year_set.all()
+        sts = school.get_students()
+        for year in years:
+            for st in sts:
+                tbs = st.tbnam_set.filter(year_id=year)
+                if len(tbs) > 1:
+                    print '---------------'
+                    for tb in tbs:
+                        print tb.number_subject, tb.id
+                        if tb.number_subject == 0: tb.delete()
+                    print tbs
+                    print st.id, st, year, school
+
+def check_subject_type():
+    classes = Class.objects.all()
+    number = 0
+    for c in classes:
+        try:
+            c.subject_set.get(type=u'Toán')
+            c.subject_set.get(type=u'Ngữ văn')
+        except Exception as e:
+            number += 1
+            print '------------------------------'
+            print c, c.id, c.block_id.school_id
+            print 'subjects'
+            subs = c.subject_set.all()
+            for s in subs:
+                print s.id, s.name, s.type
+            print e
+    print 'There are %s class having wrong subject setting' % number
+
 def fail_all_pending_sms():
     sms.objects.filter(recent=True).update(recent=False)
 

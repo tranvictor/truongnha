@@ -1,13 +1,11 @@
 #! /usr/bin/env python
 #encoding:UTF-8
 from django.core.urlresolvers import reverse
-from base_tests import SchoolSetupTest,AddStudentTest
+from base_tests import AddStudentTest
 from school.models import Mark
-import simplejson
-from datetime import date
 
 class MarkTest(AddStudentTest):
-    def phase31_add_mark(self):
+    def phase11_add_mark(self):
         print "helll"
         classes = self.year.class_set.all()
         for c in classes:

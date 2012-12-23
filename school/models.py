@@ -973,7 +973,7 @@ class Pupil(BasicPersonInfo):
     def move_to_new_class(self, _class):
         return self._move_to_class(_class)
 
-        # This method is rarely used, it moves a student to an upper class
+    # This method is rarely used, it moves a student to an upper class
     # in the same year, this short of action usually illegal
     def _move_to_upper_class(self, _class):
         cur_cl = self.current_class()
