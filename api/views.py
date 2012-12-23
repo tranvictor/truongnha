@@ -23,7 +23,7 @@ import simplejson
 import time
 import datetime
 import re
-from school.templateExcel import  MAX_COL, CHECKED_DATE, normalize
+from school.templateExcel import  MAX_COL, CHECKED_DATE
 from school.viewMark import update_mark
 
 class ApiLogin(View):

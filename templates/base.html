@@ -127,10 +127,6 @@
                             <small class="hidden-phone hidden-tablet">({{ user.username }})</small>
                         </span>
                     </a>
-                    <span class="badge badge-important"
-                        title="Tài khoản cả trường còn {{user.userprofile.organization.balance|floatformat:"0" }} tin nhắn" >
-                        {{ user.userprofile.organization.balance|floatformat:"0" }}</span>
-
                     <a id="logout" href="{% url django.contrib.auth.views.logout %}"
                        title="Thoát ra, kết thúc phiên làm việc. BẠN PHẢI ĐĂNG XUẤT NẾU ĐĂNG NHẬP TRÊN CÁC MÁY TÍNH DÙNG CHUNG ĐỂ TRÁNH NGƯỜI KHÁC THAY ĐỔI DỮ LIỆU.">
                         <i class="icon-signout"></i>

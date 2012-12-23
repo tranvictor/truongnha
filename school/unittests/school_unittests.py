@@ -486,6 +486,26 @@ class ImportStudentTest(SchoolSetupTest):
         self.cl = classes[0]
         res = self.client.get(reverse('class_detail', args=[self.cl.id]))
         self.assertEqual(res.status_code, 200)
+
+    def phase9_import_1_student_with_separated_phonenumber(self):
+        with open('school/unittests/import_1_student_with_separated_phonenumber.xls',
+                'rb') as input_file:
+            res = self.client.post(
+                    reverse('student_import', args=[self.cl.id,'import']),
+                    {
+                        'name': 'import file',
+                        'files[]': [input_file]
+                    })
+            self.assertEqual(res.status_code, 200)
+            self.assertEqual(res['Content-Type'], 'json')
+            content = simplejson.loads(res.content)
+            content = content[0]
+            self.assertEqual(content['number'], 1)
+            self.assertEqual(content['number_ok'], 1)
+            self.assertEqual(content['message'], u'Nhập dữ liệu thành công')
+            self.assertEqual(content['student_confliction'], '')
+        return True
+
     def phase9_import_5_students(self):
         with open('school/unittests/import_5_student.xls', 'rb') as input_file:
             res = self.client.post(
@@ -502,6 +522,7 @@ class ImportStudentTest(SchoolSetupTest):
             self.assertEqual(content['number_ok'], 5)
             self.assertEqual(content['message'], u'Nhập dữ liệu thành công')
             self.assertEqual(content['student_confliction'], '')
+    
     def phase10_import_5_duplicated_students(self):
         with open('school/unittests/import_5_student.xls', 'rb') as input_file:
             res = self.client.post(
@@ -1570,6 +1591,7 @@ class ExamTest(SchoolSetupTest):
                     self.assertEqual(content['number_ok'], 40)
                     self.assertEqual(content['message'], u'Nhập dữ liệu thành công')
                     self.assertEqual(content['student_confliction'], '')
+
     def phase9_create_exam(self):
         post_dict ={ u'classifiedType': 1,
             u'name': u'Tess 1',
@@ -1587,21 +1609,24 @@ class ExamTest(SchoolSetupTest):
             reverse('create_list_exam'),post_dict,
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        self.assertEquals(response['Content-Disposition'], u'attachment; filename=danhSachThi.xls')
+        self.assertEquals(response['Content-Disposition'],
+                u'attachment; filename=danhSachThi.xls')
         self.assertEqual(response.status_code, 200)
         post_dict['classifiedType'] = 2
         response = self.client.post(
             reverse('create_list_exam'),post_dict,
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        self.assertEquals(response['Content-Disposition'], u'attachment; filename=danhSachThi.xls')
+        self.assertEquals(response['Content-Disposition'],
+                u'attachment; filename=danhSachThi.xls')
         self.assertEqual(response.status_code, 200)
         post_dict['classifiedType'] = 3
         response = self.client.post(
             reverse('create_list_exam'),post_dict,
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        self.assertEquals(response['Content-Disposition'], u'attachment; filename=danhSachThi.xls')
+        self.assertEquals(response['Content-Disposition'],
+                u'attachment; filename=danhSachThi.xls')
         self.assertEqual(response.status_code, 200)
         post_dict ={ u'classifiedType': 1,
                      u'name': u'Tess 1',
@@ -1618,21 +1643,24 @@ class ExamTest(SchoolSetupTest):
             reverse('create_list_exam'),post_dict,
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        self.assertEquals(response['Content-Disposition'], u'attachment; filename=danhSachThi.xls')
+        self.assertEquals(response['Content-Disposition'],
+                u'attachment; filename=danhSachThi.xls')
         self.assertEqual(response.status_code, 200)
         post_dict['classifiedType'] = 2
         response = self.client.post(
             reverse('create_list_exam'),post_dict,
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        self.assertEquals(response['Content-Disposition'], u'attachment; filename=danhSachThi.xls')
+        self.assertEquals(response['Content-Disposition'],
+                u'attachment; filename=danhSachThi.xls')
         self.assertEqual(response.status_code, 200)
         post_dict['classifiedType'] = 3
         response = self.client.post(
             reverse('create_list_exam'),post_dict,
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        self.assertEquals(response['Content-Disposition'], u'attachment; filename=danhSachThi.xls')
+        self.assertEquals(response['Content-Disposition'],
+                u'attachment; filename=danhSachThi.xls')
         self.assertEqual(response.status_code, 200)
         post_dict ={ u'classifiedType': 1,
                      u'name': u'Tess 1',
@@ -1649,19 +1677,22 @@ class ExamTest(SchoolSetupTest):
             reverse('create_list_exam'),post_dict,
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        self.assertEquals(response['Content-Disposition'], u'attachment; filename=danhSachThi.xls')
+        self.assertEquals(response['Content-Disposition'],
+                u'attachment; filename=danhSachThi.xls')
         self.assertEqual(response.status_code, 200)
         post_dict['classifiedType'] = 2
         response = self.client.post(
             reverse('create_list_exam'),post_dict,
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        self.assertEquals(response['Content-Disposition'], u'attachment; filename=danhSachThi.xls')
+        self.assertEquals(response['Content-Disposition'],
+                u'attachment; filename=danhSachThi.xls')
         self.assertEqual(response.status_code, 200)
         post_dict['classifiedType'] = 3
         response = self.client.post(
             reverse('create_list_exam'),post_dict,
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        self.assertEquals(response['Content-Disposition'], u'attachment; filename=danhSachThi.xls')
+        self.assertEquals(response['Content-Disposition'],
+                u'attachment; filename=danhSachThi.xls')
         self.assertEqual(response.status_code, 200)

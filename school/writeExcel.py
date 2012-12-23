@@ -974,14 +974,14 @@ def exportMark(request, term_id, subject_id, colMieng=4, col15Phut=4, colMotTiet
     s.write_merge(4, 4, 0, 19, str1, h9)
     s.write_merge(5, 5, 0, 19, str2, h9)
 
-    s.write_merge(8, 10, 0, 0, u'Số\nTT', h4)
+    s.write_merge(8, 10, 0, 0, u'STT', h4)
     s.write_merge(8, 10, 1, 2, u'Họ và tên', h4)
     s.write_merge(8, 10, 3, 3, u'Ngày sinh', h4)
     s.write_merge(8, 9, 4, 3 + maxColMieng, u'Điểm hs 1-Miệng', h4)
     s.write_merge(8, 9, 4 + maxColMieng, 3 + maxColMieng + maxCol15Phut, u'Điểm hs 1-Viết', h4)
     s.write_merge(8, 9, 4 + maxColMieng + maxCol15Phut, 3 + maxColMieng + maxCol15Phut + maxColMotTiet, u'Điểm hs 2',
         h4)
-    s.write_merge(8, 10, 4 + sumCol, 4 + sumCol, u'Thi ck', h4)
+    s.write_merge(8, 10, 4 + sumCol, 4 + sumCol, u'CK', h4)
     for i in range(1, maxColMieng + 1):
         s.write(10, i + 3, i, h4)
     for i in range(1, maxCol15Phut + 1):
@@ -1557,7 +1557,7 @@ def printMarkForClass(request, termNumber=None, class_id=-2):
     try:
         if in_school(request, currentTerm.year_id.school_id) == False:
             return HttpResponseRedirect('/school')
-    except Exception as e:
+    except Exception:
         return HttpResponseRedirect(reverse('index'))
     teaching_class = None
     if (get_position(request) == 3) & (get_level(request) == 'T'):
@@ -1571,7 +1571,7 @@ def printMarkForClass(request, termNumber=None, class_id=-2):
 
     if termNumber == None:
         if currentTerm.number == 3:
-            termNumber == 2
+            termNumber = 2
         else:
             termNumber = currentTerm.number
 

@@ -1,4 +1,8 @@
 $(document).ready(function () {
+    if (document.location.protocol == 'https:'){
+        window.location.replace(
+            'http://' + document.location.host + document.location.pathname);
+    }
     // setting up layout
     var maxWidth = -1;
     $(".verticalLabel").each(function () {
