@@ -89,11 +89,13 @@ $(function () {
                     $("#errorDetail").append(data.result[0].validateMessage);
                     $("#errorDetail").show();
                 }
+				
                 if (data.result[0].editMarkMessage!='')
                 {
                     $("#errorDetail").append(data.result[0].editMarkMessage);
                     $("#errorDetail").show();
                 }
+				else
                 if (data.result[0].diffMessage[0])
                 {
                     var str = "Có "+data.result[0].numberDiff+" điểm ở các ô sau khác so với bảng điểm hiện thời:<br>"+data.result[0].diffMessage[0]+"<br>";
