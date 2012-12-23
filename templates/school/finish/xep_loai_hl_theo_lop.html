@@ -1,5 +1,35 @@
 ﻿{% extends "base.html" %}
 
+{% block css %}
+    <style type="text/css">
+        input.hk{
+            font-weight: bold;
+            text-align: center;
+            width: 20px;
+            background-color: transparent;
+            border: none;
+            margin: 0;
+            padding: 0;
+            border-radius: 0;
+        }
+        input.hk[value="T"] {
+            color: rgb(70, 136, 71);
+        }
+
+        input.hk[value="K"] {
+            color: rgb(58, 135, 173);
+        }
+
+        input.hk[value="TB"] {
+            color: rgb(248, 148, 6);
+        }
+
+        input.hk[value="Y"] {
+            color: rgb(185, 74, 72);
+        }
+    </style>
+{% endblock %}
+
 {% block js %}
    {# <script type="text/javascript" src="/static/bootstrap/js/bootstrap-button.js"></script> #}
 
@@ -7,9 +37,64 @@
         $(document).ready(function () {
             $('input[type=radio]').change(function () {
                 window.location.href = "/school/xepLoaiHlTheoLop/" + {{selectedClass.id}} + "/" + this.value;
-            })
+            });
 			//document.getElementById({{termNumber}}).checked = true;
 			$("#{{ termNumber }}").addClass('active');
+
+            function getval(inp) {
+                if (inp == 'B' || inp == 'b') return 'TB';
+                return inp.toUpperCase();
+            }
+
+            $("input[type=text]").each(function () {
+                $(this).on('keyup', function (event) {
+                    var $this = $(this).parent("td");
+                    var cellIndex = $this.index();
+                    if (event.keyCode == 40 || event.keyCode == 13 || event.keyCode == 39) {
+                        $this.closest('tr').next().children().eq(cellIndex).find("input").focus();
+                        return false;
+                    }
+
+                    if (event.keyCode == 38 || event.keyCode == 37) {
+                        $this.closest('tr').prev().children().eq(cellIndex).find("input").focus();
+                        return false;
+                    }
+
+                    if ($(this).val().length > 1) $(this).val($(this).val().substring(0, 1));
+                    $(this).val($(this).val().replace(/[^TKBYtkby]/gi, ''));
+                    $(this).attr('value', $(this).val());
+                });
+
+                $(this).blur(function () {
+                    var old_value = $(this).attr('value');
+                    var id = $(this).parents("tr").attr('class').split(' ')[0];
+                    var value = getval($(this).val());
+                    $(this).val(value);
+                    $(this).attr('value', $(this).val());
+                    var name='year';
+                    {% ifnotequal termNumber  3 %}
+                        name='term' + '{{ termNumber }}';
+                    {% endifnotequal %}
+
+                    var data = { id:id, val:value, request_type:name};
+                    var arg = { type:"POST",
+                        url:"{% url hanh_kiem selectedClass.id %}",
+                        data:data,
+                        datatype:"json",
+                        success:function(json){
+                            $("#notify1").showNotification(json.message, 3000);
+                        },
+                        error:function () {
+                            $("#notify1").showNotification("Có lỗi kết nối xảy ra. Vui lòng thử loai", 3000);
+                        }
+                    };
+                    if (value != old_value) {
+                        $.ajax(arg);
+                    }
+                    return false;
+
+                });
+            });
         });
     </script>
 {% endblock %}
@@ -31,8 +116,13 @@
 
     <div class="form-inline pagination-centered" data-toggle="buttons-radio">
         <a id="1" href="{% url xep_loai_hl_theo_lop selectedClass.id  1%}" class="btn"> Học kỳ I </a>
-        <a id="2" href="{% url xep_loai_hl_theo_lop selectedClass.id  2%}" class="btn"> Học kỳ II </a>
-        <a id="3" href="{% url xep_loai_hl_theo_lop selectedClass.id  3%}" class="btn"> Cả năm </a>
+        {% ifnotequal termNumber 1%}
+            <a id="2" href="{% url xep_loai_hl_theo_lop selectedClass.id  2%}" class="btn"> Học kỳ II </a>
+            <a id="3" href="{% url xep_loai_hl_theo_lop selectedClass.id  3%}" class="btn"> Cả năm </a>
+        {% else %}
+            <div id="2" disabled="disabled" title="Không thể truy cập khi đang ở kì 1" class="btn"> Học kỳ II </div>
+            <div id="3" disabled="disabled" title="Không thể truy cập khi đang ở kì 1" class="btn"> Cả năm </div>
+        {% endifnotequal %}
     </div>
 
     <div id="submenu" class="btn-toolbar">
@@ -40,7 +130,16 @@
             <a id="tinhtrungbinh" class="btn btn-primary" href="{% url xep_loai_hl_theo_lop selectedClass.id  termNumber 1%}" >
 			Tính điểm trung bình và xét danh hiệu
             </a>
-		{% endif %}	
+		{% endif %}
+        <span class="pull-right dimmed" >
+            <label>
+                Nhập một chữ cái:
+                <span class="label label-success">T</span> Tốt,
+                <span class="label label-info">K</span> Khá,
+                <span class="label label-warning">B</span> Trung bình,
+                <span class="label label-important">Y</span> Yếu.
+            </label>
+        </span>
     </div>
 
     <table id="mark-table" class="table table-bordered grid fifth-row">
@@ -84,7 +183,7 @@
     </thead>
     <tbody>
         {% for p,m,tbhocky,hk in list %}
-            <tr>
+            <tr class="{{ p.id }}">
                 <td >
                     {{ forloop.counter }}
                 </td>
@@ -120,7 +219,11 @@
                         {{ tbhocky.hl_hk|convertHlToVietnamese }}
                     </td>
                     <td>
-                        {{ hk|convertHKToVietnamese }}
+                        {% if isSchool %}
+                            <input type="text" class="input-mini hk" value="{{ hk|default_if_none:'' }}"/>
+                        {% else %}
+                            {{ hk|convertHKToVietnamese }}
+                        {% endif %}
                     </td>
 
                     <td>
@@ -140,7 +243,11 @@
                         {{ tbhocky.hl_nam|convertHlToVietnamese }}
                     </td>
                     <td>
-                        {{ hk.year|convertHKToVietnamese }}
+                        {% if isSchool %}
+                            <input type="text" class="input-mini hk" value="{{ hk.year|default_if_none:'' }}"/>
+                        {% else %}
+                            {{ hk.year|convertHKToVietnamese }}
+                        {% endif %}
                     </td>
 
                     <td>
@@ -152,6 +259,11 @@
         {% endfor %}
     </tbody>
     </table>
+    {% if isSchool %}
+        <div class="pagination-right">
+            <p class="dimmed">Típ: có thể dùng phím ENTER hoặc các phím mũi tên để di chuyển.</p>
+        </div>
+    {% endif %}
 
     {% if message != None %}
         <script>
@@ -162,6 +274,5 @@
 
         </script>
     {% endif %}
-
 
 {% endblock %}

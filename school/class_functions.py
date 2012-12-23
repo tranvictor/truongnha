@@ -754,12 +754,14 @@ def hanh_kiem(request, class_id=0):
                     val = request.POST['val']
                 valid_value = ['T', 'K', 'TB', 'Y', '']
                 if not (val in valid_value):
-                    data = simplejson.dumps({'message' : 'Bad request.'})
+                    data = simplejson.dumps({'message': 'Bad request.',
+                                             'success': False})
                     return HttpResponse(data, mimetype='json')
 
                 if term.number == 1:
                     if request.POST['request_type'] in [u'year', u'term2']:
-                        data = simplejson.dumps({'message' : 'Bad request.'})
+                        data = simplejson.dumps({'message': 'Bad request.',
+                                                 'success': False})
                         return HttpResponse(data, mimetype='json')
 
                 setattr(hk, request.POST['request_type'], val)
