@@ -9,6 +9,7 @@ from app.models import Organization, KHOI_CHOICES,\
 from school.templateExcel import MAX_COL, normalize,\
     convertMarkToCharacter1
 from sms.utils import sendSMS, send_email
+from sms.models import regc
 import random, string
 import itertools
 import urllib2
@@ -138,12 +139,11 @@ def validate_mark(value):
 
 #validate the phone format
 def validate_phone(value):
-    if len(value) <= 5:
-        raise ValidationError(u'Điện thoạt phải có trên 5 chữ số.')
-    try:
-        int(value)
-    except ValueError:
-        raise ValidationError(u'Không đúng định dạng.')
+    if type(value) in [unicode, str]:
+        value = value.replace(' ', '')
+    else: value = str(value)
+    print value
+    if not regc(value): raise ValidationError(u'Không đúng định dạng.')
 
 #validate birthday. set range between 1990 and current year
 def validate_birthday(value):
@@ -262,8 +262,7 @@ class Block(models.Model):
 
 
 class Team(models.Model):
-    name = models.CharField("Tổ",
-        max_length=30)
+    name = models.CharField("Tổ", max_length=30)
     school_id = models.ForeignKey(Organization, verbose_name="Trường(*)")
 
     class Meta:
@@ -974,7 +973,7 @@ class Pupil(BasicPersonInfo):
     def move_to_new_class(self, _class):
         return self._move_to_class(_class)
 
-        # This method is rarely used, it moves a student to an upper class
+    # This method is rarely used, it moves a student to an upper class
     # in the same year, this short of action usually illegal
     def _move_to_upper_class(self, _class):
         cur_cl = self.current_class()

@@ -295,6 +295,7 @@ class sms(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:
             self.created = datetime.datetime.today()
+            self.modified = datetime.datetime.today()
         self.modified = datetime.datetime.today()
         super(sms, self).save(*args, **kwargs)
 

@@ -75,6 +75,12 @@
         {% if pos > 3 or gvcn == 1 %}
             <div class="pull-right">
                 <div class="btn-group">
+                    <span class="btn btn-danger"
+                        title="Tài khoản cả trường còn {{user.userprofile.organization.balance|floatformat:"0" }} tin nhắn" >
+                        Tài khoản trường: {{ user.userprofile.organization.balance|floatformat:"0" }}
+                    </span>
+                </div>
+                <div class="btn-group">
                     {% if pos == 3 and gvcn == 1 or pos > 3 %}
                         <button id="textSms" class="btn btn-warning"
                                 title="Nhắn tin đến những học sinh đã chọn">

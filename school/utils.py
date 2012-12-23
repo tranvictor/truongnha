@@ -11,8 +11,8 @@ from django.db.models import get_model
 from django.contrib.auth.models import SiteProfileNotAvailable, User
 from django.forms import forms
 from app.models import UserProfile, Organization
-from school.models import syllables, Pupil, Mark, TKMon, TBHocKy, TBNam, TKDiemDanh, Team, SUBJECT_LIST_ASCII,\
-    Group, Subject, Teacher
+from school.models import syllables, Pupil, Mark, TKMon, TBHocKy, TBNam,\
+        TKDiemDanh, Team, SUBJECT_LIST_ASCII, Group, Subject, Teacher
 import settings
 
 def to_date(value):
@@ -929,7 +929,7 @@ def get_current_term(request, except_summer=False):
 def get_current_class(request):
     if request.user.userprofile.position == u'GIAO_VIEN':
         teacher = request.user.teacher
-        cl = teacher.current_homeroom_class
+        cl = teacher.current_homeroom_class()
         if cl is None:
             cll = teacher.current_teaching_class()
             if cll:
@@ -974,7 +974,8 @@ def in_school(request, school_id):
 
 
 def save_file(file):
-    saved_file = open(os.path.join(settings.TEMP_FILE_LOCATION, 'sms_input.xls'), 'wb+')
+    saved_file = open(os.path.join(settings.TEMP_FILE_LOCATION,
+        'sms_input.xls'), 'wb+')
     for chunk in file.chunks():
         saved_file.write(chunk)
     saved_file.close()

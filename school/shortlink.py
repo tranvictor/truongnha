@@ -1,14 +1,14 @@
 from datetime import date
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from school.utils import get_current_term, get_current_class, get_current_student
+from school.utils import get_current_term, get_current_class 
 
 __author__ = 'ACDC'
 
 
 def viewClassDetail(request):
     cl = get_current_class(request)
-    return HttpResponseRedirect(reverse('class_detail',args=[cl.id]))
+    return HttpResponseRedirect(reverse('class_detail', args=[cl.id]))
 
 def diemdanh(request):
     cl = get_current_class(request)

@@ -251,6 +251,7 @@ def sms_summary(request, class_id=None):
             number = 0
             for st in students:
                 if (st.sms_phone and st.id in ids
+                    and (st.id in info_list and st.id in dd_info_list)
                     and (info_list[st.id] != u'Không có điểm mới.'
                         or dd_info_list[st.id] != '')):
                     try:
@@ -612,10 +613,11 @@ def editTeacherDetail(request, teacher_id):
     if not in_school(request, teacher.school_id):
         return HttpResponseNotAllowed()
     pos = get_position(request)
+    school = get_school(request)
     if request.is_ajax() and pos >= 3:
         data = request.POST.copy()
-        data['first_name'] = data['first_name'].strip()
-        data['last_name'] = data['last_name'].strip()
+        if 'first_name' in data: data['first_name'] = data['first_name'].strip()
+        if 'last_name' in data: data['last_name'] = data['last_name'].strip()
         form = TeacherForm(teacher.school_id_id, data, instance=teacher)
         message = u'Đã lưu'
         if request.method == 'POST':
@@ -632,6 +634,18 @@ def editTeacherDetail(request, teacher_id):
             hs_luong = ''
             bhxh = ''
             if form.is_valid():
+                new_birthday = to_date(data['birthday'])
+                teacher_query = school.teacher_set.filter(
+                    first_name__exact=data['first_name'],
+                    last_name__exact=data['last_name'],
+                    birthday__exact=new_birthday).exclude(id__exact=teacher.id)
+                if len(teacher_query):
+                    message = u'Thông tin trùng với giáo viên khác trong hệ thống.'
+                    response = simplejson.dumps({
+                        'success': False,
+                        'message': message
+                    })
+                    return HttpResponse(response, mimetype='json')
                 form.save()
             else:
                 message = 'Có lỗi ở dữ liệu nhập vào'
