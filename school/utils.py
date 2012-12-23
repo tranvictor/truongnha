@@ -465,8 +465,9 @@ def add_many_students( student_list=None,
             if force_update:
                 st = find[0]
             elif not unc_st_found:
-                existing_student.append(student)
                 st = find[0]
+                student['class_id'] = st.current_class().id
+                existing_student.append(student)
                 continue
         else:    # the student does not exist
             st = Pupil(first_name=first_name,

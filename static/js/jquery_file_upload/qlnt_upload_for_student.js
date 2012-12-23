@@ -45,10 +45,18 @@ $(function () {
                 $("#errorDetail").html(data.result[0].process_message);
                 if (data.result[0].student_confliction){
                     $("#errorDetail > ul").append(
-                            '<li>' + data.result[0].student_confliction +' ' +
+                            '<li>' + data.result[0].student_confliction +' ' + '</li>');
+                    if (data.result[0].exist_student_in_class){
+                        $("#errorDetail > ul").append('<li>'+
                             '<a id="update_existing" href="/school/start_year/import/student/'+id+
-                            '/update" class="btn btn-primary">Cập nhật những học sinh này.</a>'+
-                            '</li>');
+                            '/update" class="btn btn-primary">Cập nhật thông tin những học sinh trong lớp này.</a>'+'</li>'
+                        );
+                    }
+                    if (data.result[0].exist_student_out_class){
+                        $("#errorDetail > ul").append(
+                            '<li>Nếu bạn muốn chuyển những học sinh đã tồn tại đến lớp này xin vui lòng sử' +
+                                ' dụng chức năng chuyển lớp.</li>');
+                    }
                     $("#update_existing").click(function(){
                         if ($(this).attr('href') != '')
                             $.ajax({

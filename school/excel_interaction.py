@@ -1249,14 +1249,27 @@ def student_import( request, class_id, request_type='' ):
                                              start_year=year, year=current_year,
                                              term=term, school=school)
         student_confliction = ''
+        import_student = []
+        exist_student_in_class = 0
         if existing_student:
-            student_confliction = u'Có %s học sinh không được nhập do đã tồn tại trong hệ thống' % len(existing_student)
-            request.session['saving_import_student'] = existing_student
+            for student in existing_student:
+                if student['class_id'] == chosen_class.id:
+                    import_student.append(student)
+            exist_student_in_class = len(import_student)
+            student_confliction = u'Có %s học sinh không được nhập do đã tồn tại trong hệ thống.' % len(existing_student)
+            if exist_student_in_class:
+                student_confliction += u' Trong đó có %s học sinh thuộc lớp này.' % exist_student_in_class
+
+            if import_student:
+                request.session['saving_import_student'] = import_student
+        exist_student_out_class = len(existing_student) - exist_student_in_class
         data = [{'name': file.name,
                  'url': reverse('user_upload', args=[filename]),
                  'sizef': file.size,
                  'process_message': process_file_message,
                  'student_confliction': student_confliction,
+                 'exist_student_in_class': exist_student_in_class,
+                 'exist_student_out_class': exist_student_out_class,
                  'number': number,
                  'number_ok': number_ok - len(existing_student),
                  'message': u'Nhập dữ liệu thành công'}]
