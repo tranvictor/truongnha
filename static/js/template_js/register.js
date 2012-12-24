@@ -17,7 +17,6 @@ $(document).ready(function () {
         "captcha-form",
         {
             theme:"white",
-            callback:Recaptcha.focus_response_field,
             custom_translations : {
                 instructions_visual : "Nhập chuỗi ký tự trên:",
                 instructions_audio : ":",
@@ -31,6 +30,7 @@ $(document).ready(function () {
             }
         }
     );
+    $("#registerName").focus();
     $("#sendRegister").click(function () {
         var self = $(this);
         // check validity
