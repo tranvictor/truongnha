@@ -789,9 +789,8 @@ def hanh_kiem(request, class_id=0):
     return HttpResponse(t.render(c))
 
 @need_login
-def viewSubjectDetail (request, subject_id):
-    if get_position(request) < 4:
-        return HttpResponseRedirect(reverse('index'))
+@operating_permission(['HIEU_PHO', 'HIEU_TRUONG'])
+def viewSubjectDetail(request, subject_id):
     pos = get_position(request)
     sub = Subject.objects.get(id=subject_id)
     class_id = sub.class_id
@@ -800,20 +799,26 @@ def viewSubjectDetail (request, subject_id):
 
     form = SubjectForm(class_id.block_id.school_id.id, instance=sub)
     message = None
+    success = True
     if request.method == 'POST':
+        success = False
         data = request.POST.copy()
+        print data
         data['name'] = data['name'].strip()
+        data['type'] = sub.type
         form = SubjectForm(class_id.block_id.school_id.id, data, instance=sub)
         if form.is_valid():
             form.save()
+            success = True
             message = u'Bạn đã cập nhật thành công'
-
+        else:
+            print form
     t = loader.get_template(os.path.join('school', 'subject_detail.html'))
     c = RequestContext(request, {'form': form,
-                                 'message': message,
-                                 'sub': sub,
-                                 'pos': pos,
-                                 })
+        'success': success,
+        'message': message,
+        'sub': sub,
+        'pos': pos,})
     return HttpResponse(t.render(c))
 
 @need_login

@@ -2,7 +2,7 @@
 #encoding:UTF-8
 from django.core.urlresolvers import reverse
 from base_tests import SchoolSetupTest, AddStudentTest
-from school.models import DiemDanh
+from school.models import DiemDanh, Subject
 import simplejson
 from school.models import Teacher, Team, Group
 from datetime import date
@@ -73,8 +73,8 @@ class AddSubjectTest(SchoolSetupTest):
         print 'Going to check in db'
         check_sub = None
         try:
-            check_sub = cl.subject_set.get(name = u'Mĩ thuật test')
-        except Exception as e:
+            check_sub = cl.subject_set.get(name=u'Mĩ thuật test')
+        except Exception:
             pass
         self.assertIsNone(check_sub)
 
@@ -242,6 +242,60 @@ class AddSubjectTest(SchoolSetupTest):
         print 'Going to check response content'
         cont = simplejson.loads(response.content)
         self.assertEqual(cont['message'], u'Số tiết phải là số nguyên.')
+
+class IllegalModifySubjectType(SchoolSetupTest):
+    def phase8_get_a_subject(self):
+        classes = self.year.class_set.order_by('id')
+        self.assertEqual(len(classes)>0, True)
+        self.cl = cl = classes[0]
+        subs = cl.subject_set.all()
+        # Must have at least Toan and Van
+        self.assertEqual(len(subs) >= 2, True)
+        self.subject = subs[0]
+
+    def phase9_get_subject_detail(self):
+        res = self.client.get(reverse('subject_detail',
+            args=[self.subject.id]))
+        print 'Going to check response status code'
+        self.assertEqual(res.status_code, 200)
+        print 'Going to check response content'
+        context = res.context
+        self.assertEqual(context['sub'].id, self.subject.id)
+
+    def phase10_delete_lichsu(self):
+        ls = self.cl.subject_set.get(type=u'Lịch sử')
+        response = self.client.post(
+            reverse('subject_per_class',args=[self.cl.id]),
+                {
+                'request_type': u'xoa',
+                'id' : ls.id,
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        print 'Going to check response content type'
+        self.assertEqual(response['Content-Type'], 'json')
+        print 'Going to check response content'
+        cont = simplejson.loads(response.content)
+        self.assertEqual(cont['message'], u'Đã xóa thành công.')
+
+    def phase11_modify_subject_type(self):
+        res = self.client.post(
+                reverse('subject_detail', args=[self.subject.id]),
+                {
+                    'name': self.subject.name,
+                    'teacher_id': '',
+                    'number_lesson': self.subject.number_lesson,
+                    'hs': self.subject.hs,
+                    'primary': self.subject.primary,
+                    'type': u'Lịch sử',
+                    })
+        self.assertEqual(res.status_code, 200)
+        print 'Going to check database'
+        sub = Subject.objects.get(id=self.subject.id)
+        self.assertEqual(res.context['success'], True)
+        self.assertEqual(sub.type != u'Lịch sử', True)
+        self.assertEqual(sub.type , self.subject.type)
 
 class DiemDanhTest(AddStudentTest):
     def diemdanh_a_student(self, cl, st, t, today):

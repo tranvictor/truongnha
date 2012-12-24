@@ -370,7 +370,9 @@ class SubjectForm(forms.ModelForm):
         
     def __init__(self, school_id, *args, **kwargs):
         super(SubjectForm, self).__init__(*args, **kwargs)
-        self.fields['teacher_id'] = forms.ModelChoiceField(required = False, queryset = Teacher.objects.filter(school_id = school_id), label=u'Giáo viên giảng dạy')
+        self.fields['teacher_id'] = forms.ModelChoiceField(required=False,
+                queryset=Teacher.objects.filter(school_id=school_id),
+                label=u'Giáo viên giảng dạy')
 
 class KhenThuongForm(forms.ModelForm):
     class Meta:
