@@ -27,7 +27,8 @@ from app.models import SUBJECT_CHOICES as SUBJECT, UserProfile, RegisterForm,\
         KHOI_CHOICES, TINH_CHOICES, Organization, Register, ChangePasswordForm,\
         AuthenticationForm, IP, Feedback, SystemLesson, FeedbackForm, selectForm
 from school.models import log_action
-from school.utils import make_username, make_default_password, get_school, get_profile_form, to_en1
+from school.utils import make_username, make_default_password,\
+        get_school, get_profile_form, to_en1
 import settings
 from sms.utils import send_email, sendSMS
 
@@ -76,6 +77,12 @@ def register(request):
                         response = simplejson.dumps({
                             'success': success,
                             'message': message
+                        })
+                        return HttpResponse(response, mimetype='json')
+                    else:
+                        response = simplejson.dumps({
+                            'success': success,
+                            'message': u'Trình duyệt của bạn cần hỗ trợ Javascript'
                         })
                         return HttpResponse(response, mimetype='json')
 
@@ -284,7 +291,8 @@ def manage_register(request, sort_by_date=0, sort_by_status=0):
                                 sendSMS(reg.register_phone, sms_msg, request.user)
                             except Exception:
                                 pass
-                        send_email(u'Thông báo từ Trường Nhà', unicode(content), to_addr=[reg.register_email])
+                        send_email(u'Thông báo từ Trường Nhà',
+                                unicode(content), to_addr=[reg.register_email])
                     data = simplejson.dumps({
                         'success': True,
                         'message': u'Gửi thông báo thành công.',
@@ -427,7 +435,7 @@ def login(request, template_name='app/login.html',
         redirect_field_name: redirect_to
     }
     return render_to_response(template_name, context,
-                              context_instance=django.template.RequestContext(request))
+            context_instance=django.template.RequestContext(request))
 
 def feedback(request):
     if request.method == 'POST': # If the form has been submitted...
@@ -506,7 +514,8 @@ def feedback(request):
                 return HttpResponseRedirect('/app/contact') # Redirect after POST
     else:
         form = FeedbackForm() # An unbound form
-    return render_to_response('contact.html', {'form': form}, django.template.RequestContext(request))
+    return render_to_response('contact.html',
+            {'form': form}, django.template.RequestContext(request))
 
 @need_login
 @operating_permission(['SUPER_USER'])
@@ -517,16 +526,31 @@ def system_subject_agenda(request, subject = 1, grade = 6, term = 1):
     if request.method == 'POST':
         form = selectForm(request.POST)
         try:
-            lessons = SystemLesson.objects.filter(subject = request.POST['subject'], grade = int(request.POST['grade']), term = int(request.POST['term']))
+            lessons = SystemLesson.objects.filter(
+                    subject=request.POST['subject'],
+                    grade=int(request.POST['grade']),
+                    term=int(request.POST['term']))
         except  Exception:
             pass
-        c = RequestContext(request,{'list': lessons, 'id': subject, 'subject' : SUBJECT[int(request.POST['subject'])-1][1], 'grade' : int(request.POST['grade']), 'term' : request.POST['term'], 'form':form})
+        c = RequestContext(request, {
+            'list': lessons,
+            'id': subject,
+            'subject' : SUBJECT[int(request.POST['subject'])-1][1],
+            'grade' : int(request.POST['grade']),
+            'term' : request.POST['term'],
+            'form':form})
     else:
         try:
-            lessons = SystemLesson.objects.filter(subject = subject, grade = grade, term = term)
+            lessons = SystemLesson.objects.filter(subject=subject,
+                    grade=grade, term=term)
         except  Exception:
             lessons = None
-        c = RequestContext(request,{'list': lessons, 'id': subject, 'subject' : SUBJECT[int(subject)-1][1], 'grade' : grade, 'term' : term, 'form':form})
+        c = RequestContext(request, {'list': lessons,
+            'id': subject,
+            'subject' : SUBJECT[int(subject)-1][1],
+            'grade' : grade,
+            'term' : term,
+            'form':form})
     t = loader.get_template(os.path.join('app', 'manage_system_agenda.html'))
     return HttpResponse(t.render(c))
 

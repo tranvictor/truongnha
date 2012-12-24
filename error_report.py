@@ -4,5 +4,6 @@ class ExceptionUserInfoMiddleware(object):
             if request.user.is_authenticated():
                 request.META['USERNAME'] = str(request.user.username)
                 request.META['USERID'] = str(request.user.id)
+                request.META['AJAX'] = str(request.is_ajax())
         except:
             pass
