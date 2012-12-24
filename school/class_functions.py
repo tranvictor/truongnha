@@ -811,8 +811,6 @@ def viewSubjectDetail(request, subject_id):
             form.save()
             success = True
             message = u'Bạn đã cập nhật thành công'
-        else:
-            print form
     t = loader.get_template(os.path.join('school', 'subject_detail.html'))
     c = RequestContext(request, {'form': form,
         'success': success,
