@@ -431,7 +431,6 @@ def calculateOverallMarkYear(class_id=7):
 @need_login
 def xepLoaiHlTheoLop(request, class_id, termNumber, isCalculate=0):
     t1 = time.time()
-    user = request.user
     selectedClass = Class.objects.get(id__exact=class_id)
 
     try:
