@@ -104,7 +104,7 @@ class AddSubjectTest(SchoolSetupTest):
         # get a class
         self.assertEqual(len(classes)>0, True)
         cl = classes[0]
-        sub = cl.subject_set.get(type = u'Toán')
+        sub = cl.subject_set.get(type=u'Toán')
 
         print 'Update with negative heso'
         response = self.client.post(

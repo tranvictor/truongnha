@@ -229,7 +229,6 @@ def markTable(request, term_id=-1, class_id=-1, subject_id=-1, move=None):
 @need_login
 def markForTeacher(request, type=1, term_id=-1, subject_id=-1, move=None):
     tt1 = time.time()
-    user = request.user
     try:
         idTeacher = request.user.teacher.id
         classChoice = -1
@@ -361,7 +360,6 @@ def markForTeacher(request, type=1, term_id=-1, subject_id=-1, move=None):
 
     tt2 = time.time()
     print (tt2 - tt1)
-
     return HttpResponse(t.render(c))
 
 
@@ -497,10 +495,10 @@ def update_mark(s, primary, isComment, user, time_history,position,school,teache
     m = Mark.objects.get(id=idMark)
     if position == 3:
         if m.subject_id.teacher_id != teacher:
-            raise Exception(" Don't have permission")
+            raise Exception("Don't have permission")
     elif position == 4:
         if m.term_id.year_id.school_id != school:
-            raise Exception(" Don't have permission")
+            raise Exception("Don't have permission")
 
     arrMark = m.toArrayMark()
     arrTime = m.toArrayTime()
@@ -655,14 +653,19 @@ def saveMark(request):
         primary = int(strs[2])
         isComment = strs[3] == "true"
         time_history = 60
-        for i in range(4, length):
-            update_mark(strs[i], primary, isComment, user,time_history,position,school,teacher)
+        try:
+            for i in range(4, length):
+                update_mark(strs[i], primary, isComment, user, 
+                        time_history, position, school, teacher)
+        except Exception as e:
+            if e.message == "Don't have permission":
+                message = u'Bạn không có quyền sửa điểm môn này'
+            else: raise e
 
         message = strs[0]
         data = simplejson.dumps({'message': message})
         #t2 = time.time()
         #print (t2 - t1)
-
     return HttpResponse(data, mimetype='json')
 
 
