@@ -7,6 +7,7 @@ import os.path
 import time
 from datetime import datetime
 from school.models import TBNam, BAN_CHOICE, TBHocKy, Year, Term, SUBJECT_LIST, TKMon, Mark
+from app.models import Organization
 from school.writeExcel import practisingByGradeExcel,\
     practisingByMajorExcel, learningByGradeExcel, learningByMajorExcel, titleByGradeExcel, titleByMajorExcel,\
     practisingByDistrictExcel, learningByDistrictExcel, titleByDistrictExcel, countFinalMarkExcel
@@ -39,12 +40,15 @@ def defineYearList(yearNumber, termNumber, type='1'):
 
     if yearNumber is None:
         yearNumber = now.year - 1
-        if 5 >= month:
+        if month <= 5:
             termNumber = 1
-        elif (7 >= month) or (type == '0'):
+        elif (month <= 7 ) or (type == '0'):
             termNumber = 2
         else:
             termNumber = 3
+    if month == 12:
+        yearNumber = now.year
+        termNumber = 1
 
     yearList = []
     for i in range(2011, lastestYear):
@@ -169,7 +173,7 @@ def practisingByDistrict(request, yearNumber=None, termNumber=-1, isExcel=0):
     if so.level != 'S':
         return HttpResponseRedirect(reverse('index'))
 
-    listSchool = so.organization_set.all().order_by("district")
+    listSchool = Organization.objects.filter(upper_organization=so,status__in =[1,2,3]).order_by("district")
     numberSchool = len(listSchool)
 
     list = []
@@ -345,7 +349,7 @@ def learningByDistrict(request, yearNumber=None, termNumber=-1, isExcel=0):
     if so.level != 'S':
         return HttpResponseRedirect(reverse('index'))
 
-    listSchool = so.organization_set.all().order_by("district")
+    listSchool = Organization.objects.filter(upper_organization=so,status__in =[1,2,3]).order_by("district")
     numberSchool = len(listSchool)
 
     list = []
@@ -516,7 +520,7 @@ def titleByDistrict(request, yearNumber=None, termNumber=-1, isExcel=0):
     if so.level != 'S':
         return HttpResponseRedirect(reverse('index'))
 
-    listSchool = so.organization_set.all().order_by("district")
+    listSchool = Organization.objects.filter(upper_organization=so,status__in =[1,2,3]).order_by("district")
     numberSchool = len(listSchool)
 
     list = []
@@ -604,7 +608,7 @@ def countFinalMark(request, type=0, yearNumber=None, termNumber=-1, subjectIndex
             level = [11, 4.995, -1]
             headerTable = [u"Đạt", u"Không đạt"]
 
-        listSchool = so.organization_set.all()
+        listSchool = Organization.objects.filter(upper_organization=so,status__in =[1,2,3])
         slSum = [0] * numberLevel
         ptSum = [0] * numberLevel
         sumsum = 0.0
@@ -666,12 +670,17 @@ def countFinalMark(request, type=0, yearNumber=None, termNumber=-1, subjectIndex
     if int(isExcel) == 1:
         return countFinalMarkExcel(type, yearNumber, termNumber, subjectIndex, blockIndex, subjectList, list,
             headerTable, sumList, sumsum)
+    print yearNumber
+    print termNumber
+    next_year = int(yearNumber) + 1
+    yearString = str(yearNumber) + "-" + str(next_year)
     tt2 = time.time()
     print (tt2 - tt1) / 1000.0
     t = loader.get_template(os.path.join('school/report', 'count_final_mark.html'))
     c = RequestContext(request, {"message": message,
                                  "type": type,
                                  "yearNumber": yearNumber,
+                                 "yearString": yearString,
                                  "termNumber": termNumber,
                                  "subjectIndex": subjectIndex,
                                  "blockIndex": blockIndex,
