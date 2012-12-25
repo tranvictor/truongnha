@@ -205,7 +205,7 @@
                 <button id="sendSelected" class="btn btn-warning" title="Gửi SMS cho những tháng đã chọn">
                     <i class="icon-envelope-alt"></i> Gửi tin nhắn
                 </button>
-            {% endif %}
+
             <a class="btn"
                title="Nhập chương trình học từ file Excel"
                href="#upload_modal"
@@ -213,6 +213,7 @@
                id="import">
                 <i class="icon-upload-alt"></i>
                 Nhập từ Excel</a>
+            {% endif %}
             <a class="btn" title="Xuất hạnh kiểm ra file Excel."
                href="{% url export_hanh_kiem class.id %}" id="export">
                 <i class="icon-download-alt"></i>
