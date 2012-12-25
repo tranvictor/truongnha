@@ -20,7 +20,7 @@ def departmentReport(request):
     if so.level != 'S':
         return HttpResponseRedirect(reverse('index'))
 
-    schoolList = so.organization_set.all()
+    schoolList = so.organization_set.all().order_by("name")
 
     t = loader.get_template(os.path.join('school/report', 'department_report.html'))
     c = RequestContext(request, {"message": message,
@@ -173,7 +173,7 @@ def practisingByDistrict(request, yearNumber=None, termNumber=-1, isExcel=0):
     if so.level != 'S':
         return HttpResponseRedirect(reverse('index'))
 
-    listSchool = Organization.objects.filter(upper_organization=so,status__in =[1,2,3]).order_by("district")
+    listSchool = Organization.objects.filter(upper_organization=so,status__in =[1,2,3]).order_by("district","name")
     numberSchool = len(listSchool)
 
     list = []
@@ -349,7 +349,7 @@ def learningByDistrict(request, yearNumber=None, termNumber=-1, isExcel=0):
     if so.level != 'S':
         return HttpResponseRedirect(reverse('index'))
 
-    listSchool = Organization.objects.filter(upper_organization=so,status__in =[1,2,3]).order_by("district")
+    listSchool = Organization.objects.filter(upper_organization=so,status__in =[1,2,3]).order_by("district","name")
     numberSchool = len(listSchool)
 
     list = []
@@ -520,7 +520,7 @@ def titleByDistrict(request, yearNumber=None, termNumber=-1, isExcel=0):
     if so.level != 'S':
         return HttpResponseRedirect(reverse('index'))
 
-    listSchool = Organization.objects.filter(upper_organization=so,status__in =[1,2,3]).order_by("district")
+    listSchool = Organization.objects.filter(upper_organization=so,status__in =[1,2,3]).order_by("district","name")
     numberSchool = len(listSchool)
 
     list = []

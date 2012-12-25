@@ -1363,7 +1363,7 @@ def donvi(request):
         del request.session['school_id']
     except Exception:
         pass
-    listdonvi = so.organization_set.all()
+    listdonvi = so.organization_set.all().order_by("name")
     t = loader.get_template(os.path.join('school','donvi.html'))
     c = RequestContext( request, {'list':listdonvi})
     return HttpResponse(t.render(c))
