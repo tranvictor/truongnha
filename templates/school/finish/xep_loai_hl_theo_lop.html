@@ -130,15 +130,17 @@
 			Tính điểm trung bình và xét danh hiệu
             </a>
 		{% endif %}
-        <span class="pull-right dimmed" >
-            <label>
-                Để nhập hạnh kiểm hãy nhập một chữ cái:
-                <span class="label label-success">T</span> Tốt,
-                <span class="label label-info">K</span> Khá,
-                <span class="label label-warning">B</span> Trung bình,
-                <span class="label label-important">Y</span> Yếu.
-            </label>
-        </span>
+		{% if request.user.userprofile.organization.level == 'T' %}
+			<span class="pull-right dimmed" >
+				<label>
+					Để nhập hạnh kiểm hãy nhập một chữ cái:
+					<span class="label label-success">T</span> Tốt,
+					<span class="label label-info">K</span> Khá,
+					<span class="label label-warning">B</span> Trung bình,
+					<span class="label label-important">Y</span> Yếu.
+				</label>
+			</span>
+		{% endif %}	
     </div>
 
     <table id="mark-table" class="table table-bordered grid fifth-row">
