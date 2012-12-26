@@ -8,11 +8,34 @@
     {% else %}
         {% add_crumb 'Báo cáo' 'report' %}
     {% endif %}
-    {% add_crumb 'Số lượng điểm đã nhập' %}
+    {% add_crumb 'Số đầu điểm đã nhập' %}
 {% endblock %}
 {% load dictionary %}
+{% block js %}
+    <script type="text/javascript">
+        $(document).ready(function (){
+            $(".cal_num").each(function (){
+                var id = $(this).attr('id');
+                var class_id = '#' + id.split('-')[1];
+                var num_mark_id = '#' + id + '-1';
+                var num_mark = $(num_mark_id).html();
+                var num_student = $(class_id).html();
+                var value = 0;
+                if (num_student != 0 && num_mark != 0) value = Math.floor(num_mark/num_student) + 1;
+                $(this).html(value);
+            });
+            $(".switch").click(function (){
+                $("#mark_num").toggle();
+                $("#mark_col").toggle();
+                $(".switch").toggle();
+            });
+        });
+    </script>
+{% endblock %}
 {% block content %}
     <div class="btn-toolbar form-inline pagination-centered ">
+        <button class="btn pull-left switch">Số lượng đầu điểm</button>
+        <button class="btn pull-left switch" style="display:none;">Số lượng điểm</button>
         <div class="btn-group" data-toggle="buttons-radio">
             <a id="1" href="{% url count_mark year_id 1%}" class="btn"> Học kỳ I </a>
             <a id="2" href="{% url count_mark year_id 2%}" class="btn"> Học kỳ II </a>
@@ -21,7 +44,7 @@
 
         <a class='btn pull-right' href="{% url count_mark year_id term_num 1%}">Xuất ra Exel </a>
     </div>
-    <table class="table grid table-bordered">
+    <table id="mark_num" class="table grid table-bordered">
         <thead>
             <tr>
                 <th class="align-left" rowspan="2">Lớp</th>
@@ -48,16 +71,53 @@
                     {% for s in subject_name %}
                         {% with subject_list|get_value:s as subject_id %}
                             {% with count_mark|get_value:subject_id as marks %}
-                                <td>{{ marks|get_value:'m'|default_if_none:0 }}</td>
-                                <td>{{ marks|get_value:'15'|default_if_none:0 }}</td>
-                                <td>{{ marks|get_value:'45'|default_if_none:0 }}</td>
-                                <td>{{ marks|get_value:'ck'|default_if_none:0 }}</td>
+                                <td id="m-{{ cl.id }}-{{ subject_id }}-1">{{ marks|get_value:'m'|default_if_none:0 }}</td>
+                                <td id="15-{{ cl.id }}-{{ subject_id }}-1">{{ marks|get_value:'15'|default_if_none:0 }}</td>
+                                <td id="45-{{ cl.id }}-{{ subject_id }}-1">{{ marks|get_value:'45'|default_if_none:0 }}</td>
+                                <td id="ck-{{ cl.id }}-{{ subject_id }}-1">{{ marks|get_value:'ck'|default_if_none:0 }}</td>
                             {% endwith %}
                         {% endwith %}
                     {% endfor %}
                 </tr>
                 {% endwith %}
             {% endfor %}
+        </tbody>
+    </table>
+    <table id="mark_col" class="table grid table-bordered" style="display: none;">
+        <thead>
+        <tr>
+            <th class="align-left" rowspan="2">Lớp</th>
+            <th class="align-left" rowspan="2">Sỹ số</th>
+            {% for s in subject_name %}
+                <th colspan="4">{{ s }}</th>
+            {% endfor %}
+        </tr>
+        <tr>
+            {% for s in subject_name %}
+                <th>M</th>
+                <th>15</th>
+                <th>45</th>
+                <th>CK</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for cl in classes %}
+            {% with subject_name_cl|get_value:cl.id as subject_list %}
+                <tr>
+                    <td nowrap class="align-left">{{ cl.name }}</td>
+                    <td id="{{ cl.id }}" nowrap class="align-left">{{ number_dict|get_value:cl.id|default_if_none:"0" }}</td>
+                    {% for s in subject_name %}
+                        {% with subject_list|get_value:s as subject_id %}
+                            <td id="m-{{ cl.id }}-{{ subject_id }}"></td>
+                            <td id="15-{{ cl.id }}-{{ subject_id }}" class="cal_num"></td>
+                            <td id="45-{{ cl.id }}-{{ subject_id }}" class="cal_num"></td>
+                            <td id="ck-{{ cl.id }}-{{ subject_id }}" class="cal_num"></td>
+                        {% endwith %}
+                    {% endfor %}
+                </tr>
+            {% endwith %}
+        {% endfor %}
         </tbody>
     </table>
 {% endblock %}
