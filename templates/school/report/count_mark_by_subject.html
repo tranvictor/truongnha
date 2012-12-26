@@ -21,7 +21,7 @@
                 var num_mark = $(num_mark_id).html();
                 var num_student = $(class_id).html();
                 var value = 0;
-                if (num_student != 0 && num_mark != 0) value = Math.floor(num_mark/num_student) + 1;
+                if (num_student != 0) value = Math.ceil(num_mark/num_student);
                 $(this).html(value);
             });
             $(".switch").click(function (){
@@ -109,7 +109,7 @@
                     <td id="{{ cl.id }}" nowrap class="align-left">{{ number_dict|get_value:cl.id|default_if_none:"0" }}</td>
                     {% for s in subject_name %}
                         {% with subject_list|get_value:s as subject_id %}
-                            <td id="m-{{ cl.id }}-{{ subject_id }}"></td>
+                            <td id="m-{{ cl.id }}-{{ subject_id }}" class="cal_num"></td>
                             <td id="15-{{ cl.id }}-{{ subject_id }}" class="cal_num"></td>
                             <td id="45-{{ cl.id }}-{{ subject_id }}" class="cal_num"></td>
                             <td id="ck-{{ cl.id }}-{{ subject_id }}" class="cal_num"></td>
