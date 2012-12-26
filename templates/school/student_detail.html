@@ -273,14 +273,15 @@
 
     <div id="tabs">
         <ul class="nav nav-tabs">
-            <li class="active"><a href="#tabs-1">Thông tin học sinh</a></li>
+            <li class="active"><a href="#tabs-4">Bảng điểm</a></li>
+            <li><a href="#tabs-1">Thông tin học sinh</a></li>
             <li><a href="#tabs-2">Khen thưởng, kỷ luật</a></li>
             <li><a href="#tabs-3">Nghỉ học, chuyển lớp</a></li>
-            <li><a href="#tabs-4">Bảng điểm</a></li>
             <li><a href="#tabs-5">Miễn giảm</a></li>
         </ul>
         <div class="tab-content">
-            <div id="tabs-1" class="tab-pane active">
+            <div id="tabs-4" class="tab-pane active"></div>
+            <div id="tabs-1" class="tab-pane">
                 <div id="taikhoan"></div>
             {% if pos > 3 %}
                 <form action="{% url student_detail id %}" method="post" class="student_detail">
@@ -328,7 +329,6 @@
                     <div id="lscl" class="span6"></div>
                 </div>
             </div>
-            <div id="tabs-4" class="tab-pane"></div>
             <div id="tabs-5" class="tab-pane">
                 <div class="row-fluid">
                     <div id="miengiam" class="span4"><h4>Không có miễn giảm.</h4></div>
