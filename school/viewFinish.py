@@ -9,94 +9,115 @@ from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.utils import simplejson
 import os.path
-from school.models import TBNam, TBHocKy, TKDiemDanh, Class, Term, DiemDanh, Subject, Mark, Year, TKMon, Pupil
+from school.models import TBNam, TBHocKy, TKDiemDanh, Class, Term,\
+        DiemDanh, Subject, Mark, Year, TKMon, Pupil
 from decorators import need_login
 from school.templateExcel import convertMarkToCharacter1, convertMarkToCharacter
-from school.utils import in_school, get_current_term, get_position, get_level, get_current_year, get_school, to_en1,\
-    convertHlToVietnamese, convertHkToVietnamese, convertDanhHieu
-from school.viewCount import countDanhHieuInYear, countTotalLearningInYear, countTotalPractisingInYear,\
-    countDanhHieuInTerm, countTotalLearningInTerm, countTotalPractisingInTerm
-from sms.utils import sendSMS
+from school.utils import in_school, get_current_term, get_position,\
+        get_level, get_current_year, get_school, to_en1,\
+        convertHlToVietnamese, convertHkToVietnamese, convertDanhHieu
+from school.viewCount import countDanhHieuInYear, countTotalLearningInYear,\
+        countTotalPractisingInYear, countDanhHieuInTerm,\
+        countTotalLearningInTerm, countTotalPractisingInTerm
 
 ENABLE_CHANGE_MARK = True
 e = 0.00000001
 
 @need_login
 def finish(request, active_term=0, term_number=None, year_number=None, is_calculate=0):
-    user = request.user
     current_term = get_current_term(request)
     try:
-        if in_school(request, current_term.year_id.school_id) == False:
-            return HttpResponseRedirect('/school')
-    except Exception as e:
+        if not in_school(request, current_term.year_id.school_id):
+            return HttpResponseRedirect(reverse('index'))
+    except Exception:
         return HttpResponseRedirect(reverse('index'))
 
     if (get_position(request) != 4) & (get_level(request) == 'T' ):
-        return HttpResponseRedirect('/school')
+        return HttpResponseRedirect(reverse('index'))
 
     message = None
+    school = request.user.userprofile.organization
     if int(active_term) != 0:
-        request.user.userprofile.organization.status = int(active_term)
-        request.user.userprofile.organization.save()
-        #year  = Year.objects.filter(school_id = request.user.userprofile.organization, time = term[1])
+        school.status = int(active_term)
+        school.save()
+        #year  = Year.objects.filter(school_id=school, time=term[1])
     if (term_number != None) & (is_calculate == '1'):
         if int(term_number) < 3:
-            term = Term.objects.get(year_id__school_id=request.user.userprofile.organization, year_id__time=year_number,
-                number=term_number)
+            term = Term.objects.get(year_id__school_id=school,
+                    year_id__time=year_number, number=term_number)
             finishTermInSchool(term.id)
             message = "Đã tính tổng kết xong. Mời bạn xem kết quả phía dưới."
         else:
-            year = Year.objects.get(school_id=request.user.userprofile.organization, time=year_number)
+            year = Year.objects.get(school_id=school, time=year_number)
             finishYearInSchool(year.id)
             message = "Đã tính tổng kết xong. Mời bạn xem kết quả phía dưới."
 
     current_term = get_current_term(request)
-    #year_list = Year.objects.filter(school_id = request.user.userprofile.organization).order_by("time")
+    #year_list = Year.objects.filter(school_id=school).order_by("time")
     list = []
     if term_number == None:
         current_year = get_current_year(request)
     else:
-        current_year = Year.objects.get(school_id=request.user.userprofile.organization, time=year_number)
+        current_year = Year.objects.get(school_id=school, time=year_number)
 
     term1 = Term.objects.get(year_id=current_year, number=1)
     term2 = Term.objects.get(year_id=current_year, number=2)
-    number_pupil = TBNam.objects.filter(year_id=current_year, student_id__disable=False).count()
+    number_pupil = TBNam.objects.filter(year_id=current_year,
+            student_id__disable=False).count()
     # get term 1
-    finish_learning1, not_finish_learning1, finish_practising1, not_finish_practising1, finish_all1, not_finish_all1 = countDetailTerm(
-        term1.id)
-    number_finish_learning1 = number_pupil - TBHocKy.objects.filter(term_id=term1, student_id__disable=False,
-        hl_hk=None).count()
-    number_finish_practising1 = number_pupil - TBNam.objects.filter(year_id=current_year, student_id__disable=False,
-        term1=None).count()
-    number_finish_title1 = number_pupil - TBHocKy.objects.filter(term_id=term1, student_id__disable=False,
-        danh_hieu_hk=None).count()
+    finish_learning1, not_finish_learning1,\
+    finish_practising1, not_finish_practising1,\
+    finish_all1, not_finish_all1 = countDetailTerm(term1.id)
 
-    list.append((number_finish_learning1, number_finish_practising1, number_finish_title1, not_finish_learning1,
-                 not_finish_practising1, not_finish_all1))
+    number_finish_learning1 = number_pupil - TBHocKy.objects.filter(term_id=term1,
+            student_id__disable=False, hl_hk=None).count()
+
+    number_finish_practising1 = number_pupil - TBNam.objects.filter(year_id=current_year,
+            student_id__disable=False, term1=None).count()
+
+    number_finish_title1 = number_pupil - TBHocKy.objects.filter(term_id=term1,
+            student_id__disable=False, danh_hieu_hk=None).count()
+
+    list.append((number_finish_learning1, number_finish_practising1,
+        number_finish_title1, not_finish_learning1,
+        not_finish_practising1, not_finish_all1))
 
     # get term 2
-    finish_learning2, not_finish_learning2, finish_practising2, not_finish_practising2, finish_all2, not_finish_all2 = countDetailTerm(
-        term2.id)
-    number_finish_learning2 = number_pupil - TBHocKy.objects.filter(term_id=term2, student_id__disable=False,
-        hl_hk=None).count()
-    number_finish_practising2 = number_pupil - TBNam.objects.filter(year_id=current_year, student_id__disable=False,
-        term2=None).count()
-    number_finish_title2 = number_pupil - TBHocKy.objects.filter(term_id=term2, student_id__disable=False,
-        danh_hieu_hk=None).count()
-    list.append((number_finish_learning2, number_finish_practising2, number_finish_title2, not_finish_learning2,
-                 not_finish_practising2, not_finish_all2))
-    #get year
-    finish_learning3, not_finish_learning3, finish_practising3, not_finish_practising3, finish_all3, not_finish_all3 = countDetailYear(
-        current_year.id)
-    number_finish_learning3 = number_pupil - TBNam.objects.filter(year_id=current_year, student_id__disable=False,
-        hl_nam=None).count()
-    number_finish_practising3 = number_pupil - TBNam.objects.filter(year_id=current_year, student_id__disable=False,
-        year=None).count()
-    number_finish_title3 = number_pupil - TBNam.objects.filter(year_id=current_year, student_id__disable=False,
-        danh_hieu_nam=None).count()
+    finish_learning2, not_finish_learning2,\
+    finish_practising2, not_finish_practising2,\
+    finish_all2, not_finish_all2 = countDetailTerm(term2.id)
 
-    list.append((number_finish_learning3, number_finish_practising3, number_finish_title3, not_finish_learning3,
-                 not_finish_practising3, not_finish_all3))
+    number_finish_learning2 = number_pupil - TBHocKy.objects.filter(term_id=term2,
+            student_id__disable=False, hl_hk=None).count()
+
+    number_finish_practising2 = number_pupil - TBNam.objects.filter(year_id=current_year,
+            student_id__disable=False, term2=None).count()
+
+    number_finish_title2 = number_pupil - TBHocKy.objects.filter(term_id=term2,
+            student_id__disable=False, danh_hieu_hk=None).count()
+
+    list.append((number_finish_learning2, number_finish_practising2,
+        number_finish_title2, not_finish_learning2,
+        not_finish_practising2, not_finish_all2))
+
+    #get year
+    finish_learning3, not_finish_learning3,\
+    finish_practising3, not_finish_practising3,\
+    finish_all3, not_finish_all3 = countDetailYear(current_year.id)
+
+    number_finish_learning3 = number_pupil - TBNam.objects.filter(year_id=current_year,
+            student_id__disable=False, hl_nam=None).count()
+
+    number_finish_practising3 = number_pupil - TBNam.objects.filter(year_id=current_year,
+            student_id__disable=False, year=None).count()
+
+    number_finish_title3 = number_pupil - TBNam.objects.filter(year_id=current_year,
+            student_id__disable=False, danh_hieu_nam=None).count()
+
+    list.append((number_finish_learning3, number_finish_practising3,
+        number_finish_title3, not_finish_learning3,
+        not_finish_practising3, not_finish_all3))
+
     school = get_school(request)
     grades = school.block_set.all()
     cy_time = datetime.datetime.now().year
@@ -108,10 +129,7 @@ def finish(request, active_term=0, term_number=None, year_number=None, is_calcul
                                  'grades': grades,
                                  'school': school,
                                  'year': current_year,
-                                 'year_time': cy_time,
-                                 #'year_list':year_list,
-    }
-    )
+                                 'year_time': cy_time, })
     return HttpResponse(t.render(c))
 
 # tinh diem tong ket cho 1 lop theo hoc ky
