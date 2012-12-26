@@ -64,6 +64,7 @@ def finish(request, active_term=0, term_number=None, year_number=None, is_calcul
     term2 = Term.objects.get(year_id=current_year, number=2)
     number_pupil = TBNam.objects.filter(year_id=current_year,
             student_id__disable=False).count()
+
     # get term 1
     finish_learning1, not_finish_learning1,\
     finish_practising1, not_finish_practising1,\
@@ -129,7 +130,7 @@ def finish(request, active_term=0, term_number=None, year_number=None, is_calcul
                                  'grades': grades,
                                  'school': school,
                                  'year': current_year,
-                                 'year_time': cy_time, })
+                                 'year_time': cy_time,})
     return HttpResponse(t.render(c))
 
 # tinh diem tong ket cho 1 lop theo hoc ky
@@ -839,33 +840,40 @@ def countDetailTerm(term_id):
     classList = Class.objects.filter(year_id=selectedTerm.year_id)
 
     for c in classList:
-        number = TBHocKy.objects.filter(term_id=term_id, student_id__classes=c.id, hl_hk=None,
-            student_id__attend__is_member=True).distinct().count()
-        if number == 0:   finishLearning.append(c)
-        else:  notFinishLearning.append([c, number])
+        number = TBHocKy.objects.filter(term_id=term_id, student_id__classes=c.id,
+                hl_hk=None, student_id__attend__is_member=True).distinct().count()
+        if number == 0: finishLearning.append(c)
+        else: notFinishLearning.append([c, number])
 
         if selectedTerm.number == 1:
-            number = TBNam.objects.filter(year_id=selectedTerm.year_id, student_id__classes=c.id, term1=None,
-                student_id__attend__is_member=True).distinct().count()
-            if number == 0:  finishPractising.append(c)
-            else:  notFinishPractising.append([c, number])
-        else:
-            number = TBNam.objects.filter(year_id=selectedTerm.year_id, student_id__classes=c.id, term2=None,
-                student_id__attend__is_member=True).distinct().count()
-            if number == 0:  finishPractising.append(c)
-            else:  notFinishPractising.append([c, number])
+            number = TBNam.objects.filter(year_id=selectedTerm.year_id,
+                    student_id__classes=c.id, term1=None,
+                    student_id__attend__is_member=True).distinct().count()
 
-        number = TBHocKy.objects.filter(term_id=term_id, student_id__classes=c.id, danh_hieu_hk=None,
-            student_id__attend__is_member=True).distinct().count()
-        if number == 0:  finishAll.append(c)
-        else:  notFinishAll.append([c, number])
-    return  finishLearning, notFinishLearning, finishPractising, notFinishPractising, finishAll, notFinishAll
+            if number == 0: finishPractising.append(c)
+            else: notFinishPractising.append([c, number])
+
+        else:
+            number = TBNam.objects.filter(year_id=selectedTerm.year_id,
+                    student_id__classes=c.id, term2=None,
+                    student_id__attend__is_member=True).distinct().count()
+
+            if number == 0: finishPractising.append(c)
+            else: notFinishPractising.append([c, number])
+
+        number = TBHocKy.objects.filter(term_id=term_id, student_id__classes=c.id,
+                danh_hieu_hk=None, student_id__attend__is_member=True).distinct().count()
+
+        if number == 0: finishAll.append(c)
+        else: notFinishAll.append([c, number])
+
+    return finishLearning, notFinishLearning, finishPractising,\
+            notFinishPractising, finishAll, notFinishAll
 
 #@transaction.commit_on_success                                                                                  
 @need_login
 def finishTerm(request, term_id=None):
     t1 = time.time()
-    user = request.user
 
     selectedTerm = Term.objects.get(id__exact=term_id)
     try:
@@ -887,8 +895,8 @@ def finishTerm(request, term_id=None):
     selectedTerm = Term.objects.get(id=term_id)
     yearString = str(selectedTerm.year_id.time) + "-" + str(selectedTerm.year_id.time + 1)
 
-    finishLearning, notFinishLearning, finishPractising, notFinishPractising, finishAll, notFinishAll = countDetailTerm(
-        term_id)
+    finishLearning, notFinishLearning, finishPractising,\
+    notFinishPractising, finishAll, notFinishAll = countDetailTerm(term_id)
 
     hlList, pthlList = countTotalLearningInTerm(term_id)
     hkList, pthkList = countTotalPractisingInTerm(term_id)
@@ -900,25 +908,23 @@ def finishTerm(request, term_id=None):
     t2 = time.time()
     print (t2 - t1)
     c = RequestContext(request, {"message": message,
-                                 "selectedTerm": selectedTerm,
-                                 "currentTerm": currentTerm,
-                                 "yearString": yearString,
+        "selectedTerm": selectedTerm,
+        "currentTerm": currentTerm,
+        "yearString": yearString,
 
-                                 "finishLearning": finishLearning,
-                                 "notFinishLearning": notFinishLearning,
-                                 "finishPractising": finishPractising,
-                                 "notFinishPractising": notFinishPractising,
-                                 "finishAll": finishAll,
-                                 "notFinishAll": notFinishAll,
+        "finishLearning": finishLearning,
+        "notFinishLearning": notFinishLearning,
+        "finishPractising": finishPractising,
+        "notFinishPractising": notFinishPractising,
+        "finishAll": finishAll,
+        "notFinishAll": notFinishAll,
 
-                                 "hlList": hlList,
-                                 "pthlList": pthlList,
-                                 "hkList": hkList,
-                                 "pthkList": pthkList,
-                                 "ddList": ddList,
-                                 "ptddList": ptddList,
-                                 }
-    )
+        "hlList": hlList,
+        "pthlList": pthlList,
+        "hkList": hkList,
+        "pthkList": pthkList,
+        "ddList": ddList,
+        "ptddList": ptddList,})
     return HttpResponse(t.render(c))
 
 
@@ -940,28 +946,29 @@ def countDetailYear(year_id):
     classList = Class.objects.filter(year_id=year_id)
 
     for c in classList:
-        number = TBNam.objects.filter(year_id=year_id, student_id__classes=c.id, hl_nam=None,
-            student_id__attend__is_member=True).distinct().count()
-        if number == 0:   finishLearning.append(c)
-        else:  notFinishLearning.append([c, number])
+        number = TBNam.objects.filter(year_id=year_id, student_id__classes=c.id,
+                hl_nam=None, student_id__attend__is_member=True).distinct().count()
 
-        number = TBNam.objects.filter(year_id=year_id, student_id__classes=c.id, year=None,
-            student_id__attend__is_member=True).distinct().count()
-        if number == 0:  finishPractising.append(c)
-        else:  notFinishPractising.append([c, number])
+        if number == 0: finishLearning.append(c)
+        else: notFinishLearning.append([c, number])
 
-        number = TBNam.objects.filter(year_id=year_id, student_id__classes=c.id, danh_hieu_nam=None,
-            student_id__attend__is_member=True).distinct().count()
-        if number == 0:  finishAll.append(c)
-        else:  notFinishAll.append([c, number])
+        number = TBNam.objects.filter(year_id=year_id, student_id__classes=c.id,
+                year=None, student_id__attend__is_member=True).distinct().count()
 
-    return  finishLearning, notFinishLearning, finishPractising, notFinishPractising, finishAll, notFinishAll
+        if number == 0: finishPractising.append(c)
+        else: notFinishPractising.append([c, number])
 
+        number = TBNam.objects.filter(year_id=year_id, student_id__classes=c.id,
+                danh_hieu_nam=None, student_id__attend__is_member=True).distinct().count()
+        if number == 0: finishAll.append(c)
+        else: notFinishAll.append([c, number])
+
+    return finishLearning, notFinishLearning, finishPractising,\
+            notFinishPractising, finishAll, notFinishAll
 
 @need_login
 def finishYear(request, year_id):
     t1 = time.time()
-    user = request.user
 
     selectedTerm = Term.objects.get(year_id=year_id, number=2)
     try:
