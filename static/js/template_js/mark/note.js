@@ -62,8 +62,9 @@
 				$("#editClose").trigger("click");
 				var id="#edit_"+currentIndex;
 				
-				$(id).tooltip();
-				$(id).attr("data-original-title", data1);
+				//$(id).tooltip();
+				//$(id).attr("data-original-title", data1);
+				$(id).attr("title", data1);
 				messageNote[currentIndex]=data1;
 				
 				if (data1!="")
