@@ -22,11 +22,10 @@ def departmentReport(request):
 
     schoolList = so.organization_set.all().order_by("name")
 
-    t = loader.get_template(os.path.join('school/report', 'department_report.html'))
+    t = loader.get_template(os.path.join('school/report',
+        'department_report.html'))
     c = RequestContext(request, {"message": message,
-                                 'schoolList': schoolList,
-                                 }
-    )
+                'schoolList': schoolList,})
     return HttpResponse(t.render(c))
 
 

@@ -411,8 +411,8 @@ def add_many_students( student_list=None,
                        school=None,
                        school_join_date=None,
                        force_update=False):
-    if not ( student_list and start_year and term and school and _class ):
-        raise Exception("Student,Start_Year,Term,School,CanNotBeNull")
+    if not (start_year and term and school and _class ):
+        raise Exception("Start_Year,Term,School CanNotBeNull")
     index = _class.max
     existing_student = []
     number_of_change = 0
