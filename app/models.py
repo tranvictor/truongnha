@@ -80,7 +80,8 @@ GRADES_CHOICES = ((6, u'Lớp 6'),
 TERMS=((1, u'Kì 1'),
         (2, u'Kì 2'))
 
-LOGIN_TYPE = ['DEMO_LOGIN_SCHOOL', 'DEMO_LOGIN_TEACHER', 'DEMO_LOGIN_UPPER', 'DEMO_LOGIN_STUDENT']
+LOGIN_TYPE = ['DEMO_LOGIN_SCHOOL', 'DEMO_LOGIN_TEACHER', 'DEMO_LOGIN_UPPER',
+'DEMO_LOGIN_STUDENT']
 
 class MyConfigParser(SafeConfigParser):
     def write(self, fp):
@@ -94,32 +95,31 @@ class MyConfigParser(SafeConfigParser):
                 fp.write("%s\n" % key)
             fp.write("\n")
 
-
 class Organization(models.Model):
     SEMESTER_STATUS = [u'Chưa thiết lập', u'Học kỳ I',
                        u'Học kỳ II', u'Học kỳ hè']
     name = models.CharField(u'Tên tổ chức', max_length=100)
     level = models.CharField(u"cấp", max_length=2,
-                                choices=ORGANIZATION_LEVEL_CHOICES)
-    organization_status = models.SmallIntegerField(max_length=3, default= 1,
-        choices=ORGANIZATION_STATUS_CHOICES)
+            choices=ORGANIZATION_LEVEL_CHOICES)
+    organization_status = models.SmallIntegerField(max_length=3, default=1,
+            choices=ORGANIZATION_STATUS_CHOICES)
     #------- those attributes is used for School only -------------------------
     school_level = models.CharField(u"Khối học", max_length=6, blank=True,
-                                    null=True, choices=KHOI_CHOICES)
+            null=True, choices=KHOI_CHOICES)
     status = models.SmallIntegerField(max_length=3, blank=True, null=True,
-                                    choices=SCHOOL_ACTION_STATUS)
+            choices=SCHOOL_ACTION_STATUS)
     school_type = models.CharField(u'Loại trường', max_length=30, blank=True,
-                                    choices=SCHOOL_TYPES)
+            choices=SCHOOL_TYPES)
     balance = models.FloatField(u'Tài khoản', default=50)
     #--------------------------------------------------------------------------
     upper_organization = models.ForeignKey('self', blank=True, null=True,
-                                            verbose_name='Trực thuộc')
+            verbose_name='Trực thuộc')
     manager_name = models.CharField("Tên thủ trưởng", max_length=100, null=True)
     address = models.CharField("Địa chỉ", max_length=255, blank=True, null=True)
     phone = models.CharField("Điện thoại", max_length=20, blank=True, null=True)
     email = models.EmailField(max_length=50, blank=True, null=True)
     district = models.CharField(u'Huyện',max_length = 100,blank=True,null=True,
-                                default='')
+            default='')
 
     class Meta:
         verbose_name_plural = "Tổ chức"
@@ -141,7 +141,6 @@ class Organization(models.Model):
     def _atomic_increase_bl(self):
         Organization.objects.select_for_update().filter(id=self.id)\
                 .update(balance=F('balance') + 1)
-        print 'increase'
 
     @transaction.commit_on_success
     def _atomic_decrease_bl(self):
@@ -149,7 +148,6 @@ class Organization(models.Model):
         if temp.balance > 0:
             temp.balance -= 1
             temp.save()
-            print 'decrease'
             return True
         else: return False
 
