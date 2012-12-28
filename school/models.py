@@ -1250,7 +1250,7 @@ class Mark(models.Model):
     def new_summary(self, subject=None):
         if not subject: subject = self.subject_id
         is_comment = subject.nx
-        arr_mark = self.toArrayMark()
+        arr_mark = self.toArrayMark(has_final=True)
         arr_sent = self.to_array_sent()
         result = []
         for i in range(3):
@@ -1272,6 +1272,23 @@ class Mark(models.Model):
                 elif i == 2:
                     result.append(" 45p %s" % temp.replace('.', ',').strip())
                     #so on i=3,4
+        if (arr_mark[3 * MAX_COL+1] != '') & (arr_sent[3*MAX_COL+1] == ''):
+            if is_comment:
+                temp = convertMarkToCharacter1(
+                    float(arr_mark[3 * MAX_COL + 1]),
+                    False) + ' '
+            else:
+                temp = arr_mark[3 * MAX_COL + 1]
+            result.append(u' thi ck %s' % temp)
+
+        if (arr_mark[3 * MAX_COL+2] != '') & (arr_sent[3*MAX_COL+2] == ''):
+            if is_comment:
+                temp = convertMarkToCharacter1(
+                    float(arr_mark[3 * MAX_COL + 2]),
+                    False) + ' '
+            else:
+                temp = arr_mark[3 * MAX_COL + 2]
+            result.append(u' tb %s' % temp)
         result = ';'.join(result)
         return result + '.' if result else result
 
