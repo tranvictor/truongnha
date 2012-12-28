@@ -15,7 +15,7 @@ from school.templateExcel import h4, noneSubject, h5, h1, first_name1, s3, s2, s
     BIRTHDAY_WIDTH, PLACE_WIDTH, SEX_WIDTH, DAN_TOC_WIDTH, UU_TIEN_WIDTH, A3_WIDTH, f1, f81, f8, f71, f7, f82, m6,\
     m7, m8, m9, m10, printHeader, SIZE_PAGE_WIDTH1, s4, h72, h73, h41, MAX_VIEW, h8center, d4
 from school.utils import get_current_term, in_school, get_position, get_level, to_en1, convertDanhHieu,\
-    convertHkToVietnamese, convertHlToVietnamese
+    convertHkToVietnamese, convertHlToVietnamese , to_en1
 from school.viewMark import  getDecodeMark, e
 import datetime
 from excel_interaction import class_generate
@@ -2386,79 +2386,14 @@ def titleByDistrictExcel(list, yearNumber, termNumber, so):
     return response
 
 
-def countFinalMarkExcel1(type, yearNumber, termNumber,
-        subjectIndex, blockIndex, list, headerTable,
-        sumList):
-    book = Workbook(encoding='utf-8')
-
-    firstTitle = u'TỔNG HỢP ĐÁNH GIÁ DANH HIỆU HỌC SINH THEO QUẬN HUYỆN'
-    nextYear = int(yearNumber) + 1
-    if int(termNumber) == 1:
-        secondTitle = u'HỌC KỲ I NĂM HỌC ' + str(yearNumber) + "-" + unicode(nextYear)
-    elif int(termNumber) == 2:
-        secondTitle = u'HỌC KỲ II NĂM HỌC ' + unicode(yearNumber) + "-" + unicode(nextYear)
-    else:
-        secondTitle = u'CẢ NĂM NĂM HỌC ' + unicode(yearNumber) + "-" + unicode(nextYear)
-
-    s = book.add_sheet('DSHS ', True)
-    width = (A4_WIDTH - 2.5 * LASTNAME_WIDTH) / 5
-    for i in range(11):
-        s.col(i).width = width
-    s.col(0).width = LASTNAME_WIDTH
-    s.col(1).width = 1.5 * LASTNAME_WIDTH
-
-    printCongHoa(s, 0, 1, 6)
-    x = 7
-    y = 0
-    s.write_merge(x - 3, x - 3, 0, 6, firstTitle, h40)
-    s.write_merge(x - 2, x - 2, 0, 6, secondTitle, h40)
-
-    s.write_merge(x, x + 1, y, y, u'Huyện', h4)
-    s.write_merge(x, x + 1, y + 1, y + 1, u'Trường', h4)
-    s.write_merge(x, x + 1, y + 2, y + 2, u'TS', h4)
-    s.write_merge(x, x, y + 3, y + 4, u'Học sinh giỏi', h4)
-    s.write_merge(x, x, y + 5, y + 6, u'Học sinh tiên tiến', h4)
-    for i in range(2):
-        s.write(x + 1, y + 3 + 2 * i, 'sl', h4)
-        s.write(x + 1, y + 3 + 2 * i + 1, '%', h4)
-    i = 0
-    for aList in list:
-        for school, subList in aList:
-            if school == '1':
-                s.write(x + i + 2, y, u'Tổng', h92)
-                s.write(x + i + 2, y + 1, '', h5)
-            else:
-                s.write(x + i + 2, y, school.district, h74)
-                s.write(x + i + 2, y + 1, school.name, h74)
-
-            for (t, l) in enumerate(subList):
-                s.write(x + i + 2, y + t + 2, l, h5)
-
-            i += 1
-            if school == '1':
-                i += 1
-
-    if int(termNumber) < 3:
-        term = 'Ky' + str(termNumber)
-    else:
-        term = 'CaNam'
-    name = u'SGD_ThongKeDanhHieuTheoQuanHuyen' + unicode(yearNumber) + term
-
-    response = HttpResponse(mimetype='application/ms-excel')
-    response['Content-Disposition'] = u'attachment; filename=%s.xls' % name
-    book.save(response)
-    return response
-
-
-def countFinalMarkExcel(type, yearNumber, termNumber,
-        subjectIndex, blockIndex, subjectList, list,
-        headerTable, sumList, sumsum):
+def countFinalMarkExcel(type, yearNumber, termNumber, subjectIndex, blockIndex, subjectList, list, headerTable, sumList,
+                        sumsum):
     book = Workbook(encoding='utf-8')
     if type == '0':
-        firstTitle = u'THỐNG KÊ ĐIỂM THI HỌC KỲ MÔN ' + subjectList[int(subjectIndex)].upper() + u' KHỐI ' + blockIndex
+        firstTitle = u'THỐNG KÊ ĐIỂM THI HỌC KỲ MÔN ' + subjectList[int(subjectIndex)-1].upper() + u' KHỐI ' + blockIndex
     else:
         firstTitle = u'THỐNG KÊ ĐIỂM TRUNG BÌNH HỌC KỲ MÔN ' + subjectList[
-                                                               int(subjectIndex)].upper() + u' KHỐI ' + blockIndex
+                                                               int(subjectIndex)-1].upper() + u' KHỐI ' + blockIndex
     nextYear = int(yearNumber) + 1
 
     if int(termNumber) == 1:
@@ -2504,14 +2439,15 @@ def countFinalMarkExcel(type, yearNumber, termNumber,
         i += 1
     s.write_merge(x + i + 1, x + i + 1, y, y + 1, u'Tổng', h4)
     s.write(x + i + 1, y + 2, sumsum, h4)
-    for (j, (sl, pt)) in enumerate(aList):
+    for (j, (sl, pt)) in enumerate(sumList):
         s.write(x + i + 1, y + 2 * j + 3, sl, h4)
         s.write(x + i + 1, y + 2 * j + 4, pt, h4)
     if int(termNumber) < 3:
         term = 'Ky' + str(termNumber)
     else:
         term = 'CaNam'
-    name = u'SGD_ThongKeDiemTrungBinh' + unicode(yearNumber) + term
+    name = u'SGD_ThongKeDiemTrungBinh' + unicode(yearNumber) + term +\
+           'Mon'+to_en1(subjectList[int(subjectIndex)-1]).replace(' ','') +'Khoi' +  blockIndex
 
     response = HttpResponse(mimetype='application/ms-excel')
     response['Content-Disposition'] = u'attachment; filename=%s.xls' % name
