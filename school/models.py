@@ -627,7 +627,7 @@ class Class(models.Model):
         else:
             marks = Mark.objects.filter(subject_id=subject, term_id=term,
                 student_id__in=sts)
-            # use dictionary for attaching marks to student to get
+        # use dictionary for attaching marks to student to get
         # benefits of dictionary low searching average complexity O(1).
         # Overal match complexity: O(n)
         result = {}
@@ -652,7 +652,7 @@ class Class(models.Model):
         else:
             tkmons = TKMon.objects.filter(subject_id=subject,
                 student_id__in=sts)
-            # use dictionary for attaching marks to student to get
+        # use dictionary for attaching marks to student to get
         # benefits of dictionary low searching average complexity O(1).
         # Overal match complexity: O(n)
         result = {}
@@ -674,7 +674,8 @@ class Class(models.Model):
         if student_query: sts = student_query
         else: sts =self.students()
         loai = ['P','K','M']
-        dd_list = DiemDanh.objects.filter(student_id__in = sts, sent=False, loai__in = loai)
+        dd_list = DiemDanh.objects.filter(student_id__in=sts,
+                sent=False, loai__in=loai)
         return dd_list
 
     def _generate_diemdanh_summary(self, term, student_query=None):
@@ -702,7 +703,6 @@ class Class(models.Model):
             if kq_dd[std]['P'] or kq_dd[std]['K'] or kq_dd[std]['M']:
                 info[std] = 'Diem danh: '
                 for loai in kq_dd[std]:
-                    print loai
                     if kq_dd[std][loai]:
                         info[std] += self.convert_diemdanh(loai) + ':'
                         for t in kq_dd[std][loai]:
@@ -728,8 +728,7 @@ class Class(models.Model):
         for s in subjects:
             subject_dict[s.id] = s
         marks, temp = self._mark_for_students(subjects,
-            term,
-            student_query=sts)
+                term, student_query=sts)
         result = {}
         for ele in marks.items():
             sid = ele[0]
