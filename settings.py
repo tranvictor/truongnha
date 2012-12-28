@@ -274,9 +274,9 @@ LOGIN_REDIRECT_URL = '/'
 # These accounts WON'T be automatically created on database, if these variables change,
 # make sure that these username exist on database
 # Set these variables to None to disable demo-login feature
-DEMO_LOGIN_SCHOOL = 'truongnha_demo_account_school'
-DEMO_LOGIN_TEACHER = 'truongnha_demo_account_teacher'
-DEMO_LOGIN_UPPER = 'truongnha_demo_account_upper'
+DEMO_LOGIN_SCHOOL = 'truong_hoc'
+DEMO_LOGIN_TEACHER = 'giao_vien'
+DEMO_LOGIN_UPPER = 'so_phong'
 DEMO_LOGIN_STUDENT = 'hoc_sinh'
 
 LOCALE_PATHS = (

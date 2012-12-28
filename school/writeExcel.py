@@ -2386,7 +2386,9 @@ def titleByDistrictExcel(list, yearNumber, termNumber, so):
     return response
 
 
-def countFinalMarkExcel(type, yearNumber, termNumber, subjectIndex, blockIndex, list, headerTable, sumList):
+def countFinalMarkExcel1(type, yearNumber, termNumber,
+        subjectIndex, blockIndex, list, headerTable,
+        sumList):
     book = Workbook(encoding='utf-8')
 
     firstTitle = u'TỔNG HỢP ĐÁNH GIÁ DANH HIỆU HỌC SINH THEO QUẬN HUYỆN'
@@ -2448,8 +2450,9 @@ def countFinalMarkExcel(type, yearNumber, termNumber, subjectIndex, blockIndex, 
     return response
 
 
-def countFinalMarkExcel(type, yearNumber, termNumber, subjectIndex, blockIndex, subjectList, list, headerTable, sumList,
-                        sumsum):
+def countFinalMarkExcel(type, yearNumber, termNumber,
+        subjectIndex, blockIndex, subjectList, list,
+        headerTable, sumList, sumsum):
     book = Workbook(encoding='utf-8')
     if type == '0':
         firstTitle = u'THỐNG KÊ ĐIỂM THI HỌC KỲ MÔN ' + subjectList[int(subjectIndex)].upper() + u' KHỐI ' + blockIndex

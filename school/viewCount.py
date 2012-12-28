@@ -2,7 +2,6 @@
 from django.db.models import Count
 
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render_to_response
 from django.template import RequestContext, loader
 from django.core.urlresolvers import reverse
 from app.models import Organization
@@ -23,6 +22,7 @@ from datetime import datetime
 import simplejson
 
 @need_login
+@school_function
 def report(request, school_id=None):
     nameSchool = None
     if school_id != None:
