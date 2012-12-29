@@ -176,7 +176,6 @@ def send_sms_summary_mark(student, content, marks, dds, user,
                     sender=user, recent=True, success=False)
             s.save()
         if not settings.DEBUG:
-            print 'going to send sms'
             return s.send_mark_sms.delay(s, marks=marks, dds=dds, school=school)
         else:
             return s._send_mark_sms(marks, dds, school=school)

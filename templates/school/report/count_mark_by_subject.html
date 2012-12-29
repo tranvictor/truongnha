@@ -21,7 +21,7 @@
                 var num_mark = $(num_mark_id).html();
                 var num_student = $(class_id).html();
                 var value = 0;
-                if (num_student != 0) value = Math.ceil(num_mark/num_student);
+                if (num_student != 0) value = (num_mark/num_student).toFixed(2);
                 $(this).html(value);
             });
             $(".switch").click(function (){

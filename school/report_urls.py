@@ -102,9 +102,8 @@ urlpatterns = patterns('',
         viewCount.count2, name="count2"),
     url(r'countSMS$', viewCount.countSMS, name="count_sms"),
     url(r'countSMS/(?P<type>\w+)$', viewCount.countSMS, name="count_sms"),
-    url(
-        r'countSMS/(?P<type>\w+)/(?P<day>\w+)/(?P<month>\w+)/(?P<year>\w+)/(?P<day1>\w+)/(?P<month1>\w+)/(?P<year1>\w+)$'
-        , viewCount.countSMS, name="count_sms"),
+    url(r'countSMS/(?P<type>\w+)/(?P<day>\w+)/(?P<month>\w+)/(?P<year>\w+)/(?P<day1>\w+)/(?P<month1>\w+)/(?P<year1>\w+)$',
+            viewCount.countSMS, name="count_sms"),
     url(r'countMarkBySubject$', viewCount.generate_school_mark_count_report
         , name = "count_mark"),
     url(r'countMarkBySubject/(?P<year_id>\w+)$', viewCount.generate_school_mark_count_report

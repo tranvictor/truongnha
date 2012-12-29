@@ -1398,7 +1398,8 @@ def history_mark_detail(request, subject_id, term_id=None):
 
 @need_login
 @school_function
-def generate_school_mark_count_report(request,year_id=None,term_num=None,is_excel=False):
+def generate_school_mark_count_report(request,
+        year_id=None, term_num=None, is_excel=False):
     school = get_school(request)
     if year_id == None:
         year = get_current_year(request)
@@ -1424,14 +1425,15 @@ def generate_school_mark_count_report(request,year_id=None,term_num=None,is_exce
             return HttpResponseRedirect(reverse('index'))
     classes = year.class_set.order_by('name')
     classes_id = [cl.id for cl in classes]
-    subjects = Subject.objects.filter(class_id__in=classes_id).order_by('class_id','index')
+    subjects = Subject.objects.filter(
+            class_id__in=classes_id).order_by('class_id', 'index')
     marks = Mark.objects.filter(term_id__in=term_id)
     count_mark = {}
     subject_name = []
     subject_name_cl = {}
     number_dict = {}
-    numbers = Attend.objects.filter(is_member=True,_class__in=classes_id)\
-            .values('_class').annotate(number=Count('_class'))
+    numbers = Attend.objects.filter(is_member=True,
+            _class__in=classes_id).values('_class').annotate(number=Count('_class'))
     for n in numbers: number_dict[n['_class']] = n['number']
     for cl in classes:
         subject_name_cl[cl.id] = {}
@@ -1456,16 +1458,16 @@ def generate_school_mark_count_report(request,year_id=None,term_num=None,is_exce
             if m != '':
                 count_mark[mark.subject_id_id]['45'] += 1
     if is_excel:
-        return generate_school_mark_count_report_excel(count_mark,classes,subject_name,subject_name_cl,term_num,year)
-    t = loader.get_template(os.path.join('school','report','count_mark_by_subject.html'))
-    c = RequestContext(request,
-        {
+        return generate_school_mark_count_report_excel(count_mark, classes,
+                subject_name, subject_name_cl, term_num,year)
+    t = loader.get_template(os.path.join('school',
+        'report', 'count_mark_by_subject.html'))
+    c = RequestContext(request,{
             'count_mark':count_mark,
             'classes':classes,
             'subject_name':subject_name,
             'subject_name_cl':subject_name_cl,
             'year_id':year_id,
             'term_num':term_num,
-            'number_dict':number_dict,
-        })
+            'number_dict':number_dict,})
     return HttpResponse(t.render(c))
