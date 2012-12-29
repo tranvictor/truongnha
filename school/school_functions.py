@@ -256,6 +256,7 @@ def sms_summary(request, class_id=None):
                         or dd_info_list[st.id] != '')):
                     try:
                         content = info_list[st.id] + ' ' + dd_info_list[st.id]
+                        print content
                         send_sms_summary_mark(st,
                                 content,
                                 marks[st.id],

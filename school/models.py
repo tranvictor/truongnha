@@ -1279,7 +1279,7 @@ class Mark(models.Model):
                     False) + ' '
             else:
                 temp = arr_mark[3 * MAX_COL + 1]
-            result.append(u' thi ck %s' % temp)
+            result.append(u' ck %s' % temp)
 
         if (arr_mark[3 * MAX_COL+2] != '') & (arr_sent[3*MAX_COL+2] == ''):
             if is_comment:
@@ -1302,16 +1302,21 @@ class Mark(models.Model):
     def update_sent(self, index=None):
         if index and index <= 0:
             raise Exception('IndexOutOfRange')
-        arr_diem = self.toArrayMark()
+        arr_mark = self.toArrayMark(has_final=True)
         arr_sent = self.to_array_sent()
-        if (len(arr_diem) != len(arr_sent) - 2
+        if (len(arr_mark) != len(arr_sent)
             or index >= len(arr_sent)):
             raise Exception('BadMarkStructure')
         if not index:
-            for i in range(0, len(arr_diem)):
-                if arr_diem[i]: arr_sent[i] = '1'
+            for i in range(0, len(arr_mark)):
+                if arr_mark[i]: arr_sent[i] = '1'
+            if arr_mark[3 * MAX_COL + 1] != '':
+                arr_sent[3 * MAX_COL + 1] = '1'
+
+            if arr_mark[3 * MAX_COL+2] != '':
+                arr_sent[3 * MAX_COL + 2] = '1'
         else:
-            if arr_diem[index]: arr_sent[index] = '1'
+            if arr_mark[index]: arr_sent[index] = '1'
         self.saveSent(arr_sent)
 
     def length(self, x=3):
