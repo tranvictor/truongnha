@@ -279,6 +279,16 @@ DEMO_LOGIN_TEACHER = 'giao_vien'
 DEMO_LOGIN_UPPER = 'so_phong'
 DEMO_LOGIN_STUDENT = 'hoc_sinh'
 
+TERM_START_DATE = {
+        1: '15/8/',
+        2: '2/1/',
+        3: '31/5/'}
+
+TERM_FINISH_DATE = {
+        1: '1/1/',
+        2: '30/5/',
+        3: '14/8/'}
+
 LOCALE_PATHS = (
     os.path.join(os.path.dirname(__file__), 'locale')
 )

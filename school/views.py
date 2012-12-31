@@ -1,4 +1,4 @@
-﻿# coding=utf-8﻿
+﻿# coding=utf-8
 # Create your views here.
 from datetime import date
 import datetime
@@ -461,8 +461,10 @@ def b1(request):
         school.status = 1
         school.save()
         is_new_year = True
-        # tao nam hoc moi
+    # tao nam hoc moi
     current_year = datetime.datetime.now().year
+    if datetime.datetime.now().month < 5:
+        current_year -= 1
     if is_new_school or is_new_year:
         # create new year
         year, temp = Year.objects.get_or_create(time=current_year,
@@ -476,6 +478,18 @@ def b1(request):
         for number in range(1,4):
             term, temp = Term.objects.get_or_create(number=number,
                     year_id=year)
+            if number == 1:
+                start_date = to_date(settings.TERM_START_DATE[number]
+                        + str(current_year))
+            else:
+                start_date = to_date(settings.TERM_START_DATE[number]
+                        + str(current_year + 1))
+            finish_date = to_date(settings.TERM_FINISH_DATE[number]
+                    + str(current_year + 1))
+            term.start_date = start_date
+            term.finish_date = finish_date
+            term.save()
+
         # create new class.
         # -- tao cac lop ---
         for class_name in loai_lop:

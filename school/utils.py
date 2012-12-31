@@ -17,6 +17,7 @@ import settings
 
 def to_date(value):
     v = None
+    print value
     if '-' in value:
         v = value.split('-')
     elif '/' in value:
