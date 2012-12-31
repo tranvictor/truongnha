@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
-from django.db.models import Count
+from django.db.models import Count, Q
 
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect,\
+        Http404
+from django.core.exceptions import ObjectDoesNotExist
 from django.template import RequestContext, loader
 from django.core.urlresolvers import reverse
-from app.models import Organization
+from django.shortcuts import render_to_response
 from django.contrib.auth.models import User
+from app.models import Organization
 from school.models import Year, Term, TBNam, TBHocKy, Class,\
     Pupil, Block, Subject, Mark, TKMon, HistoryMark,\
     Attend
@@ -18,8 +21,10 @@ from sms.models import sms
 from templateExcel import normalize, MAX_COL
 import os.path
 import time
-from datetime import datetime
+from datetime import datetime, date
 import simplejson
+
+STUDENT_MOVES = os.path.join('school', 'report', 'student_moves.html')
 
 @need_login
 @school_function
@@ -51,30 +56,99 @@ def report(request, school_id=None):
     firstTerm = Term.objects.get(year_id=currentTerm.year_id, number=1)
     secondTerm = Term.objects.get(year_id=currentTerm.year_id, number=2)
 
-    number_no_pass = TBNam.objects.filter(len_lop=False, year_id=selected_year).count()
-    number_exam_again = TBNam.objects.filter(thi_lai=True, year_id=selected_year).count()
-    number_practising_again = TBNam.objects.filter(ren_luyen_lai=True, year_id=selected_year).count()
+    number_no_pass = TBNam.objects.filter(len_lop=False,
+            year_id=selected_year).count()
+    number_exam_again = TBNam.objects.filter(thi_lai=True,
+            year_id=selected_year).count()
+    number_practising_again = TBNam.objects.filter(ren_luyen_lai=True,
+            year_id=selected_year).count()
 
-    if(currentTerm.number < 3):
-        number_all_title = TBHocKy.objects.filter(term_id=currentTerm, danh_hieu_hk__in=['G', 'TT']).count()
+    if currentTerm.number < 3:
+        number_all_title = TBHocKy.objects.filter(term_id=currentTerm,
+                danh_hieu_hk__in=['G', 'TT']).count()
     else:
-        number_all_title = TBNam.objects.filter(year_id=selected_year, danh_hieu_nam__in=['G', 'TT']).count()
+        number_all_title = TBNam.objects.filter(year_id=selected_year,
+                danh_hieu_nam__in=['G', 'TT']).count()
 
     t = loader.get_template(os.path.join('school/report', 'report.html'))
     c = RequestContext(request, {"message": message,
-                                 'yearString': yearString,
-                                 'firstTerm': firstTerm,
-                                 'secondTerm': secondTerm,
-                                 'currentTerm': currentTerm,
-                                 'nameSchool': nameSchool,
-                                 'number_no_pass': number_no_pass,
-                                 'number_exam_again': number_exam_again,
-                                 'number_practising_again': number_practising_again,
-                                 'number_all_title': number_all_title,
-                                 }
-    )
+        'yearString': yearString,
+        'firstTerm': firstTerm,
+        'secondTerm': secondTerm,
+        'currentTerm': currentTerm,
+        'nameSchool': nameSchool,
+        'number_no_pass': number_no_pass,
+        'number_exam_again': number_exam_again,
+        'number_practising_again': number_practising_again,
+        'number_all_title': number_all_title,})
     return HttpResponse(t.render(c))
 
+@need_login
+@school_function
+def student_moves_history(request, term_id=None):
+    school = get_school(request)
+    term = None
+    terms = None
+    try:
+        if not term_id:
+            term = get_current_term(request)
+        else:
+            term = Term.objects.get(id=term_id, year_id__school_id=school)
+
+        terms = Term.objects.filter(year_id__school_id=school,
+                start_date__lte=date.today()).order_by('-start_date')
+
+    except ObjectDoesNotExist:
+        raise Http404
+
+    students = school.get_active_students()
+    classes = term.year_id.class_set.all()
+    student_dict = queryset_to_dict(students)
+    class_dict = queryset_to_dict(classes)
+
+    attends = Attend.objects.filter(~Q(leave_time=None),
+            attend_time__gte=term.start_date,
+            attend_time__lte=term.finish_date,
+            leave_time__lte=term.finish_date,
+            is_member=False,
+            pupil__in=students).order_by('leave_time')
+
+    cur_attends = Attend.objects.filter(pupil__in=students,
+            _class__in=classes,
+            is_member=True)
+
+    current_class = {}
+    attend_dict = {}
+    student_list = []
+    for attend in attends:
+        if attend.pupil_id in attend_dict:
+            attend_dict[attend.pupil_id].append(attend)
+        else:
+            attend_dict[attend.pupil_id] = [attend]
+            student_list.append(student_dict[attend.pupil_id])
+
+    for attend in cur_attends:
+        current_class[attend.pupil_id] = class_dict[attend._class_id]
+        if attend.pupil_id in attend_dict:
+            attend_dict[attend.pupil_id].append(attend)
+
+    result = {}
+    for student in student_list:
+        attends = attend_dict[student.id]
+        res = [] 
+        for attend in attends:
+            cl = class_dict[attend._class_id]
+            res.append(' (%s) %s ' %
+                    (str(attend.attend_time.strftime('%d-%m-%Y')), cl.name))
+        result[student.id] = '->'.join(res)
+
+    return render_to_response(STUDENT_MOVES, {
+        'result': result,
+        'terms': terms,
+        'term': term,
+        'current_class': current_class,
+        'student_list': student_list,},
+        context_instance=RequestContext(request))
 
 def countTotalPractisingInTerm(term_id):
     slList = [0, 0, 0, 0, 0]

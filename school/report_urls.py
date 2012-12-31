@@ -141,5 +141,7 @@ urlpatterns = patterns('',
 
     url(r'histotyMarkDetail/(?P<subject_id>\w+)$', viewCount.history_mark_detail, name="history_mark_detail"),
     url(r'histotyMarkDetail/(?P<subject_id>\w+)/(?P<term_id>\w+)$', viewCount.history_mark_detail, name="history_mark_detail"),
+    url(r'studentmoves/(?P<term_id>\d*)$', viewCount.student_moves_history,
+            name="student_moves_history"),
 
 )

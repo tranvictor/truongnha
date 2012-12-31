@@ -545,7 +545,13 @@ class StartYear(models.Model):
 
 class Term(models.Model):
     number = models.IntegerField("Kì",
-        max_length=1, choices=TERM_CHOICES)
+            max_length=1, choices=TERM_CHOICES)
+    start_date = models.DateField("Ngày bắt đầu",
+            null=True, blank=True, default=date.today(),
+            validators=[validate_join_date])
+    finish_date = models.DateField("Ngày kết thúc",
+            null=True, blank=True, default=date.today(),
+            validators=[validate_join_date])
     # neu active =false thi khong cho phep sua diem nua
     year_id = models.ForeignKey(Year, verbose_name="Năm học")
 
