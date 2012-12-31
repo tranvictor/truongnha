@@ -27,10 +27,9 @@ import simplejson
 STUDENT_MOVES = os.path.join('school', 'report', 'student_moves.html')
 
 @need_login
-@school_function
 def report(request, school_id=None):
     nameSchool = None
-    if school_id != None:
+    if school_id:
         request.session['school_id'] = school_id
         request.session['school_name'] = Organization.objects.get(id=school_id).name
 
@@ -38,7 +37,12 @@ def report(request, school_id=None):
     year_id = None
 
     if year_id == None:
-        year_id = get_current_year(request).id
+        try:
+            year_id = get_current_year(request).id
+        except Exception as e:
+            if e.message == 'UserDoesNotHaveAnySchool':
+                return HttpResponseRedirect(reverse('index'))
+            else: raise e
 
     selected_year = Year.objects.get(id=year_id)
 

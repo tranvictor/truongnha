@@ -466,16 +466,16 @@ def b1(request):
     if is_new_school or is_new_year:
         # create new year
         year, temp = Year.objects.get_or_create(time=current_year,
-                                                school_id=school)
+                school_id=school)
         if not temp:  
             return HttpResponseRedirect(reverse("classes"))
         # create new StartYear
         sty, temp = StartYear.objects.get_or_create(time=current_year,
-                                            school_id = school)
+                school_id=school)
         # create new term
         for number in range(1,4):
-                term, temp = Term.objects.get_or_create(number=number,
-                                                        year_id=year)
+            term, temp = Term.objects.get_or_create(number=number,
+                    year_id=year)
         # create new class.
         # -- tao cac lop ---
         for class_name in loai_lop:

@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load dictionary %}
+{% block js %}
+    <script type="text/javascript"
+        src="/static/js/template_js/count_sms.js?{{ VERSION }}"></script>
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Lịch sử chuyển lớp' %}
+{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+  <div class="span2" id="term-menu">
+    <div>
+      <h3>Học kì</h3>
+    </div>
+    <div>
+      <ul class="nav nav-list">
+        {% for t in terms %}
+          {% if t == term %}
+          <li id="term-{{ t.id }}" data-term-id="{{ t.id }}" class="active">
+            <a href="{% url student_moves_history t.id %}">
+              Học kì {{ t.number }} - Năm học {{ t.year_id }}
+            </a>
+          </li>
+          {% else %}
+          <li id="term-{{ t.id }}" data-term-id="{{ t.id }}">
+            <a href="{% url student_moves_history t.id %}">
+              Học kì {{ t.number }} - Năm học {{ t.year_id }}
+            </a>
+          </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="span10" id="student-moves-history">
+    <div>
+      <h3>Bảng lịch sử chuyển lớp</h3>
+    </div>
+    <table id="history-table" class="table" width="100%">
+        <tr>
+            <th style="width: 5%;">
+              STT
+            </th>
+            <th style="width: 15%;">
+              Họ
+            </th>
+            <th style="width: 5%;">
+              Tên
+            </th>
+            <th style="width: 10%;">
+              Ngày sinh
+            </th>
+            <th style="width: 15%;">
+              Lớp hiện tại
+            </th>
+            <th>
+              Lịch sử chuyển lớp
+            </th>
+        </tr>
+        {% for student in student_list %}
+        <tr>
+          <td>
+            {{ forloop.counter }}
+          </td>
+          <td>
+            {{ student.last_name }}
+          </td>
+          <td>
+            {{ student.first_name }}
+          </td>
+          <td>
+            {{ student.birthday|date:"SHORT_DATE_FORMAT" }}
+          </td>
+          <td>
+            {{ current_class|get_value:student.id|default_if_none:'' }}
+          </td>
+          <td>
+            {{ result|get_value:student.id }}
+          </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% if not student_list %}
+    <div>
+      <span class="label label-info">Không có học sinh nào chuyển lớp ở học kì này.</span>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
