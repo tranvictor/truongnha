@@ -36,11 +36,11 @@ def send_warning_sms():
         if not phone in phone_dict:
             phone_dict[phone] = school
     teachers = Teacher.objects.filter(
-            ~Q(phone=''),
+            ~Q(sms_phone=''),
             user_id__is_active=True)
     print len(teachers)
     for teacher in teachers:
-        phone = teacher.phone
+        phone = teacher.sms_phone
         if not phone in phone_dict:
             phone_dict[phone] = teacher
     # send sms
