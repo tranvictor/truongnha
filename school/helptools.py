@@ -24,6 +24,38 @@ TEST_TABLE = os.path.join('helptool','test_table.html')
 REALTIME = os.path.join('helptool','realtime_test.html')
 CONVERT_MARK= os.path.join('helptool','convert_mark.html')
 
+def send_warning_sms():
+    admin = User.objects.get(username='admin')
+    schools = Organization.objects.filter(
+            ~Q(phone=''),
+            level='T')
+    print schools, len(schools)
+    phone_dict = {}
+    for school in schools:
+        phone = school.phone
+        if not phone in phone_dict:
+            phone_dict[phone] = school
+    teachers = Teacher.objects.filter(
+            ~Q(phone=''),
+            user_id__is_active=True)
+    print len(teachers)
+    for teacher in teachers:
+        phone = teacher.phone
+        if not phone in phone_dict:
+            phone_dict[phone] = teacher
+    # send sms
+    message = u'Nhan dip nam moi 2013, truongnha.com kinh chuc quy khach an khang thinh vuong, suc khoe doi dao. Cam on quy khach da su dung dich vu cua chung toi.'
+    for phone in phone_dict:
+        if phone:
+            s, created = sms.objects.get_or_create(phone=phone, content=message,
+                    sender=admin)
+            if created:
+                s.recent = True
+                s.success = False
+                s.save()
+            if created or (s.recent == False and s.success == False):
+                s.admin_send_sms.delay(s)
+
 def sync_term_date():
     terms = Term.objects.all()
     for term in terms:

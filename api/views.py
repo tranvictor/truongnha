@@ -455,6 +455,41 @@ class FailedSms(View):
                 'message': message,
                 'success': success}), mimetype='json')
 
+class MySms(View):
+    @need_login
+    def get(self, request, from_date=None):
+        user = request.user
+        try:
+            from_date = to_date(from_date)
+        except Exception:
+            message = u'Ngày cần theo dạng dd-mm-yyyy'
+            success = False
+            HttpResponse(simplejson.dumps({
+                'message': message,
+                'success': success}, mimetype='json'))
+
+        smses = sms.objects.filter(sender=user,
+                created__gte=from_date)
+
+        result = []
+        for s in smses:
+            print s.receiver
+            result.append({
+                'id': s.id,
+                'phone': s.phone,
+                'receiver': s.receiver.username if s.receiver else '',
+                'success': s.success,
+                'recent': s.recent,
+                'content': s.content})
+
+        for s in smses:
+            s.recent = True
+            s.save()
+        return HttpResponse(simplejson.dumps({
+            'message': u'Nhận %d tin nhắn' % len(smses),
+            'smses': result,
+            'success': True}), mimetype='json')
+
 class SmsSummary(View):
     @need_login
     @school_function

@@ -188,7 +188,21 @@ class sms(models.Model):
             return client.service.InsertMT(__inject= {'msg': str(message)})
         else:
             raise Exception("InvalidPhoneNumber")
-        
+
+    def _admin_send_sms(self):
+        if get_tsp(self.phone) == 'VIETTEL':
+            result = self._send_Viettel_sms()
+        else:
+            result = self._send_iNET_sms()
+
+        if result == '1':
+            self.recent = False
+            self.success = True
+            self.save()
+            return result
+        else:
+            raise Exception('%s-SendFailed' % result)
+
     def _send_sms(self, school=None):
         if school:
             if school.is_allowed_sms(): #school.id in [11, 10]:
@@ -197,8 +211,6 @@ class sms(models.Model):
                     try:
                         result = self._send_Viettel_sms()
                         connect_failed = False
-                        print 'connected to viettel, requested'
-                        print connect_failed
                     except Exception as e:
                         school._atomic_increase_bl()
                         raise e
@@ -216,8 +228,6 @@ class sms(models.Model):
                     return result
                 else:
                     if not connect_failed:
-                        print 'connected_failed should be False'
-                        print 'Going to increase'
                         school._atomic_increase_bl()
                     raise Exception('%s-SendFailed' % result)
             else:
@@ -249,6 +259,13 @@ class sms(models.Model):
                 attachs['dd'].append(dd.id)
             self.attachment = simplejson.dumps(attachs)
             self.save()
+
+    @task(base=SMSTask, default_retry_delay=2, max_retries=3)
+    def admin_send_sms(self, *args, **kwargs):
+        try:
+            return self._admin_send_sms()
+        except Exception, e:
+            raise self.admin_send_sms.retry(exc=e)
 
     @task(base=SMSTask, default_retry_delay=2, max_retries=3)
     def send_sms(self, *args, **kwargs):

@@ -527,14 +527,21 @@
             Quản lý đăng ký
         </a>
         <a id="school-man" class="btn btn-large btn-info " href="/manageSchool" title="Quản lý các trường trong hệ thống">
-            <span>Quản lý các trường</span></a>
+            Quản lý các trường
+        </a>
         {#        <a href="{%url app.views.system_subject_agenda%}"#}
         <a id="program-man" class="btn btn-large btn-warning" href="/app/manage_agenda/"
            title="Quản lý phân phối chương trình của hệ thống">
             Phân phối chương trình
         </a>
         <a id="db-man" class="btn btn-large btn-danger" href="/admin" title="Mở trình quản trị sẵn có của hệ thống">
-            <span>Duyệt dữ liệu</span></a>
+            Duyệt dữ liệu
+        </a>
+        <a id="sms-man" class="btn btn-large btn-danger"
+            href="{% url 'admin_sms_manager' %}"
+            title="Quản lí tin nhắn hệ thống đã gửi">
+            Các tin nhắn hệ thống
+        </a>
 
     {% endif %}
 {% endblock %}
