@@ -8,7 +8,7 @@ from django.template import RequestContext
 from app.models import Organization
 from school.models import Pupil, TKDiemDanh, Attend, StartYear, Mark, Class,\
         Teacher, Subject, TKMon, DiemDanh, Year, Term
-from sms.models import sms, get_tsp, regc
+from sms.models import sms, get_tsp, regc, check_phone_number
 from school.school_settings import CAP2_DS_MON, CAP1_DS_MON, CAP3_DS_MON
 from school.templateExcel import normalize, CHECKED_DATE
 from school.utils import to_en1, add_subject, get_lower_bound,\
@@ -47,6 +47,7 @@ def send_warning_sms():
     message = u'Nhan dip nam moi 2013, truongnha.com kinh chuc quy khach an khang thinh vuong, suc khoe doi dao. Cam on quy khach da su dung dich vu cua chung toi.'
     for phone in phone_dict:
         if phone:
+            phone = check_phone_number(phone)
             try:
                 s, created = sms.objects.get_or_create(phone=phone, content=message,
                         sender=admin)
