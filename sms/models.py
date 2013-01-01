@@ -190,6 +190,7 @@ class sms(models.Model):
             raise Exception("InvalidPhoneNumber")
 
     def _admin_send_sms(self):
+        self.phone = check_phone_number(self.phone)
         if get_tsp(self.phone) == 'VIETTEL':
             result = self._send_Viettel_sms()
         else:
