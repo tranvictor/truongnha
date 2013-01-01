@@ -47,14 +47,17 @@ def send_warning_sms():
     message = u'Nhan dip nam moi 2013, truongnha.com kinh chuc quy khach an khang thinh vuong, suc khoe doi dao. Cam on quy khach da su dung dich vu cua chung toi.'
     for phone in phone_dict:
         if phone:
-            s, created = sms.objects.get_or_create(phone=phone, content=message,
-                    sender=admin)
-            if created:
-                s.recent = True
-                s.success = False
-                s.save()
-            if created or (s.recent == False and s.success == False):
-                s.admin_send_sms.delay(s)
+            try:
+                s, created = sms.objects.get_or_create(phone=phone, content=message,
+                        sender=admin)
+                if created:
+                    s.recent = True
+                    s.success = False
+                    s.save()
+                if created or (s.recent == False and s.success == False):
+                    s.admin_send_sms.delay(s)
+            except Exception:
+                pass
 
 def sync_term_date():
     terms = Term.objects.all()
