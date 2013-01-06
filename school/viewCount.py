@@ -91,6 +91,7 @@ def report(request, school_id=None):
 @school_function
 def student_moves_history(request, term_id=None):
     school = get_school(request)
+    first_term = None
     term = None
     terms = None
     try:
@@ -98,6 +99,8 @@ def student_moves_history(request, term_id=None):
             term = get_current_term(request)
         else:
             term = Term.objects.get(id=term_id, year_id__school_id=school)
+
+        first_term = term.year_id.term_set.get(number=1)
 
         terms = Term.objects.filter(year_id__school_id=school,
                 start_date__lte=date.today()).order_by('-start_date')
@@ -111,9 +114,10 @@ def student_moves_history(request, term_id=None):
     class_dict = queryset_to_dict(classes)
 
     attends = Attend.objects.filter(~Q(leave_time=None),
-            attend_time__gte=term.start_date,
-            attend_time__lte=term.finish_date,
+            attend_time__gte=first_term.start_date,
+            attend_time__lte=first_term.finish_date,
             leave_time__lte=term.finish_date,
+            leave_time__gte=term.start_date,
             is_member=False,
             pupil__in=students).order_by('leave_time')
 
