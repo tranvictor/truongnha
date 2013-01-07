@@ -5,7 +5,7 @@
 # open path for template folder
 import os
 import sys
-DEBUG = False
+DEBUG = True
 if os.environ.pop('DJANGO_SETTINGS_TESTING', None):
     IS_TESTING = True
 else:
