@@ -102,7 +102,13 @@ GRADES_CHOICES2 = ((6, u'Lớp 6'), (7, u'Lớp 7'), (8, u'Lớp 8'),
                    (9, u'Lớp 9'))
 
 GRADES_CHOICES3 = ((10, u'Lớp 10'), (11, u'Lớp 11'), (12, u'Lớp 12'))
-
+HANH_KIEM_LIST = ('HK1', 'HK2', 'CN', 'T9', 'T10', 'T11', 'T12', 'T1', 'T2', 'T3', 'T4', 'T5')
+HANH_KIEM_FIELD = ('term1', 'term2', 'year', 'hk_thang_9', 'hk_thang_10', 'hk_thang_11',
+                   'hk_thang_12', 'hk_thang_1', 'hk_thang_2', 'hk_thang_3', 'hk_thang_4',
+                   'hk_thang_5')
+HK_FIELD_LIST = {'term1': 0, 'term2': 1, 'year': 2, 'hk_thang_9': 3, 'hk_thang_10': 4,
+                 'hk_thang_11': 5, 'hk_thang_12': 6, 'hk_thang_1': 7, 'hk_thang_2':8,
+                 'hk_thang_3': 9, 'hk_thang_4': 10 , 'hk_thang_5': 11}
 INITIAL_CONSONANTS = (set(string.ascii_lowercase)
                       - set('aeiou')
                       - set('qxcsjfw')
@@ -678,6 +684,25 @@ class Class(models.Model):
                 sent=False, loai__in=loai)
         return dd_list
 
+    def _generate_hanhkiem_summary(self, year_id, student_query=None):
+        if student_query: sts = student_query
+        else: sts = self.students()
+        hk_list = TBNam.objects.filter(student_id__in=sts,year_id=year_id)
+        info = {}
+        new_hk_list = {}
+        for hk in hk_list:
+            new_hk_list[hk.student_id_id] = hk
+            info[hk.student_id_id] = ''
+            for i in range(12):
+                if hk.hk_sent[i] != 'T':
+                    if len(info[hk.student_id_id]) == 0:
+                        info[hk.student_id_id] = u' Hạnh kiểm: '
+                    else:
+                        info[hk.student_id_id] += ', '
+                    temp = getattr(hk, HANH_KIEM_FIELD[i])
+                    info[hk.student_id_id] += HANH_KIEM_LIST[i] + ':' + temp
+        return info, new_hk_list
+
     def _generate_diemdanh_summary(self, term, student_query=None):
         if student_query: sts = student_query
         else: sts = self.students()
@@ -701,7 +726,7 @@ class Class(models.Model):
             info[std.id] = ''
         for std in kq_dd:
             if kq_dd[std]['P'] or kq_dd[std]['K'] or kq_dd[std]['M']:
-                info[std] = 'Diem danh: '
+                info[std] = ' Diem danh: '
                 for loai in kq_dd[std]:
                     if kq_dd[std][loai]:
                         info[std] += self.convert_diemdanh(loai) + ':'
@@ -1500,6 +1525,7 @@ class TBNam(models.Model):
     hk_thang_5 = models.CharField("Tháng 5",
         max_length=2, choices=HK_CHOICES, blank=True)
 
+    hk_sent = models.CharField(default="TTTTTTTTTTTT", max_length=12)
     class Meta:
         verbose_name = "Trung bình năm"
         verbose_name_plural = "Trung bình năm"
@@ -1532,6 +1558,10 @@ class TBNam(models.Model):
     def get_hk_year(self):
         if self.year: return self.convertHk(self.year)
         else: return u"Chưa xét"
+
+    def update_sent(self):
+        self.hk_sent = "TTTTTTTTTTTT"
+        self.save()
 
 
 class DiemDanh(models.Model):

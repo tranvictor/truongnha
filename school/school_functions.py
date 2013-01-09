@@ -240,6 +240,7 @@ def sms_summary(request, class_id=None):
             student_query=students)
     dd_info_list, dd_list = cl._generate_diemdanh_summary(term,
             student_query=students)
+    hk_info_list, hk_list = cl._generate_hanhkiem_summary(year.id,student_query=students)
     if request.method == 'POST' and request.is_ajax():
         ids = request.POST['students'].split('-')
         ids = [int(id) for id in ids if id]
@@ -251,15 +252,16 @@ def sms_summary(request, class_id=None):
             number = 0
             for st in students:
                 if (st.sms_phone and st.id in ids
-                    and (st.id in info_list and st.id in dd_info_list)
+                    and (st.id in info_list and st.id in dd_info_list and st.id in hk_info_list)
                     and (info_list[st.id] != u'Không có điểm mới.'
-                        or dd_info_list[st.id] != '')):
+                        or dd_info_list[st.id] != '') or hk_info_list[st.id] != ''):
                     try:
-                        content = info_list[st.id] + ' ' + dd_info_list[st.id]
+                        content = info_list[st.id] + dd_info_list[st.id] + hk_info_list[st.id]
                         send_sms_summary_mark(st,
                                 content,
                                 marks[st.id],
                                 dd_list[st.id],
+                                hk_list[st.id],
                                 request.user,
                                 cl=cl,
                                 school=school)
@@ -278,7 +280,7 @@ def sms_summary(request, class_id=None):
 
     # GET reponse
     for std in info_list:
-        info_list[std] += dd_info_list[std]
+        info_list[std] += dd_info_list[std] + hk_info_list[std]
     return render_to_response(SMS_SUMMARY,
             {'info_list': info_list,
                 'students': students,
