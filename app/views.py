@@ -31,11 +31,11 @@ from school.utils import make_username, make_default_password,\
         get_school, get_profile_form, to_en1
 import settings
 from sms.utils import send_email, sendSMS
-
+from sms.models import sms
 REGISTER = os.path.join('app', 'register.html')
 MANAGE_REGISTER = os.path.join('app', 'manage_register.html')
 MANAGE_SCHOOL = os.path.join('app', 'manage_school.html')
-
+ADMIN_SMS_MANAGER = os.path.join('app', 'admin_sms_manager.html')
 
 class SchoolAdminAddForm(forms.Form):
     def __init__(self, *args, **kwargs):
@@ -135,6 +135,17 @@ def register(request):
                  'level_list': level_list,
                  'message': message},
                 context_instance = context)
+
+@need_login
+@operating_permission(['SUPER_USER'])
+def admin_sms_manager(request, from_date=None):
+    user = request.user
+    if not from_date: from_date = date.today()
+    smses = sms.objects.filter(sender=user,
+            created__gte=from_date).order_by('-modified')
+    return render_to_response(ADMIN_SMS_MANAGER, {
+        'smses': smses,},
+        context_instance=RequestContext(request))
 
 @need_login
 @operating_permission(['SUPER_USER'])

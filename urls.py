@@ -41,6 +41,8 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^sms-manager/$', app_views.admin_sms_manager,
+        name='admin_sms_manager'),
     #object comments
     #url(r'^comments/', include(comment_urls)),
     

@@ -551,7 +551,13 @@ class StartYear(models.Model):
 
 class Term(models.Model):
     number = models.IntegerField("Kì",
-        max_length=1, choices=TERM_CHOICES)
+            max_length=1, choices=TERM_CHOICES)
+    start_date = models.DateField("Ngày bắt đầu",
+            null=True, blank=True, default=date.today(),
+            validators=[validate_join_date])
+    finish_date = models.DateField("Ngày kết thúc",
+            null=True, blank=True, default=date.today(),
+            validators=[validate_join_date])
     # neu active =false thi khong cho phep sua diem nua
     year_id = models.ForeignKey(Year, verbose_name="Năm học")
 
@@ -1304,7 +1310,7 @@ class Mark(models.Model):
                     False) + ' '
             else:
                 temp = arr_mark[3 * MAX_COL + 1]
-            result.append(u' ck %s' % temp)
+            result.append(u' hk %s' % temp)
 
         if (arr_mark[3 * MAX_COL+2] != '') & (arr_sent[3*MAX_COL+2] == ''):
             if is_comment:
@@ -1313,7 +1319,7 @@ class Mark(models.Model):
                     False) + ' '
             else:
                 temp = arr_mark[3 * MAX_COL + 2]
-            result.append(u' tb %s' % temp)
+            result.append(u' tbm %s' % temp)
         result = ';'.join(result)
         return result + '.' if result else result
 

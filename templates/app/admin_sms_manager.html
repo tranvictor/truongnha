@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    {% load breadcrumb_tags %}
+    {% add_crumb 'Lịch sử nhắn tin hệ thống' %}
+{% endblock %}
+
+{% block content %}
+    <div id="submenu" class="btn-toolbar">
+      <div class="btn-group">
+          <form class="form-inline" action="{% url count_sms %}" name="info"
+                method="post" style="margin-bottom:0;"> {% csrf_token %}
+                  <div class="input-prepend" style="margin-right: 5px;">
+                      <span class="add-on">Từ ngày</span>
+                      <input id="id_date1" name="firstDate"
+                          class="datepicker input-small"
+                          type="text"
+                          style="margin-top: 0;"
+                          value="{{day}}/{{month}}/{{year}}">
+                  </div>
+
+                  <div class="btn-group" data-toggle="buttons-radio">
+                          <button type="submit" class="btn active"
+                              name="type1" value="1">
+                              Tất cả
+                          </button>
+                          <button type="submit" class="btn"
+                              name="type1" value="2">
+                              Đã gửi
+                          </button>
+                          <button type="submit" class="btn"
+                              name="type1" value="3">
+                              Thất bại
+                          </button>
+                  </div>
+          </form>
+      </div>
+    </div>
+
+    <table id="sms-table" class="table" width="100%">
+        <tr>
+            <th>
+                STT
+            </th>
+            <th>
+                Người nhận
+            </th>
+            <th>
+                SĐT
+            </th>
+            <th>
+                Ngày gửi
+            </th>
+            <th>
+                Nội dung
+            </th>
+            <th>
+                Trạng thái
+            </th>
+        </tr>
+        {% for sms in smses %}
+            {% if sms.success %}
+            <tr class="{{ sms.id }} sms" data-status="success">
+            {% else %}
+            <tr class="{{ sms.id }} sms failed" data-status="failed">
+            {% endif %}
+                <td>
+                    {{ forloop.counter }}
+                </td>
+                <td>
+                  {{ sms.receiver }}
+                </td>
+                <td>
+                    {{ sms.phone }}
+                </td>
+                <td>
+                    {{ sms.modified|date:"SHORT_DATETIME_FORMAT" }}
+                </td>
+                <td class="truncated" style="max-width:350px;"
+                    title="{{ sms.content }}">
+                    {{ sms.content }}
+                </td>
+                <td>
+                    {% if sms.recent %}
+                        Đang gửi
+                    {% else %}
+                        {% if sms.success %}
+                            Thành công
+                        {% else %}
+                        <a class="click-tooltip"
+                            href="#"
+                            title="{{l.failed_reason}}-{{l.get_failed_reason}}">
+                            Thất bại</a>
+                        {% endif %}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

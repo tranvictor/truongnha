@@ -7,12 +7,12 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from app.models import Organization
 from school.models import Pupil, TKDiemDanh, Attend, StartYear, Mark, Class,\
-        Teacher, Subject, TKMon, DiemDanh, Year
-from sms.models import sms, get_tsp, regc
+        Teacher, Subject, TKMon, DiemDanh, Year, Term
+from sms.models import sms, get_tsp, regc, check_phone_number
 from school.school_settings import CAP2_DS_MON, CAP1_DS_MON, CAP3_DS_MON
 from school.templateExcel import normalize, CHECKED_DATE
 from school.utils import to_en1, add_subject, get_lower_bound,\
-        queryset_to_dict, get_current_year
+        queryset_to_dict, get_current_year, to_date
 from school.utils import normalize as norm
 from sms.utils import to_ascii
 from django.db import transaction
@@ -24,6 +24,60 @@ TEST_TABLE = os.path.join('helptool','test_table.html')
 REALTIME = os.path.join('helptool','realtime_test.html')
 CONVERT_MARK= os.path.join('helptool','convert_mark.html')
 
+def send_warning_sms():
+    admin = User.objects.get(username='admin')
+    schools = Organization.objects.filter(
+            ~Q(phone=''),
+            level='T')
+    print schools, len(schools)
+    phone_dict = {}
+    for school in schools:
+        phone = school.phone
+        if not phone in phone_dict:
+            phone_dict[phone] = school
+    teachers = Teacher.objects.filter(
+            ~Q(sms_phone=''),
+            user_id__is_active=True)
+    print len(teachers)
+    for teacher in teachers:
+        phone = teacher.sms_phone
+        if not phone in phone_dict:
+            phone_dict[phone] = teacher
+    # send sms
+    message = u'Nhan dip nam moi 2013, truongnha.com kinh chuc quy khach an khang thinh vuong, suc khoe doi dao. Cam on quy khach da su dung dich vu cua chung toi.'
+    for phone in phone_dict:
+        if phone:
+            phone = check_phone_number(phone)
+            try:
+                s, created = sms.objects.get_or_create(phone=phone, content=message,
+                        sender=admin)
+                if created:
+                    s.recent = True
+                    s.success = False
+                    s.save()
+                if created or (s.recent == False and s.success == False):
+                    s.admin_send_sms.delay(s)
+            except Exception:
+                pass
+
+def sync_term_date():
+    terms = Term.objects.all()
+    for term in terms:
+        year = term.year_id
+        nyear = year.time
+        if term.number == 1:
+            start_date = to_date('15/8/' + str(nyear))
+            finish_date = to_date('1/1/' + str(nyear + 1))
+        elif term.number == 2:
+            start_date = to_date('2/1/' + str(nyear + 1))
+            finish_date = to_date('30/5/' + str(nyear + 1))
+        else:
+            start_date = to_date('31/5/' + str(nyear + 1))
+            finish_date = to_date('14/8/' + str(nyear + 1))
+
+        term.start_date = start_date
+        term.finish_date = finish_date
+        term.save()
 
 def check_tbnam():
     schools = Organization.objects.filter(level='T')

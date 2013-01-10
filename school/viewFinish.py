@@ -11,7 +11,7 @@ from django.utils import simplejson
 import os.path
 from school.models import TBNam, TBHocKy, TKDiemDanh, Class, Term,\
         DiemDanh, Subject, Mark, Year, TKMon, Pupil
-from decorators import need_login
+from decorators import need_login, school_function, operating_permission
 from school.templateExcel import convertMarkToCharacter1, convertMarkToCharacter
 from school.utils import in_school, get_current_term, get_position,\
         get_level, get_current_year, get_school, to_en1,\
@@ -24,19 +24,12 @@ ENABLE_CHANGE_MARK = True
 e = 0.00000001
 
 @need_login
+@school_function
+@operating_permission(['HIEU_TRUONG', 'HIEU_PHO'])
 def finish(request, active_term=0, term_number=None, year_number=None, is_calculate=0):
     current_term = get_current_term(request)
-    try:
-        if not in_school(request, current_term.year_id.school_id):
-            return HttpResponseRedirect(reverse('index'))
-    except Exception:
-        return HttpResponseRedirect(reverse('index'))
-
-    if (get_position(request) != 4) & (get_level(request) == 'T' ):
-        return HttpResponseRedirect(reverse('index'))
-
     message = None
-    school = request.user.userprofile.organization
+    school = get_school(request)
     if int(active_term) != 0:
         school.status = int(active_term)
         school.save()
@@ -73,8 +66,8 @@ def finish(request, active_term=0, term_number=None, year_number=None, is_calcul
     number_finish_learning1 = number_pupil - TBHocKy.objects.filter(term_id=term1,
             student_id__disable=False, hl_hk=None).count()
 
-    number_finish_practising1 = number_pupil - TBNam.objects.filter(year_id=current_year,
-            student_id__disable=False, term1=None).count()
+    number_finish_practising1 = number_pupil - TBNam.objects.filter(term1=None,
+            year_id=current_year, student_id__disable=False).count()
 
     number_finish_title1 = number_pupil - TBHocKy.objects.filter(term_id=term1,
             student_id__disable=False, danh_hieu_hk=None).count()
@@ -91,8 +84,8 @@ def finish(request, active_term=0, term_number=None, year_number=None, is_calcul
     number_finish_learning2 = number_pupil - TBHocKy.objects.filter(term_id=term2,
             student_id__disable=False, hl_hk=None).count()
 
-    number_finish_practising2 = number_pupil - TBNam.objects.filter(year_id=current_year,
-            student_id__disable=False, term2=None).count()
+    number_finish_practising2 = number_pupil - TBNam.objects.filter(term2=None,
+            year_id=current_year, student_id__disable=False).count()
 
     number_finish_title2 = number_pupil - TBHocKy.objects.filter(term_id=term2,
             student_id__disable=False, danh_hieu_hk=None).count()
@@ -109,8 +102,8 @@ def finish(request, active_term=0, term_number=None, year_number=None, is_calcul
     number_finish_learning3 = number_pupil - TBNam.objects.filter(year_id=current_year,
             student_id__disable=False, hl_nam=None).count()
 
-    number_finish_practising3 = number_pupil - TBNam.objects.filter(year_id=current_year,
-            student_id__disable=False, year=None).count()
+    number_finish_practising3 = number_pupil - TBNam.objects.filter(year=None,
+            year_id=current_year, student_id__disable=False).count()
 
     number_finish_title3 = number_pupil - TBNam.objects.filter(year_id=current_year,
             student_id__disable=False, danh_hieu_nam=None).count()
