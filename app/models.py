@@ -17,68 +17,63 @@ import settings
 
 SCHOOL_SETTING_FOLDER = settings.SCHOOL_SETTING_FOLDER
 
-ORGANIZATION_LEVEL_CHOICES = (('T', u'Trường'),
-                              ('P', u'Phòng'),
-                              ('S', u'Sở'))
-ORGANIZATION_STATUS_CHOICES = ((1, u'Đã kích hoạt'),
-                                (2, u'Đã khóa'))
-POSITION_CHOICE = (('HOC_SINH', u'Học sinh'),
-                    ('GIAO_VU', u'Giáo vụ'),
-                    ('GIAO_VIEN', u'Giáo viên'),
-                   ('HIEU_PHO', u'Hiệu phó'),
-                   ('HIEU_TRUONG', u'Hiệu trưởng'),
-                   ('GIAM_DOC_SO', u'Giám đốc sở'),
-                   ('TRUONG_PHONG', u'Trưởng phòng'))
+ORGANIZATION_LEVEL_CHOICES = (
+        ('T', u'Trường'),
+        ('P', u'Phòng'),
+        ('S', u'Sở'))
+ORGANIZATION_STATUS_CHOICES = (
+        (1, u'Đã kích hoạt'),
+        (2, u'Đã khóa'))
+POSITION_CHOICE = (
+        ('HOC_SINH', u'Học sinh'),
+        ('GIAO_VU', u'Giáo vụ'),
+        ('GIAO_VIEN', u'Giáo viên'),
+        ('HIEU_PHO', u'Hiệu phó'),
+        ('HIEU_TRUONG', u'Hiệu trưởng'),
+        ('GIAM_DOC_SO', u'Giám đốc sở'),
+        ('TRUONG_PHONG', u'Trưởng phòng'))
 
-KHOI_CHOICES = (('2', u'Cấp 2'),
-                ('3', u'Cấp 3'))
+KHOI_CHOICES = (
+        ('2', u'Cấp 2'),
+        ('3', u'Cấp 3'))
 
-SCHOOL_ACTION_STATUS = ((0, u'Trường mới'),
-                        (1, u'Đang học kỳ 1'),
-                        (2, u'Đang học kỳ 2'),
-                        (3, u'Đang nghỉ hè'))
+SCHOOL_ACTION_STATUS = (
+        (0, u'Trường mới'),
+        (1, u'Đang học kỳ 1'),
+        (2, u'Đang học kỳ 2'),
+        (3, u'Đang nghỉ hè'))
 SCHOOL_TYPES = (('0', u'Công lập'), ('1', u'Giáo dục thường xuyên'))
 
-TINH_CHOICES = (('1',u'An Giang'),('2',u'Bà Rịa-Vũng Tàu'),('3',u'Bạc Liêu'),('4',u'Bắc Cạn'),('5',u'Bắc Giang'),
-    ('6',u'Bắc Ninh'),('7',u'Bến Tre'),('8',u'Bình Dương'),('9',u'Bình Định'),('10',u'Bình Phước'),('11',u'Bình Thuận'),
-    ('12',u'Cà Mau'),('13',u'Cao Bằng'),('14',u'Cần Thơ'),('15',u'Đà Nẵng'),('16',u'Đắk Lắk'),('17',u'Đắk Nông'),
-    ('18',u'Điện Biên'),('19',u'Đồng Nai'),('20',u'Đồng Tháp'),('21',u'Gia Lai'),('22',u'Hà Giang'),('23',u'Hà Nam'),
-    ('24',u'Hà Nội'),('25',u'Hà Tĩnh'),('26',u'Hải Dương'),('27',u'Hải Phòng'),('28',u'Hòa Bình'),('29',u'Hồ Chí Minh'),
-    ('30',u'Hậu Giang'),('31',u'Hưng Yên'),('32',u'Khánh Hòa'),('33',u'Kiên Giang'),('34',u'Kom Tum'),('35',u'Lai Châu'),
-    ('36',u'Lào Cai'),('37',u'Lạng Sơn'),('38',u'Lâm Đồng'),('39',u'Long An'),('40',u'Nam Định'),('41',u'Nghệ An'),
-    ('42',u'Ninh Bình'),('43',u'Ninh Thuận'),('44',u'Phú Thọ'),('45',u'Phú Yên'),('46',u'Quảng Bình'),('47',u'Quảng Nam'),
-    ('48',u'Quảng Ngãi'),('49',u'Quảng Ninh'),('50',u'Quảng Trị'),('51',u'Sóc Trăng'),('52',u'Sơn La'),('53',u'Tây Ninh'),
-    ('54',u'Thái Bình'),('55',u'Thái Nguyên'),('56',u'Thanh Hóa'),('57',u'Thừa Thiên-Huế'),('58',u'Tiền Giang'),
-    ('59',u'Trà Vinh'),('60',u'Tuyên Quang'),('61',u'Vĩnh Long'),('62',u'Vĩnh Phúc'),('63',u'Yên Bái'))
+TINH_CHOICES = (('1',u'An Giang'), ('2',u'Bà Rịa-Vũng Tàu'), ('3',u'Bạc Liêu'),
+        ('4',u'Bắc Cạn'), ('5',u'Bắc Giang'), ('6',u'Bắc Ninh'), ('7',u'Bến Tre'),
+        ('8',u'Bình Dương'), ('9',u'Bình Định'), ('10',u'Bình Phước'),
+        ('11',u'Bình Thuận'), ('12',u'Cà Mau'), ('13',u'Cao Bằng'), ('14',u'Cần Thơ'),
+        ('15',u'Đà Nẵng'), ('16',u'Đắk Lắk'), ('17',u'Đắk Nông'), ('18',u'Điện Biên'),
+        ('19',u'Đồng Nai'), ('20',u'Đồng Tháp'), ('21',u'Gia Lai'), ('22',u'Hà Giang'),
+        ('23',u'Hà Nam'), ('24',u'Hà Nội'), ('25',u'Hà Tĩnh'), ('26',u'Hải Dương'),
+        ('27',u'Hải Phòng'), ('28',u'Hòa Bình'), ('29',u'Hồ Chí Minh'),
+        ('30',u'Hậu Giang'), ('31',u'Hưng Yên'), ('32',u'Khánh Hòa'),
+        ('33',u'Kiên Giang'), ('34',u'Kom Tum'), ('35',u'Lai Châu'), ('36',u'Lào Cai'),
+        ('37',u'Lạng Sơn'), ('38',u'Lâm Đồng'), ('39',u'Long An'), ('40',u'Nam Định'),
+        ('41',u'Nghệ An'), ('42',u'Ninh Bình'), ('43',u'Ninh Thuận'), ('44',u'Phú Thọ'),
+        ('45',u'Phú Yên'), ('46',u'Quảng Bình'), ('47',u'Quảng Nam'),
+        ('48',u'Quảng Ngãi'), ('49',u'Quảng Ninh'), ('50',u'Quảng Trị'),
+        ('51',u'Sóc Trăng'), ('52',u'Sơn La'), ('53',u'Tây Ninh'), ('54',u'Thái Bình'),
+        ('55',u'Thái Nguyên'), ('56',u'Thanh Hóa'), ('57',u'Thừa Thiên-Huế'),
+        ('58',u'Tiền Giang'), ('59',u'Trà Vinh'), ('60',u'Tuyên Quang'),
+        ('61',u'Vĩnh Long'), ('62',u'Vĩnh Phúc'), ('63',u'Yên Bái'))
 
 REGISTER_STATUS_CHOICES = (('DA_CAP', u"Đã cấp"), ('CHUA_CAP', u"Chưa cấp"))
 
-SUBJECT_CHOICES = ((1,u'Toán'),
-                 (2, u'Vật lí'),
-                 (3, u'Hóa học'),
-                 (4, u'Sinh học'),
-                 (5, u'Ngữ văn'),
-                 (6, u'Lịch sử'),
-                 (7, u'Địa lí'),
-                 (8, u'Ngoại ngữ'),
-                 (9, u'GDCD'),
-                 (10, u'Công nghệ'),
-                 (11, u'Thể dục'),
-                 (12, u'Âm nhạc'),
-                 (13, u'Mĩ thuật'),
-                 (14, u'NN2'),
-                 (15, u'Tin học'),
-                 (16, u'GDQP-AN'))
+SUBJECT_CHOICES = ((1,u'Toán'), (2, u'Vật lí'), (3, u'Hóa học'), (4, u'Sinh học'),
+        (5, u'Ngữ văn'), (6, u'Lịch sử'), (7, u'Địa lí'), (8, u'Ngoại ngữ'),
+        (9, u'GDCD'), (10, u'Công nghệ'), (11, u'Thể dục'), (12, u'Âm nhạc'),
+        (13, u'Mĩ thuật'), (14, u'NN2'), (15, u'Tin học'), (16, u'GDQP-AN'))
 
-GRADES_CHOICES = ((6, u'Lớp 6'),
-                  (7, u'Lớp 7'),
-                  (8, u'Lớp 8'),
-                  (9, u'Lớp 9'),
-                  (10, u'Lớp 10'),
-                  (11, u'Lớp 11'),
-                  (12, u'Lớp 12'))
-TERMS=((1, u'Kì 1'),
-        (2, u'Kì 2'))
+GRADES_CHOICES = ((6, u'Lớp 6'), (7, u'Lớp 7'), (8, u'Lớp 8'), (9, u'Lớp 9'),
+        (10, u'Lớp 10'), (11, u'Lớp 11'), (12, u'Lớp 12'))
+
+TERMS=((1, u'Kì 1'), (2, u'Kì 2'))
 
 LOGIN_TYPE = ['DEMO_LOGIN_SCHOOL', 'DEMO_LOGIN_TEACHER', 'DEMO_LOGIN_UPPER',
 'DEMO_LOGIN_STUDENT']

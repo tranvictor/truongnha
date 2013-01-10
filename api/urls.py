@@ -3,7 +3,8 @@ __author__ = 'vutran'
 from django.conf.urls import patterns, url
 from views import ApiLogin, ApiLogout, Attendance, SchoolSetting, ApiGetStudentList
 from views import SmsStatus, SmsSummary, hanhkiem, StudentProfile,\
-        MarkForASubject, MarkForAStudent, Schedule, FailedSms
+        MarkForASubject, MarkForAStudent, Schedule, FailedSms,\
+        MySms
 from views import GetListTerm, GetAttendanceForStudent, GetSubjectOfHomeroomTeacher
 
 urlpatterns = patterns('',
@@ -18,6 +19,8 @@ urlpatterns = patterns('',
     url(r'sms/(?P<ids>\w+)/$', SmsStatus.as_view(), name='api_sms'),
     url(r'failed-sms/(?P<from_date>\d{2}-\d{2}-\d{4})/$',
         FailedSms.as_view(), name='failed_sms'),
+    url(r'mysms/(?P<from_date>\d{2}-\d{2}-\d{4})/$',
+        MySms.as_view(), name='mysms'),
     url(r'sms_summary/(?P<class_id>\d+)/$', SmsSummary.as_view(),
         name='api_sms_summary'),
     url(r'hanhkiem/$', hanhkiem.as_view(), name='api_post_hanhkiem'),

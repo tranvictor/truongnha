@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from app.tests import BasicWorkFlow
 from app.models import Organization
 import simplejson
+import settings
 
 # This class will test the very first steps on a workflow
 # 1. create a register
@@ -19,6 +20,7 @@ import simplejson
 # 10. setup new school
 # 11. check classes, school's status, classes' subjects
 from school.models import Pupil
+from school.utils import to_date
 
 class SchoolSetupTest(BasicWorkFlow):
     def phase1_login_as_school_admin(self):
@@ -166,6 +168,15 @@ class SchoolSetupTest(BasicWorkFlow):
         print 'This school should have 3 terms 1, 2, 3'
         for term in terms:
             self.assertEqual(actual_term.pop(term.number, None), '')
+            if term.number == 1:
+                self.assertEqual(term.start_date,
+                        to_date(settings.TERM_START_DATE[1] + str(year.time)))
+            else:
+                self.assertEqual(term.start_date,
+                        to_date(settings.TERM_START_DATE[term.number]
+                            + str(year.time + 1)))
+            self.assertEqual(term.finish_date,
+                    to_date(settings.TERM_FINISH_DATE[term.number] + str(year.time + 1)))
 
 class AddStudentTest(SchoolSetupTest):
     def phase8_get_a_class(self):
