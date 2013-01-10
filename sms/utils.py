@@ -138,7 +138,7 @@ def sendSMS(phone, content, user, receiver=None, save_to_db=True, school=None):
     else:
         return _send_sms(phone, content, user, receiver, save_to_db, school)
 
-def send_sms_summary_mark(student, content, marks, dds, user,
+def send_sms_summary_mark(student, content, marks, dds, hk, user,
         cl=None, school=None):
     phone = check_phone_number(student.sms_phone)
     try:
@@ -176,9 +176,9 @@ def send_sms_summary_mark(student, content, marks, dds, user,
                     sender=user, recent=True, success=False)
             s.save()
         if not settings.DEBUG:
-            return s.send_mark_sms.delay(s, marks=marks, dds=dds, school=school)
+            return s.send_mark_sms.delay(s, marks=marks, dds=dds, hk=hk, school=school)
         else:
-            return s._send_mark_sms(marks, dds, school=school)
+            return s._send_mark_sms(marks, dds, hk, school=school)
     else:
         raise Exception('InvalidPhoneNumber')
 
