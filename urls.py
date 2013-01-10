@@ -17,7 +17,7 @@ urlpatterns = patterns('',
     url(r'^$', views.index, name="index"),
     # the built-in sign-in/out module
     url(r'^login/$', app_views.login , name="login"),
-    url(r'^login/(?P<redirect_after>[/%a-zA-Z0-9_]+)/$',
+    url(r'^login/(?P<redirect_after>[/%a-zA-Z0-9_\-]+)/$',
         app_views.login, name="login_redirect"),
     url(r'^logout/$', 'django.contrib.auth.views.logout',
             {'template_name': os.path.join(settings.TEMPLATE_DIRS[0],
