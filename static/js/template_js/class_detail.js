@@ -48,7 +48,15 @@ $(document).ready(function() {
             $("#notify").showNotification("Bạn chưa chọn học sinh nào.");
             return false;
         }
-        var moveToClId = $("#move_to_class_id").val();
+        var moveToClIdValue = $("#move_to_class_id").val().split(' ');
+        var moveToClId = moveToClIdValue[0];
+        if (moveToClIdValue.length > 1){
+            var userConfirm = confirm("Sau khi chuyển học sinh lên lớp, bạn sẽ không thể chuyển học sinh trở lại lớp thấp hơn. Bạn có muốn chuyển không?");
+            if (userConfirm == false){
+                return false;
+            }
+        }
+
         var d = '';
         for (var i=$selecteds.length; i--;){
             d += $($selecteds[i]).attr('class').split(' ')[0] + '-';

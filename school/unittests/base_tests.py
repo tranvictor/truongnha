@@ -98,9 +98,11 @@ class SchoolSetupTest(BasicWorkFlow):
         if self.school_level == 3:
             self.school_cl_list = u'10 A, 10 B, 10 C, 11 A, 11 B, 11 C,\
                     12 A, 12 B, 12 C, 12 Toán 1'
+            self.middle_block_number = 11
         else:
             self.school_cl_list = u'9 A, 9 B, 9 C, 8 A, 8 B, 8 C, 7 A,\
                     7 B, 7 C, 7 Toán 1, 6 A, 6 B, 6 C, 6 Văn'
+            self.middle_block_number = 7
         res = self.client.post(reverse('setup'),{
                 'labels': self.school_cl_list,
                 'update_class_name': True

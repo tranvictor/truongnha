@@ -18,11 +18,23 @@ from sms.utils import to_ascii
 from django.db import transaction
 from django.db.models import Q
 import thread
+
 SYNC_RESULT = os.path.join('helptool','recover_marktime.html')
 SYNC_SUBJECT = os.path.join('helptool','sync_subject.html')
 TEST_TABLE = os.path.join('helptool','test_table.html')
 REALTIME = os.path.join('helptool','realtime_test.html')
 CONVERT_MARK= os.path.join('helptool','convert_mark.html')
+
+def rescure_student(student, current_class, previous_class):
+    student._move_to_class(previous_class)
+    Mark.objects.filter(subject_id__class_id=current_class,
+            student_id=student).update(current=False)
+    student.tkmon_set.filter(subject_id__class_id=current_class)\
+            .update(current=False)
+    Mark.objects.filter(subject_id__class_id=previous_class,
+            student_id=student).update(current=True)
+    student.tkmon_set.filter(subject_id__class_id=previous_class)\
+            .update(current=True)
 
 def send_warning_sms():
     admin = User.objects.get(username='admin')

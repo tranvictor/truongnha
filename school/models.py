@@ -953,15 +953,26 @@ class Pupil(BasicPersonInfo):
         number_subject = 0
         number_subject += _class.subject_set.filter(primary=0).count()
         number_subject += _class.subject_set.filter(primary=3).count()
+        print number_subject
 
         for t in year.term_set.all():
             if t.number == 1:
-                number_subject = _class.subject_set.filter(primary=1).count()
+                num_sub_for_this_term = _class.subject_set.filter(primary=1).count()
+                num_sub_for_this_term += number_subject
             elif t.number == 2:
-                number_subject = _class.subject_set.filter(primary=2).count()
-            TBHocKy.objects.get_or_create(student_id=self,
-                term_id=t,
-                number_subject=number_subject)
+                num_sub_for_this_term = _class.subject_set.filter(primary=2).count()
+                num_sub_for_this_term += number_subject
+            else:
+                num_sub_for_this_term = number_subject
+
+            tbhk, created = TBHocKy.objects.get_or_create(student_id=self,
+                    term_id=t)
+
+            tbhk.number_subject = num_sub_for_this_term
+
+            print created, 'created'
+            print tbhk.student_id, tbhk.term_id, tbhk.number_subject
+
             TKDiemDanh.objects.get_or_create(student_id=self, term_id=t)
         for subject in subjects:
             for i in range(1, 3):
@@ -983,9 +994,9 @@ class Pupil(BasicPersonInfo):
     def _move_to_upper_class(self, _class):
         cur_cl = self.current_class()
         Mark.objects.filter(subject_id__class_id=cur_cl, student_id=self)\
-        .update(current=False)
+                .update(current=False)
         self.tkmon_set.filter(subject_id__class_id=cur_cl)\
-        .update(current=False)
+                .update(current=False)
         return self._move_to_class(_class)
 
     def get_school(self):
