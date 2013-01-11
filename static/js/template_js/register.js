@@ -58,6 +58,7 @@ $(document).ready(function () {
         var registerSchoolProvince = $("#registerSchoolProvince").val();
         var recaptchaChallengeField = $("#recaptcha_challenge_field").val();
         var recaptchaResponseField = $("#recaptcha_response_field").val();
+        $("#notify").showNotification("Đang gửi dữ liệu...", 15000);
         // end checking
         if (self.text() == "Gửi") {
             var arg = { type:"POST",
