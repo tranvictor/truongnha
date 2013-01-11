@@ -50,13 +50,15 @@
                     var schoolClassLabels = $("#id_class_labels").val();
                     var semesterStartTime = $("#id_semester_start_time").val();
                     var semesterFinishTime= $("#id_semester_finish_time").val();
+                    var allow_recover_password = $("#id_allow_recover_password").val();
                     var data = { name:schoolName, school_level:schoolLevel,
                         address:schoolAddress, phone:schoolPhone, email:schoolEmail,
                         update_school_detail:true,
                         lock_time:schoolLockTime,
                         class_labels:schoolClassLabels,
                         semester_start_time: semesterStartTime,
-                        semester_finish_time: semesterFinishTime
+                        semester_finish_time: semesterFinishTime,
+                        allow_recover_password: allow_recover_password
                     };
                     var para = {
                         type:"POST",
