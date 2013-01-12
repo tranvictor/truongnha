@@ -148,8 +148,7 @@ def validate_phone(value):
     if type(value) in [unicode, str]:
         value = value.replace(' ', '')
     else: value = str(value)
-    print value
-    if not regc(value): raise ValidationError(u'Không đúng định dạng.')
+    if not regc(value): raise ValidationError(u'Số điện thoại phải là số di động.')
 
 #validate birthday. set range between 1990 and current year
 def validate_birthday(value):

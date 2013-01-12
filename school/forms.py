@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-import re
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django import forms
@@ -14,13 +13,6 @@ from school.models import Teacher, Block, Group, Team, GRADES_CHOICES3, Pupil, C
 from school.utils import get_school, get_permission, save_file
 
 EXPORTED_FILE_LOCATION = settings.EXPORTED_FILE_LOCATION
-
-re_phone = re.compile('(84|\+84|0)(90|93|122|126|121|128|120|91|94|123|125|127|129\
-        |97|98|162|163|164|165|166|167|168|169|96|95|92|199)(\d{7})$')
-
-def phone_validate(value):
-    if not re_phone.match(value):
-        raise ValidationError(u'Số điện thoại không đúng')
 
 class BlockForm(forms.ModelForm):
     class Meta:
@@ -260,7 +252,9 @@ class SchoolForm(forms.Form):
                     max_length=20, validators=[validate_phone], required=False)
             self.fields['email'] = forms.EmailField(max_length=50, required=False)
             self.fields['allow_recover_password'] = forms.BooleanField(required=False,
-            label=u'Cho phép giáo viên tự kích hoạt tài khoản')
+                    label=u'Tự kích hoạt',
+                    help_text=u'Cho phép giáo viên tự kích hoạt tài khoản bằng'
+                    + u' email hoặc số điện thoại')
 
     def save_to_model(self):
         try:
@@ -646,12 +640,16 @@ class SelectSchoolLessonForm3(forms.Form):
 
 class ForgetPasswordForm(forms.Form):
     school = forms.ModelChoiceField(required=True, label='Trường',
-        queryset=Organization.objects.filter(level='T',allow_recover_password=True))
+            queryset=Organization.objects.filter(level='T',
+                allow_recover_password=True))
+
     last_name = forms.CharField(label='Họ')
     first_name = forms.CharField(required=True, label='Tên')
     birthday = forms.DateField(required=True, label='Ngày sinh')
     email = forms.EmailField(label='Email', required=False)
-    phone = forms.CharField(validators=[phone_validate], label='Số điện thoại', required=False)
+
+    phone = forms.CharField(validators=[validate_phone],
+            label='Số điện thoại', required=False)
 
     def clean(self):
         cleaned_data = super(ForgetPasswordForm, self).clean()
