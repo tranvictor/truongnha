@@ -1186,7 +1186,7 @@ def student_import( request, class_id, request_type='' ):
             lb = get_lower_bound(school)
             syear = this_year() - chosen_class.block_id.number + lb
             year, temp = StartYear.objects.get_or_create(time=syear,
-                                                           school_id=school)
+                    school_id=school)
             current_year = get_current_year(request)
             term = get_current_term(request)
             saving_import_student = request.session.pop('saving_import_student')
@@ -1241,7 +1241,7 @@ def student_import( request, class_id, request_type='' ):
         lb = get_lower_bound(school)
         syear = this_year() - chosen_class.block_id.number + lb
         year, temp = StartYear.objects.get_or_create(time=syear,
-                                                    school_id=school)
+                school_id=school)
         current_year = get_current_year(request)
         term = get_current_term(request)
         existing_student = add_many_students(student_list=result,
@@ -1805,7 +1805,7 @@ def process_file_hanh_kiem(request, file_name, class_id):
             try:
                 p = cl.pupil_set.get(first_name__exact = p_first_name, last_name__exact = p_last_name)
                 print p
-            except Exception as ex:
+            except Exception:
                 message += u'<ul>Không tồn tại học sinh ' + unicode(p_last_name + p_first_name) + u' </ul>'
                 continue
 

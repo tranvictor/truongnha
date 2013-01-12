@@ -1299,7 +1299,6 @@ def edit_ki_luat(request, kt_id):
 def dd(request, class_id, day, month, year, api_called=False, data=None):
     school = get_school(request)
     _class = Class.objects.get(id = class_id)
-    user = request.user
     if _class.year_id.school_id != school:
         return HttpResponseRedirect(reverse('school_index'))
     url = reverse('ds_nghi',args=[class_id,day,month,year])

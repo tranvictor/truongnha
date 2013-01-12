@@ -555,13 +555,14 @@ def add_many_students( student_list=None,
                     number_subject += _class.subject_set.filter(primary=0).count()
                     number_subject += _class.subject_set.filter(primary=3).count()
                     if i == 1:
-                        number_subject = _class.subject_set.filter(primary=1).count()
+                        number_subject += _class.subject_set.filter(primary=1).count()
                     if i == 2:
-                        number_subject = _class.subject_set.filter(primary=2).count()
+                        number_subject += _class.subject_set.filter(primary=2).count()
 
-                TBHocKy.objects.get_or_create(student_id=st,
-                    number_subject=number_subject,
-                    term_id=term1)
+                tbhk, created = TBHocKy.objects.get_or_create(student_id=st,
+                        term_id=term1)
+                tbhk.number_subject = number_subject
+                tbhk.save()
 
                 TKDiemDanh.objects.get_or_create(student_id=st,
                     term_id=term1)
@@ -713,14 +714,14 @@ def del_teacher( teacher):
 
 # subject_name: string, teacher : Teacher object, _class : Class object
 @transaction.commit_manually
-def add_subject( subject_name=None, subject_type='', hs=1, teacher=None, _class=None, index=0, nx=False,
-                 number_lesson=0):
+def add_subject(subject_name=None, subject_type='', hs=1,
+        teacher=None, _class=None, index=0,
+        nx=False, number_lesson=0):
     find = _class.subject_set.filter(name__exact=subject_name)
     try:
         #noinspection PyUnusedLocal
-        term = _class.year_id.term_set.get(number=_class.year_id.school_id.status)
-    except Exception as e:
-        print e
+        _class.year_id.term_set.get(number=_class.year_id.school_id.status)
+    except ObjectDoesNotExist:
         raise Exception("TermDoesNotExist")
     if find:
         raise Exception("SubjectExist")

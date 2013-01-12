@@ -947,13 +947,11 @@ class Pupil(BasicPersonInfo):
 
     def _move_to_class(self, _class):
         year = _class.year_id
-        TBNam.objects.get_or_create(student_id=self,
-            year_id=year)
+        TBNam.objects.get_or_create(student_id=self, year_id=year)
         subjects = _class.subject_set.all()
         number_subject = 0
         number_subject += _class.subject_set.filter(primary=0).count()
         number_subject += _class.subject_set.filter(primary=3).count()
-        print number_subject
 
         for t in year.term_set.all():
             if t.number == 1:
@@ -969,9 +967,6 @@ class Pupil(BasicPersonInfo):
                     term_id=t)
 
             tbhk.number_subject = num_sub_for_this_term
-
-            print created, 'created'
-            print tbhk.student_id, tbhk.term_id, tbhk.number_subject
 
             TKDiemDanh.objects.get_or_create(student_id=self, term_id=t)
         for subject in subjects:
