@@ -148,6 +148,28 @@
             {% endif %}
             </div>
     </div>
+{% elif user.userprofile.position == 'GIAM_DOC_SO' %}
+    <div id="main-menu">
+        <div class="pagination-centered">
+            <a id="report" class="cmd btn btn-info" href="{% url report %}"
+               title="Các báo cáo thống kê, tổng kết">
+                <i class="icon-bar-chart"></i>
+                <p>Báo cáo</p>
+            </a>
+
+            <a id="teachers" class="cmd btn btn-primary" href="{% url teachers %}"
+               title="Quản lý danh sách giáo viên, cán bộ trong trường">
+                <i class="icon-group"></i>
+                <p>Giáo viên</p>
+            </a>
+
+            {#<hr />#}{#<hr />#}
+            <a id="timetable" class="cmd btn btn-danger" href="{% url timetable_school %}" title="Thời khóa biểu toàn trường">
+                <i class="icon-calendar"></i>
+                <p>Lịch học</p>
+            </a>
+        </div>
+    </div>
 {% endif %}
 
 
