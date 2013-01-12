@@ -14,6 +14,7 @@ from django.http import HttpResponseNotAllowed
 from django.core.urlresolvers import reverse
 from django.utils import simplejson
 from django.contrib.auth import logout
+from recaptcha.client import captcha
 from app.models import SystemLesson, SUBJECT_CHOICES, Organization
 from school.forms import UsernameChangeForm, SchoolForm,\
         SettingForm, TKDiemDanhForm, TKBForm, SelectSchoolLessonForm3,\
@@ -1613,6 +1614,20 @@ def forget_password(request):
     if request.method == 'POST':
         form = ForgetPasswordForm(request.POST)
         if form.is_valid():
+            if not settings.IS_TESTING:
+                captchar_check = captcha.submit(
+                    request.POST['recaptcha_challenge_field'],
+                    request.POST['recaptcha_response_field'],
+                    settings.CAPTCHA_PRIVATE_KEY,
+                    request.META['REMOTE_ADDR']
+                )
+                if not captchar_check.is_valid:
+                    error = {'__all__':u'Hai từ bạn nhập không đúng'}
+                    response = simplejson.dumps({
+                        'success': False,
+                        'err': error,
+                        'message': u'Có lỗi ở dữ liệu nhập vào'})
+                    return HttpResponse(response, mimetype='json')
             form.save()
             response = simplejson.dumps({
                 'success':True,
