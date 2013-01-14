@@ -16,99 +16,124 @@ import urllib2
 from django.contrib.auth.hashers import make_password
 
 LOAI_CHOICES = ((0, u'Tính cả 2 kỳ'), (1, u'Chỉ tính kì 1'),
-                (2, u'Chỉ tính kì 2'), (3, u'Cộng vào điểm TB(NN2)'),
-                (4, u'Không tính điểm'))
+      (2, u'Chỉ tính kì 2'), (3, u'Cộng vào điểm TB(NN2)'),
+      (4, u'Không tính điểm'))
+
 SUBJECT_TYPES = ((u'Toán', u'Toán'),
-                 (u'Vật lí', u'Vật lí'), (u'Hóa học', u'Hóa học'),
-                 (u'Sinh học', u'Sinh học'), (u'Ngữ văn', u'Ngữ văn'),
-                 (u'Lịch sử', u'Lịch sử'), (u'Địa lí', u'Địa lí'),
-                 (u'Ngoại ngữ', u'Ngoại ngữ'), (u'GDCD', u'GDCD'),
-                 (u'Công nghệ', u'Công nghệ'), (u'Thể dục', u'Thể dục'),
-                 (u'Âm nhạc', u'Âm nhạc'), (u'Mĩ thuật', u'Mĩ thuật'),
-                 (u'NN2', u'NN2'), (u'Tin học', u'Tin học'),
-                 (u'GDQP-AN', u'GDQP-AN'), (u'Tự chọn', u'Tự chọn'))
+      (u'Vật lí', u'Vật lí'), (u'Hóa học', u'Hóa học'),
+      (u'Sinh học', u'Sinh học'), (u'Ngữ văn', u'Ngữ văn'),
+      (u'Lịch sử', u'Lịch sử'), (u'Địa lí', u'Địa lí'),
+      (u'Ngoại ngữ', u'Ngoại ngữ'), (u'GDCD', u'GDCD'),
+      (u'Công nghệ', u'Công nghệ'), (u'Thể dục', u'Thể dục'),
+      (u'Âm nhạc', u'Âm nhạc'), (u'Mĩ thuật', u'Mĩ thuật'),
+      (u'NN2', u'NN2'), (u'Tin học', u'Tin học'),
+      (u'GDQP-AN', u'GDQP-AN'), (u'Tự chọn', u'Tự chọn'))
+
 COMMENT_SUBJECT_LIST = [u'Âm nhạc', u'Mĩ thuật', u'Thể dục']
+
 SUBJECT_LIST = [u'Toán', u'Vật lí', u'Hóa học', u'Sinh học', u'Ngữ văn',
-                u'Lịch sử', u'Địa lí', u'Ngoại ngữ', u'GDCD', u'Công nghệ',
-                u'Thể dục', u'Âm nhạc', u'Mĩ thuật', u'NN2', u'Tin học',
-                u'GDQP-AN', u'Tự chọn']
+      u'Lịch sử', u'Địa lí', u'Ngoại ngữ', u'GDCD', u'Công nghệ',
+      u'Thể dục', u'Âm nhạc', u'Mĩ thuật', u'NN2', u'Tin học',
+      u'GDQP-AN', u'Tự chọn']
+
 SUBJECT_LIST_ASCII = [u'toan', u'vat li', u'hoa hoc', u'sinh hoc', u'ngu van',
-                      u'lich su', u'dia li', u'ngoai ngu', u'gdcd', u'cong nghe',
-                      u'the duc', u'am nhac', u'mi thuat', u'nn2', u'tin hoc',
-                      u'gdqp-an', u'tu chon']
+      u'lich su', u'dia li', u'ngoai ngu', u'gdcd', u'cong nghe',
+      u'the duc', u'am nhac', u'mi thuat', u'nn2', u'tin hoc',
+      u'gdqp-an', u'tu chon']
+
 GENDER_CHOICES = ((u'Nam', u'Nam'), (u'Nữ', u'Nữ'),)
 TERM_CHOICES = ((1, u'1'), (2, u'2'), (3, u'3'),)
+
 HK_CHOICES = ((u'', u'Chưa xét'), (u'T', u'Tốt'), (u'K', u'Khá'),
-              (u'TB', u'TB'), (u'Y', u'Yếu'),)
+      (u'TB', u'TB'), (u'Y', u'Yếu'),)
+
 HL_CHOICES = ((u'G', u'Giỏi'), (u'K', u'Khá'), (u'TB', u'Trung Bình'),
-              (u'Y', u'Yếu'), (u'Kem', u'Kém'))
+      (u'Y', u'Yếu'), (u'Kem', u'Kém'))
+
 DH_CHOICES = ((u'XS', u'Học sinh xuất sắc'), (u'G', u'Hoc sinh giỏi'),
-              (u'TT', u'Học sinh tiên tiến'), (u'K', u'Không được gì'))
+      (u'TT', u'Học sinh tiên tiến'), (u'K', u'Không được gì'))
+
 KT_CHOICES = ((u'Khen trước lớp', u'Khen trước lớp'),
-              (u'Khen trước toàn trường', u'Khen trước toàn trường'),
-              (u'Được tặng danh hiệu học sinh khá', u'Được tặng danh hiệu học sinh khá'),
-              (u'Được tặng danh hiệu học sinh giỏi', u'Được tặng danh hiệu học sinh giỏi'),
-              (u'Được ghi tên vào bảng danh dự của trường',
-               u'Được ghi tên vào bảng danh dự của trường'),
-              (u'Được tặng danh hiệu học sinh xuất sắc',
-               u'Được tặng danh hiệu học sinh xuất sắc'),
-              (u'Được khen thưởng đặc biệt', u'Được khen thưởng đặc biệt'))
+      (u'Khen trước toàn trường', u'Khen trước toàn trường'),
+      (u'Được tặng danh hiệu học sinh khá', u'Được tặng danh hiệu học sinh khá'),
+      (u'Được tặng danh hiệu học sinh giỏi', u'Được tặng danh hiệu học sinh giỏi'),
+      (u'Được ghi tên vào bảng danh dự của trường',
+         u'Được ghi tên vào bảng danh dự của trường'),
+      (u'Được tặng danh hiệu học sinh xuất sắc',
+         u'Được tặng danh hiệu học sinh xuất sắc'),
+      (u'Được khen thưởng đặc biệt', u'Được khen thưởng đặc biệt'))
+
 KL_CHOICES = ((u'Khiển trách trước lớp', u'Khiển trách trước lớp'),
-              (u'Khiển trách trước hội đồng kỷ luật', u'Khiển trách trước hội đồng kỷ luật'),
-              (u'Cảnh cáo trước toàn trường', u'Cảnh cáo trước toàn trường'),
-              (u'Đình chỉ học', u'Đình chỉ học'))
+      (u'Khiển trách trước hội đồng kỷ luật', u'Khiển trách trước hội đồng kỷ luật'),
+      (u'Cảnh cáo trước toàn trường', u'Cảnh cáo trước toàn trường'),
+      (u'Đình chỉ học', u'Đình chỉ học'))
+
 SCHOOL_LEVEL_CHOICE = ((1, u'1'), (2, u'2'), (3, u'3'))
+
 DIEM_DANH_TYPE = ((u'', u'Đi học'), (u'P', u'nghỉ học có phép'),
-                  (u'K', u'nghỉ học không phép'), (u'M', u'đi học muộn'),)
+      (u'K', u'nghỉ học không phép'), (u'M', u'đi học muộn'),)
+
 BAN_CHOICE = ((u'KHTN', u'Ban KHTN'), (u'KHXH', u'Ban KHXH-NV'),
-              (u'CBA', u'Ban Cơ bản A'), (u'CBB', u'Ban Cơ bản B'),
-              (u'CBB', u'Ban Cơ bản C'), (u'CBD', u'Ban Cơ bản D'),
-              (u'CB', u'Ban Cơ bản'))
+      (u'CBA', u'Ban Cơ bản A'), (u'CBB', u'Ban Cơ bản B'),
+      (u'CBB', u'Ban Cơ bản C'), (u'CBD', u'Ban Cơ bản D'),
+      (u'CB', u'Ban Cơ bản'))
+
 KHOI_CHOICE = ((1, u'Khối 1'), (2, u'Khối 2'), (3, u'Khối 3'),
-               (4, u'Khối 4'), (5, u'Khối 5'), (6, u'Khối 6'), (7, u'Khối 7'),
-               (8, u'Khối 8'), (9, u'Khối 9'), (10, u'Khối 10'), (11, u'Khối 11'),
-               (12, u'Khối 12'))
+      (4, u'Khối 4'), (5, u'Khối 5'), (6, u'Khối 6'), (7, u'Khối 7'),
+      (8, u'Khối 8'), (9, u'Khối 9'), (10, u'Khối 10'), (11, u'Khối 11'),
+      (12, u'Khối 12'))
+
 KV_CHOICE = ((u'1', u'KV1'), (u'2A', 'KV2'), (u'2B', 'KV2-NT'), (u'3', u'KV3'))
+
 DT_CHOICE = ((1, u'Kinh (Việt)'), (2, u'Tày'), (3, u'Nùng'), (4, u'Hmông (Mèo)'),
-             (5, u'Mường'), (6, u'Dao'), (7, u'Khmer'), (8, u'Êđê'), (9, u'CaoLan'),
-             (10, u'Thái'), (11, u'Gia rai'), (12, u'La chư'), (13, u'Hà nhì'), (14, u'Giáy'),
-             (15, u"M'nông"), (16, u'Cơ tu'), (17, u'Xê đăng'), (18, u"X'tiêng"),
-             (19, u"Ba na"), (20, "H'rê"), (21, u'Giê-Triêng'), (22, u'Chăm'),
-             (23, u'Cơ ho'), (24, u'Mạ'), (25, u'Sán Dìu'), (26, u'Thổ'),
-             (27, u'Khơ mú'), (28, u'Bru - Vân Kiều'), (29, u'Tà ôi'),
-             (30, u'Co'), (31, u'Lào'), (32, u'Xinh mun'), (33, u'Chu ru'),
-             (35, u'Phù lá'), (36, u'La hú'), (37, u'Kháng'), (38, u'Lự'),
-             (39, u'Pà Thén'), (40, u'Lô lô'), (41, u'Chứt'), (42, u'Mảng'),
-             (43, u'Cơ lao'), (44, u'Bố y'), (45, u'La ha'), (46, u'Cống'),
-             (47, u'Ngái'), (48, u'Si la'), (49, u'Pu Péo'), (50, u'Brâu'),
-             (51, u'Rơ măm'), (52, u'Ơ đu'), (53, u'Hoa'), (54, u'Raglay'),
-             (55, u'HMông'), (56, u'Pacô'), (57, u'Pahy'), (60, u'Jơ lơng'),
-             (61, u'Rơ ngao'), (62, u'Ra dong'), (63, u'Sơ rá'), (64, u'Jẻ'),
-             (65, u'Mơ nâm'), (66, u'Hơ lăng'), (67, u'Hoa (Hán)'), (68, u'Sán chay'),
-             (69, u'CaDong'), (70, u'Chơ ro'))
+      (5, u'Mường'), (6, u'Dao'), (7, u'Khmer'), (8, u'Êđê'), (9, u'CaoLan'),
+      (10, u'Thái'), (11, u'Gia rai'), (12, u'La chư'), (13, u'Hà nhì'), (14, u'Giáy'),
+      (15, u"M'nông"), (16, u'Cơ tu'), (17, u'Xê đăng'), (18, u"X'tiêng"),
+      (19, u"Ba na"), (20, "H'rê"), (21, u'Giê-Triêng'), (22, u'Chăm'),
+      (23, u'Cơ ho'), (24, u'Mạ'), (25, u'Sán Dìu'), (26, u'Thổ'),
+      (27, u'Khơ mú'), (28, u'Bru - Vân Kiều'), (29, u'Tà ôi'),
+      (30, u'Co'), (31, u'Lào'), (32, u'Xinh mun'), (33, u'Chu ru'),
+      (35, u'Phù lá'), (36, u'La hú'), (37, u'Kháng'), (38, u'Lự'),
+      (39, u'Pà Thén'), (40, u'Lô lô'), (41, u'Chứt'), (42, u'Mảng'),
+      (43, u'Cơ lao'), (44, u'Bố y'), (45, u'La ha'), (46, u'Cống'),
+      (47, u'Ngái'), (48, u'Si la'), (49, u'Pu Péo'), (50, u'Brâu'),
+      (51, u'Rơ măm'), (52, u'Ơ đu'), (53, u'Hoa'), (54, u'Raglay'),
+      (55, u'HMông'), (56, u'Pacô'), (57, u'Pahy'), (60, u'Jơ lơng'),
+      (61, u'Rơ ngao'), (62, u'Ra dong'), (63, u'Sơ rá'), (64, u'Jẻ'),
+      (65, u'Mơ nâm'), (66, u'Hơ lăng'), (67, u'Hoa (Hán)'), (68, u'Sán chay'),
+      (69, u'CaDong'), (70, u'Chơ ro'))
+
 LENLOP_CHOICES = ((True, u'Được lên lớp'), (False, u'Không được lên lớp'))
+
 SCHOOL_ACTION_STATUS = ((0, u'Trường mới'), (1, u'Đang học kỳ 1'),
-                        (2, u'Đang học kỳ 2'), (3, u'Đang nghỉ hè'))
+      (2, u'Đang học kỳ 2'), (3, u'Đang nghỉ hè'))
+
 CLASS_ACTION_STATUS = ((1, u'Đang học kỳ 1'), (2, u'Đang học kỳ 2'),
-                       (3, u'Đang nghỉ hè'))
+      (3, u'Đang nghỉ hè'))
+
 ACTIVE_CHOICES = ((True, u'Đang diễn ra'), (False, u'Đã kết thúc'))
+
 LEARNING_STATUS_CHOICES = ((u'TN', u'Tốt nghiệp'), (u'LB', u'Lưu ban'),
-                           (u'LL', u'Lên lớp'))
+      (u'LL', u'Lên lớp'))
 
 DAY_CHOICE = ((2, u'Thu 2'), (3, u'Thu 3'), (4, u'Thu 4'),
-              (5, u'Thu 5'), (6, u'Thu 6'), (7, u'Thu 7'))
+      (5, u'Thu 5'), (6, u'Thu 6'), (7, u'Thu 7'))
 
 GRADES_CHOICES2 = ((6, u'Lớp 6'), (7, u'Lớp 7'), (8, u'Lớp 8'),
-                   (9, u'Lớp 9'))
+      (9, u'Lớp 9'))
 
 GRADES_CHOICES3 = ((10, u'Lớp 10'), (11, u'Lớp 11'), (12, u'Lớp 12'))
-HANH_KIEM_LIST = ('HK1', 'HK2', 'CN', 'T9', 'T10', 'T11', 'T12', 'T1', 'T2', 'T3', 'T4', 'T5')
+
+HANH_KIEM_LIST = ('HK1', 'HK2', 'CN', 'T9', 'T10',
+      'T11', 'T12', 'T1', 'T2', 'T3', 'T4', 'T5')
+
 HANH_KIEM_FIELD = ('term1', 'term2', 'year', 'hk_thang_9', 'hk_thang_10', 'hk_thang_11',
-                   'hk_thang_12', 'hk_thang_1', 'hk_thang_2', 'hk_thang_3', 'hk_thang_4',
-                   'hk_thang_5')
+      'hk_thang_12', 'hk_thang_1', 'hk_thang_2', 'hk_thang_3', 'hk_thang_4', 'hk_thang_5')
+
 HK_FIELD_LIST = {'term1': 0, 'term2': 1, 'year': 2, 'hk_thang_9': 3, 'hk_thang_10': 4,
-                 'hk_thang_11': 5, 'hk_thang_12': 6, 'hk_thang_1': 7, 'hk_thang_2':8,
-                 'hk_thang_3': 9, 'hk_thang_4': 10 , 'hk_thang_5': 11}
+      'hk_thang_11': 5, 'hk_thang_12': 6, 'hk_thang_1': 7, 'hk_thang_2':8,
+      'hk_thang_3': 9, 'hk_thang_4': 10 , 'hk_thang_5': 11}
+
 INITIAL_CONSONANTS = (set(string.ascii_lowercase)
                       - set('aeiou')
                       - set('qxcsjfw')
@@ -118,8 +143,8 @@ INITIAL_CONSONANTS = (set(string.ascii_lowercase)
 
 FINAL_CONSONANTS = (set(string.ascii_lowercase)
                     - set('aeiouxfjw')
+                    - set('qx')
                     | set('@#$%')
-- set('qx')
                     | {'ct', 'ft', 'mp', 'nd', 'ng', 'nk', 'nt', 'pt'})
 
 VOWELS = 'aeiou' # we'll keep this simple

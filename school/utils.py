@@ -774,7 +774,6 @@ def add_subject( subject_name=None, subject_type='', hs=1, teacher=None, _class=
                 print e
         transaction.commit()
 
-
 def completely_del_subject( subject):
     if subject.type == u"Toán" or subject.type == u"Ngữ văn":
         raise Exception("Invalid request")
