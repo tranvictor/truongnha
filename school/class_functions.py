@@ -657,7 +657,7 @@ def hanh_kiem(request, class_id=0):
             return HttpResponseRedirect(reverse('index'))
     if gvcn(request, class_id) == 1:
         pos = 4
-    message = None
+    message = ''
     pupilList = c.students()
 
     form = []
@@ -696,51 +696,49 @@ def hanh_kiem(request, class_id=0):
         elif request.POST['request_type'] == u'sms':
             data = request.POST[u'data']
             data = data.strip().split(' ')
-            try:
-                for each in all:
-                    sms_message = u'Hạnh kiểm '
-                    sms_content = u''
-                    for element in data:
-                        if not int(element) in [6, 7, 8]:
-                            sms_message += u'tháng ' + unicode(element) + u', '
-                            sms_content += unicode(getattr(each, "hk_thang_"+str(element))) + u', '
-                        else:
-                            if int(element) == 6:
-                                sms_message += u'kì 1, '
-                                sms_content += unicode(each.term1) + u','
-                            elif int(element) == 7:
-                                sms_message += u'kì 2, '
-                                sms_content += unicode(each.term2) + u','
-                            elif int(element) == 7:
-                                sms_message += u'cả năm, '
-                                sms_content += unicode(each.year) + u','
-                    # send sms
-                    student = each.student_id
-                    phone_number = student.sms_phone
-                    name = ' '.join([student.last_name, student.first_name])
-                    sms_message += name + u' : ' + sms_content[:len(sms_content)-1]
-                    if phone_number:
-                        try:
-                            sent = sendSMS(phone_number, to_en1(sms_message), user)
-                        except Exception as e:
-                            if e.message == 'InvalidPhoneNumber':
-                                message = message + u'<li><b>Số ' + str(phone_number)\
-                                          + u' không tồn tại</b>'\
-                                          + u': ' + sms_message + u'</li>'
-                                continue
-                            else:
-                                message = e.message
-                                continue
-                        if sent == '1':
-                            message = message + u'<li><b>-> ' + str(
-                                phone_number) + u': ' + sms_message + u'</b></li>'
-                        else:
-                            message = message + u'<li> ' + str(phone_number) + u': ' + sms_message + u'</li>'
+            print request.POST
+            for each in all:
+                sms_message = u'Hạnh kiểm '
+                sms_content = u''
+                for element in data:
+                    if not int(element) in [6, 7, 8]:
+                        sms_message += u'tháng ' + unicode(element) + u', '
+                        sms_content += unicode(getattr(each, "hk_thang_"+str(element))) + u', '
                     else:
-                        message = message + u'<li> ' + u'<b>Không số</b>' + u': ' + sms_message + u'</li>'
-            except Exception as e:
-                print e
-                raise Exception('StrangeRequestMethod')
+                        if int(element) == 6:
+                            sms_message += u'kì 1, '
+                            sms_content += unicode(each.term1) + u','
+                        elif int(element) == 7:
+                            sms_message += u'kì 2, '
+                            sms_content += unicode(each.term2) + u','
+                        elif int(element) == 7:
+                            sms_message += u'cả năm, '
+                            sms_content += unicode(each.year) + u','
+                # send sms
+                student = each.student_id
+                phone_number = student.sms_phone
+                name = ' '.join([student.last_name, student.first_name])
+                sms_message += name + u' : ' + sms_content[:len(sms_content)-1]
+                if phone_number:
+                    try:
+                        sent = sendSMS(phone_number, to_en1(sms_message), user)
+                    except Exception as e:
+                        if e.message == 'InvalidPhoneNumber':
+                            message = message + u'<li><b>Số ' + str(phone_number)\
+                                      + u' không tồn tại</b>'\
+                                      + u': ' + sms_message + u'</li>'
+                            continue
+                        else:
+                            message = e.message
+                            continue
+                    if sent == '1':
+                        message = message + u'<li><b>-> ' + str(
+                            phone_number) + u': ' + sms_message + u'</b></li>'
+                    else:
+                        message = message + u'<li> ' + str(phone_number) + u': ' + sms_message + u'</li>'
+                else:
+                    message = message + u'<li> ' + u'<b>Không số</b>' + u': ' + sms_message + u'</li>'
+
             data = simplejson.dumps({'message': message})
             return HttpResponse(data, mimetype='json')
         else:
