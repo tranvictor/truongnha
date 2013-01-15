@@ -11,38 +11,23 @@
     {% endif %}
 {% endblock %}
 
-{% block css %}
-    <style type="text/css">
-        .report {
-            font-size: 1.1em;
-            padding: .7em .1em .7em .1em;
-            display: block;
-        }
-        .report:hover {
-            background:#f5f5f5;
-            text-decoration: none;
-        }
-
-    </style>
-{% endblock %}
-
 {% block content %}
     <div class="row-fluid">
         <div class="span3">
             <h2>Xuất ra Excel</h2>
 
-            <a class="report" href="{% url print_mark_book %}"> Sổ gọi tên và ghi điểm </a>
+            <a class="link-list" href="{% url print_mark_book %}"> Sổ gọi tên và ghi điểm </a>
 
-            <a class="report" href="{% url print_mark_for_class %}"> Phiếu báo điểm</a>
+            <a class="link-list" href="{% url print_mark_for_class %}"> Phiếu báo điểm</a>
 
-            <a class="report" href="{% url excel_class_list %}"> Danh sách học sinh theo lớp </a>
+            <a class="link-list" href="{% url excel_class_list %}"> Danh sách học sinh theo lớp </a>
 
-            <a class="report" title="Xuất danh sách giáo viên ra file Excel"
+            <a class="link-list" title="Xuất danh sách giáo viên ra file Excel"
                href="{% url teacher_generate 'all' %}"  >             
 			   <i class="icon-download-alt"> </i> 
                 Danh sách giáo viên
             </a>
-            <a class="report" title="Xuất danh sách giáo viên chủ nhiệm ra file Excel."
+            <a class="link-list" title="Xuất danh sách giáo viên chủ nhiệm ra file Excel."
                href="{%url export_gvcn_list %}" >
                 <i class="icon-download-alt"> </i>
                 Danh sách giáo viên chủ nhiệm </a>
@@ -52,14 +37,14 @@
         <div class="span3">
             <h2>Học tập</h2>
 
-            <a class="report" href="{% url count1 %}"> Học lực, hạnh kiểm, danh hiệu</a>
-            <a class="report" href="{% url count2 1 1 %}"> Thống kê điểm trung bình</a>
-            <a class="report" href="{% url count2 2 1 %}"> Thống kê điểm cuối kì</a>
-            <a class="report" href="{% url count_mark %}"> Thông kê số đầu điểm đã nhập</a>
-            <a class="report" href="{% url print_danh_hieu %}"> Danh hiệu ({{number_all_title}}) </a>
-            <a class="report" href="{% url print_no_pass 1 %}"> Không lên lớp ({{number_no_pass}}) </a>
-            <a class="report" href="{% url print_no_pass 2 %}"> Thi lại ({{number_exam_again}})    </a>
-            <a class="report" href="{% url print_no_pass 3 %}"> Rèn luyện thêm ({{number_practising_again}}) </a>
+            <a class="link-list" href="{% url count1 %}"> Học lực, hạnh kiểm, danh hiệu</a>
+            <a class="link-list" href="{% url count2 1 1 %}"> Thống kê điểm trung bình</a>
+            <a class="link-list" href="{% url count2 2 1 %}"> Thống kê điểm cuối kì</a>
+            <a class="link-list" href="{% url count_mark %}"> Thông kê số đầu điểm đã nhập</a>
+            <a class="link-list" href="{% url print_danh_hieu %}"> Danh hiệu ({{number_all_title}}) </a>
+            <a class="link-list" href="{% url print_no_pass 1 %}"> Không lên lớp ({{number_no_pass}}) </a>
+            <a class="link-list" href="{% url print_no_pass 2 %}"> Thi lại ({{number_exam_again}})    </a>
+            <a class="link-list" href="{% url print_no_pass 3 %}"> Rèn luyện thêm ({{number_practising_again}}) </a>
         </div>
 		{% if user.userprofile.isSchool %}
             <div class="span3">
@@ -69,7 +54,7 @@
             </div>
 			<div class="span3">
 				<h2>Lịch sử điểm</h2>
-				<a class="report" href="{% url history_mark %}"> Lịch sử sửa điểm </a>
+				<a class="link-list" href="{% url history_mark %}"> Lịch sử sửa điểm </a>
 			</div>
 		{% endif %}	
     </div>

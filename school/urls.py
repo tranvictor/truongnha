@@ -170,6 +170,8 @@ urlpatterns = patterns('',
             name= "activate_teacher"),
     url(r'activate/student/$', school_functions.activate_student,
         name= "activate_student"),
+    url(r'forgetpassword/$', views.forget_password,
+        name="forget_password"),
     #url(r'classify/$',  views.classify, name = "classify"),
     #url(r'^school/test$', views.test), 
     

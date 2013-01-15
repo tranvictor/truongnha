@@ -135,20 +135,20 @@
     </div>
 
     <div class="span9" id="teacher-list-div">
-    <div class="btn-toolbar">
-        <div class="btn-group">
-            <button id="activateAccount" class="btn"
-                title="Mở cho tài khoản giáo viên được sử dụng. Các giáo viên không sử dụng cần khóa lại để đảm bảo an toàn thông tin hơn.">
-                <i class="icon-key"></i>
-                Mở và gửi tài khoản
-            </button>
-            <button id="deactivateAccount" class="btn">
-                <i class="icon-lock"></i>
-                Khóa tài khoản
-            </button>
-        </div>
+    {% if pos > 3 %}
+        <div class="btn-toolbar">
+            <div class="btn-group">
+                <button id="activateAccount" class="btn"
+                    title="Mở cho tài khoản giáo viên được sử dụng. Các giáo viên không sử dụng cần khóa lại để đảm bảo an toàn thông tin hơn.">
+                    <i class="icon-key"></i>
+                    Mở và gửi tài khoản
+                </button>
+                <button id="deactivateAccount" class="btn">
+                    <i class="icon-lock"></i>
+                    Khóa tài khoản
+                </button>
+            </div>
 
-        {% if pos > 3 %}
             <div class="btn-group pull-right">
                 {% if pos >= 3 %}
                 <div class="btn-group">
@@ -205,8 +205,9 @@
                     </ul>
                 </div>
             </div>
-        {% endif %}
-    </div>
+        </div>
+    {% endif %}
+
     <div id="teacher-pills" class="row-fluid">
         <div class="span12" id="teacher-table-div">
             <div id="after-post-alert"></div>
@@ -230,12 +231,10 @@
 
                 <thead>
                 <tr>
-                    {% if pos >= 3 %}
-                        {% if pos > 3 %}
-                            <th class="align-left" title="Tài khoản">
-                                <i class="icon-user"></i>
-                            </th>
-                        {% endif %}
+                    {% if pos > 3 %}
+                        <th class="align-left" title="Tài khoản">
+                            <i class="icon-user"></i>
+                        </th>
                         <th class="" style="text-align: center;">
                             <input type="checkbox" id="checkbox_all"/>
                         </th>
@@ -268,7 +267,7 @@
                             </td>
                         {% endif %}
 
-                        {% if pos >= 3 %}
+                        {% if pos > 3 %}
                             <td style="text-align: center;">
                                 <input type="checkbox" id="checkbox_{{ teacher.id }}"
                                        class="teacherCheckbox"/>

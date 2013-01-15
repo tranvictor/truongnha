@@ -19,7 +19,7 @@ from school.utils import get_position, gvcn, inClass, in_school,\
         to_date, add_student, move_student, get_lower_bound, get_upper_bound
 from school.models import Class, Pupil, StartYear, validate_phone, Term,\
         Teacher, Subject, DiemDanh, KhenThuong, KiLuat, UncategorizedClass,\
-        this_year, Block, Year
+        this_year, Block, Year, HK_FIELD_LIST
 from school.forms import PupilForm, SubjectForm, TBNam, TBNamForm,\
         DiemDanhForm, DateAndClassForm, KhenThuongForm, KiLuatForm, DDForm
 from datetime import date, timedelta
@@ -693,54 +693,6 @@ def hanh_kiem(request, class_id=0):
                     hk.year = y[i]
                 hk.save()
                 i += 1
-        elif request.POST['request_type'] == u'sms':
-            data = request.POST[u'data']
-            data = data.strip().split(' ')
-            print request.POST
-            for each in all:
-                sms_message = u'Hạnh kiểm '
-                sms_content = u''
-                for element in data:
-                    if not int(element) in [6, 7, 8]:
-                        sms_message += u'tháng ' + unicode(element) + u', '
-                        sms_content += unicode(getattr(each, "hk_thang_"+str(element))) + u', '
-                    else:
-                        if int(element) == 6:
-                            sms_message += u'kì 1, '
-                            sms_content += unicode(each.term1) + u','
-                        elif int(element) == 7:
-                            sms_message += u'kì 2, '
-                            sms_content += unicode(each.term2) + u','
-                        elif int(element) == 7:
-                            sms_message += u'cả năm, '
-                            sms_content += unicode(each.year) + u','
-                # send sms
-                student = each.student_id
-                phone_number = student.sms_phone
-                name = ' '.join([student.last_name, student.first_name])
-                sms_message += name + u' : ' + sms_content[:len(sms_content)-1]
-                if phone_number:
-                    try:
-                        sent = sendSMS(phone_number, to_en1(sms_message), user)
-                    except Exception as e:
-                        if e.message == 'InvalidPhoneNumber':
-                            message = message + u'<li><b>Số ' + str(phone_number)\
-                                      + u' không tồn tại</b>'\
-                                      + u': ' + sms_message + u'</li>'
-                            continue
-                        else:
-                            message = e.message
-                            continue
-                    if sent == '1':
-                        message = message + u'<li><b>-> ' + str(
-                            phone_number) + u': ' + sms_message + u'</b></li>'
-                    else:
-                        message = message + u'<li> ' + str(phone_number) + u': ' + sms_message + u'</li>'
-                else:
-                    message = message + u'<li> ' + u'<b>Không số</b>' + u': ' + sms_message + u'</li>'
-
-            data = simplejson.dumps({'message': message})
-            return HttpResponse(data, mimetype='json')
         else:
             try:
                 p_id = request.POST['id']
@@ -761,7 +713,14 @@ def hanh_kiem(request, class_id=0):
                         data = simplejson.dumps({'message': 'Bad request.',
                                                  'success': False})
                         return HttpResponse(data, mimetype='json')
-
+                index = HK_FIELD_LIST[request.POST['request_type']]
+                temp = list(hk.hk_sent)
+                if val != '':
+                    temp[index] = 'F'
+                else:
+                    temp[index] = 'T'
+                temp = "".join(temp)
+                hk.hk_sent = temp
                 setattr(hk, request.POST['request_type'], val)
                 hk.save()
                 data = simplejson.dumps({'message': 'Cập nhật thành công hạnh kiểm.',

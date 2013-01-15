@@ -2,18 +2,21 @@
 {% block breadcrumb %}
     {{ block.super }}
     {% load breadcrumb_tags %}
-    {% add_crumb 'Xem thông tin của từng trường' %}
+    {% add_crumb 'Xem thông tin của trường' %}
 {% endblock %}
 
 {% block content %}
-    <h2> Các trường trực thuộc </h2>
-    {% for a in list %}
-		{% if a.status == 0 %}
-{#			<p>{{ a.name }} ( chưa khởi tạo ) </p>#}
-		{% else %}			
-			<p><a href="{% url view_school a.id %}">
-				{{ a.name }}
-			</a></p>
-		{% endif %}	
-    {% endfor %}
+    <ul>
+        {% for a in list %}
+            {% if a.status == 0 %}
+                {#			<p>{{ a.name }} ( chưa khởi tạo ) </p>#}
+            {% else %}
+                <li class="link-list">
+                    <a href="{% url view_school a.id %}">
+                        {{ a.name }}
+                    </a>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
 {% endblock %}

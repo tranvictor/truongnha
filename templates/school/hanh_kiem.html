@@ -44,29 +44,6 @@
     {% if pos > 3 %}
         <script type="text/javascript">
         $(document).ready(function () {
-            var done = function (json) {
-                if (json.message != null && json.message != '')
-                    $("#smsNotification").html("<ul>" + json.message + "</ul>");
-                else
-                    $("#smsNotification").html('');
-                $("#smsNotification").dialog("open");
-            };
-
-            $("#smsNotification").dialog({
-                modal:true,
-                buttons:{
-                    Đóng:function () {
-                        $(this).dialog('close');
-                    }
-                },
-                autoOpen:false,
-                width:500,
-                height:450,
-                maxWidth:500,
-                maxHeight:450,
-                title:"Tin nhắn đã gửi"
-            });
-
             $("#upload_modal").on('hidden', function () {
                 location.reload('true');
             });
@@ -86,31 +63,6 @@
                     $(location).attr('href', url);
                 }
             });
-
-            var sendSelected = function () {
-                var data = '';
-                $("input[type=checkbox]").each(function () {
-                    if ($(this).is(':checked')) {
-                        var id = $(this).attr('id').split('_')[1];
-                        data = data + id + ' ';
-                        $(this).prop("checked", false);
-                    }
-                });
-                if (data == '') {
-                    alert("Hãy chọn ít nhất một cột");
-                    return false;
-                }
-                var arg = { type:"POST",
-                    url:"",
-                    data:{data:data, request_type:'sms'},
-                    datatype:"json",
-                    success:done
-                };
-                $.ajax(arg);
-                return false;
-            };
-
-            $("#sendSelected").click(sendSelected);
 
             $(".submitbutton").attr("disabled", true);
 
@@ -163,16 +115,6 @@
 
                 });
             });
-
-            $("input[type=checkbox]").change(function () {
-                var selected = '.' + $(this).parent().attr("class").split(' ')[0];
-                if ($(this).is(':checked')) {
-                    $(selected).addClass('selected');
-                }
-                else {
-                    $(selected).removeClass('selected');
-                }
-            });
         });
         </script>
     {% else %}
@@ -208,10 +150,6 @@
     <div id="submenu" class="btn-toolbar">
         <div class="btn-group">
             {% if user.userprofile.organization.level == 'T' and pos > 3 %}
-                <button id="sendSelected" class="btn btn-warning" title="Gửi SMS cho những tháng đã chọn">
-                    <i class="icon-envelope-alt"></i> Gửi tin nhắn
-                </button>
-
             <a class="btn"
                title="Nhập chương trình học từ file Excel"
                href="#upload_modal"
@@ -243,43 +181,11 @@
         {% endif %}
 
         <table class="table table-bordered table-hover grid-edit fifth-row">
-            {% if pos == 4 %}
                 <thead>
                 <tr>
-                    <th rowspan="2">TT</th>
-                    <th rowspan="2" colspan="2" class="align-left">Họ tên</th>
-                    <th rowspan="2">Ngày sinh</th>
-                    <th class="hk1"><input title="Chọn nhắn tin hạnh kiểm kì 1" type="checkbox" id="checkbox_6"/></th>
-                    {% if term.number == 1 %}
-                        <th></th>
-                        <th></th>
-                    {% else %}
-                        <th class="hk2"><input title="Chọn nhắn tin hạnh kiểm kì 2" type="checkbox" id="checkbox_7"/>
-                        </th>
-                        <th class="cn"><input title="Chọn nhắn tin hạnh kiểm cả năm" type="checkbox" id="checkbox_8"/>
-                        </th>
-                    {% endif %}
-
-                    <th class="col1"><input title="Chọn nhắn tin hạnh kiểm tháng 9" type="checkbox" id="checkbox_9"/>
-                    </th>
-                    <th class="col2"><input title="Chọn nhắn tin hạnh kiểm tháng 10" type="checkbox" id="checkbox_10"/>
-                    </th>
-                    <th class="col3"><input title="Chọn nhắn tin hạnh kiểm tháng 11" type="checkbox" id="checkbox_11"/>
-                    </th>
-                    <th class="col4"><input title="Chọn nhắn tin hạnh kiểm tháng 12" type="checkbox" id="checkbox_12"/>
-                    </th>
-                    <th class="col5"><input title="Chọn nhắn tin hạnh kiểm tháng 1" type="checkbox" id="checkbox_1"/>
-                    </th>
-                    <th class="col6"><input title="Chọn nhắn tin hạnh kiểm tháng 2" type="checkbox" id="checkbox_2"/>
-                    </th>
-                    <th class="col7"><input title="Chọn nhắn tin hạnh kiểm tháng 3" type="checkbox" id="checkbox_3"/>
-                    </th>
-                    <th class="col8"><input title="Chọn nhắn tin hạnh kiểm tháng 4" type="checkbox" id="checkbox_4"/>
-                    </th>
-                    <th class="col9"><input title="Chọn nhắn tin hạnh kiểm tháng 5" type="checkbox" id="checkbox_5"/>
-                    </th>
-                </tr>
-                <tr>
+                    <th>TT</th>
+                    <th colspan="2" class="align-left">Họ tên</th>
+                    <th>Ngày sinh</th>
                     <th class="hk1">Kì 1</th>
                     <th class="hk2">Kì 2</th>
                     <th class="cn">Cả năm</th>
@@ -295,30 +201,6 @@
                     <th class="col9" title="Tháng">Th.5</th>
                 </tr>
                 </thead>
-            {% else %}
-                <thead>
-                <tr>
-                    <th>TT</th>
-                    <th class="align-left" colspan="2">Họ tên</th>
-                    <th>Ngày sinh</th>
-
-                    <th>Kì 1</th>
-                    <th>Kì 2</th>
-                    <th>Cả năm</th>
-
-                    <th title="Tháng">9</th>
-                    <th title="Tháng">10</th>
-                    <th title="Tháng">11</th>
-                    <th title="Tháng">12</th>
-                    <th title="Tháng">1</th>
-                    <th title="Tháng">2</th>
-                    <th title="Tháng">3</th>
-                    <th title="Tháng">4</th>
-                    <th title="Tháng">5</th>
-                </tr>
-
-                </thead>
-            {% endif %}
 
             <tbody>
             {% for p,f, v in list %}

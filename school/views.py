@@ -14,10 +14,11 @@ from django.http import HttpResponseNotAllowed
 from django.core.urlresolvers import reverse
 from django.utils import simplejson
 from django.contrib.auth import logout
-from app.models import SystemLesson, SUBJECT_CHOICES
+from recaptcha.client import captcha
+from app.models import SystemLesson, SUBJECT_CHOICES, Organization
 from school.forms import UsernameChangeForm, SchoolForm,\
         SettingForm, TKDiemDanhForm, TKBForm, SelectSchoolLessonForm3,\
-        SelectSchoolLessonForm2, LessonForm
+        SelectSchoolLessonForm2, LessonForm, ForgetPasswordForm
 from school.models import UncategorizedClass, Term, Subject, Pupil,\
         Class, DiemDanh, StartYear, Year, Lesson, TKDiemDanh, TKB,\
         SchoolLesson, Block, Teacher, Attend, COMMENT_SUBJECT_LIST
@@ -262,7 +263,8 @@ def info(request):
     else:
         data = {'name': school.name,
                 'address': school.address, 'phone': school.phone,
-                'email': school.email, 'school_level': school.school_level}
+                'email': school.email, 'school_level': school.school_level,
+                'allow_recover_password': school.allow_recover_password}
         form = SchoolForm(data, request=request)
         lock_time = school.get_setting('lock_time')
         labels = school.get_setting('class_labels')
@@ -1604,3 +1606,44 @@ def use_system_agenda_for_school(request, subject, grade, term):
     c = RequestContext(request,{'list': lessons, 'sub' : subject, 'grade' : grade, 'term' : term, 'subject': SUBJECT_CHOICES[int(subject) - 1][1]})
     t = loader.get_template(os.path.join('school', 'use_system_agenda_for_school.html'))
     return HttpResponse(t.render(c))
+
+def forget_password(request):
+    if not request.user.is_anonymous():
+        return HttpResponseRedirect(reverse('school_index'))
+    form = ForgetPasswordForm()
+    if request.method == 'POST':
+        form = ForgetPasswordForm(request.POST)
+        if form.is_valid():
+            if not settings.IS_TESTING:
+                captchar_check = captcha.submit(
+                    request.POST['recaptcha_challenge_field'],
+                    request.POST['recaptcha_response_field'],
+                    settings.CAPTCHA_PRIVATE_KEY,
+                    request.META['REMOTE_ADDR']
+                )
+                if not captchar_check.is_valid:
+                    error = {'__all__':u'Hai từ bạn nhập không đúng'}
+                    response = simplejson.dumps({
+                        'success': False,
+                        'err': error,
+                        'message': u'Có lỗi ở dữ liệu nhập vào'})
+                    return HttpResponse(response, mimetype='json')
+            form.save()
+            response = simplejson.dumps({
+                'success':True,
+                'message':u'Thông tin tài khoản đang được gửi vào email hoặc điện thoại của bạn.'
+                          u' Xin vui lòng chờ trong ít phút'
+            })
+            return HttpResponse(response, mimetype='json')
+        else:
+            error = {}
+            for k, v in form.errors.items():
+                error[k] = form.error_class.as_text(v)
+            response = simplejson.dumps({
+                'success': False,
+                'err': error,
+                'message': u'Có lỗi ở dữ liệu nhập vào'})
+            return HttpResponse(response, mimetype='json')
+    return render_to_response(os.path.join('school','forget_password.html'),
+        {'form':form},
+        context_instance=RequestContext(request))

@@ -668,6 +668,16 @@ div.dataform {
     color: rgb(185, 74, 72);
 }
 
+.link-list {
+    font-size: 1.1em;
+    padding: .7em .1em .7em .1em;
+    display: block;
+}
+.link-list:hover {
+    background:#f5f5f5;
+    text-decoration: none;
+}
+
 
 .ui-autocomplete-input {
     display: inline-block;

@@ -115,6 +115,7 @@ class Organization(models.Model):
     email = models.EmailField(max_length=50, blank=True, null=True)
     district = models.CharField(u'Huyện',max_length = 100,blank=True,null=True,
             default='')
+    allow_recover_password = models.BooleanField(default=False,blank=True)
 
     class Meta:
         verbose_name_plural = "Tổ chức"
