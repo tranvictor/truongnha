@@ -1184,10 +1184,10 @@ def student_import( request, class_id, request_type='' ):
         if request_type == u'update':
             chosen_class = Class.objects.get(id=int(class_id))
             lb = get_lower_bound(school)
-            syear = this_year() - chosen_class.block_id.number + lb
+            current_year = get_current_year(request)
+            syear = current_year.time - chosen_class.block_id.number + lb
             year, temp = StartYear.objects.get_or_create(time=syear,
                     school_id=school)
-            current_year = get_current_year(request)
             term = get_current_term(request)
             saving_import_student = request.session.pop('saving_import_student')
             number_of_change = add_many_students(student_list=saving_import_student,
@@ -1239,10 +1239,10 @@ def student_import( request, class_id, request_type='' ):
         chosen_class = Class.objects.get(id=int(class_id))
         #year = school.startyear_set.latest('time')
         lb = get_lower_bound(school)
-        syear = this_year() - chosen_class.block_id.number + lb
+        current_year = get_current_year(request)
+        syear = current_year.time - chosen_class.block_id.number + lb
         year, temp = StartYear.objects.get_or_create(time=syear,
                 school_id=school)
-        current_year = get_current_year(request)
         term = get_current_term(request)
         existing_student = add_many_students(student_list=result,
                                              _class=chosen_class,

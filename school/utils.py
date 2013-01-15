@@ -430,16 +430,16 @@ def add_many_students( student_list=None,
 
         birthday = student['birthday']
         ban = student['ban_dk']
-        find = start_year.pupil_set.filter(first_name__exact=first_name)\
-        .filter(last_name__exact=last_name)\
-        .filter(birthday__exact=birthday)
+        find = start_year.pupil_set.filter(first_name__exact=first_name,
+                last_name__exact=last_name, birthday__exact=birthday)
+
         cr_bl_found = False
         bl = _class.block_id
         unc_set = bl.uncategorizedclass_set.filter(year_id=year)
         for unc in unc_set:
             unc_st = unc.pupil_set.filter(first_name__exact=first_name)\
-            .filter(last_name__exact=last_name)\
-            .filter(birthday__exact=birthday)
+                    .filter(last_name__exact=last_name)\
+                    .filter(birthday__exact=birthday)
             if unc_st:
                 st = unc_st[0]
                 unc_st_found = True
@@ -451,8 +451,8 @@ def add_many_students( student_list=None,
                 unc_set = bl.uncategorizedclass_set.filter(year_id=year)
                 for unc in unc_set:
                     unc_st = unc.pupil_set.filter(first_name__exact=first_name)\
-                    .filter(last_name__exact=last_name)\
-                    .filter(birthday__exact=birthday)
+                            .filter(last_name__exact=last_name)\
+                            .filter(birthday__exact=birthday)
                     if unc_st:
                         st = unc_st[0]
                         unc_st_found = True
@@ -471,14 +471,14 @@ def add_many_students( student_list=None,
                 continue
         else:    # the student does not exist
             st = Pupil(first_name=first_name,
-                last_name=last_name,
-                birthday=birthday,
-                ban_dk=ban,
-                school_join_date=school_join_date,
-                start_year_id=start_year,
-                class_id=_class,
-                index=index,
-                school_id=school)
+                    last_name=last_name,
+                    birthday=birthday,
+                    ban_dk=ban,
+                    school_join_date=school_join_date,
+                    start_year_id=start_year,
+                    class_id=_class,
+                    index=index,
+                    school_id=school)
         changed = False
         if 'sex' in student:
             if st.sex != student['sex']:
