@@ -1509,7 +1509,7 @@ def generate_school_mark_count_report(request,
     classes_id = [cl.id for cl in classes]
     subjects = Subject.objects.filter(
             class_id__in=classes_id).order_by('class_id', 'index')
-    marks = Mark.objects.filter(term_id__in=term_id)
+    marks = Mark.objects.filter(term_id__in=term_id, current=True)
     count_mark = {}
     subject_name = []
     subject_name_cl = {}
@@ -1528,7 +1528,7 @@ def generate_school_mark_count_report(request,
         mark_m = mark.diem.split('|')[0].split('*')
         mark_15 = mark.diem.split('|')[1].split('*')
         mark_45 = mark.diem.split('|')[2].split('*')
-        if mark.ck:
+        if mark.ck != '':
             count_mark[mark.subject_id_id]['ck'] += 1
         for m in mark_m:
             if m != '':
