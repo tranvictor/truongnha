@@ -1496,6 +1496,7 @@ def generate_school_mark_count_report(request,
         term = get_current_term(request)
         term_id = [term.id]
         term_num = term.number
+        print term, term.id
     elif term_num == '3':
         terms = year.term_set.all()
         term_id = [term.id for term in terms]
@@ -1525,10 +1526,12 @@ def generate_school_mark_count_report(request,
         count_mark[s.id] = {'m':0,'15':0,'45':0,'ck':0}
         subject_name_cl[s.class_id_id][s.name] = s.id
     for mark in marks:
+        print mark.term_id_id
         mark_m = mark.diem.split('|')[0].split('*')
         mark_15 = mark.diem.split('|')[1].split('*')
         mark_45 = mark.diem.split('|')[2].split('*')
-        if mark.ck != '':
+        if mark.ck or mark.ck == 0:
+            print mark.ck
             count_mark[mark.subject_id_id]['ck'] += 1
         for m in mark_m:
             if m != '':
