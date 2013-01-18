@@ -13,6 +13,15 @@
             $(".startYear").hide();
             $(".confirmation").hide();
 
+            $("form input").keypress(function (e) {
+                if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+                    $(this).closest('div').find('.default').click();
+                    return false;
+                } else {
+                    return true;
+                }
+            });
+
             var update_school_detail_done = function(json) {
                 if (json.status == 'done') {
                     $("#headTitle").text($("#id_name").val());
@@ -160,12 +169,11 @@
                     <table class="table table-condensed no-border">
                         {{ form.as_table }}
                     </table>
-                    <input class="btn btn-primary" type="submit" name="submit" id="update_school_detail" value="Tiếp tục"/>
+                    <input class="btn btn-primary default" type="submit" name="submit" id="update_school_detail" value="Tiếp tục"/>
                 </div>
 
                 <div class="rightInfoDiv">
                     <h4>Khai báo lớp học</h4>
-                    <div class="rightInfoDivMain">
                         <p>Nếu tên các lớp trong khối khác nhau, liệt kê các tên lớp cách nhau bằng dấu phảy.</p>
 
                         <p>Ví dụ: <strong>10 A, 10 B, 10 C, 11 A, v.v.</strong></p>
@@ -180,10 +188,9 @@
                                id="labels"
                                style="width: 400px; padding: 3px;"
                                value="{{labels}}"/>
-                    </div>
                     <br>
                     <input class="btn" type="submit" id="begin_setup" value="Quay lại" title="Quay lại màn hình trước.">
-                    <input class="btn btn-primary" type="submit" name="submit" id="update_class_name" value="Tiếp tục"/>
+                    <input class="btn btn-primary default" type="submit" name="submit" id="update_class_name" value="Tiếp tục"/>
                 </div>
                 <div class="confirmation">
                     <h4>Tạo lớp học</h4>
@@ -193,14 +200,14 @@
                     <br>
                     <input class="btn" type="submit" id="confirmation_cancel" value="Quay lại"
                            title="Quay lại màn hình trước.">
-                    <input class="btn btn-primary" type="submit" id="confirmation_ok" value="Tiếp tục"
+                    <input class="btn btn-primary default" type="submit" id="confirmation_ok" value="Tiếp tục"
                            title="Tiếp tục tạo các lớp trên.">
                 </div>
                 <div class="startYear">
                     <h4>Hoàn tất</h4>
                     <p>Hoàn thành quá trình khai báo và bắt đầu năm học.</p>
                     <br>
-                    <input class="btn btn-success" type="submit" name="start_year" id="start_year" value="Bắt đầu năm học"/>
+                    <input class="btn btn-success default" type="submit" name="start_year" id="start_year" value="Bắt đầu năm học"/>
                 </div>
             </div>
         </form>
