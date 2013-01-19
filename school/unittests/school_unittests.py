@@ -1160,8 +1160,26 @@ class AddClassTest(SchoolSetupTest):
         self.assertEqual(response.status_code, 302)
         num_of_class_1 = self.school.get_current_year().class_set.count()
         self.assertEqual(num_of_class + 1, num_of_class_1)
-        new_class = self.school.get_current_year().class_set.get(name = class_name)
+        new_class = self.school.get_current_year().class_set.get(name=class_name)
         self.assertEqual(new_class.block_id,block)
+
+    def phase9_add_dupplicated_class_with_extra_spaces(self):
+        block = self.school.block_set.get(number=self.middle_block_number)
+        class_name = str(block.number) + '   Test 1'
+        num_of_class = self.school.get_current_year().class_set.count()
+        response = self.client.post(
+            reverse('add_class'),
+            {
+                'name':class_name,
+                'phan_ban' : u'CB',
+                'teacher_id': u'',
+                }
+        )
+        self.assertEqual(response.status_code, 200)
+        num_of_class_1 = self.school.get_current_year().class_set.count()
+        self.assertEqual(num_of_class, num_of_class_1)
+
+        return True
 
     def phase9_prepare_data(self):
         block = self.school.block_set.get(number=self.middle_block_number)

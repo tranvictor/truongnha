@@ -115,7 +115,6 @@ def student_moves_history(request, term_id=None):
 
     attends = Attend.objects.filter(~Q(leave_time=None),
             attend_time__gte=first_term.start_date,
-            attend_time__lte=first_term.finish_date,
             leave_time__lte=term.finish_date,
             leave_time__gte=term.start_date,
             is_member=False,

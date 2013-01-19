@@ -13,7 +13,7 @@
 
 {% block content %}
     <div class="row-fluid">
-        <div class="span3">
+        <div class="span4">
             <h2>Xuất ra Excel</h2>
 
             <a class="link-list" href="{% url print_mark_book %}"> Sổ gọi tên và ghi điểm </a>
@@ -34,7 +34,7 @@
 
         </div>
 
-        <div class="span3">
+        <div class="span4">
             <h2>Học tập</h2>
 
             <a class="link-list" href="{% url count1 %}"> Học lực, hạnh kiểm, danh hiệu</a>
@@ -47,15 +47,12 @@
             <a class="link-list" href="{% url print_no_pass 3 %}"> Rèn luyện thêm ({{number_practising_again}}) </a>
         </div>
 		{% if user.userprofile.isSchool %}
-            <div class="span3">
-                <h2>Quản lí</h2>
+            <div class="span4">
+                <h2>Lịch sử</h2>
                 <a class="link-list" href="{% url count_sms %}"> Lịch sử nhắn tin </a>
                 <a class="link-list" href="{% url student_moves_history '' %}"> Lịch sử chuyển lớp </a>
-            </div>
-			<div class="span3">
-				<h2>Lịch sử điểm</h2>
-				<a class="link-list" href="{% url history_mark %}"> Lịch sử sửa điểm </a>
-			</div>
+                <a class="link-list" href="{% url history_mark %}"> Lịch sử sửa điểm </a>
+        </div>
 		{% endif %}	
     </div>
 {% endblock %}

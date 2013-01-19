@@ -340,12 +340,26 @@ class ClassForm(forms.ModelForm):
         
     def __init__(self, school_id, *args, **kwargs):
         super(ClassForm, self).__init__(*args, **kwargs)
-        self.fields['teacher_id'] = forms.ModelChoiceField(required = False, queryset=Teacher.objects.filter(school_id = school_id))
-        self.fields['block_id'] = forms.ModelChoiceField(queryset=Block.objects.filter(school_id = school_id))
+
+        self.fields['teacher_id'] = forms.ModelChoiceField(required=False,
+                queryset=Teacher.objects.filter(school_id=school_id))
+
+        self.fields['block_id'] = forms.ModelChoiceField(
+                queryset=Block.objects.filter(school_id=school_id))
+
 class TBNamForm(forms.ModelForm):
     class Meta:
         model = TBNam
-        exclude = {'number_subject', 'number_finish', 'tong_so_ngay_nghi', 'danh_hieu_nam', 'len_lop', 'thi_lai', 'tb_thi_lai', 'hl_thi_lai'}
+
+        exclude = {'number_subject',
+                'number_finish',
+                'tong_so_ngay_nghi',
+                'danh_hieu_nam',
+                'len_lop',
+                'thi_lai',
+                'tb_thi_lai',
+                'hl_thi_lai'}
+
         widgets = {
             'hk_thang_9' : forms.TextInput(attrs={'size':'1', 'class':'hk'}),
             'hk_thang_10' : forms.TextInput(attrs={'size':'1', 'class':'hk'}),
@@ -360,10 +374,18 @@ class TBNamForm(forms.ModelForm):
             'term2' : forms.TextInput(attrs={'size':'1', 'class':'hk'}),
             'year' : forms.TextInput(attrs={'size':'1', 'class':'hk'})
         }
-    def get_list_month(self):
-        return [self['hk_thang_9'], self['hk_thang_10'], self['hk_thang_11'], self['hk_thang_12'], self['hk_thang_1'],self['hk_thang_2'], self['hk_thang_3'], self['hk_thang_4'], self['hk_thang_5']]
-        
 
+    def get_list_month(self):
+        return [self['hk_thang_9'],
+                self['hk_thang_10'],
+                self['hk_thang_11'],
+                self['hk_thang_12'],
+                self['hk_thang_1'],
+                self['hk_thang_2'],
+                self['hk_thang_3'],
+                self['hk_thang_4'],
+                self['hk_thang_5']]
+        
 class SubjectForm(forms.ModelForm):
     class Meta:
         model = Subject
