@@ -288,4 +288,17 @@ $(document).ready(function() {
             }
         });
     });
+
+    $("#advanced").click(function(){
+        $(".auto_hide").each(function(){
+            $(this).show();
+        });
+        $(this).hide();
+    });
+    $("#hide_advanced").click(function(){
+        $(".auto_hide").each(function(){
+            $(this).hide();
+        });
+        $("#advanced").show();
+    });
 });
