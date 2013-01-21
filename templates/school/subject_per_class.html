@@ -15,6 +15,9 @@
             input[class^="id_teacher_id"] {
                 width: 15em;
             }
+            .auto_hide{
+                display: none;
+            }
         </style>
     {% endblock %}
 
@@ -83,6 +86,9 @@
                 Hướng dẫn</a>
 {#            <input id="save" class="btn submitbutton pull-right" type="submit" value="Lưu"/>#}
         {% endif %}
+        <input class="btn" title="Hiện thông tin nâng cao" type="button" id="advanced" value="Nâng cao"/>
+        <input class="btn auto_hide" title="Ẩn thông tin nâng cao" type="button" id="hide_advanced" value="Đơn giản"/>
+
     </div>
 
     {% if message != None %}
@@ -99,7 +105,7 @@
                 STT</th>
             <th>
                 Môn học </th>
-            <th>
+            <th class="auto_hide">
                 Chuyên môn
             </th>
             <th>
@@ -109,10 +115,10 @@
                 Hệ số</th>
             <th>
                 Giáo viên</th>
-            <th>
+            <th class="auto_hide">
                 Cách tính điểm
             </th>
-            <th title="Nếu chọn sẽ nhập điểm nhận xét thay vì điểm là số">
+            <th title="Nếu chọn sẽ nhập điểm nhận xét thay vì điểm là số" class="auto_hide">
                 Điểm nhận xét
             </th>
             <th title="Khung phân phối chương trình">
@@ -143,7 +149,7 @@
                            href="{%url subject_detail ss.id %}">
                             {{ ss.name }}</a>
                     </td>
-                    <td> {{ ss.type }} </td>
+                    <td class="auto_hide"> {{ ss.type }} </td>
                     <td>{{ f.number_lesson }}</td>
                     <td> {{ f.hs }} </td>
                     <td >
@@ -171,8 +177,8 @@
                             </select>
                         </div>
                     </td>
-                    <td> {{ f.primary }} </td>
-                    <td class="align-center"> {{ f.nx }} </td>
+                    <td class="auto_hide"> {{ f.primary }} </td>
+                    <td class="align-center auto_hide"> {{ f.nx }} </td>
                     <td class="align-center">
                         <a class="btn btn-small"
                            href="{% url subject_agenda ss.id %}">
@@ -186,7 +192,7 @@
                         {% endif %}
                 {% else %}
                     <td> {{ ss.name }}</td>
-                    <td> {{ ss.type }}</td>
+                    <td class="auto_hide"> {{ ss.type }}</td>
                     <td> {{ ss.number_lesson }}</td>
                     <td> {{ ss.hs }} </td>
                     <td>
@@ -196,8 +202,8 @@
                             {{ ss.teacher_id }}
                         {% endif %}
                     </td>
-                    <td> {{ ss.get_primary }} </td>
-                    <td>
+                    <td class="auto_hide"> {{ ss.get_primary }} </td>
+                    <td class="auto_hide">
                         {% if not ss.nx %}
                             Không
                         {% else %}
@@ -212,8 +218,8 @@
         {% endfor %}
 
         {% if pos > 3 %}
-            <form action="{% url subject_per_class class.id %}" id="add_subject_form" method="post">{% csrf_token %}
-                <tr id="subject_form">
+            <form   action="{% url subject_per_class class.id %}" id="add_subject_form" method="post">{% csrf_token %}
+                <tr class="auto_hide" id="subject_form">
                     {{ form.non_field_errors }}
                     <td></td>
                     <td>
