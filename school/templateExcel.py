@@ -172,6 +172,11 @@ htbdot = easyxf(
     'font:name Times New Roman ,height 240 ;align:horz left;'
     'borders: right thin,left thin,bottom dotted')
 
+n4 = easyxf(
+    'font    :name Times New Roman, bold on,height 260 ;align:wrap on, vert centre, horz center;'
+    'borders : top thin ,right thin, left thin, bottom thin')
+n4.num_format_str = "0.00"
+
 def printHeader(s, x, y, school, width=4, heigh=3):
     name = school.name.strip()
     if name.lower().find(u'trường') < 0:

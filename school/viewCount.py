@@ -1540,7 +1540,7 @@ def generate_school_mark_count_report(request,
             if m != '':
                 count_mark[mark.subject_id_id]['45'] += 1
     if is_excel:
-        return generate_school_mark_count_report_excel(count_mark, classes,
+        return generate_school_mark_count_report_excel(number_dict ,count_mark, classes,
                 subject_name, subject_name_cl, term_num,year)
     t = loader.get_template(os.path.join('school',
         'report', 'count_mark_by_subject.html'))
