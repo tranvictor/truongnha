@@ -1316,9 +1316,7 @@ def countSMS(request, type=None,
 def history_mark(request, term_id=None):
     tt1 = time.time()
     if term_id == None:
-        selected_term = get_current_term(request)
-        if selected_term.number == 3:
-            selected_term = Term.objects.get(year_id=selected_term.year_id, number=2)
+        selected_term = get_current_term(request,except_summer=True)
     else:
         selected_term = Term.objects.get(id=term_id)
 
@@ -1331,7 +1329,8 @@ def history_mark(request, term_id=None):
         a_list = [('', '')] * number_subject
         ok = False
         for s in subject_list:
-            number_history = HistoryMark.objects.filter(subject_id=s, term_id=selected_term).count()
+            number_history = HistoryMark.objects.filter(mark_id__subject_id=s, term_id=selected_term).count()
+            #number_history = HistoryMark.objects.filter(subject_id=s, term_id=selected_term).count()
             for i in range(number_subject):
                 if s.type == all_sub_of_school[i]:
                     break
@@ -1399,9 +1398,7 @@ def check_empty_col(arr_mark_list, detail, length):
 def history_mark_detail(request, subject_id, term_id=None):
     tt1 = time.time()
     if term_id == None:
-        selected_term = get_current_term(request)
-        if selected_term.number == 3:
-            selected_term = Term.objects.get(year_id=selected_term.year_id, number=2)
+        selected_term = get_current_term(request,excep_summer=True)
     else:
         selected_term = Term.objects.get(id=term_id)
 
@@ -1431,14 +1428,20 @@ def history_mark_detail(request, subject_id, term_id=None):
         i = index[h.mark_id_id]
         if h.number == 3 * MAX_COL + 3:
             h.number = 3 * MAX_COL + 2
-        print h.number
-        print i
-        arr_mark_list[i][h.number] = normalize(h.old_mark, selected_subject.nx) + "-" + arr_mark_list[i][h.number]
-        temp = h.date.strftime("%d/%m/%Y %H:%M")\
-               + " " + h.user_id.first_name + " " + h.user_id.last_name\
-               + u" sửa điểm từ " + normalize(h.old_mark, selected_subject.nx)\
-               + u" -> " + arr_mark_list[i][h.number].split('-')[1]
-        detail[i][h.number] += temp + '<br>'
+        old_mark = normalize(h.old_mark, selected_subject.nx)
+        if old_mark == arr_mark_list[i][h.number].split('-')[0]:
+            arr_mark_list[i][h.number] = old_mark + u"-trống-" + arr_mark_list[i][h.number]
+            temp = h.date.strftime("%d/%m/%Y %H:%M")\
+                   + " " + h.user_id.first_name + " " + h.user_id.last_name\
+                   + u" xóa điểm " + old_mark\
+                   + u" sau đó lại nhập lại "
+        else:
+            arr_mark_list[i][h.number] = old_mark + "-" + arr_mark_list[i][h.number]
+            temp = h.date.strftime("%d/%m/%Y %H:%M")\
+                   + " " + h.user_id.first_name + " " + h.user_id.last_name\
+                   + u" sửa điểm từ " + old_mark\
+                   + u" -> " + arr_mark_list[i][h.number].split('-')[1]
+        detail[i][h.number] += temp + '\n'
     data = [0] * number_pupils
     empty_col, number_col_mieng, number_col_15phut, num_col_mot_tiet = check_empty_col(arr_mark_list, detail,
         number_pupils)

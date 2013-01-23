@@ -1387,7 +1387,7 @@ class HistoryMark(models.Model):
     term_id = models.ForeignKey(Term, verbose_name="Kì")
     mark_id = models.ForeignKey(Mark, verbose_name="Điểm")
     user_id = models.ForeignKey(User, verbose_name="Tài khoản")
-    subject_id = models.ForeignKey(Subject, verbose_name="Môn")
+    #subject_id = models.ForeignKey(Subject, verbose_name="Môn")
 
 
 class TKMon(models.Model):
