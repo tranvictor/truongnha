@@ -653,7 +653,7 @@ def saveMark(request):
         length = len(strs)
         primary = int(strs[2])
         isComment = strs[3] == "true"
-        time_history = 1
+        time_history = 60
         #try:
         for i in range(4, length):
             update_mark(strs[i], primary, isComment, user,
