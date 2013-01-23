@@ -534,6 +534,7 @@ def update_mark(s, primary, isComment, user, time_history,position,school,teache
                     h.term_id = m.term_id
                     h.user_id = user
                     h.save()
+
         if number <= 3 * MAX_COL:
             arrMark[number] = value
             arrTime[number] = time
@@ -652,15 +653,15 @@ def saveMark(request):
         length = len(strs)
         primary = int(strs[2])
         isComment = strs[3] == "true"
-        time_history = 60
-        try:
-            for i in range(4, length):
-                update_mark(strs[i], primary, isComment, user, 
-                        time_history, position, school, teacher)
-        except Exception as e:
-            if e.message == "Don't have permission":
-                message = u'Bạn không có quyền sửa điểm môn này'
-            else: raise e
+        time_history = 1
+        #try:
+        for i in range(4, length):
+            update_mark(strs[i], primary, isComment, user,
+                    time_history, position, school, teacher)
+#        except Exception as e:
+#            if e.message == "Don't have permission":
+#                message = u'Bạn không có quyền sửa điểm môn này'
+#            else: raise e
 
         message = strs[0]
         data = simplejson.dumps({'message': message})
