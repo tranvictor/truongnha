@@ -134,8 +134,9 @@ def deactivate_student(request):
 @school_function
 def move_one_student(request, student_id):
     school = get_school(request)
-
     pos = get_position(request)
+    if pos < 4:
+        return HttpResponseRedirect(reverse('index'))
     if request.is_ajax():
         student = Pupil.objects.get(id=student_id)
         message = ''
@@ -169,7 +170,7 @@ def move_one_student(request, student_id):
                                      'pos' : pos,
                                      'attendlist': attendlist})
         return HttpResponse(t.render(c))
-    return HttpResponseNotAllowed(u'Không được phép truy cập')
+    return HttpResponseRedirect(reverse('index'))
 
 @need_login
 def move_students(request):
