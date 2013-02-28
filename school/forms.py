@@ -401,6 +401,8 @@ class SubjectForm(forms.ModelForm):
         self.fields['teacher_id'] = forms.ModelChoiceField(required=False,
                 queryset=Teacher.objects.filter(school_id=school_id),
                 label=u'Giáo viên giảng dạy')
+        if 'instance' in kwargs and kwargs['instance'].type in [u'Toán', u'Ngữ văn']:
+            del self.fields['primary']
 
 class KhenThuongForm(forms.ModelForm):
     class Meta:
@@ -415,9 +417,13 @@ class KhenThuongForm(forms.ModelForm):
         def validate_ktkl_date(value):
             if value < student.school_join_date or value > date.today():
                 raise ValidationError(u'Ngày nằm ngoài khoảng cho phép.\n Ngày hợp lệ tính từ ngày học sinh nhập trường đến ngày hiện tại')
+            
         super(KhenThuongForm, self).__init__(*args, **kw)
-        self.fields['time'] = forms.DateField(required=False, initial=date.today(), label=u'Ngày',
-            validators=[validate_ktkl_date], widget=forms.DateInput(attrs={'class':'datepicker'}))
+        self.fields['time'] = forms.DateField(required=False,
+                initial=date.today(),
+                label=u'Ngày',
+                validators=[validate_ktkl_date],
+                widget=forms.DateInput(attrs={'class':'datepicker'}))
 
 class KiLuatForm(forms.ModelForm):        
     class Meta:

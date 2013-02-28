@@ -867,15 +867,13 @@ def addClass(request):
         form = ClassForm(school.id)
 
         if request.method == 'POST':
-            print request.is_ajax()
-            print request.POST
             names = request.POST['name'].split(" ")
             block_num = names[0]
             name = ' '.join([n for n in names if n])
 
             try:
                 block = school.block_set.get(number=int(block_num))
-            except ObjectDoesNotExist:
+            except (ObjectDoesNotExist, ValueError):
                 t = loader.get_template(os.path.join('school', 'add_class.html'))
                 c = RequestContext(request, {'form': form})
                 return HttpResponse(t.render(c))
@@ -883,7 +881,8 @@ def addClass(request):
             index = get_current_year(request).class_set.count()
 
             data = {'name': name,
-                    'year_id': Year.objects.filter(school_id=school.id).latest('time').id,
+                    'year_id': Year.objects.filter(school_id=school.id)\
+                            .latest('time').id,
                     'block_id': block.id,
                     'teacher_id': request.POST['teacher_id'],
                     'phan_ban': request.POST['phan_ban'],
@@ -891,8 +890,6 @@ def addClass(request):
                     'status': school.status,
                     'index': index}
             
-            print data['year_id']
-
             form = ClassForm(school.id, data)
             if form.is_valid():
                 _class = form.save()

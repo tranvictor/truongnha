@@ -38,12 +38,11 @@ def finish(request, active_term=0, term_number=None, year_number=None, is_calcul
         if int(term_number) < 3:
             term = Term.objects.get(year_id__school_id=school,
                     year_id__time=year_number, number=term_number)
-            finishTermInSchool(term.id)
-            message = "Đã tính tổng kết xong. Mời bạn xem kết quả phía dưới."
+            message = finishTermInSchool(term.id)
         else:
             year = Year.objects.get(school_id=school, time=year_number)
             finishYearInSchool(year.id)
-            message = "Đã tính tổng kết xong. Mời bạn xem kết quả phía dưới."
+            message = u"Đã tính tổng kết xong. Mời bạn xem kết quả phía dưới."
 
     current_term = get_current_term(request)
     #year_list = Year.objects.filter(school_id=school).order_by("time")
@@ -158,45 +157,77 @@ def defineHl(tb, monChuyen, monToan, monVan, minMark, minComment):
 #tinh diem tong ket cua mot lop theo hoc ky
 #def overallForAStudentInTerm(markList,tbHocKy,vtMonChuyen,vtMonToan,vtMonVan):
 @transaction.commit_on_success
-def calculateOverallMarkTerm(class_id, termNumber):
-    selectedClass = Class.objects.get(id=class_id)
+def calculateOverallMarkTerm(selectedClass, termNumber):
+    class_id = selectedClass.id
     selectedTerm = Term.objects.get(year_id=selectedClass.year_id, number=termNumber)
-    ddhkList = TKDiemDanh.objects.filter(student_id__classes=class_id, term_id=selectedTerm,
-        student_id__attend__is_member=True).order_by('student_id__index', 'student_id__first_name',
-        'student_id__last_name', 'student_id__birthday').distinct()
+
+    ddhkList = TKDiemDanh.objects.filter(student_id__classes=class_id,
+            term_id=selectedTerm,
+            student_id__attend__is_member=True).order_by('student_id__index',
+                    'student_id__first_name',
+                    'student_id__last_name',
+                    'student_id__birthday').distinct()
+
     for ddhk in ddhkList:
-        ddhk.co_phep = DiemDanh.objects.filter(student_id=ddhk.student_id, term_id=selectedTerm, loai='P').count()
-        ddhk.khong_phep = DiemDanh.objects.filter(student_id=ddhk.student_id, term_id=selectedTerm, loai='K').count()
+
+        ddhk.co_phep = DiemDanh.objects.filter(student_id=ddhk.student_id,
+                term_id=selectedTerm, loai='P').count()
+
+        ddhk.khong_phep = DiemDanh.objects.filter(student_id=ddhk.student_id,
+                term_id=selectedTerm, loai='K').count()
+
         ddhk.tong_so = ddhk.co_phep + ddhk.khong_phep
         ddhk.save()
 
     pupilNoSum = 0
-    subjectList = Subject.objects.filter(class_id=class_id, primary__in=[0, termNumber]).order_by('index', 'name')
-    markList = Mark.objects.filter(subject_id__class_id=class_id, term_id=selectedTerm, current=True,
-        subject_id__primary__in=[0, termNumber]).order_by('student_id__index', 'student_id__first_name',
-        'student_id__last_name', 'student_id__birthday', 'subject_id__index', 'subject_id__name')
-    tbHocKyList = TBHocKy.objects.filter(student_id__classes=class_id, term_id=selectedTerm,
-        student_id__attend__is_member=True).order_by('student_id__index', 'student_id__first_name',
-        'student_id__last_name', 'student_id__birthday').distinct()
-    hkList = TBNam.objects.filter(year_id=selectedClass.year_id, student_id__classes=class_id,
-        student_id__attend__is_member=True).order_by('student_id__index', 'student_id__first_name',
-        'student_id__last_name', 'student_id__birthday').distinct()
+
+    subjectList = Subject.objects.filter(class_id=class_id,
+            primary__in=[0, termNumber]).order_by('index', 'name')
+
+    markList = Mark.objects.filter(subject_id__class_id=class_id,
+            term_id=selectedTerm, current=True,
+            subject_id__primary__in=[0, termNumber]).order_by('student_id__index',
+                    'student_id__first_name',
+                    'student_id__last_name',
+                    'student_id__birthday',
+                    'subject_id__index', 'subject_id__name')
+
+    tbHocKyList = TBHocKy.objects.filter(student_id__classes=class_id,
+            term_id=selectedTerm,
+            student_id__attend__is_member=True).order_by('student_id__index',
+                    'student_id__first_name',
+                    'student_id__last_name',
+                    'student_id__birthday').distinct()
+
+    hkList = TBNam.objects.filter(year_id=selectedClass.year_id,
+            student_id__classes=class_id,
+            student_id__attend__is_member=True).order_by('student_id__index',
+                    'student_id__first_name',
+                    'student_id__last_name',
+                    'student_id__birthday').distinct()
+
     length = len(subjectList)
     i = 0
     vtMonChuyen = -1
+    vtMonToan = -1
+    vtMonVan = -1
     checkComment = [0] * len(subjectList)
     for s in subjectList:
         if s.hs == 3:  vtMonChuyen = i
 
-        if s.type == u'Toán':
-            vtMonToan = i
-        elif  s.type == u'Ngữ văn':
-            vtMonVan = i
-        if s.nx:
-            checkComment[i] = 1
+        if s.type == u'Toán': vtMonToan = i
+        elif  s.type == u'Ngữ văn': vtMonVan = i
+
+        if s.nx: checkComment[i] = 1
         i += 1
     i = 0
     j = 0
+
+    if vtMonToan == -1:
+        raise UnboundLocalError(u'MathIsMissing')
+    if vtMonVan == -1:
+        raise UnboundLocalError(u'LiteratureIsMissing')
+    
     # cam xoa dong nay
     for tt in tbHocKyList:
         pass
@@ -231,7 +262,6 @@ def calculateOverallMarkTerm(class_id, termNumber):
                         minMark = m.tb
                 elif m.tb < minComment:
                     minComment = m.tb
-
         else:
             if m.mg == False:
                 ok = False
@@ -243,7 +273,12 @@ def calculateOverallMarkTerm(class_id, termNumber):
                     pupilNoSum += 1
                 else:
                     tbHocKy.tb_hk = round(markSum / factorSum + e, 1)
-                    tbHocKy.hl_hk = defineHl(tbHocKy.tb_hk + e, monChuyen, monToan, monVan, minMark + e, minComment + e)
+                    tbHocKy.hl_hk = defineHl(tbHocKy.tb_hk + e,
+                            monChuyen,
+                            monToan,
+                            monVan,
+                            minMark + e,
+                            minComment + e)
             else:
                 tbHocKy.tb_hk = None
                 tbHocKy.hl_hk = None
@@ -251,9 +286,15 @@ def calculateOverallMarkTerm(class_id, termNumber):
 
                 #tbHocKy.save()
         i += 1
-    NN2List = Mark.objects.filter(subject_id__class_id=class_id, term_id__number=termNumber, subject_id__primary=3,
-        current=True).order_by('student_id__index', 'student_id__first_name', 'student_id__last_name',
-        'student_id__birthday')
+
+    NN2List = Mark.objects.filter(subject_id__class_id=class_id,
+            term_id__number=termNumber,
+            subject_id__primary=3,
+            current=True).order_by('student_id__index',
+                    'student_id__first_name',
+                    'student_id__last_name',
+                    'student_id__birthday')
+
     if len(NN2List) > 0:
         for nn2, tbHocKy in zip(NN2List, tbHocKyList):
             if (nn2.tb is not None) & (tbHocKy.tb_hk is not None):
@@ -274,7 +315,8 @@ def calculateOverallMarkTerm(class_id, termNumber):
             tbHocKy.danh_hieu_hk = None
         elif (loaiHk == 'T') & (tbHocKy.hl_hk == 'G'):
             tbHocKy.danh_hieu_hk = 'G'
-        elif ((loaiHk == 'T') | (loaiHk == 'K')) & ((tbHocKy.hl_hk == 'G') | (tbHocKy.hl_hk == 'K')):
+        elif ((loaiHk == 'T' | loaiHk == 'K')
+                & (tbHocKy.hl_hk == 'G' | tbHocKy.hl_hk == 'K')):
             tbHocKy.danh_hieu_hk = 'TT'
         else: tbHocKy.danh_hieu_hk = 'K'
 
@@ -282,7 +324,6 @@ def calculateOverallMarkTerm(class_id, termNumber):
         tb.save()
 
     return pupilNoSum, noHanhKiem
-
 
 @transaction.commit_on_success
 def calculateTKMon(class_id):
@@ -817,8 +858,17 @@ def finishTermInSchool(term_id):
     selectedTerm = Term.objects.get(id=term_id)
     classList = Class.objects.filter(year_id=selectedTerm.year_id)
     termNumber = selectedTerm.number
+    messages = [u'Đã tổng kết xong.']
     for c in classList:
-        calculateOverallMarkTerm(c.id, termNumber)
+        try:
+            calculateOverallMarkTerm(c, termNumber)
+        except UnboundLocalError as e:
+            if e.message == u'MathIsMissing':
+                messages.append(u'Lớp %s không có môn Toán.' % c.name)
+            elif e.message == u'LiteratureIsMissing':
+                messages.append(u'Lớp %s không có môn Văn.' % c.name)
+
+    return ' '.join(messages)
 
 
 def countDetailTerm(term_id):
