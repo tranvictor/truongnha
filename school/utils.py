@@ -418,6 +418,7 @@ def add_many_students( student_list=None,
     number_of_change = 0
     unc_st_found = False
     for student in student_list:
+        print student
         index += 1
         if 'fullname' in student:
             first_name, last_name = extract_fullname(student['fullname'])
@@ -430,6 +431,7 @@ def add_many_students( student_list=None,
 
         birthday = student['birthday']
         ban = student['ban_dk']
+        print start_year
         find = start_year.pupil_set.filter(first_name__exact=first_name,
                 last_name__exact=last_name, birthday__exact=birthday)
 

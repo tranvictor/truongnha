@@ -18,7 +18,7 @@ from xlwt.Workbook import Workbook
 from app.models import SystemLesson, SUBJECT_CHOICES
 from decorators import school_function, need_login, operating_permission, year_started
 from school.models import Class, Subject, SchoolLesson, validate_phone, Lesson, TKB
-from school.models import this_year, StartYear, SUBJECT_LIST_ASCII
+from school.models import StartYear, SUBJECT_LIST_ASCII
 from school.templateExcel import *
 from school.utils import get_latest_startyear, get_current_year, in_school,\
                             get_permission , gvcn, get_level, get_school, to_date,\
@@ -48,7 +48,8 @@ def class_generate(request, class_id, object):
     permission = get_permission(request)
     cn = gvcn(request, _class)
 
-    if (not permission in [u'HIEU_TRUONG', u'HIEU_PHO']) and ( not cn) and (get_level(request)=='T'):
+    if ((not permission in [u'HIEU_TRUONG', u'HIEU_PHO'])
+            and ( not cn) and (get_level(request)=='T')):
         return HttpResponseRedirect(reverse('school_index'))
 
     if object == 'student_list':
@@ -56,7 +57,8 @@ def class_generate(request, class_id, object):
         book = Workbook(encoding='utf-8')
         #renderring xls file
         sheet = book.add_sheet(u'Danh sách học sinh')
-        sheet.write_merge(0, 1,0,4, u'DANH SÁCH HỌC SINH LỚP %s' % unicode(_class).upper(), h40)
+        sheet.write_merge(0, 1,0,4,
+                u'DANH SÁCH HỌC SINH LỚP %s' % unicode(_class).upper(), h40)
         sheet.row(0).height = 350
 
         sheet.col(0).width = 1500

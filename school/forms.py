@@ -240,12 +240,10 @@ class SchoolForm(forms.Form):
         if get_permission(self.request) in [u'HIEU_TRUONG', u'HIEU_PHO']:
             self.fields['name'] = forms.CharField(label=u'Tên trường:',
                     max_length = 100 ) #tên đơn vị. tổ chức
-            school = get_school(self.request)
             self.fields['school_level'] = forms.ChoiceField(label=u"Cấp:",
                     choices=KHOI_CHOICES)
-            if school.status in [1,2]:
-                self.fields['school_level'].widget.attrs['disabled'] = 'disabled'
-                self.fields['school_level'].required = False
+            self.fields['school_level'].widget.attrs['disabled'] = 'disabled'
+            self.fields['school_level'].required = False
             self.fields['address'] = forms.CharField(label=u"Địa chỉ:",
                     max_length=255, required=False) #
             self.fields['phone'] = forms.CharField(label="Điện thoại:",
@@ -260,8 +258,8 @@ class SchoolForm(forms.Form):
         try:
             school = get_school(self.request)
             school.name = self.cleaned_data['name']
-            if self.cleaned_data['school_level']:
-                school.school_level = self.cleaned_data['school_level']
+            #if self.cleaned_data['school_level']:
+                #school.school_level = self.cleaned_data['school_level']
             school.address = self.cleaned_data['address']
             school.phone = self.cleaned_data['phone']
             school.email = self.cleaned_data['email']
