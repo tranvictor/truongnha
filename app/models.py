@@ -417,10 +417,26 @@ class AuthenticationForm(forms.Form):
         self.api_called = api_called
         self.user_cache = None
         self.errors_type = None
-        self.exceed_failure_limit = IP.exceed_failure_limit(request.META['REMOTE_ADDR'])
-        if self.request.method == 'POST' and self.exceed_failure_limit and not api_called:
-            self.recaptcha_challenge_field = self.request.POST['recaptcha_challenge_field']
-            self.recaptcha_response_field = self.request.POST['recaptcha_response_field']
+
+        self.exceed_failure_limit =\
+                IP.exceed_failure_limit(request.META['REMOTE_ADDR'])
+
+        if (self.request.method == 'POST'
+                and self.exceed_failure_limit
+                and not api_called):
+
+            if ('recaptcha_challenge_field' in self.request.POST
+                    and 'recaptcha_response_field' in self.request.POST):
+                self.recaptcha_challenge_field =\
+                        self.request.POST['recaptcha_challenge_field']
+
+                self.recaptcha_response_field =\
+                        self.request.POST['recaptcha_response_field']
+            else:
+                self.recaptcha_challenge_field = ''
+
+                self.recaptcha_response_field = ''
+
         super(AuthenticationForm, self).__init__(*args, **kwargs)
 
     def clean(self):
@@ -465,10 +481,13 @@ class AuthenticationForm(forms.Form):
         self.check_for_test_cookie()
 
     def check_for_test_cookie(self):
-        if self.user_cache and not self.user_cache.username in [settings.DEMO_LOGIN_SCHOOL,
-                                                                settings.DEMO_LOGIN_TEACHER,
-                                                                settings.DEMO_LOGIN_UPPER,
-                                                                settings.DEMO_LOGIN_STUDENT]:
+        if (self.user_cache
+                and not self.user_cache.username in [
+                    settings.DEMO_LOGIN_SCHOOL,
+                    settings.DEMO_LOGIN_TEACHER,
+                    settings.DEMO_LOGIN_UPPER,
+                    settings.DEMO_LOGIN_STUDENT]):
+
             if self.request  and not self.request.session.test_cookie_worked():
                 raise forms.ValidationError(
                     "Cookies của trình duyệt chưa được bật. Bạn cần phải bật cookies thì mới sử dụng được.")
