@@ -9,6 +9,8 @@ from django.db import transaction
 import os.path
 import time
 import datetime
+import sys
+import traceback
 from decorators import need_login
 from school.models import Term, Mark, Subject, Pupil, TKMon, SUBJECT_LIST, Class, Teacher, HistoryMark
 from school.utils import get_current_term, get_position, in_school, get_level, to_en1, get_school, get_student
@@ -644,7 +646,7 @@ def saveMark(request):
         school = None
         teacher = None
 
-        if   position == 4:
+        if position == 4:
             school = user.userprofile.organization
         elif position == 3:
             teacher = user.teacher
@@ -656,8 +658,15 @@ def saveMark(request):
         time_history = 60
         #try:
         for i in range(4, length):
-            update_mark(strs[i], primary, isComment, user,
+            try:
+                update_mark(strs[i], primary, isComment, user,
                     time_history, position, school, teacher)
+            except Exception as e:
+                print "Exception in user code:"
+                print '-'*60
+                traceback.print_exc(file=sys.stdout)
+                print '-'*60
+                raise e
 #        except Exception as e:
 #            if e.message == "Don't have permission":
 #                message = u'Bạn không có quyền sửa điểm môn này'

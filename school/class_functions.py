@@ -128,7 +128,7 @@ def viewClassDetail(request, class_id):
         move_to_cls = cl.block_id.class_set.filter(year_id = this_y)\
                 .exclude(id=class_id)\
                 .order_by('index')
-        bl1 = Block.objects.filter(number = cl.block_id.number +1,
+        bl1 = Block.objects.filter(number=cl.block_id.number + 1,
                 school_id = cl.block_id.school_id)
         move_to_cls1 = []
         if bl1:

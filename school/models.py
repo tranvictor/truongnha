@@ -254,7 +254,6 @@ def log_action(request, object, change_message):
         action_flag=4
     )
 
-
 class DanhSachLoaiLop(models.Model):
     loai = models.CharField("Loại", max_length=15)
     school_id = models.ForeignKey(Organization, verbose_name="Trường")
@@ -1387,7 +1386,7 @@ class HistoryMark(models.Model):
     term_id = models.ForeignKey(Term, verbose_name="Kì")
     mark_id = models.ForeignKey(Mark, verbose_name="Điểm")
     user_id = models.ForeignKey(User, verbose_name="Tài khoản")
-    #subject_id = models.ForeignKey(Subject, verbose_name="Môn")
+    subject_id = models.ForeignKey(Subject, verbose_name="Môn")
 
 
 class TKMon(models.Model):

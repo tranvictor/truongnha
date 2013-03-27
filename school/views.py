@@ -15,7 +15,7 @@ from django.core.urlresolvers import reverse
 from django.utils import simplejson
 from django.contrib.auth import logout
 from recaptcha.client import captcha
-from app.models import SystemLesson, SUBJECT_CHOICES, Organization
+from app.models import SystemLesson, SUBJECT_CHOICES
 from school.forms import UsernameChangeForm, SchoolForm,\
         SettingForm, TKDiemDanhForm, TKBForm, SelectSchoolLessonForm3,\
         SelectSchoolLessonForm2, LessonForm, ForgetPasswordForm
@@ -190,14 +190,11 @@ def info(request):
         data['phone'] = data['phone'].strip()
         data['email'] = data['email'].strip()
         data['name'] = data['name'].strip()
-        try:
-            data['school_level'] = data['school_level'].strip()
-        except Exception:
-            data['school_level'] = school.school_level
+        data['school_level'] = school.school_level
         data['lock_time'] = data['lock_time'].strip()
         data['class_labels'] = data['class_labels'].strip()
         data['semester_start_time'] = data['semester_start_time']
-        data['semester_finish_time']= data['semester_finish_time']
+        data['semester_finish_time'] = data['semester_finish_time']
         name = ''
         address = ''
         email = ''
