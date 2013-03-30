@@ -50,7 +50,7 @@ else:
         'default': {
             'ENGINE': 'django.db.backends.mysql',
             'NAME': 'freeschool',
-            'USER': 'root',
+            'USER': 'freeschool',
             'PASSWORD':'freeschool',
             'OPTIONS': { 'init_command': 'SET storage_engine=INNODB',},
         },
@@ -227,7 +227,7 @@ INSTALLED_APPS = (
     'pagination',
     'djcelery',
     'bootstrapform',
-    'south', #for database migration/upgrade
+    #'south', #for database migration/upgrade
 #    'django_jenkins',
 )
 
