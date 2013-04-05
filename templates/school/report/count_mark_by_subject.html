@@ -66,8 +66,8 @@
             {% for cl in classes %}
                 {% with subject_name_cl|get_value:cl.id as subject_list %}
                 <tr>
-                    <td nowrap class="align-left">{{ cl.name }}</td>
-                    <td nowrap class="align-left">{{ number_dict|get_value:cl.id|default_if_none:"0" }}</td>
+                    <th nowrap class="align-left">{{ cl.name }}</th>
+                    <th nowrap class="align-left">{{ number_dict|get_value:cl.id|default_if_none:"0" }}</th>
                     {% for s in subject_name %}
                         {% with subject_list|get_value:s as subject_id %}
                             {% with count_mark|get_value:subject_id as marks %}
@@ -105,8 +105,8 @@
         {% for cl in classes %}
             {% with subject_name_cl|get_value:cl.id as subject_list %}
                 <tr>
-                    <td nowrap class="align-left">{{ cl.name }}</td>
-                    <td id="{{ cl.id }}" nowrap class="align-left">{{ number_dict|get_value:cl.id|default_if_none:"0" }}</td>
+                    <th nowrap class="align-left">{{ cl.name }}</th>
+                    <th id="{{ cl.id }}" nowrap class="align-left">{{ number_dict|get_value:cl.id|default_if_none:"0" }}</th>
                     {% for s in subject_name %}
                         {% with subject_list|get_value:s as subject_id %}
                             <td id="m-{{ cl.id }}-{{ subject_id }}" class="cal_num"></td>

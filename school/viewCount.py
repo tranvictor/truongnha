@@ -115,7 +115,6 @@ def student_moves_history(request, term_id=None):
 
     attends = Attend.objects.filter(~Q(leave_time=None),
             attend_time__gte=first_term.start_date,
-            attend_time__lte=first_term.finish_date,
             leave_time__lte=term.finish_date,
             leave_time__gte=term.start_date,
             is_member=False,
@@ -1317,9 +1316,7 @@ def countSMS(request, type=None,
 def history_mark(request, term_id=None):
     tt1 = time.time()
     if term_id == None:
-        selected_term = get_current_term(request)
-        if selected_term.number == 3:
-            selected_term = Term.objects.get(year_id=selected_term.year_id, number=2)
+        selected_term = get_current_term(request,except_summer=True)
     else:
         selected_term = Term.objects.get(id=term_id)
 
@@ -1332,7 +1329,8 @@ def history_mark(request, term_id=None):
         a_list = [('', '')] * number_subject
         ok = False
         for s in subject_list:
-            number_history = HistoryMark.objects.filter(subject_id=s, term_id=selected_term).count()
+            number_history = HistoryMark.objects.filter(mark_id__subject_id=s, term_id=selected_term).count()
+            #number_history = HistoryMark.objects.filter(subject_id=s, term_id=selected_term).count()
             for i in range(number_subject):
                 if s.type == all_sub_of_school[i]:
                     break
@@ -1400,9 +1398,7 @@ def check_empty_col(arr_mark_list, detail, length):
 def history_mark_detail(request, subject_id, term_id=None):
     tt1 = time.time()
     if term_id == None:
-        selected_term = get_current_term(request)
-        if selected_term.number == 3:
-            selected_term = Term.objects.get(year_id=selected_term.year_id, number=2)
+        selected_term = get_current_term(request,excep_summer=True)
     else:
         selected_term = Term.objects.get(id=term_id)
 
@@ -1432,14 +1428,20 @@ def history_mark_detail(request, subject_id, term_id=None):
         i = index[h.mark_id_id]
         if h.number == 3 * MAX_COL + 3:
             h.number = 3 * MAX_COL + 2
-        print h.number
-        print i
-        arr_mark_list[i][h.number] = normalize(h.old_mark, selected_subject.nx) + "-" + arr_mark_list[i][h.number]
-        temp = h.date.strftime("%d/%m/%Y %H:%M")\
-               + " " + h.user_id.first_name + " " + h.user_id.last_name\
-               + u" sửa điểm từ " + normalize(h.old_mark, selected_subject.nx)\
-               + u" -> " + arr_mark_list[i][h.number].split('-')[1]
-        detail[i][h.number] += temp + '<br>'
+        old_mark = normalize(h.old_mark, selected_subject.nx)
+        if old_mark == arr_mark_list[i][h.number].split('-')[0]:
+            arr_mark_list[i][h.number] = old_mark + u"-trống-" + arr_mark_list[i][h.number]
+            temp = h.date.strftime("%d/%m/%Y %H:%M")\
+                   + " " + h.user_id.first_name + " " + h.user_id.last_name\
+                   + u" xóa điểm " + old_mark\
+                   + u" sau đó lại nhập lại "
+        else:
+            arr_mark_list[i][h.number] = old_mark + "-" + arr_mark_list[i][h.number]
+            temp = h.date.strftime("%d/%m/%Y %H:%M")\
+                   + " " + h.user_id.first_name + " " + h.user_id.last_name\
+                   + u" sửa điểm từ " + old_mark\
+                   + u" -> " + arr_mark_list[i][h.number].split('-')[1]
+        detail[i][h.number] += temp + '\n'
     data = [0] * number_pupils
     empty_col, number_col_mieng, number_col_15phut, num_col_mot_tiet = check_empty_col(arr_mark_list, detail,
         number_pupils)
@@ -1496,6 +1498,7 @@ def generate_school_mark_count_report(request,
         term = get_current_term(request)
         term_id = [term.id]
         term_num = term.number
+        print term, term.id
     elif term_num == '3':
         terms = year.term_set.all()
         term_id = [term.id for term in terms]
@@ -1509,7 +1512,7 @@ def generate_school_mark_count_report(request,
     classes_id = [cl.id for cl in classes]
     subjects = Subject.objects.filter(
             class_id__in=classes_id).order_by('class_id', 'index')
-    marks = Mark.objects.filter(term_id__in=term_id)
+    marks = Mark.objects.filter(term_id__in=term_id, current=True)
     count_mark = {}
     subject_name = []
     subject_name_cl = {}
@@ -1525,10 +1528,12 @@ def generate_school_mark_count_report(request,
         count_mark[s.id] = {'m':0,'15':0,'45':0,'ck':0}
         subject_name_cl[s.class_id_id][s.name] = s.id
     for mark in marks:
+        print mark.term_id_id
         mark_m = mark.diem.split('|')[0].split('*')
         mark_15 = mark.diem.split('|')[1].split('*')
         mark_45 = mark.diem.split('|')[2].split('*')
-        if mark.ck:
+        if mark.ck or mark.ck == 0:
+            print mark.ck
             count_mark[mark.subject_id_id]['ck'] += 1
         for m in mark_m:
             if m != '':

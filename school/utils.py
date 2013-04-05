@@ -418,6 +418,7 @@ def add_many_students( student_list=None,
     number_of_change = 0
     unc_st_found = False
     for student in student_list:
+        print student
         index += 1
         if 'fullname' in student:
             first_name, last_name = extract_fullname(student['fullname'])
@@ -430,16 +431,17 @@ def add_many_students( student_list=None,
 
         birthday = student['birthday']
         ban = student['ban_dk']
-        find = start_year.pupil_set.filter(first_name__exact=first_name)\
-        .filter(last_name__exact=last_name)\
-        .filter(birthday__exact=birthday)
+        print start_year
+        find = start_year.pupil_set.filter(first_name__exact=first_name,
+                last_name__exact=last_name, birthday__exact=birthday)
+
         cr_bl_found = False
         bl = _class.block_id
         unc_set = bl.uncategorizedclass_set.filter(year_id=year)
         for unc in unc_set:
             unc_st = unc.pupil_set.filter(first_name__exact=first_name)\
-            .filter(last_name__exact=last_name)\
-            .filter(birthday__exact=birthday)
+                    .filter(last_name__exact=last_name)\
+                    .filter(birthday__exact=birthday)
             if unc_st:
                 st = unc_st[0]
                 unc_st_found = True
@@ -451,8 +453,8 @@ def add_many_students( student_list=None,
                 unc_set = bl.uncategorizedclass_set.filter(year_id=year)
                 for unc in unc_set:
                     unc_st = unc.pupil_set.filter(first_name__exact=first_name)\
-                    .filter(last_name__exact=last_name)\
-                    .filter(birthday__exact=birthday)
+                            .filter(last_name__exact=last_name)\
+                            .filter(birthday__exact=birthday)
                     if unc_st:
                         st = unc_st[0]
                         unc_st_found = True
@@ -471,14 +473,14 @@ def add_many_students( student_list=None,
                 continue
         else:    # the student does not exist
             st = Pupil(first_name=first_name,
-                last_name=last_name,
-                birthday=birthday,
-                ban_dk=ban,
-                school_join_date=school_join_date,
-                start_year_id=start_year,
-                class_id=_class,
-                index=index,
-                school_id=school)
+                    last_name=last_name,
+                    birthday=birthday,
+                    ban_dk=ban,
+                    school_join_date=school_join_date,
+                    start_year_id=start_year,
+                    class_id=_class,
+                    index=index,
+                    school_id=school)
         changed = False
         if 'sex' in student:
             if st.sex != student['sex']:
@@ -555,13 +557,14 @@ def add_many_students( student_list=None,
                     number_subject += _class.subject_set.filter(primary=0).count()
                     number_subject += _class.subject_set.filter(primary=3).count()
                     if i == 1:
-                        number_subject = _class.subject_set.filter(primary=1).count()
+                        number_subject += _class.subject_set.filter(primary=1).count()
                     if i == 2:
-                        number_subject = _class.subject_set.filter(primary=2).count()
+                        number_subject += _class.subject_set.filter(primary=2).count()
 
-                TBHocKy.objects.get_or_create(student_id=st,
-                    number_subject=number_subject,
-                    term_id=term1)
+                tbhk, created = TBHocKy.objects.get_or_create(student_id=st,
+                        term_id=term1)
+                tbhk.number_subject = number_subject
+                tbhk.save()
 
                 TKDiemDanh.objects.get_or_create(student_id=st,
                     term_id=term1)
@@ -713,14 +716,14 @@ def del_teacher( teacher):
 
 # subject_name: string, teacher : Teacher object, _class : Class object
 @transaction.commit_manually
-def add_subject( subject_name=None, subject_type='', hs=1, teacher=None, _class=None, index=0, nx=False,
-                 number_lesson=0):
+def add_subject(subject_name=None, subject_type='', hs=1,
+        teacher=None, _class=None, index=0,
+        nx=False, number_lesson=0):
     find = _class.subject_set.filter(name__exact=subject_name)
     try:
         #noinspection PyUnusedLocal
-        term = _class.year_id.term_set.get(number=_class.year_id.school_id.status)
-    except Exception as e:
-        print e
+        _class.year_id.term_set.get(number=_class.year_id.school_id.status)
+    except ObjectDoesNotExist:
         raise Exception("TermDoesNotExist")
     if find:
         raise Exception("SubjectExist")

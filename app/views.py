@@ -376,7 +376,8 @@ def login(request, template_name='app/login.html',
           demo_account=None,
           redirect_field_name=REDIRECT_FIELD_NAME,
           api_called=False):
-
+    if request.user.is_authenticated():
+        return HttpResponseRedirect(reverse('school_index'))
     """
     login the system
     """
@@ -419,7 +420,6 @@ def login(request, template_name='app/login.html',
             if api_called: return HttpResponse(status=200)
             return HttpResponseRedirect(redirect_to)
         else:
-            print error, error_type
             error = form._errors
             error_type = form.errors_type
             try:

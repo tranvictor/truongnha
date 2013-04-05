@@ -128,7 +128,7 @@ def viewClassDetail(request, class_id):
         move_to_cls = cl.block_id.class_set.filter(year_id = this_y)\
                 .exclude(id=class_id)\
                 .order_by('index')
-        bl1 = Block.objects.filter(number = cl.block_id.number +1,
+        bl1 = Block.objects.filter(number=cl.block_id.number + 1,
                 school_id = cl.block_id.school_id)
         move_to_cls1 = []
         if bl1:
@@ -393,50 +393,84 @@ def subjectPerClass(request, class_id):
         sfl.append(SubjectForm(school.id, instance=s))
     if request.is_ajax() and pos > 3:
         if request.POST['request_type'] == u'add':
-            try:
-                max_index_subject = cl.subject_set.order_by('-index')[0]
-                index = max_index_subject.index + 1
-                nx = request.POST.get('nx', 0)
-                data = {'name': request.POST['name'].strip(), 'hs': request.POST['hs'], 'class_id': class_id,
-                                            'teacher_id': request.POST['teacher_id'], 'index': index, 'primary': request.POST['primary'], 'type': request.POST['type'], 'nx': nx, 'number_lesson': request.POST['number_lesson']}
-                form = SubjectForm(school.id, data)
-                if form.is_valid():
-                    if request.POST['type'] not in [u'',u'Tự chọn']:
-                        subject_count = cl.subject_set.filter(type = request.POST['type']).count()
-                        if subject_count > 0:
-                            message = u'Đã có môn học cùng loại này.'
-                            data = simplejson.dumps({'message': message, 'success' : False})
-                            return HttpResponse(data, mimetype='json')
-                    try:
-                        if request.POST['teacher_id'] != u'':
-                            teacher = Teacher.objects.get(id=int(data['teacher_id']))
-                            add_subject(subject_name=data['name'], hs=float(data['hs']), teacher=teacher, _class=cl,
-                                index=index, subject_type=data['type'], nx=data['nx'], number_lesson=data['number_lesson'])
-                            form = SubjectForm(school.id)
-                        else:
-                            add_subject(subject_name=data['name'], hs=float(data['hs']), _class=cl, index=index,
-                                subject_type=data['type'], nx=data['nx'])
-                            form = SubjectForm(school.id)
-                        message = u'Môn học mới đã được thêm.'
-                        success = True
-                        data = simplejson.dumps({'message': message, 'success' : success})
+            max_index_subject = cl.subject_set.order_by('-index')[0]
+            index = max_index_subject.index + 1
+            nx = request.POST.get('nx', 0)
+
+            data = {'name': request.POST['name'].strip(),
+                    'hs': request.POST['hs'],
+                    'class_id': class_id,
+                    'teacher_id': request.POST['teacher_id'],
+                    'index': index,
+                    'primary': request.POST['primary'],
+                    'type': request.POST['type'],
+                    'nx': nx,
+                    'number_lesson': request.POST['number_lesson']}
+
+            form = SubjectForm(school.id, data)
+            if form.is_valid():
+                if request.POST['type'] not in [u'',u'Tự chọn']:
+
+                    subject_count = cl.subject_set.filter(
+                            type=request.POST['type']).count()
+
+                    if subject_count > 0:
+                        message = u'Đã có môn học cùng loại này.'
+
+                        data = simplejson.dumps({'message': message,
+                            'success' : False})
+
                         return HttpResponse(data, mimetype='json')
-                    except Exception as e:
-                        print e
-                        message = u'Tên môn học đã tồn tại.'
-                        data = simplejson.dumps({'message': message, 'success' : False})
-                        return HttpResponse(data, mimetype='json')
-                else:
-                    message = u'<ul>'
-                    if request.POST['name'] == u'': message += u'<li>Tên môn học phải chứa ít nhất một kí tự.</li>'
-                    if int(request.POST['number_lesson']) <= 0: message += u'<li>Số tiết trong một tuần phải lớn hơn 0.</li>'
-                    if request.POST['hs'] == u'' or float(request.POST['hs']) <= 0 or float(request.POST['hs']) > 3: message += u'<li>Hệ số phải nằm trong khoảng [0, 3].</li>'
-                    message += u'</ul>'
-#                    print message
-                    data = simplejson.dumps({'message': message})
+                try:
+                    if request.POST['teacher_id'] != u'':
+                        teacher = Teacher.objects.get(id=int(data['teacher_id']))
+
+                        add_subject(subject_name=data['name'],
+                                hs=float(data['hs']),
+                                teacher=teacher,
+                                _class=cl,
+                                index=index,
+                                subject_type=data['type'],
+                                nx=data['nx'],
+                                number_lesson=data['number_lesson'])
+
+                        form = SubjectForm(school.id)
+                    else:
+
+                        add_subject(subject_name=data['name'],
+                                hs=float(data['hs']),
+                                _class=cl,
+                                index=index,
+                                subject_type=data['type'],
+                                nx=data['nx'])
+
+                        form = SubjectForm(school.id)
+
+                    message = u'Môn học mới đã được thêm.'
+                    success = True
+                    data = simplejson.dumps({'message': message, 'success' : success})
                     return HttpResponse(data, mimetype='json')
-            except Exception as e:
-                print e
+                except Exception as e:
+                    print e
+                    message = u'Tên môn học đã tồn tại.'
+                    data = simplejson.dumps({'message': message, 'success' : False})
+                    return HttpResponse(data, mimetype='json')
+            else:
+                message = u'<ul>'
+                if request.POST['name'] == u'':
+                    message += u'<li>Tên môn học phải chứa ít nhất một kí tự.</li>'
+                if int(request.POST['number_lesson']) <= 0:
+                    message += u'<li>Số tiết trong một tuần phải lớn hơn 0.</li>'
+
+                if (request.POST['hs'] == u''
+                        or float(request.POST['hs']) <= 0
+                        or float(request.POST['hs']) > 3):
+                    message += u'<li>Hệ số phải nằm trong khoảng [0, 3].</li>'
+
+                message += u'</ul>'
+                data = simplejson.dumps({'message': message})
+                return HttpResponse(data, mimetype='json')
+
         sid = request.POST.get('id', None)
         sub = cl.subject_set.get(id=sid)
         if request.POST['request_type'] == u'teacher':
@@ -471,24 +505,14 @@ def subjectPerClass(request, class_id):
                 sub.save()
                 message = u'Cập nhật thành công.'
 
-        if request.POST['request_type'] == u'type':
-            if request.POST['type'] != u'':
-                type = request.POST['type']
+        if request.POST['request_type'] == u'primary':
+            shs = request.POST['primary']
+            if sub.type in [u'Toán', u'Ngữ văn']:
+                message = u'Toán và Văn luôn tính cả 2 kỳ.'
             else:
-                type = None
-            try:
-                sub.type = type
+                sub.primary = shs
                 sub.save()
                 message = u'Cập nhật thành công.'
-            except Exception as e:
-                message = u'Cập nhật không thành công.'
-                print e
-
-        elif request.POST['request_type'] == u'primary':
-            shs = request.POST['primary']
-            sub.primary = shs
-            sub.save()
-            message = u'Cập nhật thành công.'
 
         elif request.POST['request_type'] == u'nx':
             try:
@@ -519,6 +543,7 @@ def subjectPerClass(request, class_id):
                 sub.hs = shs
                 sub.save()
                 message = u'Cập nhật thành công.'
+
         elif request.POST['request_type'] == u'xoa':
             try:
                 if sub.type == u'Toán' or sub.type == u'Ngữ văn':
@@ -534,77 +559,6 @@ def subjectPerClass(request, class_id):
         data = simplejson.dumps({'message': message})
         return HttpResponse(data, mimetype='json')
 
-
-#            data = {'name': request.POST['name'].strip(), 'hs': request.POST['hs'], 'class_id': class_id,
-#                    'teacher_id': request.POST['teacher_id'], 'index': index, 'primary': request.POST['primary'], 'type': request.POST['type'], 'nx': nxn, 'number_lesson':}
-#            form = SubjectForm(school.id, data)
-#            if form.is_valid():
-#                _class = Class.objects.get(id=class_id)
-#                if teacher_list[i] != u'':
-#                    teacher = Teacher.objects.get(id=int(data['teacher_id']))
-#                    add_subject(subject_name=data['name'], hs=float(data['hs']), teacher=teacher, _class=_class,
-#                        index=index, subject_type=data['type'], nx=data['nx'], number_lesson=data['number_lesson'])
-#                    form = SubjectForm(school.id)
-#                else:
-#                    try:
-#                        add_subject(subject_name=data['name'], hs=float(data['hs']), _class=_class, index=index,
-#                            subject_type=data['type'], nx=data['nx'])
-#                        form = SubjectForm(school.id)
-#                        message = u'Môn học mới đã được thêm.'
-#                    except Exception as e:
-#                        print e
-#                        message = u'Môn học đã tồn tại.'
-
-#    elif request.method == 'POST' and pos > 3:
-#        hs_list = request.POST.getlist('hs')
-#        teacher_list = request.POST.getlist('teacher_id')
-#        p_list = request.POST.getlist('primary')
-#        t_list = request.POST.getlist('type')
-#        nx_list = request.POST.getlist('nx')
-#        number_list = request.POST.getlist('number_lesson')
-#        i = 0
-#        j = 0
-#        for s in subjectList:
-#            data = {'name': s.name, 'hs': hs_list[i], 'class_id': class_id, 'teacher_id': teacher_list[i], 'index': i,
-#                    'primary': p_list[i], 'type': s.type, 'nx': s.nx, 'number_lesson':number_list[i]}
-#            if s.nx:
-#                j += 1
-#            of = sfl[i]
-#            sfl[i] = SubjectForm(school.id, data, instance=s)
-#            if str(of) != str(sfl[i]):
-#                if sfl[i].is_valid():
-#                    sfl[i].save()
-#                    message = 'Danh sách môn học đã được cập nhật.'
-#            i += 1
-#        if teacher_list[i] != u'' or request.POST['name'].strip() != u'' or hs_list[i] != u'':
-#            index = i + 1
-#            nxn = False
-#            if len(nx_list) > j:
-#                nxn = True
-#
-#            data = {'name': request.POST['name'].strip(), 'hs': hs_list[i], 'class_id': class_id,
-#                    'teacher_id': teacher_list[i], 'index': index, 'primary': p_list[i], 'type': t_list[0], 'nx': nxn, 'number_lesson':number_list[i]}
-#            form = SubjectForm(school.id, data)
-#            if form.is_valid():
-#                _class = Class.objects.get(id=class_id)
-#                if teacher_list[i] != u'':
-#                    teacher = Teacher.objects.get(id=int(data['teacher_id']))
-#                    add_subject(subject_name=data['name'], hs=float(data['hs']), teacher=teacher, _class=_class,
-#                        index=index, subject_type=data['type'], nx=data['nx'], number_lesson=data['number_lesson'])
-#                    form = SubjectForm(school.id)
-#                else:
-#                    try:
-#                        add_subject(subject_name=data['name'], hs=float(data['hs']), _class=_class, index=index,
-#                            subject_type=data['type'], nx=data['nx'])
-#                        form = SubjectForm(school.id)
-#                        message = u'Môn học mới đã được thêm.'
-#                    except Exception as e:
-#                        print e
-#                        message = u'Môn học đã tồn tại.'
-#
-#            else:
-#                message = None
-
     subjectList = cl.subject_set.order_by('index')
 
     sfl = []
@@ -619,14 +573,14 @@ def subjectPerClass(request, class_id):
     list = zip(subjectList, sfl, teachers, rteachers)
     t = loader.get_template(os.path.join('school', 'subject_per_class.html'))
     c = RequestContext(request, {'list': list,
-                                 'form': form,
-                                 'message': message,
-                                 'subjectList': subjectList,
-                                 'teacherList' : teacher_list,
-                                 'class': cl,
-                                 'term': term,
-                                 'classList': classList,
-                                 'pos': pos})
+        'form': form,
+        'message': message,
+        'subjectList': subjectList,
+        'teacherList' : teacher_list,
+        'class': cl,
+        'term': term,
+        'classList': classList,
+        'pos': pos})
     return HttpResponse(t.render(c))
 
 @need_login
@@ -657,7 +611,7 @@ def hanh_kiem(request, class_id=0):
             return HttpResponseRedirect(reverse('index'))
     if gvcn(request, class_id) == 1:
         pos = 4
-    message = None
+    message = ''
     pupilList = c.students()
 
     form = []
@@ -1256,7 +1210,6 @@ def edit_ki_luat(request, kt_id):
 def dd(request, class_id, day, month, year, api_called=False, data=None):
     school = get_school(request)
     _class = Class.objects.get(id = class_id)
-    user = request.user
     if _class.year_id.school_id != school:
         return HttpResponseRedirect(reverse('school_index'))
     url = reverse('ds_nghi',args=[class_id,day,month,year])

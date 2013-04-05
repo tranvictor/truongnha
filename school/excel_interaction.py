@@ -18,7 +18,7 @@ from xlwt.Workbook import Workbook
 from app.models import SystemLesson, SUBJECT_CHOICES
 from decorators import school_function, need_login, operating_permission, year_started
 from school.models import Class, Subject, SchoolLesson, validate_phone, Lesson, TKB
-from school.models import this_year, StartYear, SUBJECT_LIST_ASCII
+from school.models import StartYear, SUBJECT_LIST_ASCII
 from school.templateExcel import *
 from school.utils import get_latest_startyear, get_current_year, in_school,\
                             get_permission , gvcn, get_level, get_school, to_date,\
@@ -48,7 +48,8 @@ def class_generate(request, class_id, object):
     permission = get_permission(request)
     cn = gvcn(request, _class)
 
-    if (not permission in [u'HIEU_TRUONG', u'HIEU_PHO']) and ( not cn) and (get_level(request)=='T'):
+    if ((not permission in [u'HIEU_TRUONG', u'HIEU_PHO'])
+            and ( not cn) and (get_level(request)=='T')):
         return HttpResponseRedirect(reverse('school_index'))
 
     if object == 'student_list':
@@ -56,7 +57,8 @@ def class_generate(request, class_id, object):
         book = Workbook(encoding='utf-8')
         #renderring xls file
         sheet = book.add_sheet(u'Danh sách học sinh')
-        sheet.write_merge(0, 1,0,4, u'DANH SÁCH HỌC SINH LỚP %s' % unicode(_class).upper(), h40)
+        sheet.write_merge(0, 1,0,4,
+                u'DANH SÁCH HỌC SINH LỚP %s' % unicode(_class).upper(), h40)
         sheet.row(0).height = 350
 
         sheet.col(0).width = 1500
@@ -1184,10 +1186,10 @@ def student_import( request, class_id, request_type='' ):
         if request_type == u'update':
             chosen_class = Class.objects.get(id=int(class_id))
             lb = get_lower_bound(school)
-            syear = this_year() - chosen_class.block_id.number + lb
-            year, temp = StartYear.objects.get_or_create(time=syear,
-                                                           school_id=school)
             current_year = get_current_year(request)
+            syear = current_year.time - chosen_class.block_id.number + lb
+            year, temp = StartYear.objects.get_or_create(time=syear,
+                    school_id=school)
             term = get_current_term(request)
             saving_import_student = request.session.pop('saving_import_student')
             number_of_change = add_many_students(student_list=saving_import_student,
@@ -1239,10 +1241,10 @@ def student_import( request, class_id, request_type='' ):
         chosen_class = Class.objects.get(id=int(class_id))
         #year = school.startyear_set.latest('time')
         lb = get_lower_bound(school)
-        syear = this_year() - chosen_class.block_id.number + lb
-        year, temp = StartYear.objects.get_or_create(time=syear,
-                                                    school_id=school)
         current_year = get_current_year(request)
+        syear = current_year.time - chosen_class.block_id.number + lb
+        year, temp = StartYear.objects.get_or_create(time=syear,
+                school_id=school)
         term = get_current_term(request)
         existing_student = add_many_students(student_list=result,
                                              _class=chosen_class,
@@ -1805,7 +1807,7 @@ def process_file_hanh_kiem(request, file_name, class_id):
             try:
                 p = cl.pupil_set.get(first_name__exact = p_first_name, last_name__exact = p_last_name)
                 print p
-            except Exception as ex:
+            except Exception:
                 message += u'<ul>Không tồn tại học sinh ' + unicode(p_last_name + p_first_name) + u' </ul>'
                 continue
 

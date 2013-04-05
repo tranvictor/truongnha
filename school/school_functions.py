@@ -237,11 +237,16 @@ def sms_summary(request, class_id=None):
             'message': message,
             'success': success}, mimetype='json'))
     students = cl.students()
+
     info_list, marks = cl._generate_mark_summary(term,
             student_query=students)
+
     dd_info_list, dd_list = cl._generate_diemdanh_summary(term,
             student_query=students)
-    hk_info_list, hk_list = cl._generate_hanhkiem_summary(year.id,student_query=students)
+
+    hk_info_list, hk_list = cl._generate_hanhkiem_summary(year.id,
+            student_query=students)
+
     if request.method == 'POST' and request.is_ajax():
         ids = request.POST['students'].split('-')
         ids = [int(id) for id in ids if id]
@@ -253,9 +258,12 @@ def sms_summary(request, class_id=None):
             number = 0
             for st in students:
                 if (st.sms_phone and st.id in ids
-                    and (st.id in info_list and st.id in dd_info_list and st.id in hk_info_list)
+                    and (st.id in info_list
+                        and st.id in dd_info_list
+                        and st.id in hk_info_list)
                     and (info_list[st.id] != u'Không có điểm mới.'
-                        or dd_info_list[st.id] != '') or hk_info_list[st.id] != ''):
+                        or dd_info_list[st.id] != '')
+                    or hk_info_list[st.id] != ''):
                     try:
                         content = info_list[st.id] + dd_info_list[st.id] + hk_info_list[st.id]
                         send_sms_summary_mark(st,
@@ -266,6 +274,7 @@ def sms_summary(request, class_id=None):
                                 request.user,
                                 cl=cl,
                                 school=school)
+
                         number += 1
                     except Exception as e:
                         print e
@@ -273,8 +282,8 @@ def sms_summary(request, class_id=None):
             message = '<li>%d tin nhắn sẽ được gửi trong chậm nhất 1h</li>'\
                     % (number)
             if len(ids) > number:
-                message += '<li>%d học sinh không có thông tin mới để gửi hoặc không có số điện thoại</li>'\
-                           % (len(ids) - number)
+                message += '<li>%d học sinh không có thông tin mới để gửi hoặc không có số điện thoại</li>' % (len(ids) - number)
+
         return HttpResponse(simplejson.dumps({
             'message': message,
             'success': True}), mimetype='json')
@@ -858,10 +867,9 @@ def viewStudentDetail(request, student_id):
 
 @need_login
 @school_function
+@operating_permission(['HIEU_PHO', 'HIEU_TRUONG'])
 def addClass(request):
     user = request.user
-    if get_position(request) < 4:
-        return HttpResponseRedirect(reverse('index'))
     school = user.userprofile.organization
     low = get_lower_bound(school)
     up = get_upper_bound(school)
@@ -869,26 +877,29 @@ def addClass(request):
         form = ClassForm(school.id)
 
         if request.method == 'POST':
-            print request.POST
             names = request.POST['name'].split(" ")
             block_num = names[0]
+            name = ' '.join([n for n in names if n])
 
             try:
                 block = school.block_set.get(number=int(block_num))
-            except Exception:
+            except (ObjectDoesNotExist, ValueError):
                 t = loader.get_template(os.path.join('school', 'add_class.html'))
                 c = RequestContext(request, {'form': form})
                 return HttpResponse(t.render(c))
 
             index = get_current_year(request).class_set.count()
-            data = {'name': request.POST['name'],
+
+            data = {'name': name,
                     'year_id': Year.objects.filter(school_id=school.id)\
-                            .latest('time').id, 'block_id': block.id,
+                            .latest('time').id,
+                    'block_id': block.id,
                     'teacher_id': request.POST['teacher_id'],
                     'phan_ban': request.POST['phan_ban'],
                     'max': 0,
                     'status': school.status,
                     'index': index}
+            
             form = ClassForm(school.id, data)
             if form.is_valid():
                 _class = form.save()

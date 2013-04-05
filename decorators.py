@@ -19,9 +19,9 @@ def need_login(func):
                 return HttpResponseRedirect(reverse('login_redirect',
                     args=[urllib.quote(urllib.quote(
                         request.get_full_path(), ''), '')]))
-        except Exception as e:
-            print e
+        except IndexError:
             raise Exception("IllegalRequestCall")
+
         if kwargs:
             return func(*args, **kwargs)
         else: return func(*args)

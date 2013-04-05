@@ -233,9 +233,7 @@
                         {{ ss.current_address }} </td>
                     <td>
                         {% if ss.father_name %}
-                            {{ ss.father_name }}
-                            {% if ss.mother_name %}
-                                ,
+                            {{ ss.father_name }}{% if ss.mother_name %},
                             {% endif %}
                         {% endif %}
                         {{ ss.mother_name }}
@@ -409,7 +407,7 @@
                     <option value="{{ cl.id }}">{{ cl }}</option>
                 {% endfor %}
                 {% for cl in move_to_cls1 %}
-                    <option value="{{ cl.id }}">{{ cl }}</option>
+                    <option value="{{ cl.id }} upper-class">{{ cl }}</option>
                 {% endfor %}
             </select>
 

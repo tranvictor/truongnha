@@ -254,7 +254,6 @@ def log_action(request, object, change_message):
         action_flag=4
     )
 
-
 class DanhSachLoaiLop(models.Model):
     loai = models.CharField("Loại", max_length=15)
     school_id = models.ForeignKey(Organization, verbose_name="Trường")
@@ -938,66 +937,60 @@ class Pupil(BasicPersonInfo):
             self.save()
 
     def join_class(self, _class, time=None):
-        if not time:
-            time = date.today()
+        if not time: time = date.today()
         current = self.current_class()
-        try:
-            if current:
-                relationship = Attend.objects.filter(pupil=self,
-                    _class=current,
-                    leave_time=None)
-                if len(relationship) == 1:
-                    if current != _class:
-                        relationship[0].leave_time = date.today()
-                        if current.year_id == _class.year_id:
-                            relationship[0].is_member = False
-                        relationship[0].save()
-                        Attend.objects.create(pupil=self,
-                            _class=_class,
-                            attend_time=time,
-                            leave_time=None)
-                        self.index = _class.max + 1
-                        _class.max += 1
-                        _class.save()
-                        self.class_id = _class
-                        self.learning_status = ''
-                        self.unc_class_id = None
-                        self.save()
-                elif not relationship:
+        if current:
+            relationship = Attend.objects.filter(pupil=self,
+                _class=current,
+                leave_time=None)
+            if len(relationship) == 1:
+                if current != _class:
+                    relationship[0].leave_time = date.today()
+                    if current.year_id == _class.year_id:
+                        relationship[0].is_member = False
+                    relationship[0].save()
                     Attend.objects.create(pupil=self,
                         _class=_class,
                         attend_time=time,
                         leave_time=None)
-                    self.class_id = _class
                     self.index = _class.max + 1
-                    self.learning_status = ''
-                    self.unc_class_id = None
                     _class.max += 1
                     _class.save()
+                    self.class_id = _class
+                    self.learning_status = ''
+                    self.unc_class_id = None
                     self.save()
-                else:
-                    raise Exception(u'InvalidClassSet_%s' % self.id)
-            else:
-                #this only use for converting from 1n to nm
-                #TODO delete this section after removing class_id
+            elif not relationship:
                 Attend.objects.create(pupil=self,
                     _class=_class,
                     attend_time=time,
                     leave_time=None)
                 self.class_id = _class
                 self.index = _class.max + 1
+                self.learning_status = ''
+                self.unc_class_id = None
                 _class.max += 1
                 _class.save()
                 self.save()
-            return self
-        except Exception as e:
-            print e
-            raise e
+            else:
+                raise Exception(u'InvalidClassSet_%s' % self.id)
+        else:
+            #this only use for converting from 1n to nm
+            #TODO delete this section after removing class_id
+            Attend.objects.create(pupil=self,
+                _class=_class,
+                attend_time=time,
+                leave_time=None)
+            self.class_id = _class
+            self.index = _class.max + 1
+            _class.max += 1
+            _class.save()
+            self.save()
+        return self
 
     def _move_to_class(self, _class):
         year = _class.year_id
-        TBNam.objects.get_or_create(student_id=self,
-            year_id=year)
+        TBNam.objects.get_or_create(student_id=self, year_id=year)
         subjects = _class.subject_set.all()
         number_subject = 0
         number_subject += _class.subject_set.filter(primary=0).count()
@@ -1005,12 +998,19 @@ class Pupil(BasicPersonInfo):
 
         for t in year.term_set.all():
             if t.number == 1:
-                number_subject = _class.subject_set.filter(primary=1).count()
+                num_sub_for_this_term = _class.subject_set.filter(primary=1).count()
+                num_sub_for_this_term += number_subject
             elif t.number == 2:
-                number_subject = _class.subject_set.filter(primary=2).count()
-            TBHocKy.objects.get_or_create(student_id=self,
-                term_id=t,
-                number_subject=number_subject)
+                num_sub_for_this_term = _class.subject_set.filter(primary=2).count()
+                num_sub_for_this_term += number_subject
+            else:
+                num_sub_for_this_term = number_subject
+
+            tbhk, created = TBHocKy.objects.get_or_create(student_id=self,
+                    term_id=t)
+
+            tbhk.number_subject = num_sub_for_this_term
+
             TKDiemDanh.objects.get_or_create(student_id=self, term_id=t)
         for subject in subjects:
             for i in range(1, 3):
@@ -1032,9 +1032,9 @@ class Pupil(BasicPersonInfo):
     def _move_to_upper_class(self, _class):
         cur_cl = self.current_class()
         Mark.objects.filter(subject_id__class_id=cur_cl, student_id=self)\
-        .update(current=False)
+                .update(current=False)
         self.tkmon_set.filter(subject_id__class_id=cur_cl)\
-        .update(current=False)
+                .update(current=False)
         return self._move_to_class(_class)
 
     def get_school(self):

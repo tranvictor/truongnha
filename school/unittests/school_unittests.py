@@ -1146,7 +1146,7 @@ class AddTeacherTest(SchoolSetupTest):
 
 class AddClassTest(SchoolSetupTest):
     def phase8_add_a_class(self):
-        block = self.school.block_set.latest('id')
+        block = self.school.block_set.get(number=self.middle_block_number)
         class_name = str(block.number) + ' Test 1'
         num_of_class = self.school.get_current_year().class_set.count()
         response = self.client.post(
@@ -1160,42 +1160,46 @@ class AddClassTest(SchoolSetupTest):
         self.assertEqual(response.status_code, 302)
         num_of_class_1 = self.school.get_current_year().class_set.count()
         self.assertEqual(num_of_class + 1, num_of_class_1)
-        new_class = self.school.get_current_year().class_set.get(name = class_name)
+        new_class = self.school.get_current_year().class_set.get(name=class_name)
         self.assertEqual(new_class.block_id,block)
 
+    def phase9_add_dupplicated_class_with_extra_spaces(self):
+        block = self.school.block_set.get(number=self.middle_block_number)
+        class_name = str(block.number) + '   Test 1'
+        num_of_class = self.school.get_current_year().class_set.count()
+        response = self.client.post(
+            reverse('add_class'),
+            {
+                'name':class_name,
+                'phan_ban' : u'CB',
+                'teacher_id': u'',
+                }
+        )
+        self.assertEqual(response.status_code, 200)
+        num_of_class_1 = self.school.get_current_year().class_set.count()
+        self.assertEqual(num_of_class, num_of_class_1)
+
+        return True
+
     def phase9_prepare_data(self):
-        block = self.school.block_set.latest('id')
-        class_name_1 = str(block.number) + ' Test 2'
-        class_name_2 = str(block.number) + ' Test 3'
-        class_name_3 = str(block.number) + ' Test 4'
-        response = self.client.post(
-            reverse('add_class'),
-            {
-                'name':class_name_1,
-                'phan_ban' : u'CB',
-                'teacher_id': u'',
-                }
-        )
-        response = self.client.post(
-            reverse('add_class'),
-            {
-                'name':class_name_2,
-                'phan_ban' : u'CB',
-                'teacher_id': u'',
-                }
-        )
-        response = self.client.post(
-            reverse('add_class'),
-            {
-                'name':class_name_3,
-                'phan_ban' : u'CB',
-                'teacher_id': u'',
-                }
-        )
+        block = self.school.block_set.get(number=self.middle_block_number)
+        class_names = [str(block.number) + ' Test %d' % i for i in range(2,5)]
+        upper_class_names = [str(block.number + 1) + ' Test %d' % i
+                for i in range(2,5)]
+        class_names.extend(upper_class_names)
+        for class_name in class_names:
+            self.client.post(
+                reverse('add_class'),
+                {
+                    'name':class_name,
+                    'phan_ban' : u'CB',
+                    'teacher_id': u'',
+                    }
+            )
 
 class AddSubjectTest2(AddClassTest):
     def phase10_add_a_subject(self):
-        block = self.school.block_set.latest('id')
+        block = self.school.block_set.get(number=self.middle_block_number)
         class_name = str(block.number) + ' Test 3'
         cl = self.school.get_current_year().class_set.get(name=class_name)
         num_of_sub = cl.subject_set.count()
@@ -1221,7 +1225,7 @@ class AddSubjectTest2(AddClassTest):
         self.assertEqual(num_of_sub+1, num_of_sub_1)
 
     def phase11_delete_a_subject(self):
-        block = self.school.block_set.latest('id')
+        block = self.school.block_set.get(number=self.middle_block_number)
         class_name = str(block.number) + ' Test 4'
         cl = self.school.get_current_year().class_set.get(name = class_name)
         num_of_sub = cl.subject_set.count()
@@ -1241,9 +1245,9 @@ class AddSubjectTest2(AddClassTest):
 
 class AddStudentTest2(AddSubjectTest2):
     def phase12_add_a_student(self):
-        block = self.school.block_set.latest('id')
+        block = self.school.block_set.get(number=self.middle_block_number)
         class_name = str(block.number) + ' Test 1'
-        cl = self.school.get_current_year().class_set.get(name = class_name)
+        cl = self.school.get_current_year().class_set.get(name=class_name)
         num_of_student = cl.number_of_pupils()
         response = self.client.post(
             reverse('class_detail',args=[cl.id]),
@@ -1291,7 +1295,7 @@ class MarkTest(AddStudentTest2):
     def phase13_add_mark(self):
         school = self.school
         current_term = school.year_set.latest('time').term_set.get(number = school.status)
-        block = self.school.block_set.latest('id')
+        block = self.school.block_set.get(number=self.middle_block_number)
         class_name = str(block.number) + ' Test 1'
         cl = self.school.get_current_year().class_set.get(name = class_name)
         sub = cl.subject_set.get(name = u'Lịch sử')
@@ -1312,12 +1316,62 @@ class MarkTest(AddStudentTest2):
         self.assertEqual(mark.diem,'1*2|3*4*5|6*7*8')
         self.assertEqual(mark.ck,9)
 
+class MoveStudentToUpperClassTest(MarkTest):
+    def phase14_move_student_to_class_with_same_sub(self):
+        school = self.school
+        current_term = school.year_set.latest('time')\
+                .term_set.get(number=school.status)
+        block = self.school.block_set.get(number=self.middle_block_number)
+        class_name = str(block.number) + ' Test 1'
+        cl = self.school.get_current_year().class_set.get(name=class_name)
+        pupil = cl.students().get(first_name=u'Nguyễn Thị',
+            last_name=u'Xuân',
+            birthday=u'1995-10-22')
+        history_count = pupil.attend_set.count()
+        num_of_std_1 = cl.students().count()
+        move_class_name = str(block.number + 1) + ' Test 2'
+        print move_class_name
+        move_cl = self.school.get_current_year().class_set.get(name=move_class_name)
+        dia_ly = move_cl.subject_set.get(type=u'Địa lí')
+        dia_ly.primary = 1
+        dia_ly.save()
+        num_of_std_2 = move_cl.students().count()
+        sub_cl_count = cl.subject_set.count()
+        sub_mcl_count = move_cl.subject_set.count()
+        self.assertEqual(sub_cl_count,sub_mcl_count)
+        data = str(pupil.id) + '-'
+        response = self.client.post(
+            reverse('move_students'),
+            {
+                'target':move_cl.id,
+                'data':data,
+                'request_type':u'move'
+                },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        num_of_std_3 = cl.students().count()
+        num_of_std_4 = move_cl.students().count()
+        self.assertEqual(num_of_std_1, num_of_std_3 + 1)
+        self.assertEqual(num_of_std_2 + 1, num_of_std_4)
+        history_count_2 = pupil.attend_set.count()
+        self.assertEqual(history_count + 1, history_count_2)
+        mark = pupil.mark_set.get(subject_id__name=u'Lịch sử',
+                term_id=current_term.id,
+                current=True)
+        subject = move_cl.subject_set.get(name = u'Lịch sử')
+        self.assertEqual(mark.current, True)
+        self.assertEqual(mark.diem,'||')
+        self.assertEqual(mark.subject_id_id, subject.id)
+        tbhks = current_term.tbhocky_set.filter(student_id=pupil)
+        self.assertEqual(len(tbhks), 1)
+
 class MoveStudentTest1(MarkTest):
     def phase14_move_student_to_class_with_same_sub(self):
         school = self.school
         current_term = school.year_set.latest('time')\
                 .term_set.get(number=school.status)
-        block = self.school.block_set.latest('id')
+        block = self.school.block_set.get(number=self.middle_block_number)
         class_name = str(block.number) + ' Test 1'
         cl = self.school.get_current_year().class_set.get(name=class_name)
         pupil = cl.students().get(first_name=u'Nguyễn Thị',
@@ -1358,10 +1412,11 @@ class MoveStudentTest1(MarkTest):
 
     def phase15_edit_mark(self):
         school = self.school
-        current_term = school.year_set.latest('time').term_set.get(number = school.status)
-        block = self.school.block_set.latest('id')
+        current_term = school.year_set.latest('time')\
+                .term_set.get(number=school.status)
+        block = self.school.block_set.get(number=self.middle_block_number)
         class_name = str(block.number) + ' Test 2'
-        cl = self.school.get_current_year().class_set.get(name = class_name)
+        cl = self.school.get_current_year().class_set.get(name=class_name)
         sub = cl.subject_set.get(name = u'Lịch sử')
         pupil = cl.students().get(first_name=u'Nguyễn Thị',
             last_name=u'Xuân',
@@ -1383,7 +1438,7 @@ class MoveStudentTest1(MarkTest):
     def phase16_move_student_back(self):
         school = self.school
         current_term = school.year_set.latest('time').term_set.get(number = school.status)
-        block = self.school.block_set.latest('id')
+        block = self.school.block_set.get(number=self.middle_block_number)
         class_name = str(block.number) + ' Test 2'
         cl = self.school.get_current_year().class_set.get(name = class_name)
         pupil = cl.students().get(first_name=u'Nguyễn Thị',
@@ -1422,7 +1477,7 @@ class MoveStudentTest2(MarkTest):
     def phase14_move_student_to_class_with_less_sub(self):
         school = self.school
         current_term = school.year_set.latest('time').term_set.get(number = school.status)
-        block = self.school.block_set.latest('id')
+        block = self.school.block_set.get(number=self.middle_block_number)
         class_name = str(block.number) + ' Test 1'
         cl = self.school.get_current_year().class_set.get(name = class_name)
         pupil = cl.students().get(first_name=u'Nguyễn Thị',
@@ -1463,7 +1518,7 @@ class MoveStudentTest2(MarkTest):
     def phase15_move_student_to_back(self):
         school = self.school
         current_term = school.year_set.latest('time').term_set.get(number = school.status)
-        block = self.school.block_set.latest('id')
+        block = self.school.block_set.get(number=self.middle_block_number)
         class_name = str(block.number) + ' Test 4'
         cl = self.school.get_current_year().class_set.get(name = class_name)
         pupil = cl.students().get(first_name=u'Nguyễn Thị',
@@ -1503,7 +1558,7 @@ class MoveStudentTest3(MarkTest):
         school = self.school
         current_term = school.year_set.latest('time').term_set\
                 .get(number=school.status)
-        block = self.school.block_set.latest('id')
+        block = self.school.block_set.get(number=self.middle_block_number)
         class_name = str(block.number) + ' Test 1'
         cl = self.school.get_current_year().class_set.get(name=class_name)
         pupil = cl.students().get(first_name=u'Nguyễn Thị',
@@ -1551,7 +1606,7 @@ class MoveStudentTest3(MarkTest):
     def phase15_add_mark_to_new_sub(self):
         school = self.school
         current_term = school.year_set.latest('time').term_set.get(number = school.status)
-        block = self.school.block_set.latest('id')
+        block = self.school.block_set.get(number=self.middle_block_number)
         class_name = str(block.number) + ' Test 3'
         cl = self.school.get_current_year().class_set.get(name = class_name)
         sub = cl.subject_set.get(name = u'Mĩ thuật test')
@@ -1575,7 +1630,7 @@ class MoveStudentTest3(MarkTest):
     def phase16_move_student_back(self):
         school = self.school
         current_term = school.year_set.latest('time').term_set.get(number = school.status)
-        block = self.school.block_set.latest('id')
+        block = self.school.block_set.get(number=self.middle_block_number)
         class_name = str(block.number) + ' Test 3'
         cl = self.school.get_current_year().class_set.get(name = class_name)
         pupil = cl.students().get(first_name=u'Nguyễn Thị',

@@ -240,12 +240,10 @@ class SchoolForm(forms.Form):
         if get_permission(self.request) in [u'HIEU_TRUONG', u'HIEU_PHO']:
             self.fields['name'] = forms.CharField(label=u'Tên trường:',
                     max_length = 100 ) #tên đơn vị. tổ chức
-            school = get_school(self.request)
             self.fields['school_level'] = forms.ChoiceField(label=u"Cấp:",
                     choices=KHOI_CHOICES)
-            if school.status in [1,2]:
-                self.fields['school_level'].widget.attrs['disabled'] = 'disabled'
-                self.fields['school_level'].required = False
+            self.fields['school_level'].widget.attrs['disabled'] = 'disabled'
+            self.fields['school_level'].required = False
             self.fields['address'] = forms.CharField(label=u"Địa chỉ:",
                     max_length=255, required=False) #
             self.fields['phone'] = forms.CharField(label="Điện thoại:",
@@ -260,8 +258,8 @@ class SchoolForm(forms.Form):
         try:
             school = get_school(self.request)
             school.name = self.cleaned_data['name']
-            if self.cleaned_data['school_level']:
-                school.school_level = self.cleaned_data['school_level']
+            #if self.cleaned_data['school_level']:
+                #school.school_level = self.cleaned_data['school_level']
             school.address = self.cleaned_data['address']
             school.phone = self.cleaned_data['phone']
             school.email = self.cleaned_data['email']
@@ -340,12 +338,26 @@ class ClassForm(forms.ModelForm):
         
     def __init__(self, school_id, *args, **kwargs):
         super(ClassForm, self).__init__(*args, **kwargs)
-        self.fields['teacher_id'] = forms.ModelChoiceField(required = False, queryset=Teacher.objects.filter(school_id = school_id))
-        self.fields['block_id'] = forms.ModelChoiceField(queryset=Block.objects.filter(school_id = school_id))
+
+        self.fields['teacher_id'] = forms.ModelChoiceField(required=False,
+                queryset=Teacher.objects.filter(school_id=school_id))
+
+        self.fields['block_id'] = forms.ModelChoiceField(
+                queryset=Block.objects.filter(school_id=school_id))
+
 class TBNamForm(forms.ModelForm):
     class Meta:
         model = TBNam
-        exclude = {'number_subject', 'number_finish', 'tong_so_ngay_nghi', 'danh_hieu_nam', 'len_lop', 'thi_lai', 'tb_thi_lai', 'hl_thi_lai'}
+
+        exclude = {'number_subject',
+                'number_finish',
+                'tong_so_ngay_nghi',
+                'danh_hieu_nam',
+                'len_lop',
+                'thi_lai',
+                'tb_thi_lai',
+                'hl_thi_lai'}
+
         widgets = {
             'hk_thang_9' : forms.TextInput(attrs={'size':'1', 'class':'hk'}),
             'hk_thang_10' : forms.TextInput(attrs={'size':'1', 'class':'hk'}),
@@ -360,10 +372,18 @@ class TBNamForm(forms.ModelForm):
             'term2' : forms.TextInput(attrs={'size':'1', 'class':'hk'}),
             'year' : forms.TextInput(attrs={'size':'1', 'class':'hk'})
         }
-    def get_list_month(self):
-        return [self['hk_thang_9'], self['hk_thang_10'], self['hk_thang_11'], self['hk_thang_12'], self['hk_thang_1'],self['hk_thang_2'], self['hk_thang_3'], self['hk_thang_4'], self['hk_thang_5']]
-        
 
+    def get_list_month(self):
+        return [self['hk_thang_9'],
+                self['hk_thang_10'],
+                self['hk_thang_11'],
+                self['hk_thang_12'],
+                self['hk_thang_1'],
+                self['hk_thang_2'],
+                self['hk_thang_3'],
+                self['hk_thang_4'],
+                self['hk_thang_5']]
+        
 class SubjectForm(forms.ModelForm):
     class Meta:
         model = Subject
@@ -379,6 +399,8 @@ class SubjectForm(forms.ModelForm):
         self.fields['teacher_id'] = forms.ModelChoiceField(required=False,
                 queryset=Teacher.objects.filter(school_id=school_id),
                 label=u'Giáo viên giảng dạy')
+        if 'instance' in kwargs and kwargs['instance'].type in [u'Toán', u'Ngữ văn']:
+            del self.fields['primary']
 
 class KhenThuongForm(forms.ModelForm):
     class Meta:
@@ -393,9 +415,13 @@ class KhenThuongForm(forms.ModelForm):
         def validate_ktkl_date(value):
             if value < student.school_join_date or value > date.today():
                 raise ValidationError(u'Ngày nằm ngoài khoảng cho phép.\n Ngày hợp lệ tính từ ngày học sinh nhập trường đến ngày hiện tại')
+            
         super(KhenThuongForm, self).__init__(*args, **kw)
-        self.fields['time'] = forms.DateField(required=False, initial=date.today(), label=u'Ngày',
-            validators=[validate_ktkl_date], widget=forms.DateInput(attrs={'class':'datepicker'}))
+        self.fields['time'] = forms.DateField(required=False,
+                initial=date.today(),
+                label=u'Ngày',
+                validators=[validate_ktkl_date],
+                widget=forms.DateInput(attrs={'class':'datepicker'}))
 
 class KiLuatForm(forms.ModelForm):        
     class Meta:

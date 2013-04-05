@@ -9,6 +9,8 @@ from django.db import transaction
 import os.path
 import time
 import datetime
+import sys
+import traceback
 from decorators import need_login
 from school.models import Term, Mark, Subject, Pupil, TKMon, SUBJECT_LIST, Class, Teacher, HistoryMark
 from school.utils import get_current_term, get_position, in_school, get_level, to_en1, get_school, get_student
@@ -534,6 +536,7 @@ def update_mark(s, primary, isComment, user, time_history,position,school,teache
                     h.term_id = m.term_id
                     h.user_id = user
                     h.save()
+
         if number <= 3 * MAX_COL:
             arrMark[number] = value
             arrTime[number] = time
@@ -643,7 +646,7 @@ def saveMark(request):
         school = None
         teacher = None
 
-        if   position == 4:
+        if position == 4:
             school = user.userprofile.organization
         elif position == 3:
             teacher = user.teacher
@@ -653,14 +656,21 @@ def saveMark(request):
         primary = int(strs[2])
         isComment = strs[3] == "true"
         time_history = 60
-        try:
-            for i in range(4, length):
-                update_mark(strs[i], primary, isComment, user, 
-                        time_history, position, school, teacher)
-        except Exception as e:
-            if e.message == "Don't have permission":
-                message = u'Bạn không có quyền sửa điểm môn này'
-            else: raise e
+        #try:
+        for i in range(4, length):
+            try:
+                update_mark(strs[i], primary, isComment, user,
+                    time_history, position, school, teacher)
+            except Exception as e:
+                print "Exception in user code:"
+                print '-'*60
+                traceback.print_exc(file=sys.stdout)
+                print '-'*60
+                raise e
+#        except Exception as e:
+#            if e.message == "Don't have permission":
+#                message = u'Bạn không có quyền sửa điểm môn này'
+#            else: raise e
 
         message = strs[0]
         data = simplejson.dumps({'message': message})
