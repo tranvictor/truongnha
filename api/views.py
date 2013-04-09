@@ -44,6 +44,7 @@ class ApiLogin(View):
 
     def post(self, request):
         response = login(request, api_called=True)
+        print request
         if response.status_code == 200:
             result = {}
             try:
@@ -576,8 +577,8 @@ class hanhkiem(View):
                     field = ul.split('-')[1].strip()
                     type = ul.split('-')[2].strip().upper()
 
-                    p = c.pupil_set.get(id=int(p_id))
-                    hk = p.tbnam_set.get(year_id__exact=year.id)
+                    p = _class.pupil_set.get(id=int(p_id))
+                    hk = p.tbnam_set.get(year_id=_class.year_id.id)
 
                     valid_value = ['T', 'K', 'TB', 'Y', '']
                     FieldList = ['hk_thang_9', 'hk_thang_10', 'hk_thang_11', 'hk_thang_12', 'hk_thang_1', 'hk_thang_2',
@@ -682,6 +683,7 @@ class ScheduleForStudent(View):
     @need_login
     def get(self, request):
     #return Response(status=status.HTTP_200_OK, content=list)
+        result = ''
         return HttpResponse(simplejson.dumps(result), mimetype='json')
 
 
