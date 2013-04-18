@@ -160,10 +160,15 @@ class ApiGetStudentList(View):
             for student in student_list:
                 s = {
                     'id': student.id,
-                    'name': student.last_name + ' ' + student.first_name,
+                    'firstName': student.first_name,
+                    'lastName': student.last_name,
+                    'DOB': student.birthday.strftime("%d/%m/%Y"),
                     'sex': student.sex,
-                    'birth': student.birthday.strftime("%d/%m/%Y")
-                }
+                    'phone': student.phone,
+                    'smsPhone': student.sms_phone,
+                    'email': student.email,
+                    }
+                
                 list.append(s)
             #return Response(status=status.HTTP_200_OK, content=result)
             return HttpResponse(simplejson.dumps(list), mimetype='json')
