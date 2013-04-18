@@ -144,12 +144,7 @@ class ApiLogout(View):
 
 
 class ApiGetStudentList(View):
-    def get(self, request,
-            class_id,
-            day=None,
-            month=None,
-            year=None,
-            all=False):
+    def get(self, request,class_id):
         if request.user.is_anonymous():
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         position = get_position(request)
@@ -161,21 +156,17 @@ class ApiGetStudentList(View):
                 return Response(status.HTTP_400_BAD_REQUEST)
             if all: student_list = _class.attended_student()
             else: student_list = _class.students()
-            result = {
-                'SUBJECT': 'Ten Mon hoc' # Vu~ cho ten mon hoc vao day cai :|
-            }
             list = []
             for student in student_list:
                 s = {
                     'id': student.id,
                     'name': student.last_name + ' ' + student.first_name,
                     'sex': student.sex,
-                    'birth': student.birthday
+                    'birth': student.birthday.strftime("%d/%m/%Y")
                 }
                 list.append(s)
-            result['list'] = list
             #return Response(status=status.HTTP_200_OK, content=result)
-            return HttpResponse(simplejson.dumps(result), mimetype='json')
+            return HttpResponse(simplejson.dumps(list), mimetype='json')
         else:
             return Response(status.HTTP_403_FORBIDDEN)
 
@@ -215,7 +206,7 @@ class Attendance(View):
                 'id': student.id,
                 'firstName': student.first_name,
                 'lastName': student.last_name,
-                'DOB': student.birthday,
+                'DOB': student.birthday.strftime("%d/%m/%Y"),
                 'sex': student.sex,
                 'phone': student.phone,
                 'smsPhone': student.sms_phone,
