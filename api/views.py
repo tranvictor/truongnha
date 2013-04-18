@@ -34,11 +34,13 @@ class ApiLogin(View):
 
     def get(self, request):
         response = login(request, api_called=True)
+        print "-----------------------" + str(response.status_code)
         if response.status_code == 200:
             data = {
                 'csrfmiddlewaretoken': get_token(request)
             }
             return HttpResponse(simplejson.dumps(data), mimetype='json')
+            #return Response(status=status.HTTP_200_OK, content=data)
         else:
             return Response(status.HTTP_401_UNAUTHORIZED)
 
@@ -172,7 +174,8 @@ class ApiGetStudentList(View):
                 }
                 list.append(s)
             result['list'] = list
-            return Response(status=status.HTTP_200_OK, content=result)
+            #return Response(status=status.HTTP_200_OK, content=result)
+            return HttpResponse(simplejson.dumps(result), mimetype='json')
         else:
             return Response(status.HTTP_403_FORBIDDEN)
 
@@ -219,7 +222,9 @@ class Attendance(View):
                 'email': student.email,
                 'status': sta}
             list.append(s)
-        return Response(status=status.HTTP_200_OK, content=list)
+        #return Response(status=status.HTTP_200_OK, content=list)
+        return HttpResponse(simplejson.dumps(list), mimetype='json')
+
 
     @need_login
     @operating_permission(['HIEU_PHO', 'HIEU_TRUONG', 'GIAO_VIEN'])
@@ -282,7 +287,8 @@ class GetSubject(View):
                 'index': s.index,
                 'numberLession': s.number_lession,
                 'teacher': s.teacher_id.full_name()})
-        return Response(status=status.HTTP_200_OK, content=result)
+        #return Response(status=status.HTTP_200_OK, content=result)
+        return HttpResponse(simplejson.dumps(result), mimetype='json')
 
 
 class GetMark(View):
@@ -305,7 +311,8 @@ class GetMark(View):
             for f in m._meta.fields:
                 a_mark[f.name] = getattr(m, f.name)
             result.append(a_mark)
-        return Response(status=status.HTTP_200_OK, content=result)
+        #return Response(status=status.HTTP_200_OK, content=result)
+        return HttpResponse(simplejson.dumps(result), mimetype='json')
 
     @need_login
     @school_function
@@ -385,6 +392,7 @@ class SmsStatus(View):
         for s in _smses:
             result[s.id] = '%s-%s' % (s.recent, s.success)
         return Response(status.HTTP_200_OK, content=result)
+
 
 class FailedSms(View):
     re_post_format = re.compile('^(\d+\-(failed|ok)\*{1,2})+')
@@ -546,7 +554,9 @@ class hanhkiem(View):
             for i in FieldList:
                 s[i] = getattr(hanhkiem, i)
             list.append(s)
-        return Response(status=status.HTTP_200_OK, content=list)
+        #return Response(status=status.HTTP_200_OK, content=list)
+        return HttpResponse(simplejson.dumps(list), mimetype='json')
+
 
     @need_login
     @operating_permission(['HIEU_PHO', 'HIEU_TRUONG', 'GIAO_VIEN'])
@@ -737,7 +747,7 @@ class StudentProfile(View):
                 data['kiluat'].append(new_dict)
 
             return HttpResponse(simplejson.dumps(data), mimetype='json')
-        #            return Response(status=status.HTTP_200_OK, content=list)
+            #return Response(status=status.HTTP_200_OK, content=list)
         except Exception as e:
             print e
             return Response(status.HTTP_403_FORBIDDEN)
