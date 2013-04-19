@@ -203,9 +203,11 @@ class Attendance(View):
         list = []
         for student in student_list:
             sta = ''
+            sent = ""
             for diemdanh in diemdanh_list:
                 if diemdanh.student_id == student:
                     sta = diemdanh.loai
+                    sent = diemdanh.sent
                     break
             s = {
                 'id': student.id,
@@ -216,7 +218,9 @@ class Attendance(View):
                 'phone': student.phone,
                 'smsPhone': student.sms_phone,
                 'email': student.email,
-                'status': sta}
+                'status': sta,
+                'sent': sent
+            }
             list.append(s)
         #return Response(status=status.HTTP_200_OK, content=list)
         return HttpResponse(simplejson.dumps(list), mimetype='json')
