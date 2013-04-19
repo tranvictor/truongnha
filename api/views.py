@@ -162,13 +162,13 @@ class ApiGetStudentList(View):
                     'id': student.id,
                     'firstName': student.first_name,
                     'lastName': student.last_name,
-                    'DOB': student.birthday.strftime("%d/%m/%Y"),
+                    'birth': student.birthday.strftime("%d/%m/%Y"),
                     'sex': student.sex,
                     'phone': student.phone,
                     'smsPhone': student.sms_phone,
                     'email': student.email,
                     }
-                
+
                 list.append(s)
             #return Response(status=status.HTTP_200_OK, content=result)
             return HttpResponse(simplejson.dumps(list), mimetype='json')
@@ -211,7 +211,7 @@ class Attendance(View):
                 'id': student.id,
                 'firstName': student.first_name,
                 'lastName': student.last_name,
-                'DOB': student.birthday.strftime("%d/%m/%Y"),
+                'birth': student.birthday.strftime("%d/%m/%Y"),
                 'sex': student.sex,
                 'phone': student.phone,
                 'smsPhone': student.sms_phone,
