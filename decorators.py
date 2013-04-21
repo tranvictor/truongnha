@@ -1,5 +1,5 @@
 __author__ = 'vutran'
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from exceptions import IndexError
 import urllib
@@ -21,6 +21,8 @@ def need_login(func):
                         request.get_full_path(), ''), '')]))
         except IndexError:
             raise Exception("IllegalRequestCall")
+        except AttributeError:
+            raise Http404("NeedLogedIn")
 
         if kwargs:
             return func(*args, **kwargs)
