@@ -5,7 +5,7 @@
 # open path for template folder
 import os
 import sys
-DEBUG = True
+DEBUG = False
 if os.environ.pop('DJANGO_SETTINGS_TESTING', None):
     IS_TESTING = True
 else:
@@ -163,6 +163,9 @@ MT_PASSWORD = 'password'
 # iNET sms gate parameters
 INET_BRAND = '70077'
 INET_AUTH = 'secret_key'
+# nexmo parameters
+NEXMO_API_SECRET = 'SECRET'
+NEXMO_API_KEY = 'KEY'
 # Google Captcha Key, the private key must be secret and secured
 CAPTCHA_PUBLIC_KEY = '6LdfIc4SAAAAACxRkXpRGhyK-mHYUsCQIHwF42fc'
 CAPTCHA_PRIVATE_KEY = '6LdfIc4SAAAAAHHguVm0LwTPDOFNYzsMSomK718P'
@@ -227,7 +230,7 @@ INSTALLED_APPS = (
     'pagination',
     'djcelery',
     'bootstrapform',
-    #'south', #for database migration/upgrade
+    'south', #for database migration/upgrade
 #    'django_jenkins',
 )
 

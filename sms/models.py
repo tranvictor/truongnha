@@ -7,8 +7,9 @@ from django.core import mail
 from suds.client import Client
 from celery.contrib.methods import task
 from celery import Task
+from nexmomessage import NexmoMessage
 
-
+from xml.sax.saxutils import escape
 import xlrd
 import os
 import urllib
@@ -101,7 +102,8 @@ class SMSEmailTask(Task):
             message = kwargs['message']
             from_addr = kwargs['from_addr']
             to_addr = kwargs['to_addr']
-            mail.send_mail(settings.EMAIL_SUBJECT_PREFIX + subject,
+            mail.send_mail(
+                    settings.EMAIL_SUBJECT_PREFIX + subject,
                     message,
                     from_addr,
                     to_addr)
@@ -118,6 +120,7 @@ class sms(models.Model):
     #This field contains objects' ids those have to be updated after
     #sms sent successfully
     attachment = models.TextField("Liên quan", default='')
+    #final_tried = models.BooleanField("Gửi bằng android", default=False)
     recent = models.BooleanField(default=True)
     success = models.BooleanField(default=False)
     failed_reason = models.TextField("Lý do")
@@ -158,6 +161,34 @@ class sms(models.Model):
         else:
             raise Exception('InvalidPhoneNumber')
 
+    def _send_nexmo_sms(self):
+        print 'SEND NEXMO MESSAGE'
+        to = self.phone
+        if to:
+            reqtype = 'json'
+            api_secret = settings.NEXMO_API_SECRET
+            _from = 'truongnha sms sender'
+            api_key = settings.NEXMO_API_KEY
+            message = self.content
+            msg = {
+                    'reqtype': reqtype,
+                    'api_secret': api_secret,
+                    'from': _from,
+                    'to': '+' + to,
+                    'api_key': api_key,
+                    }
+            temp = NexmoMessage(msg)
+            temp.set_text_info(message)
+            print "DETAIL: ", temp.get_details()
+            response = temp.send_request()
+            sms_status = response['messages'][0]['status']
+            print 'SMS STATUS: ', sms_status
+            if sms_status == 0 or sms_status == '0': return '1'
+            elif sms_status == 1 or sms_status == '1': return '0'
+            else: return sms_status
+        else:
+            raise Exception('InvalidPhoneNumber')
+
     def _send_Viettel_sms(self):
         phone = self.phone
         if phone:
@@ -185,7 +216,8 @@ class sms(models.Model):
 </InsertMT>
 </soap12:Body>
 </soap12:Envelope>''' % (mt_username, mt_password, phone, phone, self.content)
-            return client.service.InsertMT(__inject= {'msg': str(message)})
+            return client.service.InsertMT(__inject={
+                'msg': escape(str(message))})
         else:
             raise Exception("InvalidPhoneNumber")
 
@@ -194,9 +226,9 @@ class sms(models.Model):
         if get_tsp(self.phone) == 'VIETTEL':
             result = self._send_Viettel_sms()
         else:
-            result = self._send_iNET_sms()
+            result = self._send_nexmo_sms()
 
-        if result == '1':
+        if result == '1' or result == 1:
             self.recent = False
             self.success = True
             self.save()
@@ -217,7 +249,7 @@ class sms(models.Model):
                         raise e
                 else:
                     try:
-                        result = self._send_iNET_sms()
+                        result = self._send_nexmo_sms()
                         connect_failed = False
                     except Exception as e:
                         school._atomic_increase_bl()

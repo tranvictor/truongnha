@@ -510,8 +510,11 @@ def xepLoaiHlTheoLop(request, class_id, termNumber, isCalculate=0):
 
     message = None
     selectedYear = selectedClass.year_id
-    pupilList = Pupil.objects.filter(classes=class_id, attend__is_member=True).order_by('index', 'first_name',
-        'last_name', 'birthday').distinct()
+    pupilList = Pupil.objects.filter(
+            classes=class_id,
+            attend__is_member=True).order_by(
+                    'index', 'first_name',
+                    'last_name', 'birthday').distinct()
 
     yearString = str(selectedYear.time) + "-" + str(selectedYear.time + 1)
     tempList = []
@@ -520,7 +523,8 @@ def xepLoaiHlTheoLop(request, class_id, termNumber, isCalculate=0):
     termNumber = int(termNumber)
 
     if isCalculate:
-        if termNumber < 3: noHl, noHk = calculateOverallMarkTerm(class_id, termNumber)
+        if termNumber < 3:
+            noHl, noHk = calculateOverallMarkTerm(selectedClass, termNumber)
         else:
             noHl, noHk = calculateOverallMarkYear(class_id)
             noHl, noHk = xepLoaiLop(class_id)

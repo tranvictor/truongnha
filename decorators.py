@@ -26,7 +26,10 @@ def need_login(func):
 
         if kwargs:
             return func(*args, **kwargs)
-        else: return func(*args)
+        else:
+            print func.__name__, 'function name'
+            print args
+            return func(*args)
 
     return wrapper
 

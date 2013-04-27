@@ -407,7 +407,8 @@ class FailedSms(View):
             success = False
             HttpResponse(simplejson.dumps({
                 'message': message,
-                'success': success}), mimetype='json')
+                'success': success
+                }), mimetype='json')
         smses = sms.objects.filter(recent=False,
                 success=False,
                 created__gte=from_date)[:limit]
