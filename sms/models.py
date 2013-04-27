@@ -215,9 +215,14 @@ class sms(models.Model):
 <Info>%s</Info>
 </InsertMT>
 </soap12:Body>
-</soap12:Envelope>''' % (mt_username, mt_password, phone, phone, self.content)
+</soap12:Envelope>''' % (
+                mt_username,
+                mt_password,
+                phone,
+                phone,
+                escape(self.content))
             return client.service.InsertMT(__inject={
-                'msg': escape(str(message))})
+                'msg': str(message)})
         else:
             raise Exception("InvalidPhoneNumber")
 
