@@ -21,7 +21,7 @@ def getMarkForAStudent(student_id, term_id):
         a_subject.update({"isComment": subject.nx})
 
         arr_mark = m.toArrayMark(has_final=True)
-        arr_time = m.toArrayTime();
+        arr_time = m.toArrayTime()
         temp_mark = []
         for (i, a) in enumerate(arr_mark):
             if (a != '') & (i <= 3 * MAX_COL + 1):
