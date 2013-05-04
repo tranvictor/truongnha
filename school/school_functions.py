@@ -939,8 +939,11 @@ def addClass(request):
 def classes(request):
     pos = get_position(request)
     if pos == 1:
-        url = reverse('class_detail', args=[get_student(request).current_class().id])
+        url = reverse(
+                'class_detail',
+                args=[get_student(request).current_class().id])
         return HttpResponseRedirect(url)
+
     message = None
     school = get_school(request)
     if request.method == 'POST':

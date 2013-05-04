@@ -1145,23 +1145,68 @@ class AddTeacherTest(SchoolSetupTest):
         self.assertIsNone(tmp)
 
 class AddClassTest(SchoolSetupTest):
-    def phase8_add_a_class(self):
+    def phase8_add_a_class(
+            self,
+            class_name='',
+            teacher_id='',
+            negative=False):
+
         block = self.school.block_set.get(number=self.middle_block_number)
-        class_name = str(block.number) + ' Test 1'
+        if class_name:
+            self.class_name = class_name
+        else:
+            self.class_name = str(block.number) + ' Test 1'
         num_of_class = self.school.get_current_year().class_set.count()
         response = self.client.post(
             reverse('add_class'),
             {
-                'name':class_name,
+                'name':self.class_name,
                 'phan_ban' : u'CB',
-                'teacher_id': u'',
+                'teacher_id': teacher_id,
                 }
         )
-        self.assertEqual(response.status_code, 302)
+        if negative:
+            self.assertEqual(response.status_code, 200)
+        else:
+            self.assertEqual(response.status_code, 302)
         num_of_class_1 = self.school.get_current_year().class_set.count()
-        self.assertEqual(num_of_class + 1, num_of_class_1)
-        new_class = self.school.get_current_year().class_set.get(name=class_name)
-        self.assertEqual(new_class.block_id,block)
+        if negative:
+            self.assertEqual(num_of_class, num_of_class_1)
+        else:
+            self.assertEqual(num_of_class + 1, num_of_class_1)
+            self.new_class = self.school.get_current_year().class_set.get(
+                    name=self.class_name)
+        self.assertEqual(self.new_class.block_id, block)
+
+    def phase9_add_a_class_with_dupplicated_teacher(self):
+        response = self.client.post(
+            reverse('teachers'),
+                {
+                'request_type':u'add',
+                'first_name': u'Nguyễn Văn A',
+                'birthday': u'20/3/1975',
+                'sex': u'Nam',
+                'sms_phone': u'0987438383',
+                'major' : u'GDCD',
+                'team_id' : u'',
+                'group_id' : u'',
+
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+
+        the_teacher = Teacher.objects.get(
+                first_name=u'A',
+                last_name=u'Nguyễn Văn')
+        self.new_class.teacher_id = the_teacher
+        self.new_class.save()
+        self.class_name = self.class_name + 'temp'
+        self.phase8_add_a_class(
+                class_name=self.class_name,
+                teacher_id=the_teacher.id,
+                negative=True)
+        return True
 
     def phase9_add_dupplicated_class_with_extra_spaces(self):
         block = self.school.block_set.get(number=self.middle_block_number)

@@ -357,7 +357,10 @@ def export_system_agenda(request, subject, grade, term):
     style_bold.borders = borders
 
     sheet = book.add_sheet('Chương trình học')
-    sheet.write(1, 1, u'Chương trình học' + u' môn ' + unicode(SUBJECT_CHOICES[int(subject)-1][1]) + u' khối ' + unicode(grade) + u' kì ' + unicode(term), style_bold)
+    sheet.write(1, 1, u'Chương trình học' + u' môn ' +\
+            unicode(SUBJECT_CHOICES[int(subject)-1][1]) +\
+            u' khối ' + unicode(grade) + u' kì ' + unicode(term), style_bold)
+
     sheet.row(0).height = 350
     sheet.col(0).width = 1500
     sheet.col(1).width = 15000
@@ -397,9 +400,8 @@ def export_school_agenda(request, subject, grade, term):
     user_type = get_permission(request)
     if not user_type in ['HIEU_TRUONG', 'HIEU_PHO']:
         return
-    Lessons = SchoolLesson.objects.filter(subject = subject, grade = grade, term = term)
-#    file_name = request.session.session_key + 'subject_agenda.xls'
-#    file_name = os.path.join(settings.TEMP_FILE_LOCATION, file_name)
+    Lessons = SchoolLesson.objects.filter(
+            subject=subject, grade=grade, term=term)
     book = Workbook(encoding='utf-8')
     #renderring xls file
 
@@ -432,7 +434,10 @@ def export_school_agenda(request, subject, grade, term):
 
     sheet = book.add_sheet('Chương trình học')
     sheet.write(0, 1, unicode(school), style_bold)
-    sheet.write(1, 1, u'Chương trình học' + u' môn ' + unicode(SUBJECT_CHOICES[int(subject)-1][1]) + u' khối ' + unicode(grade) + u' kì ' + unicode(term), style_bold)
+    sheet.write(1, 1, u'Chương trình học' + u' môn ' +\
+            unicode(SUBJECT_CHOICES[int(subject)-1][1]) +\
+            u' khối ' + unicode(grade) + u' kì ' + unicode(term), style_bold)
+
     sheet.row(0).height = 350
     sheet.col(0).width = 1500
     sheet.col(1).width = 15000
@@ -466,7 +471,8 @@ def save_file(import_file, session):
     import_file_name = import_file.name
     session_key = session.session_key
     save_file_name = session_key + to_en1(import_file_name)
-    saved_file = open(os.path.join(settings.TEMP_FILE_LOCATION, save_file_name), 'wb+')
+    saved_file = open(os.path.join(
+        settings.TEMP_FILE_LOCATION, save_file_name), 'wb+')
     for chunk in import_file.chunks():
         saved_file.write(chunk)
     saved_file.close()
@@ -1045,7 +1051,8 @@ def match_subject (subject, subject_name):
         sub_list[16] = [u'lich su', u'su']
 
         for i in range (1, 17):
-            if (sub_type in sub_list[i] and subject_name in sub_list[i]) or (sub_name in sub_list[i] and subject_name in sub_list[i]):
+            if ((sub_type in sub_list[i] and subject_name in sub_list[i])
+                    or (sub_name in sub_list[i] and subject_name in sub_list[i])):
                 return True
         return False
     except Exception as e:
@@ -1812,7 +1819,19 @@ def process_file_hanh_kiem(request, file_name, class_id):
                 continue
 
             TK = p.tbnam_set.get(year_id__exact=year.id)
-            attr_list = {4: 'hk_thang_9', 5: 'hk_thang_10', 6: 'hk_thang_11', 7: 'hk_thang_12', 8: 'hk_thang_1', 9: 'hk_thang_2', 10: 'hk_thang_3', 11: 'hk_thang_4', 12: 'hk_thang_5', 13: 'term1', 14: 'term2', 15: 'year'}
+            attr_list = {
+                    4: 'hk_thang_9',
+                    5: 'hk_thang_10',
+                    6: 'hk_thang_11',
+                    7: 'hk_thang_12',
+                    8: 'hk_thang_1',
+                    9: 'hk_thang_2',
+                    10: 'hk_thang_3',
+                    11: 'hk_thang_4',
+                    12: 'hk_thang_5',
+                    13: 'term1',
+                    14: 'term2',
+                    15: 'year'}
 
             for num, attr in attr_list.iteritems():
                     val = unicode(sheet.cell_value(r, num)).strip().upper()

@@ -9,7 +9,10 @@ import xlrd
 import datetime
 from django.conf import settings
 from app.models import Organization, TERMS, SUBJECT_CHOICES, KHOI_CHOICES
-from school.models import Teacher, Block, Group, Team, GRADES_CHOICES3, Pupil, Class, StartYear, validate_phone, validate_class_label, TBNam, Subject, KhenThuong, DiemDanh, KiLuat, TKDiemDanh, DIEM_DANH_TYPE, Mark, Term, TKB, Lesson, GRADES_CHOICES2
+from school.models import Teacher, Block, Group, Team, GRADES_CHOICES3, Pupil,\
+        Class, StartYear, validate_phone, validate_class_label, TBNam, Subject,\
+        KhenThuong, DiemDanh, KiLuat, TKDiemDanh, DIEM_DANH_TYPE, Mark, Term,\
+        TKB, Lesson, GRADES_CHOICES2
 from school.utils import get_school, get_permission, save_file
 
 EXPORTED_FILE_LOCATION = settings.EXPORTED_FILE_LOCATION
@@ -335,7 +338,19 @@ class ClassForm(forms.ModelForm):
     class Meta:
         model = Class
         exclude = {'max'}
-        
+
+    def clean(self):
+        cleaned_data = super(ClassForm, self).clean()
+        teacher = cleaned_data.get("teacher_id")
+        if teacher:
+            school = teacher.school_id
+            cyear = school.year_set.latest('time')
+            home_cl = cyear.class_set.filter(teacher_id=teacher.id)
+            if home_cl:
+                msg = u"Giáo viên đã có lớp chủ nhiệm."
+                raise forms.ValidationError(msg)
+        return cleaned_data
+
     def __init__(self, school_id, *args, **kwargs):
         super(ClassForm, self).__init__(*args, **kwargs)
 
