@@ -558,8 +558,10 @@ def update_mark(s, primary, isComment, user, time_history,position,school,teache
             if not isComment:
                 if (tbk2.tb == None) | (value == ''):
                     tbcn.tb_nam = None
+                    tbcn.time = None
                 else:
                     tbcn.tb_nam = round((m.tb + tbk2.tb * 2 + e) / 3, 1)
+                    tbcn.time = int(time)
                 tbcn.save()
             if tbk2.mg:
                 tbcn.tb_nam = toDigit(value)
