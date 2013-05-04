@@ -939,6 +939,7 @@ class GetListTerm(View):
     def get(self, request):
         school = request.user.userprofile.organization
         terms = Term.objects.filter(year_id__school_id=school).order_by("year_id__time", "number")
+        current_term = get_current_term(request,except_summer=True)
         list = []
         for term in terms:
             if term.number != 3:
@@ -946,6 +947,10 @@ class GetListTerm(View):
                 a_term['termId'] = term.id
                 a_term['year'] = term.year_id.time
                 a_term['number'] = term.number
+                if term.id == current_term.id:
+                    a_term['isCurrent'] = 'true'
+                else:
+                    a_term['isCurrent'] = 'false'
                 list.append(a_term)
         return HttpResponse(simplejson.dumps(list), mimetype='json')
 
