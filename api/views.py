@@ -154,8 +154,7 @@ class ApiGetStudentList(View):
                     block_id__school_id=get_school(request)).get(id=class_id)
             except ObjectDoesNotExist:
                 return Response(status.HTTP_400_BAD_REQUEST)
-            if all: student_list = _class.attended_student()
-            else: student_list = _class.students()
+            student_list = _class.students()
             list = []
             for student in student_list:
                 s = {
@@ -544,7 +543,7 @@ class hanhkiem(View):
                 'id': student.id,
                 'firstName': student.first_name,
                 'lastName': student.last_name,
-                'DOB': student.birthday,
+                'birth': student.birthday.strftime("%d/%m/%Y"),
                 'sex': student.sex,
                 'phone': student.phone,
                 'smsPhone': student.sms_phone,
