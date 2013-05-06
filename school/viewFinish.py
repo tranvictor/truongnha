@@ -34,7 +34,7 @@ def finish(request, active_term=0, term_number=None, year_number=None, is_calcul
         school.status = int(active_term)
         school.save()
         #year  = Year.objects.filter(school_id=school, time=term[1])
-    if (term_number != None) & (is_calculate == '1'):
+    if (term_number != None) and (is_calculate == '1'):
         if int(term_number) < 3:
             term = Term.objects.get(year_id__school_id=school,
                     year_id__time=year_number, number=term_number)
@@ -134,23 +134,23 @@ def defineHl(tb, monChuyen, monToan, monVan, minMark, minComment):
     if monChuyen == None:
         monChuyen = 10
     type = None
-    if  (tb >= 8.0) & (firstMark >= 8.0) & (monChuyen >= 8) & (minMark >= 6.5) & (minComment >= 5):
+    if  (tb >= 8.0) and (firstMark >= 8.0) and (monChuyen >= 8) and (minMark >= 6.5) and (minComment >= 5):
         type = 'G'
-    elif (tb >= 6.5) & (firstMark >= 6.5) & (monChuyen >= 6.5) & (minMark >= 5) & (minComment >= 5):
+    elif (tb >= 6.5) and (firstMark >= 6.5) and (monChuyen >= 6.5) and (minMark >= 5) and (minComment >= 5):
         type = 'K'
-    elif (tb >= 5) & (firstMark >= 5) & (monChuyen >= 5) & (minMark >= 3.5) & (minComment >= 5):
+    elif (tb >= 5) and (firstMark >= 5) and (monChuyen >= 5) and (minMark >= 3.5) and (minComment >= 5):
         type = 'TB'
-    elif (tb >= 3.5) & (minMark >= 2):
+    elif (tb >= 3.5) and (minMark >= 2):
         type = 'Y'
     else:
         type = 'Kem'
-    if   (tb >= 8) & (type == 'TB'):
+    if   (tb >= 8) and (type == 'TB'):
         type = 'K'
-    elif (tb >= 8) & (type == 'Y'):
+    elif (tb >= 8) and (type == 'Y'):
         type = 'TB'
-    elif (tb >= 6.5) & (type == 'Y'):
+    elif (tb >= 6.5) and (type == 'Y'):
         type = 'TB'
-    elif (tb >= 6.5) & (type == 'Kem'):
+    elif (tb >= 6.5) and (type == 'Kem'):
         type = 'Y'
     return type
 
@@ -297,7 +297,7 @@ def calculateOverallMarkTerm(selectedClass, termNumber):
 
     if len(NN2List) > 0:
         for nn2, tbHocKy in zip(NN2List, tbHocKyList):
-            if (nn2.tb is not None) & (tbHocKy.tb_hk is not None):
+            if (nn2.tb is not None) and (tbHocKy.tb_hk is not None):
                 if    nn2.tb + e >= 8: tbHocKy.tb_hk += 0.3
                 elif  nn2.tb + e >= 6.5: tbHocKy.tb_hk += 0.2
                 elif  nn2.tb + e >= 5: tbHocKy.tb_hk += 0.1
@@ -311,12 +311,12 @@ def calculateOverallMarkTerm(selectedClass, termNumber):
         else: loaiHk = hk.term2
 
         if loaiHk == None: noHanhKiem += 1
-        if (loaiHk == None) | (tbHocKy.hl_hk == None):
+        if (loaiHk == None) or (tbHocKy.hl_hk == None):
             tbHocKy.danh_hieu_hk = None
-        elif (loaiHk == 'T') & (tbHocKy.hl_hk == 'G'):
+        elif (loaiHk == 'T') and (tbHocKy.hl_hk == 'G'):
             tbHocKy.danh_hieu_hk = 'G'
-        elif ((loaiHk == 'T' | loaiHk == 'K')
-                & (tbHocKy.hl_hk == 'G' | tbHocKy.hl_hk == 'K')):
+        elif ((loaiHk == 'T' or loaiHk == 'K')
+                and (tbHocKy.hl_hk == 'G' or tbHocKy.hl_hk == 'K')):
             tbHocKy.danh_hieu_hk = 'TT'
         else: tbHocKy.danh_hieu_hk = 'K'
 
@@ -455,7 +455,7 @@ def calculateOverallMarkYear(class_id=7):
 
     if len(NN2List) > 0:
         for nn2, tbNam in zip(NN2List, tbNamList):
-            if (nn2.tb_nam != None) & (tbNam.tb_nam != None):
+            if (nn2.tb_nam != None) and (tbNam.tb_nam != None):
                 if  nn2.tb_nam + e >= 8: tbNam.tb_nam += 0.3
                 elif  nn2.tb_nam + e >= 6.5: tbNam.tb_nam += 0.2
                 elif  nn2.tb_nam + e >= 5: tbNam.tb_nam += 0.1
@@ -466,11 +466,11 @@ def calculateOverallMarkYear(class_id=7):
 
         if loaiHk == None: noHanhKiem += 1
 
-        if (loaiHk == None) | (tbNam.hl_nam == None):
+        if (loaiHk == None) or (tbNam.hl_nam == None):
             tbNam.danh_hieu_nam = None
-        elif (loaiHk == 'T') & (tbNam.hl_nam == 'G'):
+        elif (loaiHk == 'T') and (tbNam.hl_nam == 'G'):
             tbNam.danh_hieu_nam = 'G'
-        elif ((loaiHk == 'T') | (loaiHk == 'K')) & ((tbNam.hl_nam == 'G') | (tbNam.hl_nam == 'K')):
+        elif ((loaiHk == 'T') or (loaiHk == 'K')) and ((tbNam.hl_nam == 'G') or (tbNam.hl_nam == 'K')):
             tbNam.danh_hieu_nam = 'TT'
         else: tbNam.danh_hieu_nam = 'K'
 
@@ -529,7 +529,7 @@ def xepLoaiHlTheoLop(request, class_id, termNumber, isCalculate=0):
             noHl, noHk = calculateOverallMarkYear(class_id)
             noHl, noHk = xepLoaiLop(class_id)
 
-        if (noHl == 0) & (noHk == 0):
+        if (noHl == 0) and (noHk == 0):
             message = "Đã có đủ điểm và hạnh kiểm của cả lớp"
         elif (noHl == 0):
             message = "Còn " + str(noHk) + " học sinh chưa có hạnh kiểm"
@@ -658,11 +658,11 @@ def xepLoaiLop(class_id):
         if tbNam.year == None: noHk += 1
         if tbNam.hl_nam == None: noHl += 1
 
-        if (ddhk1.tong_so != None) & (ddhk2.tong_so != None):
+        if (ddhk1.tong_so != None) and (ddhk2.tong_so != None):
             tbNam.tong_so_ngay_nghi = ddhk1.tong_so + ddhk2.tong_so
         if tbNam.tong_so_ngay_nghi == None:
             continue
-        if (tbNam.hl_nam == None) | (tbNam.year == None):
+        if (tbNam.hl_nam == None) or (tbNam.year == None):
             tbNam.danh_hieu_nam = None
 
             if tbNam.tong_so_ngay_nghi > 45:
@@ -682,9 +682,9 @@ def xepLoaiLop(class_id):
                 tbNam.hl_thi_lai = None
 
         else:
-            if (tbNam.hl_nam == 'G') & (tbNam.year == 'T'):
+            if (tbNam.hl_nam == 'G') and (tbNam.year == 'T'):
                 tbNam.danh_hieu_nam = 'G'
-            elif ((tbNam.hl_nam == 'G') | (tbNam.hl_nam == 'K') ) & ((tbNam.year == 'T') | (tbNam.year == 'K')):
+            elif ((tbNam.hl_nam == 'G') or (tbNam.hl_nam == 'K') ) and ((tbNam.year == 'T') or (tbNam.year == 'K')):
                 tbNam.danh_hieu_nam = 'TT'
             else:
                 tbNam.danh_hieu_nam = 'K'
@@ -698,7 +698,7 @@ def xepLoaiLop(class_id):
                 tbNam.hl_thi_lai = None
                 continue
 
-            if (tbNam.hl_nam != 'Y') & (tbNam.hl_nam != 'Kem') & (tbNam.year != 'Y'):
+            if (tbNam.hl_nam != 'Y') and (tbNam.hl_nam != 'Kem') and (tbNam.year != 'Y'):
                 tbNam.len_lop = True
                 tbNam.thi_lai = None
                 tbNam.ren_luyen_lai = None
@@ -708,7 +708,7 @@ def xepLoaiLop(class_id):
                 tbNam.hl_thi_lai = None
                 continue
 
-            if ((tbNam.year != 'Y') & (tbNam.hl_nam == 'Y')):
+            if ((tbNam.year != 'Y') and (tbNam.hl_nam == 'Y')):
                 tbNam.len_lop = None
                 tbNam.thi_lai = True
                 tbNam.ren_luyen_lai = None
@@ -716,7 +716,7 @@ def xepLoaiLop(class_id):
                 tbNam.tb_thi_lai = None
                 tbNam.hl_thi_lai = None
 
-            elif  ((tbNam.year == 'Y') & (tbNam.hl_nam != 'Y') & (tbNam.hl_nam != 'Kem')):
+            elif  ((tbNam.year == 'Y') and (tbNam.hl_nam != 'Y') and (tbNam.hl_nam != 'Kem')):
                 tbNam.thi_lai = None
                 tbNam.len_lop = None
                 tbNam.ren_luyen_lai = True
@@ -788,7 +788,7 @@ def xlCaNamTheoLop(request, class_id, type, xepLoai=0):
         ok = False
         if   type == 1: ok = True
         elif type == 2:
-            if (tbNam.len_lop == None) & (tbNam.thi_lai == None) & (tbNam.ren_luyen_lai == None): ok = True
+            if (tbNam.len_lop == None) and (tbNam.thi_lai == None) and (tbNam.ren_luyen_lai == None): ok = True
         elif type == 3:
             if tbNam.danh_hieu_nam == 'G': ok = True
         elif type == 4:
@@ -929,7 +929,7 @@ def finishTerm(request, term_id=None):
     except Exception as e:
         return HttpResponseRedirect(reverse('index'))
 
-    if (get_position(request) != 4) & (get_level(request) == 'T' ):
+    if (get_position(request) != 4) and (get_level(request) == 'T' ):
         return HttpResponseRedirect('/school')
 
     message = None
@@ -1024,7 +1024,7 @@ def finishYear(request, year_id):
     except Exception as e:
         return HttpResponseRedirect(reverse('index'))
 
-    if (get_position(request) != 4) & (get_level(request) == 'T' ):
+    if (get_position(request) != 4) and (get_level(request) == 'T' ):
         return HttpResponseRedirect('/school')
 
     message = None
@@ -1106,7 +1106,7 @@ def thilai(request, class_id):
         for tbMon in aTKMonList:
             if tbMon.tb_nam == None: message = "Chưa tổng kết xong điểm của cả lớp"
 
-            elif (tbMon.tb_nam < 5) & (tbMon.mg == False):
+            elif (tbMon.tb_nam < 5) and (tbMon.mg == False):
                 tbMon.thi_lai = True
             else:
                 tbMon.thi_lai = False
@@ -1172,7 +1172,7 @@ def thilai(request, class_id):
                             if minComment > tbMon.diem_thi_lai:
                                 minComment = tbMon.diem_thi_lai
 
-                if (tbMon.diem_thi_lai == None) & ( tbMon.mg == False ):
+                if (tbMon.diem_thi_lai == None) and ( tbMon.mg == False ):
                     if not tbMon.subject_id.nx:
                         sumFactor += tbMon.subject_id.hs
                         sum += tbMon.tb_nam * tbMon.subject_id.hs
@@ -1202,7 +1202,7 @@ def thilai(request, class_id):
 
             tbNam.tb_thi_lai = round(float(sum) / sumFactor, 1)
             tbNam.hl_thi_lai = defineHl(tbNam.tb_thi_lai, monChuyen, monToan, monVan, minMark, minComment)
-            if (tbNam.hl_thi_lai != 'Y') & (tbNam.hl_thi_lai != 'Kem'):
+            if (tbNam.hl_thi_lai != 'Y') and (tbNam.hl_thi_lai != 'Kem'):
                 tbNam.len_lop = True
             else:
                 tbNam.len_lop = False
@@ -1265,7 +1265,7 @@ def updateHocLai(str):
 
         if strs[2] != '-1':
             tbNam.hl_thi_lai = strs[2]
-            if (strs[2] != 'Y') & (strs[2] != 'Kem'):
+            if (strs[2] != 'Y') and (strs[2] != 'Kem'):
                 tbNam.len_lop = True
             else:
                 tbNam.len_lop = False
@@ -1466,7 +1466,7 @@ def getContentSendSMSResult(class_id, termNumber):
                 smsString += 'TB:' + ', '
             smsString += 'hoc luc :' + to_en1(convertHlToVietnamese(tb.hl_hk)) + ', '
             smsString += 'hanh kiem:' + to_en1(convertHkToVietnamese(hk))
-            if (tb.danh_hieu_hk == 'G') | (tb.danh_hieu_hk == 'TT'):
+            if (tb.danh_hieu_hk == 'G') or (tb.danh_hieu_hk == 'TT'):
                 smsString += ', ' + 'danh hieu:' + convertDanhHieu(tb.danh_hieu_hk) + '.'
             else:
                 smsString += '.'
@@ -1477,7 +1477,7 @@ def getContentSendSMSResult(class_id, termNumber):
                 smsString += 'TB:' + ', '
             smsString += 'hoc luc :' + to_en1(convertHlToVietnamese(tb.hl_nam)) + ', '
             smsString += 'hanh kiem:' + to_en1(convertHkToVietnamese(tb.year)) + ', '
-            if (tb.danh_hieu_nam == 'G') | (tb.danh_hieu_nam == 'TT'):
+            if (tb.danh_hieu_nam == 'G') or (tb.danh_hieu_nam == 'TT'):
                 smsString += 'danh hieu:' + convertDanhHieu(tb.danh_hieu_nam) + ','
             smsString += 'thuoc dien:'
             if  tb.len_lop == True:
