@@ -544,7 +544,7 @@ class hanhkiem(View):
                 'id': student.id,
                 'firstName': student.first_name,
                 'lastName': student.last_name,
-                'DOB': student.birthday,
+                'birth': student.birthday.strftime("%d/%m/%Y"),
                 'sex': student.sex,
                 'phone': student.phone,
                 'smsPhone': student.sms_phone,
