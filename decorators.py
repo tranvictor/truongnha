@@ -27,8 +27,6 @@ def need_login(func):
         if kwargs:
             return func(*args, **kwargs)
         else:
-            print func.__name__, 'function name'
-            print args
             return func(*args)
 
     return wrapper
@@ -97,8 +95,7 @@ def school_function(func):
                 return HttpResponseRedirect(reverse('index'))
         if kwargs:
             if 'school_id' in kwargs:
-                school_id = kwargs.pop('school_id')
-                print 'school_id', school_id
+                kwargs.pop('school_id')
             return func(*args, **kwargs)
         else: return func(*args)
 

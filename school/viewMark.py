@@ -639,8 +639,13 @@ def update_mark(s, primary, isComment, user, time_history,position,school,teache
 @need_login
 def saveMark(request):
     #t1 = time.time()
-    message = 'hello'
+    message = ''
     if request.method == 'POST':
+        if not 'data' in request.POST:
+            data = simplejson.dumps(
+                    {'message': 'InvalidPostRequest'})
+            return HttpResponse(data, mimetype='json')
+
         str = request.POST['data']
         strs = str.split('/')
         position = get_position(request)
@@ -669,10 +674,6 @@ def saveMark(request):
                 traceback.print_exc(file=sys.stdout)
                 print '-'*60
                 raise e
-#        except Exception as e:
-#            if e.message == "Don't have permission":
-#                message = u'Bạn không có quyền sửa điểm môn này'
-#            else: raise e
 
         message = strs[0]
         data = simplejson.dumps({'message': message})
