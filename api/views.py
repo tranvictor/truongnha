@@ -11,11 +11,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from app.views import login
 from sms.models import sms
 from school.class_functions import dd
-from school.models import Class, Pupil, Term, Subject, DiemDanh, TBNam, TKB, \
+from school.models import Class, Pupil, Term, Subject, DiemDanh, TBNam, TKB,\
     KhenThuong, KiLuat, Mark, TKMon
 from school.utils import get_position, get_school, is_teacher,\
-        get_current_term, get_current_year, get_student, get_teacher,\
-        to_date
+    get_current_term, get_current_year, get_student, get_teacher,\
+    to_date
 from api.utils import getMarkForAStudent
 from school.forms import MarkForm
 from decorators import need_login, operating_permission, school_function
@@ -62,7 +62,7 @@ class ApiLogin(View):
                         'school': get_school(request).name,
                         'birth': request.user.pupil.birthday.strftime("%d/%m/%Y"),
                         'studentId': request.user.pupil.id,
-                        }
+                    }
                 elif user_position in [2, 3]:
                     user = {
                         'userId': request.user.id,
@@ -94,7 +94,7 @@ class ApiLogin(View):
                 pass
             elif user_position == 3:
                 try:
-                    teaching_subjects = request.user.teacher. current_teaching_subject()
+                    teaching_subjects = request.user.teacher.current_teaching_subject()
                     result['teachingClass'] = {}
                     classes = []
                     for subject in teaching_subjects:
@@ -144,7 +144,7 @@ class ApiLogout(View):
 
 
 class ApiGetStudentList(View):
-    def get(self, request,class_id):
+    def get(self, request, class_id):
         if request.user.is_anonymous():
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         position = get_position(request)
@@ -166,10 +166,10 @@ class ApiGetStudentList(View):
                     'phone': student.phone,
                     'smsPhone': student.sms_phone,
                     'email': student.email,
-                    }
+                }
 
                 list.append(s)
-            #return Response(status=status.HTTP_200_OK, content=result)
+                #return Response(status=status.HTTP_200_OK, content=result)
             return HttpResponse(simplejson.dumps(list), mimetype='json')
         else:
             return Response(status.HTTP_403_FORBIDDEN)
@@ -221,7 +221,7 @@ class Attendance(View):
                 'sent': sent
             }
             list.append(s)
-        #return Response(status=status.HTTP_200_OK, content=list)
+            #return Response(status=status.HTTP_200_OK, content=list)
         return HttpResponse(simplejson.dumps(list), mimetype='json')
 
 
@@ -286,7 +286,7 @@ class GetSubject(View):
                 'index': s.index,
                 'numberLession': s.number_lession,
                 'teacher': s.teacher_id.full_name()})
-        #return Response(status=status.HTTP_200_OK, content=result)
+            #return Response(status=status.HTTP_200_OK, content=result)
         return HttpResponse(simplejson.dumps(result), mimetype='json')
 
 
@@ -310,7 +310,7 @@ class GetMark(View):
             for f in m._meta.fields:
                 a_mark[f.name] = getattr(m, f.name)
             result.append(a_mark)
-        #return Response(status=status.HTTP_200_OK, content=result)
+            #return Response(status=status.HTTP_200_OK, content=result)
         return HttpResponse(simplejson.dumps(result), mimetype='json')
 
     @need_login
@@ -407,10 +407,10 @@ class FailedSms(View):
             HttpResponse(simplejson.dumps({
                 'message': message,
                 'success': success
-                }), mimetype='json')
+            }), mimetype='json')
         smses = sms.objects.filter(recent=False,
-                success=False,
-                created__gte=from_date)[:limit]
+            success=False,
+            created__gte=from_date)[:limit]
         result = []
         for s in smses:
             result.append({
@@ -464,6 +464,7 @@ class FailedSms(View):
                 'message': message,
                 'success': success}), mimetype='json')
 
+
 class MySms(View):
     @need_login
     def get(self, request, from_date=None):
@@ -478,7 +479,7 @@ class MySms(View):
                 'success': success}, mimetype='json'))
 
         smses = sms.objects.filter(sender=user,
-                created__gte=from_date)
+            created__gte=from_date)
 
         result = []
         for s in smses:
@@ -498,6 +499,7 @@ class MySms(View):
             'message': u'Nhận %d tin nhắn' % len(smses),
             'smses': result,
             'success': True}), mimetype='json')
+
 
 class SmsSummary(View):
     @need_login
@@ -548,13 +550,13 @@ class hanhkiem(View):
                 'phone': student.phone,
                 'smsPhone': student.sms_phone,
                 'email': student.email,
-                }
+            }
             FieldList = ['hk_thang_9', 'hk_thang_10', 'hk_thang_11', 'hk_thang_12', 'hk_thang_1', 'hk_thang_2',
                          'hk_thang_3', 'hk_thang_4', 'hk_thang_5', 'term1', 'term2', 'year', 'hk_ren_luyen_lai']
             for i in FieldList:
                 s[i] = getattr(hanhkiem, i)
             list.append(s)
-        #return Response(status=status.HTTP_200_OK, content=list)
+            #return Response(status=status.HTTP_200_OK, content=list)
         return HttpResponse(simplejson.dumps(list), mimetype='json')
 
 
@@ -938,7 +940,7 @@ class GetListTerm(View):
     def get(self, request):
         school = request.user.userprofile.organization
         terms = Term.objects.filter(year_id__school_id=school).order_by("year_id__time", "number")
-        current_term = get_current_term(request,except_summer=True)
+        current_term = get_current_term(request, except_summer=True)
         list = []
         for term in terms:
             if term.number != 3:
@@ -956,23 +958,34 @@ class GetListTerm(View):
 
 class GetAttendanceForStudent(View):
     @need_login
-    def get(self, request, all=None, day=None, month=None, year=None, day1=None, month1=None, year1=None):
+    def get(self, request, all=None, from_number=None, to_number=None, day=None, month=None, year=None, day1=None,
+            month1=None, year1=None):
         student = get_student(request)
+        if from_number == None:
+            from_number = 0
+            to_number = 50
+        to_number = int(to_number)
+        from_number = int(from_number)
+        if to_number - from_number > 50:
+            return HttpResponse(simplejson.dumps({"error": "don't get more than 50 attendace"}), mimetype='json')
+
         if all == 'allTerm':
             current_term = get_current_term(request)
-            attendaces = DiemDanh.objects.filter(student_id=student, term_id=current_term).order_by("time")
+            attendaces = DiemDanh.objects.filter(student_id=student, term_id=current_term).order_by("-time")[
+                         to_number:from_number]
         elif all == 'allYear':
             current_year = get_current_year(request)
             term1 = Term.objects.get(year_id=current_year, number=1)
             term2 = Term.objects.get(year_id=current_year, number=2)
-            attendaces = DiemDanh.objects.filter(student_id=student, term_id__in=[term1.id, term2.id]).order_by("time")
+            attendaces = DiemDanh.objects.filter(student_id=student, term_id__in=[term1.id, term2.id]).order_by("-time")[
+            from_number:to_number]
         elif all != None:
             raise Exception("Page not found")
         else:
             first_day = datetime.datetime(int(year), int(month), int(day))
             second_day = datetime.datetime(int(year1), int(month1), int(day1))
             attendaces = DiemDanh.objects.filter(student_id=student, time__range=(first_day, second_day)).order_by(
-                "time")
+                "-time")[from_number:to_number]
         result = []
         for att in attendaces:
             a_att = {}
