@@ -44,7 +44,7 @@ urlpatterns = patterns('',
     url(r'getListTerm$', GetListTerm.as_view(), name='api_get_list_term'),
 
 
-    url('getAttendanceForStudent/(?P<day>\d+)/(?P<from_number>\d+)/(?P<to_number>\d+)/(?P<month>\d+)/(?P<year>\d+)/(?P<day1>\d+)/(?P<month1>\d+)/(?P<year1>\d+)$'
+    url('getAttendanceForStudent/(?P<from_number>\d+)/(?P<to_number>\d+)/(?P<day>\d+)/(?P<month>\d+)/(?P<year>\d+)/(?P<day1>\d+)/(?P<month1>\d+)/(?P<year1>\d+)$'
         , GetAttendanceForStudent.as_view(), name='api_get_attendance_for_student'),
     url(r'getAttendanceForStudent/(?P<all>[\w\-]*)$'
         , GetAttendanceForStudent.as_view(), name='api_get_attendance_for_student'),
