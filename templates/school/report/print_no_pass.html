@@ -3,7 +3,7 @@
 {% block js %}
     <script>
         $(document).ready(function () {
-			$("#{{ type }}").addClass('active');
+            $("#{{ type }}").addClass('active');
         });
     </script>
 {% endblock %}
@@ -12,32 +12,32 @@
     {{ block.super }}
     {% load breadcrumb_tags %}
     {% if not user.userprofile.isSchool %}
-		{% add_crumb 'Báo cáo' 'department_report' %}
-		{% add_crumb request.session.school_name 'report' request.session.school_id  %}
-	{% else %}
-		{% add_crumb 'Báo cáo' 'report' %}
-	{% endif %}
-	
-	{% if type == 1 %}
-		{% add_crumb 'Học sinh không lên lớp' %}
-	{% else %}
-	{% if type == 2 %}
-		{% add_crumb 'Học sinh thi lại' %}
-	{% else %}
-		{% add_crumb 'Học sinh rèn luyện thêm' %}
-	{% endif %}
-	{% endif %}
+        {% add_crumb 'Báo cáo' 'department_report' %}
+        {% add_crumb request.session.school_name 'report' request.session.school_id  %}
+    {% else %}
+        {% add_crumb 'Báo cáo' 'report' %}
+    {% endif %}
+    
+    {% if type == 1 %}
+        {% add_crumb 'Học sinh không lên lớp' %}
+    {% else %}
+    {% if type == 2 %}
+        {% add_crumb 'Học sinh thi lại' %}
+    {% else %}
+        {% add_crumb 'Học sinh rèn luyện thêm' %}
+    {% endif %}
+    {% endif %}
 {% endblock %}
 
 {% block content %}
     <div class="btn-toolbar form-inline pull-right" >
-        <a href="{% url print_no_pass type 1%}" class="btn"> Xuất ra Excel </a>
+        <a href="{% url 'print_no_pass' type 1%}" class="btn"> Xuất ra Excel </a>
     </div>
 
     {% load mark %}
 
     {% if type != None %}
-		<div>
+        <div>
         <table class="table"  >
         <thead>
             <tr>
@@ -125,7 +125,7 @@
             {% endfor %}
         </tbody>
         </table>
-		</div>
+        </div>
     {% endif %}
 
 {% endblock %}

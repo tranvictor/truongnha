@@ -52,7 +52,7 @@
                 <i class="icon-upload-alt"></i>
                 Nhập từ Excel </a>
             <a class="btn" title="Xuất thời khoá biểu toàn trường ra file Excel."
-               href="{% url export_timetable %}" id="export">
+               href="{% url 'export_timetable' %}" id="export">
                 <i class="icon-download-alt"></i>
                 Xuất ra Excel </a>
             <a id="changeTeacher" class="btn checked"> Ẩn giáo viên dạy</a>
@@ -89,7 +89,7 @@
                 <tr class ="{{ cl.id }}">
                     {% if i == 1 %}
                         <th rowspan="10">
-                            <h3><a href="{%url timetable cl.id %}" title="Xem/chỉnh sửa thời khóa biểu lớp">
+                            <h3><a href="{% url 'timetable' cl.id %}" title="Xem/chỉnh sửa thời khóa biểu lớp">
                                 {{ cl.name }}</a></h3></th>
                     {% endif %}
                     <th>{{ i }}</th>

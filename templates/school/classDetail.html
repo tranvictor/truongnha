@@ -16,7 +16,7 @@
         function submitClass() {
             if (document.info.class.value != {{class.id}})
                 if (document.info.class.value != -1) {
-                    window.location = "{% url school_index  %}viewClassDetail/" + document.info.class.value;
+                    window.location = "{% url 'school_index'  %}viewClassDetail/" + document.info.class.value;
                 }
         }
 
@@ -33,13 +33,13 @@
         <div class="btn-group">
             {% if pos > 3 or user.userprofile.organization.level == 'S' %}
                 <a id="btn-diem" title="Nhập hoặc chỉnh sửa điểm các môn học" class="btn btn-primary"
-                   href="{% url mark_table selected_term.id class.id %}">
+                   href="{% url 'mark_table' selected_term.id class.id %}">
                     <i class="icon-star-empty"></i>
                     Điểm</a>
             {% else %}
                 {% if gvcn %}
                     <a id="btn-diem" title="Xem điểm các môn do người dùng chủ nhiệm" class="btn btn-primary"
-                       href="{% url mark_for_teacher 2 selected_term.id %}">
+                       href="{% url 'mark_for_teacher' 2 selected_term.id %}">
                         <i class="icon-star-empty"></i>
                         Điểm</a>
                 {% endif %}
@@ -48,14 +48,14 @@
             {% if pos > 3 or gvcn == 1 %}
                 <a id="btn-diemdanh" title="Nhập thông tin học sinh nghỉ học có phép, không phép"
                    class="btn btn-success"
-                   href="{% url diem_danh_form class.id %}">
+                   href="{% url 'diem_danh_form' class.id %}">
                     <i class="icon-check"></i>
                     Điểm danh</a>
             {% endif %}
 
             {% if pos > 0 %}
                 <a id="btn-hanhkiem" title="Đánh giá hạnh kiểm học sinh trong lớp" class="btn"
-                   href="{% url hanh_kiem class.id %}">
+                   href="{% url 'hanh_kiem' class.id %}">
                     Hạnh kiểm</a>
             {% endif %}
         </div>
@@ -63,12 +63,12 @@
         <div class="btn-group">
             {% if pos > 1 or inClass == 1 %}
                 <a id="btn-monhoc" title="Xem tất cả thông tin của của môn học trong lớp" class="btn"
-                   href="{% url subject_per_class class.id %}">
+                   href="{% url 'subject_per_class' class.id %}">
                     Môn học</a>
             {% endif %}
 
             <a id="btn-lichhoc" title="Xem thời khóa biểu lớp" class="btn"
-               href="{% url timetable class.id %}">
+               href="{% url 'timetable' class.id %}">
                 Lịch học</a>
         </div>
 
@@ -98,11 +98,12 @@
                     <ul class="dropdown-menu pull-right">
                         {% if pos > 3 or gvcn == 1 %}
                             <li>
-                                <a id="student-sort" href="{% url orgamize_student class.id '0' %}"
-                                   title="Sắp xếp thứ tự học sinh trong lớp">
-                                    <i class="icon-sort"></i>
-                                    Sắp xếp
-                                </a>
+                            <a id="student-sort"
+                                href="{% url 'orgamize_student' class.id '0' %}"
+                                title="Sắp xếp thứ tự học sinh trong lớp">
+                                <i class="icon-sort"></i>
+                                Sắp xếp
+                            </a>
                             </li>
                         {% endif %}
                         {% if pos > 3 %}
@@ -128,10 +129,9 @@
 
                         {% if pos > 3 or gvcn == 1 %}
                             <li>
-                                <a
-                                        title="Xuất danh sách học sinh ra file Excel."
-                                        href="{% url class_generate class.id 'student_list' %}"
-                                        id="export">
+                                <a title="Xuất danh sách học sinh ra file Excel."
+                                    href="{% url 'class_generate' class.id 'student_list' %}"
+                                    id="export">
                                     <i class="icon-download-alt"></i>
                                     Xuất ra Excel </a>
                             </li>
@@ -211,9 +211,9 @@
                     <td style="text-align: center;"> {{ forloop.counter }} </td>
                     {% if pos > 1 or student_id == ss.id %}
                         <td><a title="Xem toàn bộ thông tin chi tiết"
-                               href="{% url student_detail ss.id %}">{{ ss.last_name }}</a></td>
+                               href="{% url 'student_detail' ss.id %}">{{ ss.last_name }}</a></td>
                         <td><a title="Xem toàn bộ thông tin chi tiết"
-                               href="{% url student_detail ss.id %}">{{ ss.first_name }}</a>
+                               href="{% url 'student_detail' ss.id %}">{{ ss.first_name }}</a>
                         </td>
                     {% else %}
                         <td> {{ ss.last_name }} </td>
@@ -247,17 +247,17 @@
             <div class="btn-group ">
                 {% ifequal class.year_id.school_id.status 1 %}
                     <a id="btn-tongket" title="Tính trung bình học lực của cả lớp" class="btn"
-                       href="{% url xep_loai_hl_theo_lop class.id 1 %}">
+                       href="{% url 'xep_loai_hl_theo_lop' class.id 1 %}">
                         Tổng kết </a>
                 {% else %}
                     <a id="btn-tongket" title="Tính trung bình học lực của cả lớp" class="btn"
-                       href="{% url xep_loai_hl_theo_lop class.id 2 %}">
+                       href="{% url 'xep_loai_hl_theo_lop' class.id 2 %}">
                         Tổng kết </a>
                 {% endifequal %}
 
                 <a id="btn-xeploai" title=" Xem xếp loại, lên lớp, ở lại lớp, kiểm tra lại, rèn luyện thêm trong hè"
                    class="btn"
-                   href="{% url xl_ca_nam_theo_lop class.id 1 %}">
+                   href="{% url 'xl_ca_nam_theo_lop' class.id 1 %}">
                     Xếp loại</a>
             </div>
         {% endif %}
@@ -271,15 +271,15 @@
                 <ul class="dropdown-menu">
                     <li>
                         <a id="btn-phieudiem1" title="In phiếu báo điểm kỳ I"
-                           href="{% url print_mark_for_class 1 %}">
+                           href="{% url 'print_mark_for_class' 1 %}">
                             Phiếu báo điểm kì I </a></li>
                     <li>
                         <a id="btn-phieudiem2" title="In phiếu báo điểm kỳ II"
-                           href="{% url print_mark_for_class 2 %}">
+                           href="{% url 'print_mark_for_class' 2 %}">
                             Phiếu báo điểm kì II </a></li>
                     <li>
                         <a id="btn-sogoiten" title="In sổ gọi tên và ghi điểm"
-                           href="{% url print_mark_book class.id %}">
+                           href="{% url 'print_mark_book' class.id %}">
                             Sổ ghi điểm và gọi tên </a></li>
                 </ul>
             </div>
@@ -310,7 +310,7 @@
             <h3>Thêm học sinh</h3>
 
             <div>
-                <form action="{% url class_detail class.id %}"
+                <form action="{% url 'class_detail' class.id %}"
                       id="submitform" method="post">{% csrf_token %}
                     <table class="dataform">
                         <tbody>

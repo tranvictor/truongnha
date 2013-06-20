@@ -12,7 +12,7 @@
     <h2>Gửi tin nhắn SMS</h2>
   {% else %}
     <h2>Gửi tin nhắn SMS</h2>
-    <a href="{%url school.sms_views.excel_sms%}">Nhập từ Excel</a>
+    <a href="{% url 'school.sms_views.excel_sms' %}">Nhập từ Excel</a>
     <form action="" method="post">{% csrf_token %}
       <table class="table table-condensed no-border">
         <col width="160">

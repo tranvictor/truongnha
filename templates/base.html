@@ -127,7 +127,7 @@
                             <small class="hidden-phone hidden-tablet">({{ user.username }})</small>
                         </span>
                     </a>
-                    <a id="logout" href="{% url django.contrib.auth.views.logout %}"
+                    <a id="logout" href="{% url 'django.contrib.auth.views.logout' %}"
                        title="Thoát ra, kết thúc phiên làm việc. BẠN PHẢI ĐĂNG XUẤT NẾU ĐĂNG NHẬP TRÊN CÁC MÁY TÍNH DÙNG CHUNG ĐỂ TRÁNH NGƯỜI KHÁC THAY ĐỔI DỮ LIỆU.">
                         <i class="icon-signout"></i>
                         <small class="hidden-phone hidden-tablet">Đăng xuất</small>
@@ -136,12 +136,12 @@
                     {{ user.last_name }} {{ user.first_name }}
                     <small>({{ user.username }})</small>
 
-                    <a href="{% url django.contrib.auth.views.logout %}">
+                    <a href="{% url 'django.contrib.auth.views.logout' %}">
                         Đăng xuất <i class="icon-signout"></i>
                     </a>
                 {% endif %}
             {% else %}
-                <a id="logo" href="{% url index %}" title="Dịch vụ phần mềm quản lý trường học">
+                <a id="logo" href="{% url 'index' %}" title="Dịch vụ phần mềm quản lý trường học">
                     <span class="logo-truong">Trường</span><span class="logo-nha">Nhà</span>
                 </a>
             {% endif %}
@@ -152,7 +152,7 @@
 <nav >
     <div class="row-fluid">
         <div id="breadcrumb" class="pull-left">
-            <a id="breadcrumb-home" href="{% url index %}" title="Trang bắt đầu">
+            <a id="breadcrumb-home" href="{% url 'index' %}" title="Trang bắt đầu">
                 <i class="icon-home logo-nha"></i>
                 <i class="icon-home logo-truong" style=";margin-left: -.5em;"></i>
                 {#            Trường#}
@@ -169,7 +169,7 @@
                 <a class="hidden-phone dimmed" id="feedback" href="#feedbackWindow" title="Gửi góp ý, bình luận, thông báo lỗi.."><i class="icon-comment-alt"></i></a> &nbsp;
 
 
-                <a id="logo" href="{% url index %}" title="Dịch vụ phần mềm quản lý trường học">
+                <a id="logo" href="{% url 'index' %}" title="Dịch vụ phần mềm quản lý trường học">
                     <span class="logo-truong">Trường</span><span class="logo-nha">Nhà</span>
                 </a>
             {% endif %}

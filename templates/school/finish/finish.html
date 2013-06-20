@@ -17,12 +17,12 @@
             if ("{{message}}" != "None")
                 $("#notify").showNotification("{{message}}", 100000);
                 
-            for(var i=1; i < 4; i++) {	
+            for(var i=1; i < 4; i++) {    
                 var id = "#calculate_"+i;
                 $(id).click(function(){
                     $("#notify").showNotification("Đang tính tổng kết, xin vui lòng chờ vài phút...", 100000);
                 })
-            }						
+            }                        
         });
     </script>
     <script type="text/javascript" src="/static/js/template_js/finish.js?{{ VERSION }}"></script>
@@ -35,9 +35,9 @@
             <h3>Thiết lập học kỳ hiện tại</h3>
             <div class="btn-toolbar">
             <div class="btn-group" data-toggle="buttons-radio">
-                <a id="term_1" href="{% url finish 1%}" class="btn changeTerm"> Học kỳ I </a>
-                <a id="term_2" href="{% url finish 2%}" class="btn changeTerm"> Học kỳ II </a>
-                <a id="term_3" href="{% url finish 3%}" class="btn changeTerm"> Học hè </a>
+                <a id="term_1" href="{% url 'finish' 1%}" class="btn changeTerm"> Học kỳ I </a>
+                <a id="term_2" href="{% url 'finish' 2%}" class="btn changeTerm"> Học kỳ II </a>
+                <a id="term_3" href="{% url 'finish' 3%}" class="btn changeTerm"> Học hè </a>
 
                 {% if school.status  == 3 or school.status == 2 %}
                 <a class="btn btn-danger"
@@ -75,7 +75,7 @@
                 {% endif %}
                 </div>
                 <button id="update_class_label" class="btn">Thay đổi</button>
-                <a href="{% url start_year %}"
+                <a href="{% url 'start_year' %}"
                     id="start_year"
                     class="btn btn-primary">Tiếp tục</a>
             </div>
@@ -120,7 +120,7 @@
                             <p> Còn
                                 {% for c,s in not_finish_learning %}
                                     <a title="Xem chi tiết"
-                                       href="{% url xep_loai_hl_theo_lop c.id forloop.parentloop.counter %}"> {{ c.name }}</a>
+                                       href="{% url 'xep_loai_hl_theo_lop' c.id forloop.parentloop.counter %}"> {{ c.name }}</a>
                                     <span class="" title="Số lượng">({{ s }})</span>
                                 {% endfor %}
                             </p>
@@ -131,7 +131,7 @@
                             </h4>
                             <p> Còn
                                 {% for c,s in not_finish_practising %}
-                                    <a title="Xem chi tiết" href="{% url hanh_kiem c.id %}"> {{ c.name }}</a>
+                                    <a title="Xem chi tiết" href="{% url 'hanh_kiem' c.id %}"> {{ c.name }}</a>
                                     <span class="" title="Số lượng">({{ s }})</span>
                                 {% endfor %}
                             </p>
@@ -142,7 +142,7 @@
                             </h4>
                             <p> Còn
                                 {% for c,s in not_finish_all %}
-                                    <a title="Xem chi tiết" href="{% url xep_loai_hl_theo_lop c.id forloop.parentloop.counter %}"> {{ c.name }}</a>
+                                    <a title="Xem chi tiết" href="{% url 'xep_loai_hl_theo_lop' c.id forloop.parentloop.counter %}"> {{ c.name }}</a>
                                     <span class="alert-success" title="Số lượng">({{ s }})</span>
                                 {% endfor %}
                             </p>
@@ -150,11 +150,11 @@
                         <td>
                             {% if current_term.number == 1 and forloop.counter == 1 %}
                                 <a class="btn btn-primary" id ="calculate_{{forloop.counter}}"
-                                   href="{% url finish 1 forloop.counter current_term.year_id.time 1 %}"
+                                   href="{% url 'finish' 1 forloop.counter current_term.year_id.time 1 %}"
                                    title="Tính tổng kết cả trường">Tính tổng kết cả trường </a>
                             {% elif current_term.number > 1 and forloop.counter > 1 %}
                                 <a class="btn btn-primary" id ="calculate_{{forloop.counter}}"
-                                   href="{% url finish current_term.number  forloop.counter current_term.year_id.time 1 %}"
+                                   href="{% url 'finish' current_term.number  forloop.counter current_term.year_id.time 1 %}"
                                    title="Tính tổng kết cả trường">Tính tổng kết cả trường </a>
                             {% endif %}
                         </td>

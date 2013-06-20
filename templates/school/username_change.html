@@ -8,7 +8,7 @@
 
 {% block content %}
     {% if user.userprofile.username_change == 0 %}
-        <form action="{% url username_change %}" method="post">{% csrf_token %}
+        <form action="{% url 'username_change' %}" method="post">{% csrf_token %}
             <legend>Đổi tên đăng nhập</legend>
             <div class="alert alert-heading"><strong>Chú ý</strong> tên tài khoản chỉ được thay đổi <strong>một</strong>
                 lần duy nhất.

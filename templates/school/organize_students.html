@@ -24,15 +24,15 @@
             // done configuration.
 
             $("#sort_alphabet_1").click(function () {
-                document.location.replace('{% url orgamize_student class.id "1" %}');
+                document.location.replace('{% url 'orgamize_student' class.id "1" %}');
             });
 
             $("#sort_alphabet_2").click(function () {
-                document.location.replace('{% url orgamize_student class.id "2" %}');
+                document.location.replace('{% url 'orgamize_student' class.id "2" %}');
             });
 
             $("#cancel_list_sorting").click(function () {
-                document.location.replace('{% url class_detail class.id %}');
+                document.location.replace('{% url 'class_detail' class.id %}');
             });
 
         });
@@ -92,5 +92,5 @@
             {% endfor %}
         </ul>
     </div>
-    <p id="ajax_to" style="display: none;">{% url change_index 'student' class.id %}</p>
+    <p id="ajax_to" style="display: none;">{% url 'change_index' 'student' class.id %}</p>
 {% endblock %}

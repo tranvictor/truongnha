@@ -21,13 +21,13 @@
         <div class="btn-toolbar pagination-centered">
             {% if pos >= 4 %}
             <a class="btn btn-primary" grade="{{ class.block_id.number }}"
-               href="{% url add_class %}">
+               href="{% url 'add_class' %}">
                 <span class="icon-plus"></span>
                 Thêm lớp
             </a>
             {% endif %}
             <a class="btn" title="Xuất danh sách giáo viên chủ nhiệm ra file Excel."
-               href="{%url export_gvcn_list %}" id="export">
+               href="{% url 'export_gvcn_list' %}" id="export">
                 <i class="icon-download-alt"></i>
                 Xuất ra Excel </a>
         </div>
@@ -54,7 +54,7 @@
                     {% if class.block_id == grade %}
                         <tr id="{{ class.id }}" teacher="{{class.teacher_id.id|default:''}}">
                             <td>
-                                <a href="{% url class_detail class.id %}">{{ class.name }}</a>
+                                <a href="{% url 'class_detail' class.id %}">{{ class.name }}</a>
                             </td>
                             <td>
                                 <select class="combobox" id="teacher{{ class.id }}">
@@ -118,7 +118,7 @@
                             {% if class.block_id == grade %}
                                 <tr>
                                     <td>
-                                        <a href="{% url class_detail class.id %}">
+                                        <a href="{% url 'class_detail' class.id %}">
                                             {{ class.name }}
                                         </a>
                                     </td>

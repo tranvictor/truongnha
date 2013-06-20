@@ -2,14 +2,14 @@
 
 {% block breadcrumb %}
     {{ block.super }}
-    {% load breadcrumb_tags %}	
+    {% load breadcrumb_tags %}    
     {% if not user.userprofile.isSchool %}
-		{% add_crumb 'Báo cáo' 'department_report' %}
-		{% add_crumb request.session.school_name 'report' request.session.school_id  %}
-	{% else %}
-		{% add_crumb 'Báo cáo' 'report' %}
-	{% endif %}
-	
+        {% add_crumb 'Báo cáo' 'department_report' %}
+        {% add_crumb request.session.school_name 'report' request.session.school_id  %}
+    {% else %}
+        {% add_crumb 'Báo cáo' 'report' %}
+    {% endif %}
+    
     {% add_crumb 'Học lực, hạnh kiểm, danh hiệu' %}
 {% endblock %}
 
@@ -17,13 +17,13 @@
 
     <script>
         $(document).ready(function () {
-			{% if message != None %}
-				var temp = document.getElementById("notify1");
-				temp.innerHTML = "{{message}}";
-				$(temp).fadeIn('fast');
-				$(temp).delay(1500000).fadeOut('fast');
-			{% endif %}
-			$("#{{ number }}").addClass('active');
+            {% if message != None %}
+                var temp = document.getElementById("notify1");
+                temp.innerHTML = "{{message}}";
+                $(temp).fadeIn('fast');
+                $(temp).delay(1500000).fadeOut('fast');
+            {% endif %}
+            $("#{{ number }}").addClass('active');
         });
     </script>
 {% endblock %}
@@ -39,14 +39,14 @@
     </div>
 
     <div class="btn-toolbar form-inline pagination-centered ">
-		<div class="btn-group" data-toggle="buttons-radio">
-			<a id="1" href="{% url count1 year_id 1%}" class="btn"> Học kỳ I </a>
-			<a id="2" href="{% url count1 year_id 2%}" class="btn"> Học kỳ II </a>
-			<a id="3" href="{% url count1 year_id 3%}" class="btn"> Cả năm </a>
-		</div>
-		
-		<a class='btn pull-right' href="{% url count1 year_id number 1%}">Xuất ra Exel </a>
-	</div>	
+        <div class="btn-group" data-toggle="buttons-radio">
+            <a id="1" href="{% url 'count1' year_id 1%}" class="btn"> Học kỳ I </a>
+            <a id="2" href="{% url 'count1' year_id 2%}" class="btn"> Học kỳ II </a>
+            <a id="3" href="{% url 'count1' year_id 3%}" class="btn"> Cả năm </a>
+        </div>
+        
+        <a class='btn pull-right' href="{% url 'count1' year_id number 1%}">Xuất ra Exel </a>
+    </div>    
 
     <table width="100%" class="table grid">
         <tr>

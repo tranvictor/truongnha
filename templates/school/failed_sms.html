@@ -4,8 +4,8 @@
 {% block content %}
 <h2>Kết quả gửi tin nhắn</h2>
 	{% if user.is_authenticated %}
-		<a href="{%url school.sms_views.sent_sms %}">Những tin nhắn gửi đi thành công</a>&nbsp;-&nbsp;
-		<a href="{%url school.sms_views.failed_sms %}">Những tin nhắn gửi đi thất bại</a>
+		<a href="{% url 'school.sms_views.sent_sms' %}">Những tin nhắn gửi đi thành công</a>&nbsp;-&nbsp;
+		<a href="{% url 'school.sms_views.failed_sms' %}">Những tin nhắn gửi đi thất bại</a>
 
         <h2>Danh sách tin nhắn không được gửi đi:</h2>
 		<small><b>Ghi chú - x</b>: Số điện thoại không thuộc Người sử dụng nào.</small>

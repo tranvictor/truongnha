@@ -197,9 +197,9 @@
 
 
     <div class="well form-inline pagination-centered">
-        <form class="submitform" action="{% url class_tab block_id %}" method="post">{% csrf_token %}
+        <form class="submitform" action="{% url 'class_tab' block_id %}" method="post">{% csrf_token %}
             {% if pos >= 4 %}
-                <a id="add-class" href="{% url add_class %}" class="btn btn-danger">Thêm lớp học</a>
+                <a id="add-class" href="{% url 'add_class' %}" class="btn btn-danger">Thêm lớp học</a>
                 <input type="submit" class="submitbutton btn" value="Đã lưu"/>
             {% endif %}
         </form>
@@ -223,7 +223,7 @@
                 <tr class="{{class.id}}">
                     <td> {{ forloop.counter }}</td>
                     <td>
-                    <a href="{% url class_detail  class.id %}">
+                    <a href="{% url 'class_detail'  class.id %}">
                         {{ class.name }}
                     </a>
                     </td>
@@ -248,18 +248,18 @@
                     {% if pos >= 4 %}
                         {% ifequal n  0 %}
                             <td>
-								<a class="btn sm delete"
-								href="{% url delete_class class.id  %}" title="Xóa lớp {{ class.name }}">
+                                <a class="btn sm delete"
+                                href="{% url 'delete_class' class.id  %}" title="Xóa lớp {{ class.name }}">
                                 Xóa
-								</a>
-							</td>
+                                </a>
+                            </td>
                         {% else %}
                             <td >
-								<a class="btn sm disabled"
-								title="Không được xóa các lớp vẫn còn học sinh"
-								href="">
+                                <a class="btn sm disabled"
+                                title="Không được xóa các lớp vẫn còn học sinh"
+                                href="">
                                 Xóa
-								</a>
+                                </a>
                             </td>
                         {% endifequal %}
                     {% endif %}

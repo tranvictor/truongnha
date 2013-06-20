@@ -13,8 +13,8 @@
     <div class="well form-inline pagination-centered">
         <form class="form-header" id="selectform" action="" name="info" method="post">{% csrf_token %}
             <a class="btn"
-                               href="{% url subject_agenda sub.id %}" title="Quay trở lại trang quản lý phân phối chương trình môn {{ sub }}">
-                               Không sử dụng</a>
+                href="{% url 'subject_agenda' sub.id %}" title="Quay trở lại trang quản lý phân phối chương trình môn {{ sub }}">
+                Không sử dụng</a>
             <button class="btn" id="submit_button" title=" Sử dụng phân phối chương trình của hệ thống cho môn {{ sub.name }}">Sử dụng</button>
         </form>
     </div>

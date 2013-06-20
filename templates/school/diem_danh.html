@@ -213,7 +213,7 @@
     </div>
 
 
-    <form id="submitform" action="{% url diem_danh class_id day month year %}" method="post">{% csrf_token %}
+    <form id="submitform" action="{% url 'diem_danh' class_id day month year %}" method="post">{% csrf_token %}
         <table class="table">
         <thead>
             <tr class="thead">

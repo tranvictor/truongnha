@@ -14,7 +14,7 @@
         <script type="text/javascript">
             $(document).ready(function () {
                 $("#cancel").click(function () {
-                    window.location.href = "{% url school_index %}";
+                    window.location.href = "{% url 'school_index' %}";
                     return false;
                 });
             });
@@ -113,7 +113,7 @@
         </script>
 
         <div>
-            <form class="" action="{%url info %}" method="post">{% csrf_token %}
+            <form class="" action="{% url 'info' %}" method="post">{% csrf_token %}
                 {% if message != None %}
                     {{ message }}
                     <br/>

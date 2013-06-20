@@ -181,7 +181,7 @@
                         </li>
                         <li>
                         <a title="Xuất danh sách giáo viên ra file Excel"
-                            href="{% url teacher_generate 'all' %}"
+                            href="{% url 'teacher_generate' 'all' %}"
                             id="export">
                             <i class="icon-download-alt"></i>
                             Xuất ra Excel </a>
@@ -276,13 +276,13 @@
                         <td>{{ forloop.counter }}</td>
                         <td>
                             {% if pos > 3 or user.id == teacher.user_id.id %}
-                                <a href="{% url teacher_detail teacher.id %}">
+                                <a href="{% url 'teacher_detail' teacher.id %}">
                             {% endif %}
                             {{ teacher.last_name }} </a>
                         </td>
                         <td>
                             {% if pos > 3 or user.id == teacher.user_id.id %}
-                                <a href="{% url teacher_detail teacher.id %}">
+                                <a href="{% url 'teacher_detail' teacher.id %}">
                             {% endif %}
                             {{ teacher.first_name }} </a>
                         </td>
@@ -330,7 +330,7 @@
             <h3>Thêm giáo viên</h3>
 
             <div id="addteacherform">
-                <form action="{% url teachers %}"
+                <form action="{% url 'teachers' %}"
                       id="submitform" method="post">{% csrf_token %}
                     <table class="dataform">
                         <tr>

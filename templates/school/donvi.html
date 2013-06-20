@@ -9,10 +9,9 @@
     <ul>
         {% for a in list %}
             {% if a.status == 0 %}
-                {#			<p>{{ a.name }} ( chưa khởi tạo ) </p>#}
             {% else %}
                 <li class="link-list">
-                    <a href="{% url view_school a.id %}">
+                    <a href="{% url 'view_school' a.id %}">
                         {{ a.name }}
                     </a>
                 </li>

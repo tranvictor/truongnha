@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.views.static import serve
+from django.views.generic import RedirectView
 import os
 import settings
 import app.views as app_views
@@ -64,7 +65,7 @@ urlpatterns = patterns('',
     (r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
     (r'^(?P<path>robots.txt)$', serve, {'document_root': settings.STATIC_ROOT}),
     url(r'^user_uploaded/(?P<path>.*)$', serve,
-        {'document_root': settings.TEMP_FILE_LOCATION}, name='user_upload'),
-    (r'^favicon\.ico$', 'django.views.generic.simple.redirect_to',
-        {'url': '/static/images/favicon.ico'}),
+            {'document_root': settings.TEMP_FILE_LOCATION},
+            name='user_upload'),
+    (r'^favicon\.ico$', RedirectView.as_view(url = '/static/images/favicon.ico')),
 )

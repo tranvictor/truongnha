@@ -104,7 +104,7 @@
                 <td class="align-left">{{ forloop.counter }}</td>
                 <td class="align-left">
                     {% if pos > 3 or teacher_id == ss.id %}
-                        <a href="{%url school.views.school_index  %}viewTeacherDetail/{{ss.id}}">
+                        <a href="{% url 'school.views.school_index'  %}viewTeacherDetail/{{ss.id}}">
                             {{ ss.last_name }} {{ ss.first_name }} </a>
                     {% else %}
                         {{ ss.last_name }} {{ ss.first_name }}

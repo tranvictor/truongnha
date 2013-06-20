@@ -30,7 +30,7 @@
 
                 $("select[name=class]").change(function() {
                     if ($(this).val() != -1) {
-                        var url = "{%url school_index  %}subjectPerClass/" + $(this).val();
+                        var url = "{% url 'school_index'  %}subjectPerClass/" + $(this).val();
                         $(location).attr('href', url);
                     }
                 });
@@ -146,7 +146,7 @@
                 {% if pos > 3 %}
                     <td>
                         <a title="Sửa thông tin môn học"
-                           href="{%url subject_detail ss.id %}">
+                           href="{% url 'subject_detail' ss.id %}">
                             {{ ss.name }}</a>
                     </td>
                     <td class="auto_hide"> {{ ss.type }} </td>
@@ -181,7 +181,7 @@
                     <td class="align-center auto_hide"> {{ f.nx }} </td>
                     <td class="align-center">
                         <a class="btn btn-small"
-                           href="{% url subject_agenda ss.id %}">
+                           href="{% url 'subject_agenda' ss.id %}">
                             Nội dung</a>
                     </td>
                         {% if ss.type != "Toán" and ss.type != "Ngữ văn" %}
@@ -211,14 +211,14 @@
                         {% endif %}
                     </td>
                     <td class="align-center">
-                        <a href="{% url subject_agenda ss.id %}">Nội dung</a>
+                        <a href="{% url 'subject_agenda' ss.id %}">Nội dung</a>
                     </td>
                 {% endif %}
             </tr>
         {% endfor %}
 
         {% if pos > 3 %}
-            <form   action="{% url subject_per_class class.id %}" id="add_subject_form" method="post">{% csrf_token %}
+            <form   action="{% url 'subject_per_class' class.id %}" id="add_subject_form" method="post">{% csrf_token %}
                 <tr class="auto_hide" id="subject_form">
                     {{ form.non_field_errors }}
                     <td></td>
@@ -272,6 +272,6 @@
         </select>
     </div>
 
-    <p id="ajax_to" style="display: none;">{% url change_index 'subject' class.id %}</p>
-    <p id="redirect_link" style="display: none;">{% url subject_per_class class.id %}</p>
+    <p id="ajax_to" style="display: none;">{% url 'change_index' 'subject' class.id %}</p>
+    <p id="redirect_link" style="display: none;">{% url 'subject_per_class' class.id %}</p>
 {% endblock %}

@@ -64,11 +64,11 @@
             <i class="icon-upload-alt"></i>
             Nhập từ Excel </a>
         <a class="btn" title="Xuất chương trình học ra file Excel."
-           href="{% url export_school_agenda id grade term%}" id="export">
+           href="{% url 'export_school_agenda' id grade term%}" id="export">
             <i class="icon-download-alt"></i>
             Xuất ra Excel </a>
         <a class="btn"
-           href="{%url use_system_agenda_for_school id grade term %}" title="Sử dụng phân phối chương trình của hệ thống theo chuẩn BGD&ĐT">
+           href="{% url 'use_system_agenda_for_school' id grade term %}" title="Sử dụng phân phối chương trình của hệ thống theo chuẩn BGD&ĐT">
             Chương trình của hệ thống</a>
     </div>
 
@@ -138,7 +138,7 @@
             </div>
             <div class="hint">
                 <p>
-                    Chú ý: Phải dùng file Excel theo <a href="{%url export_system_agenda id grade term %}">mẫu
+                    Chú ý: Phải dùng file Excel theo <a href="{% url 'export_system_agenda' id grade term %}">mẫu
                     này</a>.
                 </p>
                 <p>

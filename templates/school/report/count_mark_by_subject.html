@@ -37,12 +37,12 @@
         <button class="btn pull-left switch">Số lượng đầu điểm</button>
         <button class="btn pull-left switch" style="display:none;">Số lượng điểm</button>
         <div class="btn-group" data-toggle="buttons-radio">
-            <a id="1" href="{% url count_mark year_id 1%}" class="btn"> Học kỳ I </a>
-            <a id="2" href="{% url count_mark year_id 2%}" class="btn"> Học kỳ II </a>
-            <a id="3" href="{% url count_mark year_id 3%}" class="btn"> Cả năm </a>
+            <a id="1" href="{% url 'count_mark' year_id 1%}" class="btn"> Học kỳ I </a>
+            <a id="2" href="{% url 'count_mark' year_id 2%}" class="btn"> Học kỳ II </a>
+            <a id="3" href="{% url 'count_mark' year_id 3%}" class="btn"> Cả năm </a>
         </div>
 
-        <a class='btn pull-right' href="{% url count_mark year_id term_num 1%}">Xuất ra Exel </a>
+        <a class='btn pull-right' href="{% url 'count_mark' year_id term_num 1%}">Xuất ra Exel </a>
     </div>
     <table id="mark_num" class="table grid table-bordered">
         <thead>

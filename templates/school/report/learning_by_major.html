@@ -8,71 +8,71 @@
 {% endblock %}
 
 {% block js  %}
-	<script>
+    <script>
         $(document).ready(function () {
-			$("#year").change(function(){
-				//alert("chao");
-				$("#term").val("-1");
-			})
+            $("#year").change(function(){
+                //alert("chao");
+                $("#term").val("-1");
+            })
             $('#term').change(function () {
                 var year = $('#year').val().split("-")[0];
                 var term = $('#term').val();
                 if (term != '-1' )
                     window.location.href = "/school/report/learningByMajor/" + year +"/"+term;
             })
-			var nextYear = {{yearNumber}}+1;
-			var yearString="{{yearNumber}}-"+nextYear; 
-			$("#year").val(yearString);
-			$("#term").val("{{termNumber}}");
-		});
-	</script>
+            var nextYear = {{yearNumber}}+1;
+            var yearString="{{yearNumber}}-"+nextYear; 
+            $("#year").val(yearString);
+            $("#term").val("{{termNumber}}");
+        });
+    </script>
 {% endblock %}
 
 {% block content %}
     <div class="btn-toolbar form-inline pagination-centered">
-		Năm học
-		<select id="year" style="width:100px">
-			{% for i in yearList %}
-				<option value={{i}}> {{i}} </option>
-			{% endfor %}	
-		</select>
-		Học kỳ
+        Năm học
+        <select id="year" style="width:100px">
+            {% for i in yearList %}
+                <option value={{i}}> {{i}} </option>
+            {% endfor %}    
+        </select>
+        Học kỳ
         <select id="term" style="width:100px">
-			<option value='-1'> ----------- </option>
-			<option value='1'> Học kỳ I </option>
-			<option value='2'> Học kỳ II  </option>
-			<option value='3'> Cả năm  </option>
-		</select>	
-        <a class='btn' href="{% url learning_by_major yearNumber termNumber 1%}">Xuất ra Excel </a>
+            <option value='-1'> ----------- </option>
+            <option value='1'> Học kỳ I </option>
+            <option value='2'> Học kỳ II  </option>
+            <option value='3'> Cả năm  </option>
+        </select>    
+        <a class='btn' href="{% url 'learning_by_major' yearNumber termNumber 1%}">Xuất ra Excel </a>
     </div>
-	<table class="table grid">
-	<tr>
-		<th rowspan="2">
-			Khối
-		</th>
-		<th rowspan="2" class="align-left">
-			Ban học
-		</th>
-		<th rowspan="2">
-			TS
-		</th>
-		<th colspan="2" >
-			Giỏi
-		</th>
-		<th colspan="2" >
-			Khá
-		</th>
-		<th colspan="2">
-			Trung bình
-		</th>
-		<th colspan="2">
-			Yếu
-		</th>
-		<th colspan="2">
-			Kém
-		</th>
-	</tr>
-	<tr>	
+    <table class="table grid">
+    <tr>
+        <th rowspan="2">
+            Khối
+        </th>
+        <th rowspan="2" class="align-left">
+            Ban học
+        </th>
+        <th rowspan="2">
+            TS
+        </th>
+        <th colspan="2" >
+            Giỏi
+        </th>
+        <th colspan="2" >
+            Khá
+        </th>
+        <th colspan="2">
+            Trung bình
+        </th>
+        <th colspan="2">
+            Yếu
+        </th>
+        <th colspan="2">
+            Kém
+        </th>
+    </tr>
+    <tr>    
         <th>SL</th>
         <th>%</th>
         <th>SL</th>
@@ -83,39 +83,39 @@
         <th>%</th>
         <th>SL</th>
         <th>%</th>
-	</tr>
-	{% for subList1 in list %}
-		{% if forloop.counter > 9 %}
-			{% for u,v in BAN_CHOICE %}
-				<tr>
-				{% if forloop.counter == 1 %}
-					<td rowspan=7>
-						{{forloop.parentloop.counter}}
-					</td>	
-				{% endif %}	
-				
-					<td class="align-left">
-						{{v}}
-					</td>
-					{% for subList in subList1 %}
-						{% if forloop.counter == forloop.parentloop.counter %}
-							{% for sl in subList %}
-								{% if forloop.counter|divisibleby:"2" or forloop.counter == 1 %} 	
-									<td>
-										{{ sl}}
-									</td>
-								{% else %}	
-									<td>
-										{{ sl|floatformat:"2" }}
-									</td>
-								{% endif %}	
-							{% endfor %}
-						{% endif %}	
-					{% endfor %}	
-				</tr>
-			{% endfor %}		
-		{% endif %}	
-	{% endfor %}
-	</table>
-	
+    </tr>
+    {% for subList1 in list %}
+        {% if forloop.counter > 9 %}
+            {% for u,v in BAN_CHOICE %}
+                <tr>
+                {% if forloop.counter == 1 %}
+                    <td rowspan=7>
+                        {{forloop.parentloop.counter}}
+                    </td>    
+                {% endif %}    
+                
+                    <td class="align-left">
+                        {{v}}
+                    </td>
+                    {% for subList in subList1 %}
+                        {% if forloop.counter == forloop.parentloop.counter %}
+                            {% for sl in subList %}
+                                {% if forloop.counter|divisibleby:"2" or forloop.counter == 1 %}     
+                                    <td>
+                                        {{ sl}}
+                                    </td>
+                                {% else %}    
+                                    <td>
+                                        {{ sl|floatformat:"2" }}
+                                    </td>
+                                {% endif %}    
+                            {% endfor %}
+                        {% endif %}    
+                    {% endfor %}    
+                </tr>
+            {% endfor %}        
+        {% endif %}    
+    {% endfor %}
+    </table>
+    
 {% endblock %}

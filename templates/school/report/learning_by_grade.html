@@ -44,7 +44,7 @@
             <option value='2'> Học kỳ II</option>
             <option value='3'> Cả năm</option>
         </select>
-        <a class='btn' href="{% url learning_by_grade yearNumber termNumber 1 %}">Xuất ra Excel </a>
+        <a class='btn' href="{% url 'learning_by_grade' yearNumber termNumber 1 %}">Xuất ra Excel </a>
     </div>
     <table class="table grid">
         <thead>

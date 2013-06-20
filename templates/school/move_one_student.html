@@ -13,7 +13,7 @@
             <tbody>
             {% for a,c in attendlist %}
                 <tr>
-                    <td> <a title="Xem lớp học này" href="{% url class_detail a.get_class_id %}">{{ a.get_class }}</a></td>
+                    <td> <a title="Xem lớp học này" href="{% url 'class_detail' a.get_class_id %}">{{ a.get_class }}</a></td>
                     <td> {{ a.attend_time|date:"SHORT_DATE_FORMAT" }}</td>
                     <td> {% if a.leave_time != None %}
                         {{ a.leave_time|date:"SHORT_DATE_FORMAT" }}

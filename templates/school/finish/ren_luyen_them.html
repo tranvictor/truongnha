@@ -118,7 +118,7 @@
             }
             //alert(cookieValue);
 
-            xmlhttp.open("POST", "{% url save_ren_luyen_them %}", true);
+            xmlhttp.open("POST", "{% url 'save_ren_luyen_them' %}", true);
             xmlhttp.setRequestHeader("X-CSRFToken", cookieValue);
             var data = "str=" + str;
             xmlhttp.send(data);

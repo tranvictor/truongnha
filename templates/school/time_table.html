@@ -39,7 +39,7 @@
 
             $("select[name=class]").change(function () {
                 if ($(this).val() != -1) {
-                    var url = "{%url school_index  %}timeTable/" + $(this).val();
+                    var url = "{% url 'school_index'  %}timeTable/" + $(this).val();
                     $(location).attr('href', url);
                 }
             });
@@ -159,7 +159,7 @@
         </p>
     </div>
 
-    <form action="{% url timetable class.id %}" method="post" class="pagination-centered">{% csrf_token %}
+    <form action="{% url 'timetable' class.id %}" method="post" class="pagination-centered">{% csrf_token %}
     <table id="school-timetable" class="table table-bordered fifth-row">
     <thead>
     <colgroup>

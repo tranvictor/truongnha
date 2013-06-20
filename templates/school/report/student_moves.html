@@ -22,13 +22,13 @@
         {% for t in terms %}
           {% if t == term %}
           <li id="term-{{ t.id }}" data-term-id="{{ t.id }}" class="active">
-            <a href="{% url student_moves_history t.id %}">
+            <a href="{% url 'student_moves_history' t.id %}">
               Học kì {{ t.number }} - Năm học {{ t.year_id }}
             </a>
           </li>
           {% else %}
           <li id="term-{{ t.id }}" data-term-id="{{ t.id }}">
-            <a href="{% url student_moves_history t.id %}">
+            <a href="{% url 'student_moves_history' t.id %}">
               Học kì {{ t.number }} - Năm học {{ t.year_id }}
             </a>
           </li>

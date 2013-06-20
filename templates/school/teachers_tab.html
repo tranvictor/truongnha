@@ -82,17 +82,17 @@
                     {% endif %}
                     <th class="align-left">STT</th>
                     <th class="align-left"><a
-                            href="{%url school.views.school_index  %}teachers/1/{{next_status}}"
+                            href="{% url 'school.views.school_index'  %}teachers/1/{{next_status}}"
                             class="" title="Sắp xếp theo tên">Họ tên </a></th>
                     <th class="align-left"><a
-                            href="{%url school.views.school_index  %}teachers/2/{{next_status}}"
+                            href="{% url 'school.views.school_index'  %}teachers/2/{{next_status}}"
                             class="" title="Sắp xếp theo ngày sinh">Ngày sinh</a></th>
                     <th class="align-left"><a
-                            href="{%url school.views.school_index  %}teachers/3/{{next_status}}"
+                            href="{% url 'school.views.school_index'  %}teachers/3/{{next_status}}"
                             class="" title="Sắp xếp giới tính">Giới tính </a></th>
                     <th class="align-left">Dạy môn</th>
                     <th class="align-left"><a
-                            href="{%url school.views.school_index  %}teachers/4/{{next_status}}"
+                            href="{% url 'school.views.school_index'  %}teachers/4/{{next_status}}"
                             class="" title="Sắp xếp theo tổ">Tổ </a></th>
                     {% if pos > 3 %}
                         <th></th>
@@ -113,7 +113,7 @@
                         <td>{{ forloop.counter }}</td>
                         <td>
                             {% if pos > 3 or teacher_id == ss.id %}
-                                <a href="{%url school.views.school_index  %}viewTeacherDetail/{{ss.id}}">
+                                <a href="{% url 'school.views.school_index'  %}viewTeacherDetail/{{ss.id}}">
                             {% endif %}
                             {{ ss.last_name }} {{ ss.first_name }} </a>
                         </td>

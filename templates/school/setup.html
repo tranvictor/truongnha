@@ -126,7 +126,7 @@
             });
 
             $("#begin_setup").click(function() {
-                window.location.href = "{%url setup %}";
+                window.location.href = "{% url 'setup' %}";
                 return false;
             });
 
@@ -134,7 +134,7 @@
                 $("#start_year").attr['disabled'] = 'disabled';
                 $("div.startYear").append('<br><br><p>Quá trình bắt đầu năm học mới cần xử lý trong vài giây. \
                 Bạn vui lòng đợi một lát.</p>');
-                window.location.href = json.status == 'done' ? "{%url start_year %}" : "{%url setup %}";
+                window.location.href = json.status == 'done' ? "{% url 'start_year' %}" : "{% url 'setup' %}";
             };
 
             $("#start_year").click(function() {
@@ -162,7 +162,7 @@
     </p>
     {% if user.userprofile.position == 'HIEU_TRUONG' or user.userprofile.position == 'HIEU_PHO' %}
 
-        <form action="{%url setup %}" method="post">{% csrf_token %}
+        <form action="{% url 'setup' %}" method="post">{% csrf_token %}
             <div class="infoContent">
                 <div class="leftInfoDiv">
                     <h4>Thông tin cơ bản</h4>

@@ -385,7 +385,7 @@
             {% if pos > 3 %}
                 <a class="btn" href="#popupDiv" id="import"> Nhập từ Excel </a>
                 <a class="btn" title="Xuất danh sách giáo viên ra file Excel."
-                    href="{% url school.views.teacher_generate 'all' %}" id="export"> Xuất ra Excel </a>
+                    href="{% url 'school.views.teacher_generate' 'all' %}" id="export"> Xuất ra Excel </a>
                 <button class="btn " id="delete"> Xóa </button>
             {% endif %}
         </div>
@@ -458,7 +458,7 @@
                                 <td class="index">{{ forloop.counter }}</td>
                                 <td>
                                     {% if pos > 3 or teacher_id == ss.id %}
-                                        <a href="{%url school.views.school_index  %}viewTeacherDetail/{{ss.id}}">
+                                        <a href="{% url 'school.views.school_index'  %}viewTeacherDetail/{{ss.id}}">
                                     {% endif %}
                                     {{ ss.last_name }} {{ ss.first_name }} </a>
                                 </td>

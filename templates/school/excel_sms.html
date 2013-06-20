@@ -3,7 +3,7 @@
 {% block content %}
   {% if user.is_authenticated %}
     <h2>Gửi tin nhắn SMS</h2>
-    <a href="{%url school.sms_views.manual_sms%}" title="Nhập tin nhắn trực tiếp">Nhập trực tiếp</a>
+    <a href="{% url 'school.sms_views.manual_sms' %}" title="Nhập tin nhắn trực tiếp">Nhập trực tiếp</a>
     <br/><br/>
 
     <form enctype="multipart/form-data" action="" method="post">{% csrf_token %}

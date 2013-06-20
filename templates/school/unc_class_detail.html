@@ -57,7 +57,7 @@
                     {% else %}
                     <li id="last_class_{{cl.id}}">
                     {% endif %}
-                            <a href="{% url unc_class_detail class.id cl.id %}">
+                            <a href="{% url 'unc_class_detail' class.id cl.id %}">
                                 <span id="class-display-name-{{cl.id}}">{{cl}}</span>
                             </a>
                         </li>
@@ -76,7 +76,7 @@
                     {% else %}
                         <li id="last_class_{{cl.id}}">
                     {% endif %}
-                            <a href="{% url unc_class_detail class.id cl.id %}">
+                            <a href="{% url 'unc_class_detail' class.id cl.id %}">
                                 <span id="class-display-name-{{cl.id}}">{{cl}}</span>
                             </a>
                         </li>

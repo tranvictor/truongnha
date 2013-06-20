@@ -1,7 +1,7 @@
 ﻿{% block content %}
   <br>
 
-  <form action="{% url diem_danh_hs student_id 1 %}" method="post" class="onPage">{% csrf_token %}
+  <form action="{% url 'diem_danh_hs' student_id 1 %}" method="post" class="onPage">{% csrf_token %}
 
     <table class="table" style="width:auto;">
 

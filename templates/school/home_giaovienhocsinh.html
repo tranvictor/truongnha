@@ -3,7 +3,7 @@
         <script type="text/javascript">
             $(document).ready(function () {
                 $.ajax({
-                    url:"{% url timetable_teacher %}",
+                    url:"{% url 'timetable_teacher' %}",
                     global:false,
                     dataType:'html',
                     type:'GET',
@@ -46,7 +46,7 @@
             <div class="row-fluid">
                 {% if teaching_class %}
                     <a class="span12 btn-success btn"
-                       href="{% url class_detail teaching_class.id %}"
+                       href="{% url 'class_detail' teaching_class.id %}"
                        title="Quản lý lớp này">
                         <h3>{{ teaching_class }}</h3>
                         <p>Chủ nhiệm lớp</p>
@@ -57,7 +57,7 @@
             {% if teaching_subjects %}
                 {% for subject in teaching_subjects %}
                     <a class="span6 btn btn-primary"
-                       href="{% url mark_for_teacher 1 term.id subject.id %}"
+                       href="{% url 'mark_for_teacher' 1 term.id subject.id %}"
                        title="Nhập điểm lớp này">
                         <h3>{{ subject.class_id }}</h3>
                         <p>{{ subject.name }}</p>
@@ -70,34 +70,34 @@
 
             <div class="tiles">
                 {# Giáo viên và học sinh #}
-                <a class="span6 btn btn-info" href="{% url teachers %}"
+                <a class="span6 btn btn-info" href="{% url 'teachers' %}"
                    title="Quản lý danh sách giáo viên, cán bộ trong trường">
                     <h3><i class="icon-user icon-large"></i></h3>
                     <p>Giáo viên</p>
                 </a>
-                <a class="span6 btn btn-info" href="{%url classes %}" title="Danh sách lớp học">
+                <a class="span6 btn btn-info" href="{% url 'classes' %}" title="Danh sách lớp học">
                     <h3><i class="icon-th-large icon-large"></i></h3>
                     <p>Lớp học</p>
                 </a>
-                <a class="span6 btn btn-info" href="{%url timetable_school %}"
+                <a class="span6 btn btn-info" href="{% url 'timetable_school' %}"
                    title="Thời khóa biểu toàn trường">
                     <h3><i class="icon-calendar icon-large"></i></h3>
 
                     <p>Lịch học</p>
                 </a>
-                <a class="span6 btn btn-info" href="{% url info %}" title="Thông tin về trường học">
+                <a class="span6 btn btn-info" href="{% url 'info' %}" title="Thông tin về trường học">
                     <h3><i class="icon-flag icon-large"></i></h3>
 
                     <p>Trường</p>
                 </a>
-                <a class="span6 btn btn-info" href="{%url views.about %}"
+                <a class="span6 btn btn-info" href="{% url 'views.about' %}"
                    title="Giới thiệu, liên lạc, góp ý">
                     <h3><i class="icon-info-sign  icon-large"></i></h3>
 
                     <p>Liên hệ</p>
                 </a>
 
-                <a class="span6 btn btn-info" href="{%url help None%}"
+                <a class="span6 btn btn-info" href="{% url 'help' None%}"
                    title="Hướng dẫn sử dụng">
                     <h3><i class="icon-question-sign icon-large"></i></h3>
 

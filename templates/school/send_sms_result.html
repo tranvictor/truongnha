@@ -16,25 +16,25 @@
                 if (!$(this).hasClass('thread') && !$(this).hasClass('form') && !$(this).hasClass('function')) {
                     //var id = $(this).attr('class').split(' ')[0];
                     var id = this.rowIndex;
-					if (id==0) return;
+                    if (id==0) return;
                     var checkboxid = '#checkbox_' + id;
                     if (document.getElementById("checkbox_" + id).disabled)
                         return;
                     var checkboxall = '#checkboxAll';
-					
+                    
                     if ($(this).hasClass('selected')) {
                         $(this).removeClass('selected');
-						$(this).children("td").each(function(){
-							$(this).removeClass("selected");
-						})
+                        $(this).children("td").each(function(){
+                            $(this).removeClass("selected");
+                        })
                         $(checkboxid).prop("checked", false);
                         var n = $("input[type=checkbox]:checked").length;
                         if (n <= 1) $(checkboxall).prop("checked", false);
                     } else {
                         $(this).addClass('selected');
- 						$(this).children("td").each(function(){
-							$(this).addClass("selected");
-						})
+                         $(this).children("td").each(function(){
+                            $(this).addClass("selected");
+                        })
                        $(checkboxid).prop("checked", true);
                         $(checkboxall).prop("checked", true);
 
@@ -117,21 +117,21 @@
                 window.location.href = "/school/sendSMSResult/"+{{selectedClass.id}}+
                 "/" + this.value;
             })
-			$("#term{{ termNumber }}").addClass('active');
+            $("#term{{ termNumber }}").addClass('active');
         });
     </script>
 
     <div class="btn-toolbar form-inline pagination-centered">
-		<div class="btn-group" data-toggle="buttons-radio">
-			<a id="term1" href="{% url send_sms_result selectedClass.id 1 %}" class="btn"> Học kỳ I </a>
-			<a id="term2" href="{% url send_sms_result selectedClass.id 2 %}" class="btn"> Học kỳ II </a>
-			<a id="term3" href="{% url send_sms_result selectedClass.id 3 %}" class="btn"> Cả năm </a>
-		</div>
+        <div class="btn-group" data-toggle="buttons-radio">
+            <a id="term1" href="{% url 'send_sms_result' selectedClass.id 1 %}" class="btn"> Học kỳ I </a>
+            <a id="term2" href="{% url 'send_sms_result' selectedClass.id 2 %}" class="btn"> Học kỳ II </a>
+            <a id="term3" href="{% url 'send_sms_result' selectedClass.id 3 %}" class="btn"> Cả năm </a>
+        </div>
 
-		<div class="btn-group" >
-			<button id="checkNoSent" class="btn btn-info"> Chọn học sinh chưa gửi</button>
-			<button id="send" class="btn btn-warning"> <i class="icon-envelope-alt"></i> Gửi tin nhắn</button>
-		</div>
+        <div class="btn-group" >
+            <button id="checkNoSent" class="btn btn-info"> Chọn học sinh chưa gửi</button>
+            <button id="send" class="btn btn-warning"> <i class="icon-envelope-alt"></i> Gửi tin nhắn</button>
+        </div>
 
 
         {% if message != None %}

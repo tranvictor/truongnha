@@ -3,7 +3,7 @@
         $(document).ready(function () {
             $("select[name=term]").change(function () {
                 var arg = {
-                    url:"{% url mark_for_a_student class_id student_id %}/" + $(this).val(),
+                    url:"{% url 'mark_for_a_student' class_id student_id %}/" + $(this).val(),
                     success:function (response) {
                         $('.ui-tabs-panel:visible').html(response);
                     },
@@ -26,7 +26,7 @@
 {#    </div>#}
 
     <div id="submenu" class="btn-toolbar">
-        <form class="form-inline pull-left" action="{% url mark_for_a_student class_id student_id %}" name="info"
+        <form class="form-inline pull-left" action="{% url 'mark_for_a_student' class_id student_id %}" name="info"
               method="post"
               id='myform'> {% csrf_token %}
             <label>Bảng điểm học kỳ:
@@ -39,7 +39,7 @@
         </form>
 
         <div class="pull-right">
-            <a class="btn" href="{% url mark_excel_for_a_student class_id student_id  termChoice %}"> Xuất ra
+            <a class="btn" href="{% url 'mark_excel_for_a_student' class_id student_id  termChoice %}"> Xuất ra
                 Excel</a>
         </div>
     </div>

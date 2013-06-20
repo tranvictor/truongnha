@@ -14,7 +14,7 @@
     <td>{{ count }}</td>
     <td>
         {% if pos > 3 %}
-            <a href="{%url teacher_detail teacher.id  %}">
+            <a href="{% url 'teacher_detail' teacher.id  %}">
                 {{ teacher.last_name }} </a>
         {% else %}
             {{ teacher.last_name }}
@@ -22,7 +22,7 @@
     </td>
     <td>
         {% if pos > 3 %}
-            <a href="{%url teacher_detail teacher.id  %}">
+            <a href="{% url 'teacher_detail' teacher.id  %}">
                 {{ teacher.first_name }} </a>
         {% else %}
             {{ teacher.first_name }}

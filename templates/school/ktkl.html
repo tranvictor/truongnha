@@ -28,8 +28,8 @@
                         <td> {{ kt.dia_diem }} </td>
                         <td> {{ kt.noi_dung }} </td>
                         {% if pos > 3 %}
-                            <td><a href="{% url delete_khen_thuong kt.id %}" class="btn btn-small delOnPage"> Xóa</a>
-                            <a href="{% url edit_khen_thuong kt.id %}" class="btn btn-small onPage"> Sửa</a>
+                            <td><a href="{% url 'delete_khen_thuong' kt.id %}" class="btn btn-small delOnPage"> Xóa</a>
+                            <a href="{% url 'edit_khen_thuong' kt.id %}" class="btn btn-small onPage"> Sửa</a>
                             </td>
                         {% endif %}
                     </tr>
@@ -41,7 +41,7 @@
         {% if pos > 3 %}
             <div class="btn-toolbar pagination-centered">
                 <a title="Thêm khen thưởng cho học sinh" class="btn btn-success onPage"
-                   href="{% url add_khen_thuong student_id %}">
+                   href="{% url 'add_khen_thuong' student_id %}">
                     Thêm </a>
             </div>
         {% endif %}
@@ -75,9 +75,9 @@
                 <td> {{kl.noi_dung}} </td>
                 {%if pos > 3%}
                 <td>
-                    <a href = "{% url delete_ki_luat kl.id %}" class="btn btn-small delOnPage">
+                    <a href = "{% url 'delete_ki_luat' kl.id %}" class="btn btn-small delOnPage">
                         Xóa</a>
-                    <a href = "{% url edit_ki_luat kl.id %}" class="btn btn-small onPage">
+                    <a href = "{% url 'edit_ki_luat' kl.id %}" class="btn btn-small onPage">
                         Sửa</a>
                 </td>
                 {% endif %}
@@ -92,7 +92,7 @@
                 <div class="btn-toolbar pagination-centered">
 
                             <a  title="Thêm kỉ luật cho học sinh" class = "btn btn-danger onPage"
-                                href="{% url add_ki_luat student_id %}">
+                                href="{% url 'add_ki_luat' student_id %}">
                             Thêm </a>
                 </div>
             {% endif %}

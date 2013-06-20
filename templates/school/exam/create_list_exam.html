@@ -129,7 +129,7 @@
 {% endblock %}
 
 {% block content %}
-    <form class="well form-horizontal" action="{% url create_list_exam %}" method="post" onsubmit="return false;"
+    <form class="well form-horizontal" action="{% url 'create_list_exam' %}" method="post" onsubmit="return false;"
           name="myform">{% csrf_token %}
         <fieldset>
             <legend>Thông tin chung</legend>

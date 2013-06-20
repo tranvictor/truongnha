@@ -81,7 +81,7 @@
         </select>
 
         {% if index != -1 %}
-            <a href="{% url count2 type modeView year_id number index 1 %}" class="btn pull-right">
+            <a href="{% url 'count2' type modeView year_id number index 1 %}" class="btn pull-right">
                 Xuất ra Excel
             </a>
         {% endif %}

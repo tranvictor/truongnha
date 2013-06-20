@@ -82,7 +82,7 @@
     </div>
 
     {% if blockIndex != -1 %}
-        <div class="btn-toolbar pull-right"><a class='btn' href="{% url count_final_mark type yearNumber termNumber subjectIndex blockIndex 1 %}">
+        <div class="btn-toolbar pull-right"><a class='btn' href="{% url 'count_final_mark' type yearNumber termNumber subjectIndex blockIndex 1 %}">
             Xuất ra
             Excel </a>
         </div>

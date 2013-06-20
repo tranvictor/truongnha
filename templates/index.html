@@ -522,14 +522,14 @@
             <br>
         </div>
     {% elif user.is_superuser %}
-        {#        <a href="{%url app.views.manage_register %}"#}
+        {#        <a href="{% url 'app.views.manage_register' %}"#}
         <a id="registration-man" class="btn btn-large btn-success" href="/manageRegister" title="Đăng ký">
             Quản lý đăng ký
         </a>
         <a id="school-man" class="btn btn-large btn-info " href="/manageSchool" title="Quản lý các trường trong hệ thống">
             Quản lý các trường
         </a>
-        {#        <a href="{%url app.views.system_subject_agenda%}"#}
+        {#        <a href="{% url 'app.views.system_subject_agenda' %}"#}
         <a id="program-man" class="btn btn-large btn-warning" href="/app/manage_agenda/"
            title="Quản lý phân phối chương trình của hệ thống">
             Phân phối chương trình

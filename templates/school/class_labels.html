@@ -7,7 +7,7 @@
     <br/>
   {% endif %}
 
-  <form action="{%url school.views.class_label %}" method="post">{% csrf_token %}
+  <form action="{% url 'school.views.class_label' %}" method="post">{% csrf_token %}
     <p>Nhập tên các lớp cách nhau bởi dấu phảy.</p>
     <i>Ví dụ: A, B để tạo lớp 10 A, 10 B, 11 A, 11 B, 12 A, 12 B.</i>
     <input type="text" name="labels" style="width: 400px;" value="{{labels}}"/>

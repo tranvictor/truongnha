@@ -3,7 +3,7 @@
     {% if message != None %}
     {% endif %}
 
-    <form action="{% url finish_year currentTerm.year_id.id %}" name="info" method="post" id='myform'>{% csrf_token %}
+    <form action="{% url 'finish_year' currentTerm.year_id.id %}" name="info" method="post" id='myform'>{% csrf_token %}
         {% ifnotequal currentTerm.number 3 %}
             {#<input class="btn" type="submit" name="tongKet" value="Tính tổng kết cả trường"> #}
         {% endifnotequal %}

@@ -9,7 +9,7 @@
 {% block content %}
     <div id="submenu" class="btn-toolbar">
       <div class="btn-group">
-          <form class="form-inline" action="{% url count_sms %}" name="info"
+          <form class="form-inline" action="{% url 'count_sms' %}" name="info"
                 method="post" style="margin-bottom:0;"> {% csrf_token %}
                   <div class="input-prepend" style="margin-right: 5px;">
                       <span class="add-on">Từ ngày</span>

@@ -6,7 +6,7 @@ from django.test.client import Client, RequestFactory
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from app.models import Register
-from django.core import mail 
+from django.core import mail
 import random
 import simplejson
 import re
@@ -45,7 +45,8 @@ class BasicWorkFlow(TestCase):
         self.year = None
         self.sty = None #StartYear
         #create superuser
-        self.hashed_pwd ='pbkdf2_sha256$10000$dmOhauthwSqI$s4RDmecWbR1y04/S0r+dH5SCBovz791MUXDSxsQ48Y4='
+        self.hashed_pwd =('pbkdf2_sha256$10000$dmOhauthwSqI$s4'
+                          'RDmecWbR1y04/S0r+dH5SCBovz791MUXDSxsQ48Y4=')
         self.admin_uname = 'admin'
         self.admin_pwd = '123456'
         User.objects.create(

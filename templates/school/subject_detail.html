@@ -23,7 +23,7 @@
         <br>
     {% endif %}
 
-    <form class="well offset4 span4" action="{% url subject_detail sub.id %}" method="post">{% csrf_token %}
+    <form class="well offset4 span4" action="{% url 'subject_detail' sub.id %}" method="post">{% csrf_token %}
         {{ form.as_p }}
 		<div class="form-actions">
 			<input type="submit" class="btn btn-primary" value="Lưu"/>

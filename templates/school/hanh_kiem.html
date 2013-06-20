@@ -59,7 +59,7 @@
 
             $("select[name=class]").change(function () {
                 if ($(this).val() != -1) {
-                    var url = "{%url school_index  %}hanhkiem/" + $(this).val();
+                    var url = "{% url 'school_index'  %}hanhkiem/" + $(this).val();
                     $(location).attr('href', url);
                 }
             });
@@ -159,7 +159,7 @@
                 Nhập từ Excel</a>
             {% endif %}
             <a class="btn" title="Xuất hạnh kiểm ra file Excel."
-               href="{% url export_hanh_kiem class.id %}" id="export">
+               href="{% url 'export_hanh_kiem' class.id %}" id="export">
                 <i class="icon-download-alt"></i>
                 Xuất ra Excel </a>
         </div>
@@ -175,7 +175,7 @@
         </span>
     </div>
 
-    <form action="{% url hanh_kiem class.id %}" method="post">{% csrf_token %}
+    <form action="{% url 'hanh_kiem' class.id %}" method="post">{% csrf_token %}
         {% if message != None %}
             {{ message }}
         {% endif %}
@@ -304,7 +304,7 @@
                 <div class="hint">
                     <p>
                         Chú ý: Phải dùng file Excel theo <a
-                            href="{% url export_hanh_kiem class.id %}">mẫu
+                            href="{% url 'export_hanh_kiem' class.id %}">mẫu
                         này</a>.
                     </p>
                     <p>

@@ -34,36 +34,29 @@
 
     <div id="submenu" class="btn-toolbar">
         <div class="btn-group">
-            <a id="1" class="btn" href="{% url xl_ca_nam_theo_lop selectedClass.id  1 %}"
+            <a id="1" class="btn" href="{% url 'xl_ca_nam_theo_lop' selectedClass.id  1 %}"
                title="Danh sách tất cả học sinh">
                 Tất cả </a>
-            <a id="2" class="btn" href="{% url xl_ca_nam_theo_lop selectedClass.id 2 %}"
+            <a id="2" class="btn" href="{% url 'xl_ca_nam_theo_lop' selectedClass.id 2 %}"
                title="Hiện thị danh sách những học sinh chưa đủ thông tin để xếp loại ">
                 Chưa xếp loại ({{ number_no_calculated }})</a>
-            <a id="3" class="btn" href="{% url xl_ca_nam_theo_lop selectedClass.id 3 %}"
+            <a id="3" class="btn" href="{% url 'xl_ca_nam_theo_lop' selectedClass.id 3 %}"
                title="Danh sách tất cả học sinh giỏi"> Học sinh giỏi ({{ number_good_title }})</a>
-            <a id="4" class="btn" href="{% url xl_ca_nam_theo_lop selectedClass.id 4 %}"
+            <a id="4" class="btn" href="{% url 'xl_ca_nam_theo_lop' selectedClass.id 4 %}"
                title="Danh sách học sinh đạt danh hiệu học sinh tiên tiến ">
                 Học sinh tiên tiến ({{ number_advanced_title }})</a>
-            <a id="5" class="btn" href="{% url xl_ca_nam_theo_lop selectedClass.id 5 %}"
+            <a id="5" class="btn" href="{% url 'xl_ca_nam_theo_lop' selectedClass.id 5 %}"
                title="Danh sách những học sinh được lên lớp">Lên lớp ({{ number_passed }})</a>
-            <a id="6" class="btn" href="{% url xl_ca_nam_theo_lop selectedClass.id 6 %} "
+            <a id="6" class="btn" href="{% url 'xl_ca_nam_theo_lop' selectedClass.id 6 %} "
                title="Danh sách những học sinh không lên lớp ">
                 Không lên lớp ({{ number_no_passed }}) </a>
         </div>
-        {#        <div class="btn-group ">#}
-        {#            <a id="7" class="btn" href=" {% url xl_ca_nam_theo_lop selectedClass.id 7 %} "#}
-        {#               title="Danh sách những học sinh phải thi lại"> Thi lại ({{number_exam_again}})</a>#}
-        {#            <a id="8" class="btn" href="{% url xl_ca_nam_theo_lop selectedClass.id 8 %}"#}
-        {#               title="Danh sách học sinh phải rèn thêm trong hè ">#}
-        {#                Rèn luyện thêm trong hè ({{number_practising_again}})</a>#}
-        {#        </div>#}
 
         {% if isSchool %}
             <div class="btn-group pull-right ">
                 {% if number_exam_again %}
                     <a class="btn btn-primary"
-                       href="{%url thi_lai selectedClass.id %}"
+                       href="{% url 'thi_lai' selectedClass.id %}"
                        title="Cập nhập thi lại">
                         Nhập điểm thi lại
                         ({{ number_exam_again }})
@@ -78,7 +71,7 @@
 
                 {% if number_practising_again %}
                     <a class="btn btn-primary"
-                       href="{%url ren_luyen_them selectedClass.id %}"
+                       href="{% url 'ren_luyen_them' selectedClass.id %}"
                        title="Cập nhập rèn luyện thêm trong hè">
                         Nhập hạnh kiểm rèn luyện thêm ({{ number_practising_again }})
                     </a>

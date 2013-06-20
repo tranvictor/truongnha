@@ -35,8 +35,8 @@
             $('input[type=radio]').change(function () {
                 window.location.href = "/school/xepLoaiHlTheoLop/" + {{selectedClass.id}} + "/" + this.value;
             });
-			//document.getElementById({{termNumber}}).checked = true;
-			$("#{{ termNumber }}").addClass('active');
+            //document.getElementById({{termNumber}}).checked = true;
+            $("#{{ termNumber }}").addClass('active');
 
             function getval(inp) {
                 if (inp == 'B' || inp == 'b') return 'TB';
@@ -76,7 +76,7 @@
 
                     var data = { id:id, val:value, request_type:name};
                     var arg = { type:"POST",
-                        url:"{% url hanh_kiem selectedClass.id %}",
+                        url:"{% url 'hanh_kiem' selectedClass.id %}",
                         data:data,
                         datatype:"json",
                         success:function(json){
@@ -114,10 +114,10 @@
     {% load mark %}
 
     <div class="form-inline pagination-centered" data-toggle="buttons-radio">
-        <a id="1" href="{% url xep_loai_hl_theo_lop selectedClass.id  1%}" class="btn"> Học kỳ I </a>
+        <a id="1" href="{% url 'xep_loai_hl_theo_lop' selectedClass.id  1%}" class="btn"> Học kỳ I </a>
         {% ifnotequal termNumber 1%}
-            <a id="2" href="{% url xep_loai_hl_theo_lop selectedClass.id  2%}" class="btn"> Học kỳ II </a>
-            <a id="3" href="{% url xep_loai_hl_theo_lop selectedClass.id  3%}" class="btn"> Cả năm </a>
+            <a id="2" href="{% url 'xep_loai_hl_theo_lop' selectedClass.id  2%}" class="btn"> Học kỳ II </a>
+            <a id="3" href="{% url 'xep_loai_hl_theo_lop' selectedClass.id  3%}" class="btn"> Cả năm </a>
         {% else %}
             <div id="2" disabled="disabled" title="Không thể truy cập khi đang ở kì 1" class="btn"> Học kỳ II </div>
             <div id="3" disabled="disabled" title="Không thể truy cập khi đang ở kì 1" class="btn"> Cả năm </div>
@@ -125,22 +125,22 @@
     </div>
 
     <div id="submenu" class="btn-toolbar">
-		{% if isSchool %}		
-            <a id="tinhtrungbinh" class="btn btn-primary" href="{% url xep_loai_hl_theo_lop selectedClass.id  termNumber 1%}" >
-			Tính điểm trung bình và xét danh hiệu
+        {% if isSchool %}        
+            <a id="tinhtrungbinh" class="btn btn-primary" href="{% url 'xep_loai_hl_theo_lop' selectedClass.id  termNumber 1%}" >
+            Tính điểm trung bình và xét danh hiệu
             </a>
-		{% endif %}
-		{% if request.user.userprofile.organization.level == 'T' %}
-			<span class="pull-right dimmed" >
-				<label>
-					Để nhập hạnh kiểm hãy nhập một chữ cái:
-					<span class="label label-success">T</span> Tốt,
-					<span class="label label-info">K</span> Khá,
-					<span class="label label-warning">B</span> Trung bình,
-					<span class="label label-important">Y</span> Yếu.
-				</label>
-			</span>
-		{% endif %}	
+        {% endif %}
+        {% if request.user.userprofile.organization.level == 'T' %}
+            <span class="pull-right dimmed" >
+                <label>
+                    Để nhập hạnh kiểm hãy nhập một chữ cái:
+                    <span class="label label-success">T</span> Tốt,
+                    <span class="label label-info">K</span> Khá,
+                    <span class="label label-warning">B</span> Trung bình,
+                    <span class="label label-important">Y</span> Yếu.
+                </label>
+            </span>
+        {% endif %}    
     </div>
 
     <table id="mark-table" class="table table-bordered grid fifth-row">

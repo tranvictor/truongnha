@@ -17,8 +17,8 @@
 {% block content %}
     <div class="btn-toolbar form-inline pagination-centered">
         <div class="btn-group" data-toggle="buttons-radio">
-            <a id="term1" href="{% url history_mark term1.id %}" class="btn"> Học kỳ I </a>
-            <a id="term2" href="{% url history_mark term2.id %}" class="btn"> Học kỳ II </a>
+            <a id="term1" href="{% url 'history_mark' term1.id %}" class="btn"> Học kỳ I </a>
+            <a id="term2" href="{% url 'history_mark' term2.id %}" class="btn"> Học kỳ II </a>
         </div>
     </div>
 
@@ -47,7 +47,7 @@
                     {% for s,number in a_list %}
                         <td>
                             {% if number != '' %}
-                                <a href="{% url history_mark_detail s.id selected_term.id %}">{{ number }} </a>
+                                <a href="{% url 'history_mark_detail' s.id selected_term.id %}">{{ number }} </a>
                             {% endif %}
                         </td>
                     {% endfor %}

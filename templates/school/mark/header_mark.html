@@ -48,7 +48,7 @@
             </li>
 
             <li>
-                <a id="export" href="{% url export_mark termChoice subjectChoice %}">
+                <a id="export" href="{% url 'export_mark' termChoice subjectChoice %}">
                     <i class="icon-download-alt"></i>
                     Xuất ra Excel </a>
             </li>
@@ -68,7 +68,7 @@
             </ul>
             </div>
         {% else %}
-            <a class="btn" href="{% url export_mark termChoice subjectChoice %}">
+            <a class="btn" href="{% url 'export_mark' termChoice subjectChoice %}">
                 <i class="icon-download-alt"></i>
                 Xuất ra Excel </a>
         {% endif %}
@@ -197,6 +197,6 @@
         {% endfor %}
     </select>
     &nbsp;&nbsp;&nbsp;
-    <a href="{% url export_mark termChoice subjectChoice %}" id="finishExport" class="btn"> Tải về</a>
+    <a href="{% url 'export_mark' termChoice subjectChoice %}" id="finishExport" class="btn"> Tải về</a>
 </div>
 {% upload_js %}

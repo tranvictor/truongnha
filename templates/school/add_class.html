@@ -33,7 +33,7 @@
         {{ message }} <br>
     {% endif %}
 
-    <form class="span6" method="post" action= {% url add_class %} >{% csrf_token %}
+    <form class="span6" method="post" action= {% url 'add_class' %} >{% csrf_token %}
         <legend>Thêm lớp học mới</legend>
         {{ form.non_field_errors }}
         <table class="table table-condensed no-border">
