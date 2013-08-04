@@ -5,10 +5,10 @@ command:
 
 SET GLOBAL TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
-CREATE DATABASE freeschool CHARACTER SET utf8 COLLATE utf8_unicode_ci;
-GRANT ALL PRIVILEGES ON freeschool.* TO admin@localhost IDENTIFIED BY 'freeschool';
+CREATE DATABASE truongnha CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+GRANT ALL PRIVILEGES ON truongnha.* TO admin@localhost IDENTIFIED BY 'password';
 FLUSH PRIVILEGES;
-GRANT ALL ON test_freeschool.* TO admin@localhost;
+GRANT ALL ON test_truongnha.* TO admin@localhost;
 QUIT;
 
 python manage schemamigration app --initial
